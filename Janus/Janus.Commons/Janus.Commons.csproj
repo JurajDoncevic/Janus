@@ -10,4 +10,8 @@
     <PackageReference Include="FunctionalExtensions.Base" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Metamodel\" />
+  </ItemGroup>
+
 </Project>
