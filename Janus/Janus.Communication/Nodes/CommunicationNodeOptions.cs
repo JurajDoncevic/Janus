@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Janus.Commons.Communication.Node;
+namespace Janus.Communication.Nodes;
 
 /// <summary>
 /// Options to build a communication node
@@ -8,8 +8,8 @@ namespace Janus.Commons.Communication.Node;
 public class CommunicationNodeOptions
 {
     private readonly string _nodeId;
-    private readonly uint _port;
-    private readonly uint _timeoutMs;
+    private readonly int _port;
+    private readonly int _timeoutMs;
 
     /// <summary>
     /// Node ID. Seen as remote ID on other nodes
@@ -18,11 +18,11 @@ public class CommunicationNodeOptions
     /// <summary>
     /// Port to listen on
     /// </summary>
-    public uint Port => _port;
+    public int Port => _port;
     /// <summary>
     /// Time in milliseconds after which ingoing and outgoing messages timeout
     /// </summary>
-    public uint TimeoutMs => _timeoutMs;
+    public int TimeoutMs => _timeoutMs;
 
     /// <summary>
     /// Constructor
@@ -30,21 +30,21 @@ public class CommunicationNodeOptions
     /// <param name="nodeId">Node ID. Seen as remote ID on other nodes</param>
     /// <param name="port">Port to listen on</param>
     /// <param name="timeoutMs">Time in milliseconds after which ingoing and outgoing messages timeout</param>
-    public CommunicationNodeOptions(string nodeId, uint port = 2500, uint timeoutMs = 1000)
+    public CommunicationNodeOptions(string nodeId, int port = 2500, int timeoutMs = 1000)
     {
         _nodeId = String.IsNullOrEmpty(nodeId.Trim()) ? Guid.NewGuid().ToString() : nodeId;
-        _port = port;
-        _timeoutMs = timeoutMs;
+        _port = port > 0 ? port : 2500;
+        _timeoutMs = timeoutMs > 0 ? timeoutMs : 1000;
     }
 }
 
 public static class CommunicationNodeOptionsExtensions
 {
-    public static CommunicationNodeOptions FromConfigurationSection(this IConfigurationSection configurationSection)
+    public static CommunicationNodeOptions ToCommunicationNodeOptions(this IConfigurationSection configurationSection)
     {
         var nodeId = configurationSection["NodeId"];
-        uint port = uint.TryParse(configurationSection["Port"], out port) ? port : 2500;
-        uint timeoutMs = uint.TryParse(configurationSection["TimeoutMs"], out timeoutMs) ? timeoutMs : 1000;
+        int port = int.TryParse(configurationSection["Port"], out port) ? port : 2500;
+        int timeoutMs = int.TryParse(configurationSection["TimeoutMs"], out timeoutMs) ? timeoutMs : 1000;
 
         return new CommunicationNodeOptions(nodeId, port, timeoutMs);
     }

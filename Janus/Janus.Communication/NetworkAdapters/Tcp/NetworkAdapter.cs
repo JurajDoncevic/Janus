@@ -1,0 +1,132 @@
+﻿using Janus.Communication.Messages;
+using Janus.Communication.Remotes;
+using System.Net;
+using System.Net.Sockets;
+using static FunctionalExtensions.Base.Disposing;
+
+namespace Janus.Communication.NetworkAdapters.Tcp;
+
+/// <summary>
+/// Base class for a TCP network adapter
+/// </summary>
+public abstract class NetworkAdapter : INetworkAdapter
+{
+    protected readonly TcpListener _tcpListener;
+    protected readonly int _listenPort;
+    protected readonly CancellationTokenSource _cancellationTokenSource;
+    protected readonly Task _listenerTask;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="listenPort"></param>
+    protected NetworkAdapter(int listenPort)
+    {
+        _listenPort = listenPort;
+        _tcpListener = new TcpListener(System.Net.IPAddress.Any, listenPort);
+        _cancellationTokenSource = new CancellationTokenSource();
+        _listenerTask = Task.Run(() => RunListener(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+    }
+
+    /// <summary>
+    /// Runs a TCP listener that waits for incoming messages. This method is only top be run in a Task, due to while(true)
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    public void RunListener(CancellationToken cancellationToken)
+    {
+        _tcpListener.Start();
+        while (true)
+        {
+            // maybe the task is cancelled?
+            cancellationToken.ThrowIfCancellationRequested();
+            // await a client
+            var client = _tcpListener.AcceptTcpClient();  
+            // see how many bytes the client is sending
+            int countBytes = client.ReceiveBufferSize;
+            // create a message bytes buffer
+            byte[] messageBytes = new byte[countBytes];
+            // receive the bytes
+            client.GetStream().Read(messageBytes, 0, countBytes);
+
+            var str = Encoding.UTF8.GetString(messageBytes, 0, countBytes);
+            // determine message type and raise event
+            messageBytes.DeterminePreambule()
+                        .Bind<string, BaseMessage>(_ => BuildMessage(_, messageBytes))
+                        .Map(_ => { RaiseMessageReceivedEvent(_, ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()); return _; });
+        }
+    }
+
+    /// <summary>
+    /// Invoked when a HELLO message is received
+    /// </summary>
+    public event EventHandler<HelloReceivedEventArgs> OnHelloMessageReceived;
+
+    /// <summary>
+    /// Sends a HELLO message to the remote point
+    /// </summary>
+    /// <param name="message">HELLO message</param>
+    /// <param name="remotePoint">Target remote point</param>
+    /// <returns></returns>
+    public Result SendHelloMessage(HelloMessage message, RemotePoint remotePoint)
+    => ResultExtensions.AsResult(
+        () =>
+            Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
+                  tcpClient =>
+                  {
+                      var messageBytes = message.ToBson();
+                      return tcpClient.Connected && tcpClient.Client.Send(message.ToBson()) == messageBytes.Length;
+                  }
+                )
+        );
+
+    /// <summary>
+    /// Base method to raise message events
+    /// </summary>
+    /// <param name="message">Message instance</param>
+    /// <param name="address">Address from which the message was received</param>
+    private void RaiseMessageReceivedEvent(BaseMessage message, string address)
+    {
+        switch (message.Preamble)
+        {
+            case "HELLO":   OnHelloMessageReceived.Invoke(this, new HelloReceivedEventArgs((HelloMessage)message, address));
+                            break;
+            default:        RaiseSpecializedMessageReceivedEvent(message, address);
+                            break;
+        }
+    }
+
+    /// <summary>
+    /// Specialization method to raise message events for subclass node types
+    /// </summary>
+    /// <param name="message">Message instance</param>
+    /// <param name="address">Address from which the message was received</param>
+    public abstract void RaiseSpecializedMessageReceivedEvent(BaseMessage message, string address);
+
+    /// <summary>
+    /// Creates base messages from bytes read over the network
+    /// </summary>
+    /// <param name="preambule">Message preambule</param>
+    /// <param name="messageBytes">Message bytes</param>
+    /// <returns>Created message boxed as BaseMessage</returns>
+    private DataResult<BaseMessage> BuildMessage(string preambule, byte[] messageBytes)
+        => preambule switch
+        {
+            "HELLO" => MessageExtensions.FromBson(messageBytes).Map(_ => (BaseMessage)_),
+            _ => BuildSpecializedMessage(preambule, messageBytes)
+        };
+
+    /// <summary>
+    /// Creates node specialized messages from bytes read over the network
+    /// </summary>
+    /// <param name="preambule">Message preambule</param>
+    /// <param name="messageBytes">Message bytes</param>
+    /// <returns>Created message boxed as BaseMessage</returns>
+    public abstract DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes);
+
+    public void Dispose()
+    {
+        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource.Dispose();
+        _tcpListener.Stop();
+    }
+}

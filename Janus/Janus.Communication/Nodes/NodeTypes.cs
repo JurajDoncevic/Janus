@@ -1,4 +1,4 @@
-﻿namespace Janus.Commons.Communication.Node;
+﻿namespace Janus.Communication.Nodes;
 
 public enum NodeTypes
 {
