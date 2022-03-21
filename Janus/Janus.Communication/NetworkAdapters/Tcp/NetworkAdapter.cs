@@ -67,7 +67,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="message">HELLO message</param>
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
-    public Result SendHelloMessage(HelloMessage message, RemotePoint remotePoint)
+    public Result SendHelloMessage(HelloReqMessage message, RemotePoint remotePoint)
     => ResultExtensions.AsResult(
         () =>
             Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
@@ -88,7 +88,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     {
         switch (message.Preamble)
         {
-            case "HELLO":   OnHelloMessageReceived.Invoke(this, new HelloReceivedEventArgs((HelloMessage)message, address));
+            case "HELLO":   OnHelloMessageReceived.Invoke(this, new HelloReceivedEventArgs((HelloReqMessage)message, address));
                             break;
             default:        RaiseSpecializedMessageReceivedEvent(message, address);
                             break;
@@ -111,7 +111,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     private DataResult<BaseMessage> BuildMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
-            "HELLO" => MessageExtensions.FromBson(messageBytes).Map(_ => (BaseMessage)_),
+            "HELLO" => MessageExtensions.ToHelloReqMessage(messageBytes).Map(_ => (BaseMessage)_),
             _ => BuildSpecializedMessage(preambule, messageBytes)
         };
 

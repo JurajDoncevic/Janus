@@ -57,7 +57,7 @@ public abstract class CommunicationNode : IDisposable
     public Result SendHello(RemotePoint remotePoint)
     {
         // create hello
-        var message = new HelloMessage(_options.Id, _options.Port, NodeType);
+        var message = new HelloReqMessage(_options.Id, _options.Port, NodeType);
         // add exhange id to awaited responses
         _awaitingHelloResponses.Add(message.ExchangeId);
         // send hello
@@ -67,7 +67,7 @@ public abstract class CommunicationNode : IDisposable
     protected Result SendHelloResponse(string exchangeId, RemotePoint remotePoint)
     {
         // create hello
-        var message = new HelloMessage(exchangeId, _options.Id, _options.Port, NodeType);
+        var message = new HelloReqMessage(exchangeId, _options.Id, _options.Port, NodeType);
         // send hello
         return _networkAdapter.SendHelloMessage(message, remotePoint);
     }

@@ -23,8 +23,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "Test HELLO between 2 components")]
     public void HelloBetweenTwoComponents()
     {
-        var mask2ReceivedHellos = new List<(HelloMessage message, RemotePoint remote)>();
-        var mask1ReceivedHellos = new List<(HelloMessage message, RemotePoint remote)>();
+        var mask2ReceivedHellos = new List<(HelloReqMessage message, RemotePoint remote)>();
+        var mask1ReceivedHellos = new List<(HelloReqMessage message, RemotePoint remote)>();
         var maskNode1 = _maskCommunicationNodes["Mask1"]; 
         var maskNode2 = _maskCommunicationNodes["Mask2"];
         maskNode1.OnHelloReceived += (sender, args) => mask1ReceivedHellos.Add((args.Message, args.RemotePoint));

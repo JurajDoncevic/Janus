@@ -15,16 +15,16 @@ public class MessageTests
         var port = 2000;
         var nodeType = NodeTypes.MEDIATOR_NODE;
 
-        var helloMessage = new HelloMessage(exchangeId, nodeId, port, nodeType);
+        var helloMessage = new HelloReqMessage(exchangeId, nodeId, port, nodeType);
 
         var messageBytes = helloMessage.ToBson();
 
-        var result = messageBytes.FromBson().Map(_ => (BaseMessage)_);
+        var result = messageBytes.ToHelloReqMessage().Map(_ => (BaseMessage)_);
 
         var message = result.Data;
 
         Assert.True(result.IsSuccess);
-        Assert.Equal("HELLO", message.Preamble);
+        Assert.Equal(Preambles.HELLO_REQUEST, message.Preamble);
         Assert.Equal(exchangeId, message.ExchangeId);
 
 

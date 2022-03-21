@@ -7,7 +7,7 @@ namespace Janus.Communication.Messages;
 /// <summary>
 /// Message used to instantiate a connection between two nodes
 /// </summary>
-public class HelloMessage : BaseMessage
+public class HelloReqMessage : BaseMessage
 {
     private readonly string _nodeId;
     private readonly int _listenPort;
@@ -32,8 +32,8 @@ public class HelloMessage : BaseMessage
     /// <param name="nodeId">Sender node's ID</param>
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
-    [JsonConstructorAttribute]
-    public HelloMessage(string exchangeId,  string nodeId, int listenPort, NodeTypes nodeType) : base(exchangeId, "HELLO")
+    [JsonConstructor]
+    public HelloReqMessage(string exchangeId,  string nodeId, int listenPort, NodeTypes nodeType) : base(exchangeId, Preambles.HELLO_REQUEST)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;
@@ -46,18 +46,19 @@ public class HelloMessage : BaseMessage
     /// <param name="nodeId">Sender node's ID</param>
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
-    public HelloMessage(string nodeId, int listenPort, NodeTypes nodeType) : base(Guid.NewGuid().ToString(), "HELLO")
+    public HelloReqMessage(string nodeId, int listenPort, NodeTypes nodeType) : base(Guid.NewGuid().ToString(), Preambles.HELLO_REQUEST)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;
         _nodeType = nodeType;
     }
+
 }
 
 public static partial class MessageExtensions
 {
     #pragma warning disable
-    public static DataResult<HelloMessage> FromBson(this byte[] bytes)
+    public static DataResult<HelloReqMessage> ToHelloReqMessage(this byte[] bytes)
         => ResultExtensions.AsDataResult(
             () =>
             {
@@ -65,7 +66,7 @@ public static partial class MessageExtensions
                 // sometimes the message is exactly as long as the byte array and there is no null term
                 var bytesMessageLength = indexOfNullTerm > 0 ? indexOfNullTerm : bytes.Length; 
                 var messageString = Encoding.UTF8.GetString(bytes, 0, bytesMessageLength);
-                var message = JsonSerializer.Deserialize<HelloMessage>(messageString);
+                var message = JsonSerializer.Deserialize<HelloReqMessage>(messageString);
                 return message;
             });
     #pragma warning enable

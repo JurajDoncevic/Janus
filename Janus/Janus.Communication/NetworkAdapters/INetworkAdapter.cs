@@ -6,5 +6,5 @@ namespace Janus.Communication.NetworkAdapters;
 public interface INetworkAdapter : IDisposable
 {
     event EventHandler<HelloReceivedEventArgs> OnHelloMessageReceived;
-    Result SendHelloMessage(HelloMessage message, RemotePoint remotePoint);
+    Result SendHelloMessage(HelloReqMessage message, RemotePoint remotePoint);
 }
