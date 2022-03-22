@@ -16,7 +16,7 @@ public class MessageTests
         var nodeType = NodeTypes.MEDIATOR_NODE;
         var rememberMe = false;
 
-        var helloMessage = new HelloReqMessage(exchangeId, nodeId, port, nodeType, rememberMe);
+        var helloMessage = new HelloReqMessage(exchangeId, nodeId, port, nodeType);
 
         var messageBytes = helloMessage.ToBson();
 

@@ -27,15 +27,12 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["mediator1"]); 
         var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["mediator2"]);
 
-        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator2RemotePoint = new MediatorRemotePoint("", "127.0.0.1", mediator2.Options.Port);
 
-        var helloResult = mediator1.SendHello(mediator2RemotePoint).Result;
-        var resultRemotePoint = helloResult.Data;
+        var helloResult = mediator1.SendHello(mediator2RemotePoint);
+        var resultRemotePoint = helloResult;
         
         Assert.True(helloResult.IsSuccess);
-        Assert.True(helloResult.HasData);
-        Assert.Equal(mediator2.Options.NodeId, resultRemotePoint.NodeId);
-        Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint.Port);
         Assert.Empty(mediator1.RemotePoints);
         Assert.Empty(mediator2.RemotePoints);
 
