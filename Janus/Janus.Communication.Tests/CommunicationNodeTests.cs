@@ -7,39 +7,37 @@ namespace Janus.Communication.Tests;
 
 public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture>
 {
-    private IReadOnlyDictionary<string, MaskCommunicationNode> _maskCommunicationNodes;
-    private IReadOnlyDictionary<string, MediatorCommunicationNode> _mediatorCommunicationNodes;
-    private IReadOnlyDictionary<string, WrapperCommunicationNode> _wrapperCommunicationNodes;
+    private IReadOnlyDictionary<string, CommunicationNodeOptions> _maskCommunicationNodeOptions;
+    private IReadOnlyDictionary<string, CommunicationNodeOptions> _mediatorCommunicationNodeOptions;
+    private IReadOnlyDictionary<string, CommunicationNodeOptions> _wrapperCommunicationNodeOptions;
     private readonly CommunicationNodeTestFixture _testFixture;
     
     public CommunicationNodeTests(CommunicationNodeTestFixture testFixture)
     {
+        _wrapperCommunicationNodeOptions = testFixture.WrapperCommunicationNodeOptions;
+        _mediatorCommunicationNodeOptions = testFixture.MediatorCommunicationNodeOptions;
+        _maskCommunicationNodeOptions = testFixture.MaskCommunicationNodeOptions;
+
         _testFixture = testFixture;
-        _maskCommunicationNodes = testFixture.MaskCommunicationNodes;
-        _mediatorCommunicationNodes = testFixture.MediatorCommunicationNodes;
-        _wrapperCommunicationNodes = testFixture.WrapperCommunicationNodes;
     }
 
     [Fact(DisplayName = "Test HELLO between 2 components")]
     public void HelloBetweenTwoComponents()
     {
-        var mask2ReceivedHellos = new List<(HelloReqMessage message, RemotePoint remote)>();
-        var mask1ReceivedHellos = new List<(HelloReqMessage message, RemotePoint remote)>();
-        var maskNode1 = _maskCommunicationNodes["Mask1"]; 
-        var maskNode2 = _maskCommunicationNodes["Mask2"];
-        maskNode1.OnHelloReceived += (sender, args) => mask1ReceivedHellos.Add((args.Message, args.RemotePoint));
-        maskNode2.OnHelloReceived += (sender, args) => mask2ReceivedHellos.Add((args.Message, args.RemotePoint));
-        var remotePoint1 = new MaskRemotePoint(maskNode1.Options.Id, "127.0.0.1", maskNode1.Options.Port);
-        var remotePoint2 = new MaskRemotePoint(maskNode2.Options.Id, "127.0.0.1", maskNode2.Options.Port);
+        var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["mediator1"]); 
+        var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["mediator2"]);
 
-        var result = maskNode1.SendHello(remotePoint2);
+        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
 
-        System.Threading.Thread.Sleep(1000);
+        var helloResult = mediator1.SendHello(mediator2RemotePoint).Result;
+        var resultRemotePoint = helloResult.Data;
+        
+        Assert.True(helloResult.IsSuccess);
+        Assert.True(helloResult.HasData);
+        Assert.Equal(mediator2.Options.NodeId, resultRemotePoint.NodeId);
+        Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint.Port);
+        Assert.Empty(mediator1.RemotePoints);
+        Assert.Empty(mediator2.RemotePoints);
 
-        Assert.True(result.IsSuccess);
-        Assert.Contains(remotePoint1, maskNode2.RemotePoints);
-        Assert.Contains(remotePoint2, maskNode1.RemotePoints);
-        Assert.Single(mask1ReceivedHellos);
-        Assert.Single(mask2ReceivedHellos);
     }
 }

@@ -1,0 +1,47 @@
+﻿{
+  "mask1": {
+    "NodeId": "Mask1",
+    "ListenPort": 10001,
+    "TimeoutMs": 5000
+  },
+  "mask2": {
+    "NodeId": "Mask2",
+    "ListenPort": 10002,
+    "TimeoutMs": 5000
+  },
+  "mask3": {
+    "NodeId": "Mask3",
+    "ListenPort": 10003,
+    "TimeoutMs": 5000
+  },
+  "mediator1": {
+    "NodeId": "Mediator1",
+    "ListenPort": 20001,
+    "TimeoutMs": 5000
+  },
+  "mediator2": {
+    "NodeId": "Mediator2",
+    "ListenPort": 20002,
+    "TimeoutMs": 5000
+  },
+  "mediator3": {
+    "NodeId": "Mediator3",
+    "ListenPort": 20003,
+    "TimeoutMs": 5000
+  },
+  "wrapper1": {
+    "NodeId": "Wrapper1",
+    "ListenPort": 30001,
+    "TimeoutMs": 5000
+  },
+  "wrapper2": {
+    "NodeId": "Wrapper2",
+    "ListenPort": 30002,
+    "TimeoutMs": 5000
+  },
+  "wrapper3": {
+    "NodeId": "Wrapper3",
+    "ListenPort": 30003,
+    "TimeoutMs": 5000
+  }
+}

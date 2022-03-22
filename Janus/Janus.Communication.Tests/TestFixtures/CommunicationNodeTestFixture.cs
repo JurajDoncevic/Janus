@@ -9,23 +9,23 @@ public class CommunicationNodeTestFixture
 
     private readonly IConfiguration _configuration;
 
-    public IReadOnlyDictionary<string, MaskCommunicationNode> MaskCommunicationNodes => _maskCommunicationNodes;
-    public IReadOnlyDictionary<string, MediatorCommunicationNode> MediatorCommunicationNodes => _mediatorCommunicationNodes;
-    public IReadOnlyDictionary<string, WrapperCommunicationNode> WrapperCommunicationNodes => _wrapperCommunicationNodes;
+    public IReadOnlyDictionary<string, CommunicationNodeOptions> MaskCommunicationNodeOptions => _maskCommunicationNodeOptions;
+    public IReadOnlyDictionary<string, CommunicationNodeOptions> MediatorCommunicationNodeOptions => _mediatorCommunicationNodeOptions;
+    public IReadOnlyDictionary<string, CommunicationNodeOptions> WrapperCommunicationNodeOptions => _wrapperCommunicationNodeOptions;
 
-    private readonly Dictionary<string, MaskCommunicationNode> _maskCommunicationNodes;
-    private readonly Dictionary<string, MediatorCommunicationNode> _mediatorCommunicationNodes;
-    private readonly Dictionary<string, WrapperCommunicationNode> _wrapperCommunicationNodes;
+    private readonly Dictionary<string, CommunicationNodeOptions> _maskCommunicationNodeOptions;
+    private readonly Dictionary<string, CommunicationNodeOptions> _mediatorCommunicationNodeOptions;
+    private readonly Dictionary<string, CommunicationNodeOptions> _wrapperCommunicationNodeOptions;
 
     public CommunicationNodeTestFixture()
     {
-        _maskCommunicationNodes = new Dictionary<string, MaskCommunicationNode>();
-        _mediatorCommunicationNodes = new Dictionary<string, MediatorCommunicationNode>();
-        _wrapperCommunicationNodes = new Dictionary<string, WrapperCommunicationNode>();
+        _maskCommunicationNodeOptions = new Dictionary<string, CommunicationNodeOptions>();
+        _mediatorCommunicationNodeOptions = new Dictionary<string, CommunicationNodeOptions>();
+        _wrapperCommunicationNodeOptions = new Dictionary<string, CommunicationNodeOptions>();
 
         _configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("nodeTests.appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("testsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
         LoadNodeOptions(_configuration);
@@ -45,15 +45,15 @@ public class CommunicationNodeTestFixture
                          var sectionKey = section.Key.ToLower();
                          if (sectionKey.Contains("mask"))
                          {
-                             _maskCommunicationNodes.Add(options.Id, CommunicationNodes.CreateTcpMaskCommunicationNode(options));
+                             _maskCommunicationNodeOptions.Add(options.NodeId, options);
                          }
                          if (sectionKey.Contains("mediator"))
                          {
-                             _mediatorCommunicationNodes.Add(options.Id, CommunicationNodes.CreateTcpMediatorCommunicationNode(options));   
+                             _mediatorCommunicationNodeOptions.Add(options.NodeId, options);   
                          }
                          if (sectionKey.Contains("wrapper"))
                          {
-                             _wrapperCommunicationNodes.Add(options.Id, CommunicationNodes.CreateTcpWrapperCommunicationNode(options)); 
+                             _wrapperCommunicationNodeOptions.Add(options.NodeId, options); 
                          }
                      });
     }
