@@ -12,6 +12,7 @@ public class HelloResMessage : BaseMessage
     private readonly string _nodeId;
     private readonly int _listenPort;
     private readonly NodeTypes _nodeType;
+    private readonly bool _rememberMe;
 
     /// <summary>
     /// Sender node's ID
@@ -25,6 +26,10 @@ public class HelloResMessage : BaseMessage
     /// Sender node's type
     /// </summary>
     public NodeTypes NodeType => _nodeType;
+    /// <summary>
+    /// Should the sender node be remembered by the receiving node 
+    /// </summary>
+    public bool RememberMe => _rememberMe;
 
     /// <summary>
     /// Constructor for response
@@ -33,11 +38,12 @@ public class HelloResMessage : BaseMessage
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
     [JsonConstructor]
-    public HelloResMessage(string exchangeId,  string nodeId, int listenPort, NodeTypes nodeType) : base(exchangeId, Preambles.HELLO_RESPONSE)
+    public HelloResMessage(string exchangeId,  string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(exchangeId, Preambles.HELLO_RESPONSE)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;
         _nodeType = nodeType;
+        _rememberMe = rememberMe;  
     }
 
     /// <summary>
@@ -46,11 +52,12 @@ public class HelloResMessage : BaseMessage
     /// <param name="nodeId">Sender node's ID</param>
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
-    public HelloResMessage(string nodeId, int listenPort, NodeTypes nodeType) : base(Guid.NewGuid().ToString(), Preambles.HELLO_RESPONSE)
+    public HelloResMessage(string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(Guid.NewGuid().ToString(), Preambles.HELLO_RESPONSE)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;
         _nodeType = nodeType;
+        _rememberMe = rememberMe;
     }
 
 }

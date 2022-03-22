@@ -11,7 +11,7 @@ namespace Janus.Communication.Messages
     /// </summary>
     public static class Preambles
     {
-        public static string HELLO_REQUEST => "HELLO_REQ";
-        public static string HELLO_RESPONSE => "HELLO_RES";
+        public const string HELLO_REQUEST = "HELLO_REQ";
+        public const string HELLO_RESPONSE = "HELLO_RES";
     }
 }
