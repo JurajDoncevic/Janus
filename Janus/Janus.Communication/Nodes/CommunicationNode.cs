@@ -1,6 +1,7 @@
 ﻿using Janus.Communication.Messages;
-using NetworkAdapters = Janus.Communication.NetworkAdapters;
+using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Remotes;
+using System.Collections.Concurrent;
 
 namespace Janus.Communication.Nodes;
 
@@ -9,69 +10,98 @@ public abstract class CommunicationNode : IDisposable
 
     private readonly CommunicationNodeOptions _options;
     private readonly Dictionary<string, RemotePoint> _remotePoints;
-    private readonly NetworkAdapters.INetworkAdapter _networkAdapter;
-    private readonly List<string> _awaitingHelloResponses;
+    private readonly INetworkAdapter _networkAdapter;
 
     public CommunicationNodeOptions Options => _options;
     public ReadOnlyCollection<RemotePoint> RemotePoints => _remotePoints.Values.ToList().AsReadOnly();
     public abstract NodeTypes NodeType { get;}
 
-    public event EventHandler<HelloReceivedEventArgs> OnHelloReceived;
+    protected ConcurrentDictionary<string, BaseMessage> _receivedResponseMessages;
+    protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
 
-    internal CommunicationNode(CommunicationNodeOptions options!!, NetworkAdapters.INetworkAdapter networkAdapter)
+    internal CommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
     {
         _options = options;
         _remotePoints = new();
         _networkAdapter = networkAdapter;
-        _awaitingHelloResponses = new ();
 
-        _networkAdapter.OnHelloMessageReceived += HelloReceivedFromAdapter;
+        _receivedRequestMessages = new ConcurrentDictionary<string, BaseMessage>();
+        _receivedResponseMessages = new ConcurrentDictionary<string, BaseMessage>();
+
+        _networkAdapter.HelloRequestMessageReceived += ManageHelloRequest;
+        _networkAdapter.HelloResponseMessageReceived += ManageHelloResponse;
     }
 
-    protected void HelloReceivedFromAdapter(object? sender, NetworkAdapters.HelloReceivedEventArgs e)
+    private void ManageHelloResponse(object? sender, HelloResponseReceivedEventArgs e)
     {
         var message = e.Message;
-        if (_awaitingHelloResponses.Contains(message.ExchangeId))
-        {
-            // this is a response to an already sent hello message
-            // remove from wait list
-            _awaitingHelloResponses.Remove(message.ExchangeId);
-            // create remote point
-            var remotePoint = e.CreateRemotePoint();
-            // add to remotes list
-            _remotePoints.Add(remotePoint.Id, remotePoint);
-        }
-        else
-        {
-            // this is a newly received hello message
-            // create remote point
-            var remotePoint = e.CreateRemotePoint();
-            // add to remotes list
-            _remotePoints.Add(remotePoint.Id, remotePoint);
-            // send response
-            SendHelloResponse(message.ExchangeId, remotePoint);
-        }
-        OnHelloReceived?.Invoke(this, new HelloReceivedEventArgs(message, e.CreateRemotePoint()));
+        _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
     }
 
-    public Result SendHello(RemotePoint remotePoint)
+    private void ManageHelloRequest(object? sender, HelloRequestReceivedEventArgs e)
     {
-        // create hello
-        var message = new HelloReqMessage(_options.Id, _options.Port, NodeType, false);
-        // add exhange id to awaited responses
-        _awaitingHelloResponses.Add(message.ExchangeId);
-        // send hello
-        return _networkAdapter.SendHelloMessage(message, remotePoint);
+        // get message
+        var message = e.Message;
+        // create remote point
+        var remotePoint = message.CreateRemotePoint(e.SenderAddress);
+        // if remember me, save to remote points
+        if (message.RememberMe)
+        {
+            _remotePoints.Add(message.NodeId, remotePoint);
+        }
+        // create response
+        var response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, message.RememberMe);
+        // send response, but don't wait
+        _networkAdapter.SendHelloResponse(response, remotePoint);
     }
 
-    protected Result SendHelloResponse(string exchangeId, RemotePoint remotePoint)
+    /// <summary>
+    /// Sends a hello to the remote point and waits for a response. Doesn't save the remote point
+    /// </summary>
+    /// <param name="remotePoint"></param>
+    /// <returns></returns>
+    public async Task<DataResult<RemotePoint>> SendHello(RemotePoint remotePoint)
     {
-        // create hello
-        var message = new HelloReqMessage(exchangeId, _options.Id, _options.Port, NodeType, false);
-        // send hello
-        return _networkAdapter.SendHelloMessage(message, remotePoint);
+        // create request hello message
+        var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, false);
+        var exchangdeId = helloRequest.ExchangeId;
+        var result = Timing.RunWithTimeout(
+            async () =>
+                (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
+                    .Bind<RemotePoint>(_ =>
+                    {
+                        while (!_receivedResponseMessages.ContainsKey(exchangdeId)) ;
+                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
+                        return ResultExtensions.AsDataResult(() => confirmedRemotePoint);
+                    }),
+                _options.TimeoutMs);
+        return await result;
     }
 
+    /// <summary>
+    /// Sends a hello to the remote point and waits for a response. Saves the remote point if hello is ok
+    /// </summary>
+    /// <param name="remotePoint"></param>
+    /// <returns></returns>
+    public async Task<DataResult<RemotePoint>> RegisterRemotePoint(RemotePoint remotePoint)
+    {
+        // create request hello message
+        var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, true);
+        var exchangdeId = helloRequest.ExchangeId;
+        var result = Timing.RunWithTimeout(
+            async () =>
+                (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
+                    .Bind<RemotePoint>(_ =>
+                    {
+                        while (!_receivedResponseMessages.ContainsKey(exchangdeId)) ;
+                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
+                        return ResultExtensions.AsDataResult(() => confirmedRemotePoint);
+                    }),
+                _options.TimeoutMs);
+        return await result;
+    }
     public void Dispose()
     {
         _networkAdapter.Dispose();
@@ -80,11 +110,18 @@ public abstract class CommunicationNode : IDisposable
 
 public static partial class CommunicationNodeExtensions
 {
-    public static RemotePoint CreateRemotePoint(this NetworkAdapters.HelloReceivedEventArgs eventArgs)
-        => eventArgs.Message.NodeType switch
+    public static RemotePoint CreateRemotePoint(this HelloResMessage helloResMessage!!, string senderAddress)
+        => helloResMessage.NodeType switch
         {
-            NodeTypes.MEDIATOR_NODE => new MediatorRemotePoint(eventArgs.Message.NodeId, eventArgs.SenderAddress, eventArgs.Message.ListenPort),
-            NodeTypes.WRAPPER_NODE => new WrapperRemotePoint(eventArgs.Message.NodeId, eventArgs.SenderAddress, eventArgs.Message.ListenPort),
-            NodeTypes.MASK_NODE => new MaskRemotePoint(eventArgs.Message.NodeId, eventArgs.SenderAddress, eventArgs.Message.ListenPort)
+            NodeTypes.MEDIATOR_NODE => new MediatorRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
+            NodeTypes.WRAPPER_NODE => new WrapperRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
+            NodeTypes.MASK_NODE => new MaskRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort)
+        };
+    public static RemotePoint CreateRemotePoint(this HelloReqMessage helloReqMessage!!, string senderAddress)
+        => helloReqMessage.NodeType switch
+        {
+            NodeTypes.MEDIATOR_NODE => new MediatorRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
+            NodeTypes.WRAPPER_NODE => new WrapperRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
+            NodeTypes.MASK_NODE => new MaskRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort)
         };
 }

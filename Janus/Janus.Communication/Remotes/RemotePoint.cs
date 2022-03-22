@@ -12,6 +12,13 @@ public abstract class RemotePoint
     public string Address => _address;
     public int Port => _port;
 
+    internal RemotePoint(string address, int port)
+    {
+        _id = string.Empty;
+        _address = address;
+        _port = port;
+    }
+
     internal RemotePoint(string id, string address, int port)
     {
         _id = id;

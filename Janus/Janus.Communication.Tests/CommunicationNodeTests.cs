@@ -24,15 +24,17 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "Test HELLO between 2 components")]
     public void HelloBetweenTwoComponents()
     {
-        var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["mediator1"]); 
-        var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["mediator2"]);
+        using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]); 
+        using var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator2"]);
 
-        var mediator2RemotePoint = new MediatorRemotePoint("", "127.0.0.1", mediator2.Options.Port);
+        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
 
-        var helloResult = mediator1.SendHello(mediator2RemotePoint);
-        var resultRemotePoint = helloResult;
+        var helloResult = mediator1.SendHello(mediator2RemotePoint).Result;
+        var resultRemotePoint = helloResult.Data;
         
         Assert.True(helloResult.IsSuccess);
+        Assert.Equal(mediator2.Options.NodeId, resultRemotePoint.Id);
+        Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint.Port);
         Assert.Empty(mediator1.RemotePoints);
         Assert.Empty(mediator2.RemotePoints);
 

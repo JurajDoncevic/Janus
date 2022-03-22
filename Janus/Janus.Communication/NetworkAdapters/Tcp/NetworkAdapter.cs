@@ -57,27 +57,49 @@ public abstract class NetworkAdapter : INetworkAdapter
     }
 
     /// <summary>
-    /// Invoked when a HELLO message is received
+    /// Invoked when a HELLO_REQ message is received
     /// </summary>
-    public event EventHandler<HelloReceivedEventArgs> OnHelloMessageReceived;
+    public event EventHandler<HelloRequestReceivedEventArgs> HelloRequestMessageReceived;
+    /// <summary>
+    /// Invoked when a HELLO_RES message is received
+    /// </summary>
+    public event EventHandler<HelloResponseReceivedEventArgs> HelloResponseMessageReceived;
 
     /// <summary>
-    /// Sends a HELLO message to the remote point
+    /// Sends a HELLO_REQ message to the remote point
     /// </summary>
-    /// <param name="message">HELLO message</param>
+    /// <param name="message">HELLO_REQ message</param>
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
-    public Result SendHelloMessage(HelloReqMessage message, RemotePoint remotePoint)
-    => ResultExtensions.AsResult(
-        () =>
-            Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
-                  tcpClient =>
-                  {
-                      var messageBytes = message.ToBson();
-                      return tcpClient.Connected && tcpClient.Client.Send(message.ToBson()) == messageBytes.Length;
-                  }
-                )
-        );
+    public async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
+        => await ResultExtensions.AsResult(
+            () =>
+                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
+                      async tcpClient =>
+                      {
+                          var messageBytes = message.ToBson();
+                          return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
+                      }
+                    )
+            );
+
+    /// <summary>
+    /// Sends a HELLO_RES message to the remote point
+    /// </summary>
+    /// <param name="message">HELLO_RES message</param>
+    /// <param name="remotePoint">Target remote point</param>
+    /// <returns></returns>
+    public async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
+        => await ResultExtensions.AsResult(
+            () =>
+                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
+                      async tcpClient =>
+                      {
+                          var messageBytes = message.ToBson();
+                          return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
+                      }
+                    )
+            );
 
     /// <summary>
     /// Base method to raise message events
@@ -88,8 +110,10 @@ public abstract class NetworkAdapter : INetworkAdapter
     {
         switch (message.Preamble)
         {
-            case "HELLO":   OnHelloMessageReceived.Invoke(this, new HelloReceivedEventArgs((HelloReqMessage)message, address));
-                            break;
+            case Preambles.HELLO_REQUEST:   HelloRequestMessageReceived?.Invoke(this, new HelloRequestReceivedEventArgs((HelloReqMessage)message, address));
+                                            break;
+            case Preambles.HELLO_RESPONSE:  HelloResponseMessageReceived?.Invoke(this, new HelloResponseReceivedEventArgs((HelloResMessage)message, address));
+                                            break;
             default:        RaiseSpecializedMessageReceivedEvent(message, address);
                             break;
         }
@@ -111,7 +135,8 @@ public abstract class NetworkAdapter : INetworkAdapter
     private DataResult<BaseMessage> BuildMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
-            "HELLO" => MessageExtensions.ToHelloReqMessage(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.HELLO_REQUEST => MessageExtensions.ToHelloReqMessage(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.HELLO_RESPONSE => MessageExtensions.ToHelloResMessage(messageBytes).Map(_ => (BaseMessage)_),
             _ => BuildSpecializedMessage(preambule, messageBytes)
         };
 

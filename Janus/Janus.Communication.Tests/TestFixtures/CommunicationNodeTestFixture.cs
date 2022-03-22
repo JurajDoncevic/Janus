@@ -45,15 +45,15 @@ public class CommunicationNodeTestFixture
                          var sectionKey = section.Key.ToLower();
                          if (sectionKey.Contains("mask"))
                          {
-                             _maskCommunicationNodeOptions.Add(options.Id, options);
+                             _maskCommunicationNodeOptions.Add(options.NodeId, options);
                          }
                          if (sectionKey.Contains("mediator"))
                          {
-                             _mediatorCommunicationNodeOptions.Add(options.Id, options);   
+                             _mediatorCommunicationNodeOptions.Add(options.NodeId, options);   
                          }
                          if (sectionKey.Contains("wrapper"))
                          {
-                             _wrapperCommunicationNodeOptions.Add(options.Id, options); 
+                             _wrapperCommunicationNodeOptions.Add(options.NodeId, options); 
                          }
                      });
     }
