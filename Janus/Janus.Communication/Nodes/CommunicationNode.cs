@@ -32,12 +32,24 @@ public abstract class CommunicationNode : IDisposable
         _networkAdapter.HelloResponseMessageReceived += ManageHelloResponse;
     }
 
+    /// <summary>
+    /// Manages a HELLO_RES message
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void ManageHelloResponse(object? sender, HelloResponseReceivedEventArgs e)
     {
+        // extract the message
         var message = e.Message;
+        // add the message to the responses dictionary
         _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
     }
 
+    /// <summary>
+    /// Manages a HELLO_REQ message
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void ManageHelloRequest(object? sender, HelloRequestReceivedEventArgs e)
     {
         // get message
@@ -47,7 +59,7 @@ public abstract class CommunicationNode : IDisposable
         // if remember me, save to remote points
         if (message.RememberMe)
         {
-            _remotePoints.Add(message.NodeId, remotePoint);
+            _remotePoints[message.NodeId] = remotePoint;
         }
         // create response
         var response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, message.RememberMe);
@@ -68,11 +80,17 @@ public abstract class CommunicationNode : IDisposable
         var result = Timing.RunWithTimeout(
             async () =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
-                    .Bind<RemotePoint>(_ =>
+                    .Bind<RemotePoint>(result =>
                     {
+                        // wait for the response to appear
                         while (!_receivedResponseMessages.ContainsKey(exchangdeId)) ;
+                        // get the hello response - exception if not correct message type
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        // remove the response from the concurrent dict
+                        _receivedResponseMessages.Remove(exchangdeId, out _);
+                        // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
+                        // turn it into a data result
                         return ResultExtensions.AsDataResult(() => confirmedRemotePoint);
                     }),
                 _options.TimeoutMs);
@@ -92,11 +110,19 @@ public abstract class CommunicationNode : IDisposable
         var result = Timing.RunWithTimeout(
             async () =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
-                    .Bind<RemotePoint>(_ =>
+                    .Bind<RemotePoint>(result =>
                     {
+                        // wait for the response
                         while (!_receivedResponseMessages.ContainsKey(exchangdeId)) ;
+                        // get the response
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        // remove the response from the dictionary
+                        _receivedResponseMessages.Remove(exchangdeId, out _);
+                        // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
+                        // add update the remote point into the known remote point dictionary
+                        _remotePoints[confirmedRemotePoint.NodeId] = confirmedRemotePoint;
+                        // turn the remote point into a data result
                         return ResultExtensions.AsDataResult(() => confirmedRemotePoint);
                     }),
                 _options.TimeoutMs);
@@ -110,6 +136,12 @@ public abstract class CommunicationNode : IDisposable
 
 public static partial class CommunicationNodeExtensions
 {
+    /// <summary>
+    /// Creates a remote point from response and address data 
+    /// </summary>
+    /// <param name="helloResMessage">HELLO_RES message</param>
+    /// <param name="senderAddress">Sender address of the HELLO_RES message</param>
+    /// <returns></returns>
     public static RemotePoint CreateRemotePoint(this HelloResMessage helloResMessage!!, string senderAddress)
         => helloResMessage.NodeType switch
         {
@@ -117,6 +149,12 @@ public static partial class CommunicationNodeExtensions
             NodeTypes.WRAPPER_NODE => new WrapperRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
             NodeTypes.MASK_NODE => new MaskRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort)
         };
+    /// <summary>
+    /// Creates a remote point from request and address data 
+    /// </summary>
+    /// <param name="helloResMessage">HELLO_REQ message</param>
+    /// <param name="senderAddress">Sender address of the HELLO_REQ message</param>
+    /// <returns></returns>
     public static RemotePoint CreateRemotePoint(this HelloReqMessage helloReqMessage!!, string senderAddress)
         => helloReqMessage.NodeType switch
         {

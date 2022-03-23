@@ -4,11 +4,11 @@ namespace Janus.Communication.Remotes;
 
 public class WrapperRemotePoint : RemotePoint
 {
-    public WrapperRemotePoint(string address, int port) : base(address, port)
+    public WrapperRemotePoint(string address, int listenPort) : base(address, listenPort)
     {
     }
 
-    public WrapperRemotePoint(string id, string address, int port) : base(id, address, port)
+    public WrapperRemotePoint(string nodeId, string address, int listenPort) : base(nodeId, address, listenPort)
     {
     }
 }

@@ -4,41 +4,41 @@ namespace Janus.Communication.Remotes;
 
 public abstract class RemotePoint
 {
-    private readonly string _id;
+    private readonly string _nodeId;
     private readonly string _address;
-    private readonly int _port;
+    private readonly int _listenPort;
 
-    public string Id => _id;
+    public string NodeId => _nodeId;
     public string Address => _address;
-    public int Port => _port;
+    public int Port => _listenPort;
 
-    internal RemotePoint(string address, int port)
+    internal RemotePoint(string address, int listenPort)
     {
-        _id = string.Empty;
+        _nodeId = string.Empty;
         _address = address;
-        _port = port;
+        _listenPort = listenPort;
     }
 
-    internal RemotePoint(string id, string address, int port)
+    internal RemotePoint(string nodeId, string address, int listenPort)
     {
-        _id = id;
+        _nodeId = nodeId;
         _address = address;
-        _port = port;
+        _listenPort = listenPort;
     }
 
     public override bool Equals(object? obj)
     {
         return obj is RemotePoint point &&
-               _id == point._id &&
+               _nodeId == point._nodeId &&
                EqualityComparer<string>.Default.Equals(_address, point._address) &&
-               _port == point._port &&
-               Id == point.Id &&
+               _listenPort == point._listenPort &&
+               NodeId == point.NodeId &&
                EqualityComparer<string>.Default.Equals(Address, point.Address) &&
                Port == point.Port;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_id, _address, _port, Id, Address, Port);
+        return HashCode.Combine(_nodeId, _address, _listenPort, NodeId, Address, Port);
     }
 }
