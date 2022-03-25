@@ -40,19 +40,25 @@ public abstract class NetworkAdapter : INetworkAdapter
             // maybe the task is cancelled?
             cancellationToken.ThrowIfCancellationRequested();
             // await a client
-            var client = _tcpListener.AcceptTcpClient();  
-            // see how many bytes the client is sending
-            int countBytes = client.ReceiveBufferSize;
-            // create a message bytes buffer
-            byte[] messageBytes = new byte[countBytes];
-            // receive the bytes
-            client.GetStream().Read(messageBytes, 0, countBytes);
+            var client = _tcpListener.AcceptTcpClientAsync(cancellationToken).Result;  
 
-            var str = Encoding.UTF8.GetString(messageBytes, 0, countBytes);
-            // determine message type and raise event
-            messageBytes.DeterminePreambule()
-                        .Bind<string, BaseMessage>(_ => BuildMessage(_, messageBytes))
-                        .Map(_ => { RaiseMessageReceivedEvent(_, ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()); return _; });
+            // if there wasn't a cancellation
+            if (client != null)
+            {
+                // see how many bytes the client is sending
+                int countBytes = client.ReceiveBufferSize;
+                // create a message bytes buffer
+                byte[] messageBytes = new byte[countBytes];
+                // receive the bytes
+                client.GetStream().Read(messageBytes, 0, countBytes);
+
+                var str = Encoding.UTF8.GetString(messageBytes, 0, countBytes);
+                // determine message type and raise event
+                messageBytes.DeterminePreambule()
+                            .Bind<string, BaseMessage>(_ => BuildMessage(_, messageBytes))
+                            .Map(_ => { RaiseMessageReceivedEvent(_, ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()); return _; });
+            }
+
         }
     }
 
