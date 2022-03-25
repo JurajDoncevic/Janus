@@ -19,7 +19,7 @@ public abstract class CommunicationNode : IDisposable
     protected ConcurrentDictionary<string, BaseMessage> _receivedResponseMessages;
     protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
 
-    internal CommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
+    internal protected CommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
     {
         _options = options;
         _remotePoints = new();
