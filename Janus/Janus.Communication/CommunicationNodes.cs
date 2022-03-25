@@ -1,5 +1,6 @@
 ﻿using TcpAdapters = Janus.Communication.NetworkAdapters.Tcp;
 using Janus.Communication.Nodes;
+using Janus.Communication.NetworkAdapters;
 
 namespace Janus.Communication;
 
@@ -28,4 +29,29 @@ public static class CommunicationNodes
     /// <returns></returns>
     public static WrapperCommunicationNode CreateTcpWrapperCommunicationNode(CommunicationNodeOptions options!!)
         => new WrapperCommunicationNode(options, new TcpAdapters.WrapperNetworkAdapter(options.ListenPort));
+
+
+    /// <summary>
+    /// Creates a Mask communication node over a network adapter
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public static MaskCommunicationNode CreateMaskCommunicationNode(CommunicationNodeOptions options!!, IMaskNetworkAdapter networkAdapter)
+        => new MaskCommunicationNode(options, networkAdapter);
+
+    /// <summary>
+    /// Creates a Mediator communication node over a network adapter
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public static MediatorCommunicationNode CreateMediatorCommunicationNode(CommunicationNodeOptions options!!, IMediatorNetworkAdapter networkAdapter)
+        => new MediatorCommunicationNode(options, networkAdapter);
+
+    /// <summary>
+    /// Creates a Wrapper communication node over a network adapter
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public static WrapperCommunicationNode CreateWrapperCommunicationNode(CommunicationNodeOptions options!!, IWrapperNetworkAdapter networkAdapter)
+        => new WrapperCommunicationNode(options, networkAdapter);
 }
