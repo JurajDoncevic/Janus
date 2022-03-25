@@ -1,5 +1,6 @@
 ﻿using Janus.Communication.Messages;
 using Janus.Communication.Remotes;
+using Janus.Communication.Tests.Mocks;
 using Janus.Communication.Tests.TestFixtures;
 using Xunit;
 
@@ -21,7 +22,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         _testFixture = testFixture;
     }
 
-    [Fact(DisplayName = "Test HELLO between 2 components")]
+    [Fact(DisplayName = "Test HELLO between 2 nodes")]
     public void SendHello()
     {
         using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]); 
@@ -40,7 +41,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
     }
 
-    [Fact(DisplayName = "Test Register using HELLO between 2 components")]
+    [Fact(DisplayName = "Test Register using HELLO between 2 nodes")]
     public void SendRegister()
     {
         using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]);
@@ -58,5 +59,39 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         Assert.Contains(resultRemotePoint, mediator1.RemotePoints);
         Assert.Equal(mediator2.RemotePoints.First(), mediator1RemotePoint);
 
+    }
+
+    [Fact(DisplayName = "Test HELLO timeout")]
+    public void SendHelloTimeout()
+    {
+        var mockNetworkAdapter = new AlwaysTimeoutTcpNetworkAdapter(_mediatorCommunicationNodeOptions["Mediator2"].ListenPort);
+        using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]);
+        using var mediator2 = CommunicationNodes.CreateMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator2"], mockNetworkAdapter);
+
+        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+
+        var helloResult = mediator1.SendHello(mediator2RemotePoint).Result;
+        
+
+        Assert.True(helloResult.IsFailure);
+        Assert.Contains("timeout", helloResult.ErrorMessage.ToLower());
+    }
+
+    [Fact(DisplayName = "Test Register timeout")]
+    public void RegisterTimeout()
+    {
+        var mockNetworkAdapter = new AlwaysTimeoutTcpNetworkAdapter(_mediatorCommunicationNodeOptions["Mediator2"].ListenPort);
+        using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]);
+        using var mediator2 = CommunicationNodes.CreateMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator2"], mockNetworkAdapter);
+
+        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+
+        var helloResult = mediator1.RegisterRemotePoint(mediator2RemotePoint).Result;
+
+
+        Assert.True(helloResult.IsFailure);
+        Assert.Contains("timeout", helloResult.ErrorMessage.ToLower());
     }
 }
