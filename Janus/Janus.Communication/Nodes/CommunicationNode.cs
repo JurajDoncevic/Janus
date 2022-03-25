@@ -78,12 +78,15 @@ public abstract class CommunicationNode : IDisposable
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, false);
         var exchangdeId = helloRequest.ExchangeId;
         var result = Timing.RunWithTimeout(
-            async () =>
+            async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Bind<RemotePoint>(result =>
                     {
                         // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangdeId)) ;
+                        while (!_receivedResponseMessages.ContainsKey(exchangdeId))
+                        {
+                            token.ThrowIfCancellationRequested();
+                        }
                         // get the hello response - exception if not correct message type
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
                         // remove the response from the concurrent dict
@@ -108,12 +111,15 @@ public abstract class CommunicationNode : IDisposable
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, true);
         var exchangdeId = helloRequest.ExchangeId;
         var result = Timing.RunWithTimeout(
-            async () =>
+            async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Bind<RemotePoint>(result =>
                     {
                         // wait for the response
-                        while (!_receivedResponseMessages.ContainsKey(exchangdeId)) ;
+                        while (!_receivedResponseMessages.ContainsKey(exchangdeId))
+                        {
+                            token.ThrowIfCancellationRequested();
+                        }
                         // get the response
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
                         // remove the response from the dictionary
