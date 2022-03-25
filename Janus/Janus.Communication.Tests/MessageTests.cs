@@ -7,7 +7,7 @@ namespace Janus.Communication.Tests;
 
 public class MessageTests
 {
-    [Fact]
+    [Fact(DisplayName = "Test HELLO_REQ serialization and deserialization")]
     public void HelloReqSerializationTest()
     {
         var exchangeId = "test_exchange";
@@ -29,7 +29,7 @@ public class MessageTests
         Assert.Equal(exchangeId, message.ExchangeId);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Test HELLO_RES serialization and deserialization")]
     public void HelloResSerializationTest()
     {
         var exchangeId = "test_exchange";
