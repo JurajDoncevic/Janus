@@ -21,7 +21,7 @@ public abstract class CommunicationNode : IDisposable
     protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
 
     #region RECEIVED MESSAGE EVENTS
-    public event EventHandler<HelloRequestEventArgs> HelloRequestReceived;
+    public event EventHandler<HelloReqEventArgs> HelloRequestReceived;
     #endregion
 
     internal protected CommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
@@ -62,7 +62,7 @@ public abstract class CommunicationNode : IDisposable
         // create remote point
         var remotePoint = message.CreateRemotePoint(e.SenderAddress);
         // raise event
-        HelloRequestReceived?.Invoke(this, new HelloRequestEventArgs(message, remotePoint));
+        HelloRequestReceived?.Invoke(this, new HelloReqEventArgs(message, remotePoint));
         // if remember me, save to remote points
         if (message.RememberMe)
         {

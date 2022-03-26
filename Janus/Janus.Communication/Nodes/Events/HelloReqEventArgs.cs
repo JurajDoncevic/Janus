@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Janus.Communication.Nodes.Events
 {
-    public class HelloRequestEventArgs: EventArgs
+    public class HelloReqEventArgs: EventArgs
     {
         private readonly HelloReqMessage _receivedMessage;
         private readonly RemotePoint _fromRemotePoint;
@@ -17,7 +17,7 @@ namespace Janus.Communication.Nodes.Events
 
         public RemotePoint FromRemotePoint => _fromRemotePoint;
 
-        public HelloRequestEventArgs(HelloReqMessage receivedMessage, RemotePoint fromRemotePoint) : base()
+        public HelloReqEventArgs(HelloReqMessage receivedMessage, RemotePoint fromRemotePoint) : base()
         {
             _receivedMessage = receivedMessage;
             _fromRemotePoint = fromRemotePoint;

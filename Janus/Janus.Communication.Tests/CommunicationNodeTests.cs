@@ -29,7 +29,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]); 
         using var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator2"]);
 
-        HelloRequestEventArgs helloRequestEventArgs = null;
+        HelloReqEventArgs helloRequestEventArgs = null;
 
         mediator2.HelloRequestReceived += (_, args) => helloRequestEventArgs = args; 
 
