@@ -1,5 +1,6 @@
 ﻿using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters;
+using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
 using System.Collections.Concurrent;
 
@@ -18,6 +19,10 @@ public abstract class CommunicationNode : IDisposable
 
     protected ConcurrentDictionary<string, BaseMessage> _receivedResponseMessages;
     protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
+
+    #region RECEIVED MESSAGE EVENTS
+    public event EventHandler<HelloRequestEventArgs> HelloRequestReceived;
+    #endregion
 
     internal protected CommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
     {
@@ -46,7 +51,7 @@ public abstract class CommunicationNode : IDisposable
     }
 
     /// <summary>
-    /// Manages a HELLO_REQ message
+    /// Manages a HELLO_REQ message. HELLO_REQ is not added to the request dictionary
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -56,6 +61,8 @@ public abstract class CommunicationNode : IDisposable
         var message = e.Message;
         // create remote point
         var remotePoint = message.CreateRemotePoint(e.SenderAddress);
+        // raise event
+        HelloRequestReceived?.Invoke(this, new HelloRequestEventArgs(message, remotePoint));
         // if remember me, save to remote points
         if (message.RememberMe)
         {

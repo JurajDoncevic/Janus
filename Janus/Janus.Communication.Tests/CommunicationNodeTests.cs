@@ -1,4 +1,5 @@
 ﻿using Janus.Communication.Messages;
+using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
 using Janus.Communication.Tests.Mocks;
 using Janus.Communication.Tests.TestFixtures;
@@ -28,6 +29,10 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]); 
         using var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator2"]);
 
+        HelloRequestEventArgs helloRequestEventArgs = null;
+
+        mediator2.HelloRequestReceived += (_, args) => helloRequestEventArgs = args; 
+
         var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
 
         var helloResult = mediator1.SendHello(mediator2RemotePoint).Result;
@@ -38,6 +43,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint.Port);
         Assert.Empty(mediator1.RemotePoints);
         Assert.Empty(mediator2.RemotePoints);
+        Assert.NotNull(helloRequestEventArgs);
+        Assert.Equal(mediator1.Options.NodeId, helloRequestEventArgs.ReceivedMessage.NodeId);
 
     }
 
