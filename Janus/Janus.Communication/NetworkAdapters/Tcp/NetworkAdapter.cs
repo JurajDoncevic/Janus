@@ -84,7 +84,7 @@ public abstract class NetworkAdapter : INetworkAdapter
                       async tcpClient =>
                       {
                           var messageBytes = message.ToBson();
-                          return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
+                          return tcpClient.Connected && await tcpClient.Client.SendAsync(messageBytes, SocketFlags.None) == messageBytes.Length;
                       }
                     )
             );
