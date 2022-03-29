@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Janus.Communication.Messages
@@ -19,6 +20,11 @@ namespace Janus.Communication.Messages
         /// </summary>
         public string NodeId => _nodeId;
 
+        [JsonConstructor]
+        public ByeReqMessage(string exchangeId, string nodeId) : base(exchangeId, Preambles.BYE_REQUEST)
+        {
+            _nodeId = nodeId;
+        }
 
         public ByeReqMessage(string nodeId) : base(Preambles.BYE_REQUEST)
         {
