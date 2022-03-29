@@ -1,5 +1,6 @@
 ﻿using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters;
+using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Remotes;
 using System.Net.Sockets;
 
@@ -13,8 +14,8 @@ namespace Janus.Communication.Tests.Mocks
             _tcpListener.Server.SendTimeout = 1;
         }
 
-        public event EventHandler<HelloRequestReceivedEventArgs> HelloRequestMessageReceived;
-        public event EventHandler<HelloResponseReceivedEventArgs> HelloResponseMessageReceived;
+        public event EventHandler<HelloReqReceivedEventArgs> HelloRequestMessageReceived;
+        public event EventHandler<HelloResReceivedEventArgs> HelloResponseMessageReceived;
 
 
         public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)

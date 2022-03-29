@@ -123,10 +123,17 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="message">BYE_REQ message</param>
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
-    public Task<Result> SendByeRequest(ByeReqMessage message, RemotePoint remotePoint)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result> SendByeRequest(ByeReqMessage message, RemotePoint remotePoint)
+        => await ResultExtensions.AsResult(
+            () =>
+                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
+                      async tcpClient =>
+                      {
+                          var messageBytes = message.ToBson();
+                          return tcpClient.Connected && await tcpClient.Client.SendAsync(messageBytes, SocketFlags.None) == messageBytes.Length;
+                      }
+                    )
+            );
     #endregion
 
     /// <summary>

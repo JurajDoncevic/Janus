@@ -39,6 +39,8 @@ public abstract class CommunicationNode : IDisposable
         _networkAdapter.ByeRequestMessageReceived += ManageByeRequest;
     }
 
+    #region MANAGE INCOMING MESSAGES
+
     /// <summary>
     /// Manage a BYE_REQ message
     /// </summary>
@@ -48,7 +50,7 @@ public abstract class CommunicationNode : IDisposable
     private void ManageByeRequest(object? sender, ByeReqReceivedEventArgs e)
     {
         var message = e.Message;
-        if (_remotePoints.ContainsKey(message.NodeId))
+        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
             _remotePoints.Remove(message.NodeId);
         }
@@ -91,6 +93,9 @@ public abstract class CommunicationNode : IDisposable
         _networkAdapter.SendHelloResponse(response, remotePoint);
     }
 
+    #endregion
+
+    #region SEND MESSAGES
     /// <summary>
     /// Sends a hello to the remote point and waits for a response. Doesn't save the remote point
     /// </summary>
@@ -158,6 +163,39 @@ public abstract class CommunicationNode : IDisposable
                 _options.TimeoutMs);
         return await result;
     }
+
+    /// <summary>
+    /// Sends a bye to the remote point if it exists in the saved remote points. Removes the remote point from the saved remote points.
+    /// </summary>
+    /// <param name="remotePoint"></param>
+    /// <returns></returns>
+    public async Task<Result> SendBye(RemotePoint remotePoint)
+    {
+        if (!_remotePoints.ContainsValue(remotePoint))
+            return ResultExtensions.AsResult(() => false);
+
+        var message = new ByeReqMessage(_options.NodeId);
+
+        var result = (await Timing.RunWithTimeout(
+            async token =>
+            {
+                return await _networkAdapter.SendByeRequest(message, remotePoint);
+            },
+            _options.TimeoutMs))
+            .Pass(r =>
+            {
+                if (r.IsSuccess)
+                {
+                    _remotePoints.Remove(remotePoint.NodeId);
+                }
+                return Unit();
+            });
+            
+        return result;
+    }
+
+    #endregion
+
     public void Dispose()
     {
         _networkAdapter.Dispose();
