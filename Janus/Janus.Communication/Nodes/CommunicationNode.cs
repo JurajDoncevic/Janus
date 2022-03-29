@@ -23,6 +23,7 @@ public abstract class CommunicationNode : IDisposable
 
     #region RECEIVED MESSAGE EVENTS
     public event EventHandler<HelloReqEventArgs> HelloRequestReceived;
+    public event EventHandler<ByeReqEventArgs> ByeRequestReceived;
     #endregion
 
     internal protected CommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
@@ -49,9 +50,15 @@ public abstract class CommunicationNode : IDisposable
     /// <exception cref="NotImplementedException"></exception>
     private void ManageByeRequest(object? sender, ByeReqReceivedEventArgs e)
     {
+        // get the message
         var message = e.Message;
+        // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
+            var remotePoint = _remotePoints[message.NodeId];
+            // raise event
+            ByeRequestReceived?.Invoke(this, new ByeReqEventArgs(e.Message, remotePoint));
+            // remove the remote point
             _remotePoints.Remove(message.NodeId);
         }
     }

@@ -102,8 +102,31 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         Assert.Contains("timeout", helloResult.ErrorMessage.ToLower());
     }
 
-    [Fact(DisplayName = "Test BYE by registering then sending a BYE between 2 nodes")]
+    [Fact(DisplayName = "Test BYE after a register was received")]
     public async void TestBye()
+    {
+        using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]);
+        using var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator2"]);
+
+        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+
+        var registerResult = mediator1.RegisterRemotePoint(mediator2RemotePoint).Result;
+        Result byeResult = default;
+        if (registerResult.IsSuccess)
+        {
+            byeResult = await mediator2.SendBye(mediator1RemotePoint);
+        }
+
+        Assert.True(registerResult.IsSuccess);
+        Assert.True(byeResult.IsSuccess);
+        Assert.DoesNotContain(mediator2RemotePoint, mediator1.RemotePoints);
+        Assert.DoesNotContain(mediator1RemotePoint, mediator2.RemotePoints);
+
+    }
+
+    [Fact(DisplayName = "Test BYE by sending register then sending a BYE")]
+    public async void TestByeAfterRegister()
     {
         using var mediator1 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator1"]);
         using var mediator2 = CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions["Mediator2"]);
