@@ -1,5 +1,6 @@
 ﻿using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters;
+using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
 using System.Collections.Concurrent;
@@ -35,6 +36,22 @@ public abstract class CommunicationNode : IDisposable
 
         _networkAdapter.HelloRequestMessageReceived += ManageHelloRequest;
         _networkAdapter.HelloResponseMessageReceived += ManageHelloResponse;
+        _networkAdapter.ByeRequestMessageReceived += ManageByeRequest;
+    }
+
+    /// <summary>
+    /// Manage a BYE_REQ message
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    private void ManageByeRequest(object? sender, ByeReqReceivedEventArgs e)
+    {
+        var message = e.Message;
+        if (_remotePoints.ContainsKey(message.NodeId))
+        {
+            _remotePoints.Remove(message.NodeId);
+        }
     }
 
     /// <summary>
@@ -42,7 +59,7 @@ public abstract class CommunicationNode : IDisposable
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void ManageHelloResponse(object? sender, HelloResponseReceivedEventArgs e)
+    private void ManageHelloResponse(object? sender, HelloResReceivedEventArgs e)
     {
         // extract the message
         var message = e.Message;
@@ -55,7 +72,7 @@ public abstract class CommunicationNode : IDisposable
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void ManageHelloRequest(object? sender, HelloRequestReceivedEventArgs e)
+    private void ManageHelloRequest(object? sender, HelloReqReceivedEventArgs e)
     {
         // get message
         var message = e.Message;

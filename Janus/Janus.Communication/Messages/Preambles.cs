@@ -13,5 +13,7 @@ namespace Janus.Communication.Messages
     {
         public const string HELLO_REQUEST = "HELLO_REQ";
         public const string HELLO_RESPONSE = "HELLO_RES";
+        public const string BYE_REQUEST = "BYE_REQ";
+        public const string BYE_RESPONSE = "BYE_RES";
     }
 }

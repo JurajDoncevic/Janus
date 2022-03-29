@@ -1,4 +1,5 @@
 ﻿using Janus.Communication.Messages;
+using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Remotes;
 using System.Net;
 using System.Net.Sockets;
@@ -62,15 +63,22 @@ public abstract class NetworkAdapter : INetworkAdapter
         }
     }
 
+    #region MESSAGE RECEIVED EVENTS
     /// <summary>
     /// Invoked when a HELLO_REQ message is received
     /// </summary>
-    public event EventHandler<HelloRequestReceivedEventArgs> HelloRequestMessageReceived;
+    public event EventHandler<HelloReqReceivedEventArgs> HelloRequestMessageReceived;
     /// <summary>
     /// Invoked when a HELLO_RES message is received
     /// </summary>
-    public event EventHandler<HelloResponseReceivedEventArgs> HelloResponseMessageReceived;
+    public event EventHandler<HelloResReceivedEventArgs> HelloResponseMessageReceived;
+    /// <summary>
+    /// Invoked when a BYE_REQ message is received
+    /// </summary>
+    public event EventHandler<ByeReqReceivedEventArgs> ByeRequestMessageReceived;
+    #endregion
 
+    #region SEND HELLO MESSAGES
     /// <summary>
     /// Sends a HELLO_REQ message to the remote point
     /// </summary>
@@ -106,6 +114,20 @@ public abstract class NetworkAdapter : INetworkAdapter
                       }
                     )
             );
+    #endregion
+
+    #region SEND BYE MESSAGES
+    /// <summary>
+    /// Sends a BYE_REQ message to the remote point
+    /// </summary>
+    /// <param name="message">BYE_REQ message</param>
+    /// <param name="remotePoint">Target remote point</param>
+    /// <returns></returns>
+    public Task<Result> SendByeRequest(ByeReqMessage message, RemotePoint remotePoint)
+    {
+        throw new NotImplementedException();
+    }
+    #endregion
 
     /// <summary>
     /// Base method to raise message events
@@ -116,9 +138,11 @@ public abstract class NetworkAdapter : INetworkAdapter
     {
         switch (message.Preamble)
         {
-            case Preambles.HELLO_REQUEST:   HelloRequestMessageReceived?.Invoke(this, new HelloRequestReceivedEventArgs((HelloReqMessage)message, address));
+            case Preambles.HELLO_REQUEST:   HelloRequestMessageReceived?.Invoke(this, new HelloReqReceivedEventArgs((HelloReqMessage)message, address));
                                             break;
-            case Preambles.HELLO_RESPONSE:  HelloResponseMessageReceived?.Invoke(this, new HelloResponseReceivedEventArgs((HelloResMessage)message, address));
+            case Preambles.HELLO_RESPONSE:  HelloResponseMessageReceived?.Invoke(this, new HelloResReceivedEventArgs((HelloResMessage)message, address));
+                                            break;
+            case Preambles.BYE_REQUEST:     ByeRequestMessageReceived?.Invoke(this, new ByeReqReceivedEventArgs((ByeReqMessage)message, address));
                                             break;
             default:        RaiseSpecializedMessageReceivedEvent(message, address);
                             break;
@@ -143,6 +167,7 @@ public abstract class NetworkAdapter : INetworkAdapter
         {
             Preambles.HELLO_REQUEST => MessageExtensions.ToHelloReqMessage(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.HELLO_RESPONSE => MessageExtensions.ToHelloResMessage(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.BYE_REQUEST => MessageExtensions.ToByeReqMessage(messageBytes).Map(_ => (BaseMessage)_),
             _ => BuildSpecializedMessage(preambule, messageBytes)
         };
 
@@ -153,6 +178,8 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="messageBytes">Message bytes</param>
     /// <returns>Created message boxed as BaseMessage</returns>
     public abstract DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes);
+
+
 
     public void Dispose()
     {

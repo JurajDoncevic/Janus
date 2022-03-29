@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Janus.Communication.Nodes.Events
 {
-    public class HelloReqEventArgs : MessageReceivedEventArgs<HelloReqMessage>
+    public class ByeReqEventArgs : MessageReceivedEventArgs<ByeReqMessage>
     {
-        public HelloReqEventArgs(HelloReqMessage receivedMessage, RemotePoint fromRemotePoint) : base(receivedMessage, fromRemotePoint)
+        public ByeReqEventArgs(ByeReqMessage receivedMessage, RemotePoint fromRemotePoint) : base(receivedMessage, fromRemotePoint)
         {
         }
     }
