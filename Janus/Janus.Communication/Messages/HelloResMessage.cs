@@ -52,7 +52,7 @@ public class HelloResMessage : BaseMessage
     /// <param name="nodeId">Sender node's ID</param>
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
-    public HelloResMessage(string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(Guid.NewGuid().ToString(), Preambles.HELLO_RESPONSE)
+    public HelloResMessage(string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(Preambles.HELLO_RESPONSE)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;

@@ -32,6 +32,16 @@ public abstract class BaseMessage
     }
 
     /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="preamble">Preamble AKA message type.</param>
+    protected BaseMessage(string preamble)
+    {
+        _exchangeId = Guid.NewGuid().ToString();
+        _preamble = preamble;
+    }
+
+    /// <summary>
     /// Serialize message to binary JSON
     /// </summary>
     /// <returns></returns>
