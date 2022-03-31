@@ -16,4 +16,9 @@
 		<ProjectReference Include="..\Janus.Utils\Janus.Utils.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="CommandModels\" />
+	  <Folder Include="QueryModels\" />
+	</ItemGroup>
+
 </Project>
