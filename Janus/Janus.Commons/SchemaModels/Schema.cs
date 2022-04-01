@@ -30,6 +30,12 @@ public class Schema
     /// Names of tableaus in this schema
     /// </summary>
     public List<string> TableauNames => _tableaus.Keys.ToList();
+    /// <summary>
+    /// Get tableau with name
+    /// </summary>
+    /// <param name="tableauName"></param>
+    /// <returns></returns>
+    public Tableau this[string tableauName] => _tableaus[tableauName];
 
     /// <summary>
     /// Constructor
@@ -47,8 +53,8 @@ public class Schema
     /// Constructor
     /// </summary>
     /// <param name="name">Schema name</param>
-    /// <param name="tableaus">Underlying tableaus</param>
     /// <param name="dataSource">Parent data source</param>
+    /// <param name="tableaus">Underlying tableaus</param>
     internal Schema(string name!!, List<Tableau> tableaus!!, DataSource dataSource!!)
     {
         _name = name;
@@ -63,8 +69,10 @@ public class Schema
     /// <returns>true if new tableau is added, false if a tableau with the given name exists</returns>
     internal bool AddTableau(Tableau tableau!!)
     {
+        
         if (!_tableaus.ContainsKey(tableau.Name))
         {
+            tableau = new Tableau(tableau.Name, tableau.Attributes.ToList(), this); // copy just in case to assign correct parent
             _tableaus.Add(tableau.Name, tableau);
             return true;
         }

@@ -25,6 +25,12 @@ public sealed class DataSource
     /// Names of schemas in this data source
     /// </summary>
     public List<string> SchemaNames => _schemas.Keys.ToList();
+    /// <summary>
+    /// Get schema with name
+    /// </summary>
+    /// <param name="schemaName"></param>
+    /// <returns></returns>
+    public Schema this[string schemaName] => _schemas[schemaName];
 
     /// <summary>
     /// Constructor
@@ -56,6 +62,7 @@ public sealed class DataSource
     {
         if (!_schemas.ContainsKey(schema.Name))
         {
+            schema = new Schema(schema.Name, schema.Tableaus.ToList(), this);
             _schemas.Add(schema.Name, schema);
             return true;
         }

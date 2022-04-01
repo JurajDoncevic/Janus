@@ -13,6 +13,9 @@ public class Attribute
     private readonly int _ordinal;
     private readonly Tableau _tableau;
 
+    /// <summary>
+    /// Attribute ID
+    /// </summary>
     public string Id => _tableau.Id + "." + _name;
     /// <summary>
     /// Attribute name

@@ -31,12 +31,19 @@ public class Tableau
     /// </summary>
     public List<string> AttributeNames => _attributes.Keys.ToList();
     /// <summary>
+    /// Get attribute with name
+    /// </summary>
+    /// <param name="attributeName"></param>
+    /// <returns></returns>
+    public Attribute this[string attributeName] => _attributes[attributeName];
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="name">Tableau name</param>
     /// <param name="schema">Parent schema</param>
     /// <param name="attributes">Underlying attributes</param>
-    internal Tableau(string name!!, Schema schema!!, List<Attribute> attributes!!)
+    internal Tableau(string name!!, List<Attribute> attributes!!, Schema schema!!)
     {
         _name = name;
         _schema = schema;
@@ -58,11 +65,17 @@ public class Tableau
     /// Adds a new unique attribute to the tableau
     /// </summary>
     /// <param name="attribute">Attribute object</param>
-    /// <returns>true if new attribute is added, false if an attribute with the given name exists</returns>
+    /// <returns>true if new attribute is added, false if an attribute with the given name or ordinal exists</returns>
     internal bool AddAttribute(Attribute attribute!!)
     {
-        if (!_attributes.ContainsKey(attribute.Name))
+            int automaticOrdinal = attribute.Ordinal < 0 
+                ? (_attributes.Values.Max(a => a.Ordinal as int?) ?? -1) + 1
+                : attribute.Ordinal;
+
+
+        if (!_attributes.ContainsKey(attribute.Name) && !_attributes.Values.ToList().Exists(a => a.Ordinal == attribute.Ordinal))
         {
+            attribute = new Attribute(attribute.Name, attribute.DataType, attribute.IsPrimaryKey, attribute.IsNullable, automaticOrdinal, this);
             _attributes.Add(attribute.Name, attribute);
             return true;
         }
