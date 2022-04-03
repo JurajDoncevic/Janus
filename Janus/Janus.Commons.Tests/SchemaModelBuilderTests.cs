@@ -17,26 +17,24 @@ namespace Janus.Commons.Tests
             var dataSource =
             SchemaModelBuilder.InitDataSource("datasource1")
                               .AddSchema("schema1", schemaBuilder =>
-                                schemaBuilder
-                                    .AddTableau("tableau1", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1_FK", attributeBuilder =>
-                                                attributeBuilder.WithIsNullable(false)
-                                                                .WithDataType(DataTypes.INT)
-                                                                .WithOrdinal(0)
-                                                                .WithIsPrimaryKey(true))
-                                            .AddAttribute("attr2", attributeBuilder =>
-                                                attributeBuilder.WithIsNullable(true)
-                                                                .WithDataType(DataTypes.STRING)
-                                                                .WithOrdinal(1)
-                                                                .WithIsPrimaryKey(false))
-                                            .AddAttribute("attr3", attributeBuilder =>
-                                                attributeBuilder.WithIsNullable(true)
-                                                                .WithDataType(DataTypes.DECIMAL)
-                                                                .WithOrdinal(2)
-                                                                .WithIsPrimaryKey(false)))
-                                        .AddTableau("tableau2", tableauBuilder => tableauBuilder)
-                                        .AddTableau("tableau3", tableauBuilder => tableauBuilder))
+                                schemaBuilder.AddTableau("tableau1", tableauBuilder =>
+                                        tableauBuilder.AddAttribute("attr1_FK", attributeBuilder =>
+                                                          attributeBuilder.WithIsNullable(false)
+                                                                          .WithDataType(DataTypes.INT)
+                                                                          .WithOrdinal(0)
+                                                                          .WithIsPrimaryKey(true))
+                                                      .AddAttribute("attr2", attributeBuilder =>
+                                                          attributeBuilder.WithIsNullable(true)
+                                                                          .WithDataType(DataTypes.STRING)
+                                                                          .WithOrdinal(1)
+                                                                          .WithIsPrimaryKey(false))
+                                                      .AddAttribute("attr3", attributeBuilder =>
+                                                          attributeBuilder.WithIsNullable(true)
+                                                                          .WithDataType(DataTypes.DECIMAL)
+                                                                          .WithOrdinal(2)
+                                                                          .WithIsPrimaryKey(false)))
+                                             .AddTableau("tableau2", tableauBuilder => tableauBuilder)
+                                             .AddTableau("tableau3", tableauBuilder => tableauBuilder))
                               .AddSchema("schema2", schemaBuilder => schemaBuilder)
                               .AddSchema("schema3", schemaBuilder => schemaBuilder)
                               .Build();
