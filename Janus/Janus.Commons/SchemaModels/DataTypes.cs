@@ -13,5 +13,6 @@ public enum DataTypes
     DECIMAL,
     STRING,
     DATETIME,
-    BOOLEAN
+    BOOLEAN,
+    BINARY
 }
