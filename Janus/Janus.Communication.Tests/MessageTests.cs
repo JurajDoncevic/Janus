@@ -2,6 +2,7 @@
 using Janus.Communication.Messages;
 using Xunit;
 using FunctionalExtensions.Base.Results;
+using Janus.Commons.SchemaModels;
 
 namespace Janus.Communication.Tests;
 
@@ -78,13 +79,10 @@ public class MessageTests
     {
         var exchangeId = "test_exchange";
         var nodeId = "test_node";
-        var port = 2000;
-        var nodeType = NodeTypes.MEDIATOR_NODE;
-        var rememberMe = false;
 
-        var helloMessage = new SchemaReqMessage(exchangeId, nodeId);
+        var schemaReqMessage = new SchemaReqMessage(exchangeId, nodeId);
 
-        var messageBytes = helloMessage.ToBson();
+        var messageBytes = schemaReqMessage.ToBson();
 
         var result = messageBytes.ToSchemaReqMessage().Map(_ => (BaseMessage)_);
 
@@ -94,4 +92,52 @@ public class MessageTests
         Assert.Equal(Preambles.SCHEMA_REQUEST, message.Preamble);
         Assert.Equal(exchangeId, message.ExchangeId);
     }
+
+    [Fact(DisplayName = "Test SCHEMA_RES serialization and deserialization")]
+    public void SchemaResSerializationTest()
+    {
+        var exchangeId = "test_exchange";
+        var nodeId = "test_node";
+
+        var dataSource = GetTestDataSource();
+
+        var schemaResMessage = new SchemaResMessage(exchangeId, nodeId, dataSource);
+
+        var messageBytes = schemaResMessage.ToBson();
+
+        var result = messageBytes.ToSchemaResMessage();
+
+        var message = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Preambles.SCHEMA_RESPONSE, message.Preamble);
+        Assert.Equal(exchangeId, message.ExchangeId);
+        Assert.Equal(GetTestDataSource(), message.DataSource);
+    }
+
+
+    private DataSource GetTestDataSource()
+        => SchemaModelBuilder.InitDataSource("datasource1")
+                             .AddSchema("schema1", schemaBuilder =>
+                               schemaBuilder.AddTableau("tableau1", tableauBuilder =>
+                                       tableauBuilder.AddAttribute("attr1_FK", attributeBuilder =>
+                                                         attributeBuilder.WithIsNullable(false)
+                                                                         .WithDataType(DataTypes.INT)
+                                                                         .WithOrdinal(0)
+                                                                         .WithIsPrimaryKey(true))
+                                                     .AddAttribute("attr2", attributeBuilder =>
+                                                         attributeBuilder.WithIsNullable(true)
+                                                                         .WithDataType(DataTypes.STRING)
+                                                                         .WithOrdinal(1)
+                                                                         .WithIsPrimaryKey(false))
+                                                     .AddAttribute("attr3", attributeBuilder =>
+                                                         attributeBuilder.WithIsNullable(true)
+                                                                         .WithDataType(DataTypes.DECIMAL)
+                                                                         .WithOrdinal(2)
+                                                                         .WithIsPrimaryKey(false)))
+                                            .AddTableau("tableau2", tableauBuilder => tableauBuilder)
+                                            .AddTableau("tableau3", tableauBuilder => tableauBuilder))
+                             .AddSchema("schema2", schemaBuilder => schemaBuilder)
+                             .AddSchema("schema3", schemaBuilder => schemaBuilder)
+                             .Build();
 }
