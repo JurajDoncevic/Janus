@@ -1,4 +1,5 @@
 ﻿using Janus.Commons.SchemaModels;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Janus.Communication.Messages;
@@ -36,4 +37,24 @@ public class SchemaResMessage : BaseMessage
     /// Sender's node ID
     /// </summary>
     public string NodeId => _nodeId;
+}
+
+
+public static partial class MessageExtensions
+{
+#pragma warning disable
+    public static DataResult<SchemaResMessage> ToSchemaResMessage(this byte[] bytes)
+        => ResultExtensions.AsDataResult(
+            () =>
+            {
+                var indexOfNullTerm = bytes.ToList().IndexOf(0x00);
+                // sometimes the message is exactly as long as the byte array and there is no null term
+                var bytesMessageLength = indexOfNullTerm > 0 ? indexOfNullTerm : bytes.Length;
+                var messageString = Encoding.UTF8.GetString(bytes, 0, bytesMessageLength);
+                var message = JsonSerializer.Deserialize<SchemaResMessage>(messageString);
+                return message;
+            });
+#pragma warning enable
+
+
 }
