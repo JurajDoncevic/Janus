@@ -9,6 +9,6 @@ namespace Janus.Commons.SchemaModels.JsonConversion.DTOs
     internal class TableauDTO
     {
         public string Name { get; set; }
-        public List<Attribute> Attributes { get; set; }
+        public List<AttributeDTO> Attributes { get; set; }
     }
 }
