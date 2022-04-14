@@ -69,7 +69,7 @@ public class Attribute
                _isPrimaryKey == attribute._isPrimaryKey &&
                _isNullable == attribute._isNullable &&
                _ordinal == attribute._ordinal &&
-               EqualityComparer<Tableau>.Default.Equals(_tableau, attribute._tableau);
+               _tableau.Id == attribute._tableau.Id;
     }
 
     public override int GetHashCode()

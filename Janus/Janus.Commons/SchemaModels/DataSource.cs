@@ -1,9 +1,13 @@
 ﻿
+using Janus.Commons.SchemaModels.JsonConversion;
+using System.Text.Json.Serialization;
+
 namespace Janus.Commons.SchemaModels;
 
 /// <summary>
 /// Describes a data source
 /// </summary>
+[JsonConverter(typeof(DataSourceJsonConverter))]
 public sealed class DataSource
 {
     private readonly string _name;
@@ -83,7 +87,7 @@ public sealed class DataSource
     {
         return obj is DataSource source &&
                _name == source._name &&
-               EqualityComparer<Dictionary<string, Schema>>.Default.Equals(_schemas, source._schemas);
+               _schemas.SequenceEqual(source._schemas);
     }
 
     public override int GetHashCode()

@@ -95,8 +95,8 @@ public class Tableau
     {
         return obj is Tableau tableau &&
                _name == tableau._name &&
-               EqualityComparer<Schema>.Default.Equals(_schema, tableau._schema) &&
-               EqualityComparer<Dictionary<string, Attribute>>.Default.Equals(_attributes, tableau._attributes) &&
+               _attributes.SequenceEqual(tableau._attributes) &&
+               _schema.Id == tableau.Schema.Id &&
                Id == tableau.Id;
     }
 

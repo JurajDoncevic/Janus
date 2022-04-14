@@ -93,8 +93,8 @@ public class Schema
     {
         return obj is Schema schema &&
                _name == schema._name &&
-               EqualityComparer<DataSource>.Default.Equals(_dataSource, schema._dataSource) &&
-               EqualityComparer<Dictionary<string, Tableau>>.Default.Equals(_tableaus, schema._tableaus);
+               _dataSource.Id == schema._dataSource.Id &&
+               _tableaus.SequenceEqual(schema._tableaus);
     }
 
     public override int GetHashCode()
