@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Janus.Commons.SchemaModels.JsonConversion.DTOs
+namespace Janus.Commons.SchemaModels.JsonConversion.DTOs;
+
+internal class SchemaDTO
 {
-    internal class SchemaDTO
-    {
-        public string Name { get; set; }
-        public List<TableauDTO> Tableaus { get; set; }
-    }
+    public string Name { get; set; }
+    public List<TableauDTO> Tableaus { get; set; }
 }

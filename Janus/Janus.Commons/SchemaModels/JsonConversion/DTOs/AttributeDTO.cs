@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Janus.Commons.SchemaModels.JsonConversion.DTOs
+namespace Janus.Commons.SchemaModels.JsonConversion.DTOs;
+
+internal class AttributeDTO
 {
-    internal class AttributeDTO
-    {
-        public string Name { get; set; }
-        public DataTypes DataType { get; set; }
-        public bool IsPrimaryKey { get; set; }
-        public bool IsNullable { get; set; }
-        public int Ordinal { get; set; }
-    }
+    public string Name { get; set; }
+    public DataTypes DataType { get; set; }
+    public bool IsPrimaryKey { get; set; }
+    public bool IsNullable { get; set; }
+    public int Ordinal { get; set; }
 }
