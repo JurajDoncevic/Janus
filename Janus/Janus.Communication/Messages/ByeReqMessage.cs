@@ -40,8 +40,8 @@ namespace Janus.Communication.Messages
                 () =>
                 {
                     var indexOfNullTerm = bytes.ToList().IndexOf(0x00);
-                // sometimes the message is exactly as long as the byte array and there is no null term
-                var bytesMessageLength = indexOfNullTerm > 0 ? indexOfNullTerm : bytes.Length;
+                    // sometimes the message is exactly as long as the byte array and there is no null term
+                    var bytesMessageLength = indexOfNullTerm > 0 ? indexOfNullTerm : bytes.Length;
                     var messageString = Encoding.UTF8.GetString(bytes, 0, bytesMessageLength);
                     var message = JsonSerializer.Deserialize<ByeReqMessage>(messageString);
                     return message;
