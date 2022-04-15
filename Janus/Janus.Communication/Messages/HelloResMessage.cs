@@ -5,19 +5,14 @@ using System.Text.Json.Serialization;
 namespace Janus.Communication.Messages;
 
 /// <summary>
-/// Message used to instantiate a connection between two nodes
+/// Describes a HELLO_RES message
 /// </summary>
 public class HelloResMessage : BaseMessage
 {
-    private readonly string _nodeId;
     private readonly int _listenPort;
     private readonly NodeTypes _nodeType;
     private readonly bool _rememberMe;
 
-    /// <summary>
-    /// Sender node's ID
-    /// </summary>
-    public string NodeId => _nodeId;
     /// <summary>
     /// Sender node's listening port
     /// </summary>
@@ -38,9 +33,8 @@ public class HelloResMessage : BaseMessage
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
     [JsonConstructor]
-    public HelloResMessage(string exchangeId,  string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(exchangeId, Preambles.HELLO_RESPONSE)
+    public HelloResMessage(string exchangeId,  string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(exchangeId, nodeId, Preambles.HELLO_RESPONSE)
     {
-        _nodeId = nodeId;
         _listenPort = listenPort;
         _nodeType = nodeType;
         _rememberMe = rememberMe;  
@@ -52,9 +46,8 @@ public class HelloResMessage : BaseMessage
     /// <param name="nodeId">Sender node's ID</param>
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
-    public HelloResMessage(string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(Preambles.HELLO_RESPONSE)
+    public HelloResMessage(string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(nodeId, Preambles.HELLO_RESPONSE)
     {
-        _nodeId = nodeId;
         _listenPort = listenPort;
         _nodeType = nodeType;
         _rememberMe = rememberMe;

@@ -3,23 +3,25 @@ using System.Text.Json.Serialization;
 
 namespace Janus.Communication.Messages;
 
+/// <summary>
+/// Describes a QUERY_RES message
+/// </summary>
 public class QueryResMessage : BaseMessage
 {
-    private readonly string _nodeId;
-
     /// <summary>
-    /// Sender node's ID
+    /// Constructor
     /// </summary>
-    public string NodeId => _nodeId;
-
+    /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
+    /// <param name="nodeId">Sender's node ID</param>
     [JsonConstructor]
-    public QueryResMessage(string exchangeId, string nodeId) : base(exchangeId, Preambles.QUERY_RESPONSE)
+    public QueryResMessage(string exchangeId, string nodeId) : base(exchangeId, nodeId, Preambles.QUERY_RESPONSE)
     {
-        _nodeId = nodeId;
     }
-
-    public QueryResMessage(string nodeId) : base(Preambles.QUERY_REQUEST)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="nodeId">Sender's node ID</param>
+    public QueryResMessage(string nodeId) : base(nodeId, Preambles.QUERY_REQUEST)
     {
-        this._nodeId = nodeId;
     }
 }

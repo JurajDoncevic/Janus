@@ -13,22 +13,13 @@ namespace Janus.Communication.Messages
     /// </summary>
     public class ByeReqMessage : BaseMessage
     {
-        private readonly string _nodeId;
-
-        /// <summary>
-        /// Sender node's ID
-        /// </summary>
-        public string NodeId => _nodeId;
-
         [JsonConstructor]
-        public ByeReqMessage(string exchangeId, string nodeId) : base(exchangeId, Preambles.BYE_REQUEST)
+        public ByeReqMessage(string exchangeId, string nodeId) : base(exchangeId, nodeId, Preambles.BYE_REQUEST)
         {
-            _nodeId = nodeId;
         }
 
-        public ByeReqMessage(string nodeId) : base(Preambles.BYE_REQUEST)
+        public ByeReqMessage(string nodeId) : base(nodeId, Preambles.BYE_REQUEST)
         {
-            _nodeId = nodeId;
         }
     }
 
