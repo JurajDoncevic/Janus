@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Janus.Commons.SchemaModels.JsonConversion.DTOs;
 
+/// <summary>
+/// DTO representation of <see cref="Tableau"/>
+/// </summary>
 internal class TableauDTO
 {
     public string Name { get; set; }

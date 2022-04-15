@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Janus.Commons.SchemaModels.JsonConversion.DTOs;
 
+/// <summary>
+/// /// <summary>
+/// DTO representation of <see cref="Schema"/>
+/// </summary>
+/// </summary>
 internal class SchemaDTO
 {
     public string Name { get; set; }

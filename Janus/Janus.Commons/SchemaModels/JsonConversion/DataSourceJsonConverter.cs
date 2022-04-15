@@ -1,14 +1,12 @@
 ﻿using Janus.Commons.SchemaModels.JsonConversion.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.SchemaModels.JsonConversion;
 
+/// <summary>
+/// Implicit JSON converter for DataSource objects
+/// </summary>
 public class DataSourceJsonConverter : JsonConverter<DataSource>
 {
     public override DataSource? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
