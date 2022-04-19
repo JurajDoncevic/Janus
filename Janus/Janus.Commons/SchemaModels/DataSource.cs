@@ -83,6 +83,35 @@ public sealed class DataSource
         return _schemas.Remove(schemaName);
     }
 
+    /// <summary>
+    /// Checks if the data source contains a schema with given ID  
+    /// </summary>
+    /// <param name="schemaId">Schema ID</param>
+    /// <returns></returns>
+    public bool ContainsSchema(string schemaId)
+        => _schemas.ContainsKey(schemaId);
+
+    /// <summary>
+    /// Checks if the data source contains a tableau with given ID  
+    /// </summary>
+    /// <param name="tableuId">Tableau ID</param>
+    /// <returns></returns>
+    public bool ContainsTableau(string tableuId)
+        => _schemas.Values.SelectMany(schema => schema.Tableaus)
+                          .Select(tableau => tableau.Id)
+                          .Contains(tableuId);
+
+    /// <summary>
+    /// Checks if the data source contains an attribute with given ID  
+    /// </summary>
+    /// <param name="attributeId">Attribute ID</param>
+    /// <returns></returns>
+    public bool ContainsAttribute(string attributeId)
+        => _schemas.Values.SelectMany(schema => schema.Tableaus)
+                          .SelectMany(tableau => tableau.Attributes)
+                          .Select(attribute => attribute.Id)
+                          .Contains(attributeId);
+
     public override bool Equals(object? obj)
     {
         return obj is DataSource source &&
