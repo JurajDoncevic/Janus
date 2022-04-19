@@ -18,7 +18,6 @@
 
 	<ItemGroup>
 	  <Folder Include="CommandModels\" />
-	  <Folder Include="QueryModels\" />
 	</ItemGroup>
 
 </Project>
