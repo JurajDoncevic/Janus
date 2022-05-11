@@ -9,7 +9,25 @@ namespace Janus.Commons.QueryModels
     public class Joining
     {
         private List<Join> _joins;
+
         public IReadOnlyCollection<Join> Joins => _joins;
+
+        public Joining(List<Join> joins)
+        {
+            _joins = joins;
+        }
+
+        public Joining()
+        {
+            _joins = new List<Join>();
+        }
+
+        internal bool AddJoin(Join join)
+        {
+            // TODO: check logic for joins
+            _joins.Add(join);
+            return true;
+        }
     }
 
     public class Join

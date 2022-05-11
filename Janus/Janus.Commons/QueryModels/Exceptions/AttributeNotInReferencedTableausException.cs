@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.QueryModels.Exceptions
 {
-    public class ReferencedAttributeNotInReferencedTableausException : Exception
+    public class AttributeNotInReferencedTableausException : Exception
     {
-        public ReferencedAttributeNotInReferencedTableausException(string attributeId!!) 
+        public AttributeNotInReferencedTableausException(string attributeId!!) 
             : base($"Attribute {attributeId} not found in the query's referenced tableaus. Try constructing the query by adding joins first.")
         {
         }

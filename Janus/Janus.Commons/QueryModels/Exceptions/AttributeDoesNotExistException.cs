@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.QueryModels.Exceptions
 {
-    public class ReferencedAttributeDoesNotExistException : Exception
+    public class AttributeDoesNotExistException : Exception
     {
-        internal ReferencedAttributeDoesNotExistException(string attributeId!!, string dataSourceName!!) 
+        internal AttributeDoesNotExistException(string attributeId!!, string dataSourceName!!) 
             : base($"Attribute with ID {attributeId} does not exist in data source {dataSourceName}")
         {
         }

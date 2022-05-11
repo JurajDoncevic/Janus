@@ -26,7 +26,7 @@ public class QueryBuilder
     public static QueryBuilder InitQueryOnTableau(string tableauId, DataSource dataSource)
     {
         if(!dataSource.ContainsTableau(tableauId))
-            throw new ReferencedTableauDoesNotExistException(tableauId, dataSource.Name);
+            throw new TableauDoesNotExistException(tableauId, dataSource.Name);
 
         return new QueryBuilder(tableauId, dataSource);
     }
@@ -44,6 +44,14 @@ public class QueryBuilder
         var builder = new ProjectionBuilder(_dataSource, _referencedTableaus);
         builder = configuration(builder);
         _projection = Option<Projection>.Some(builder.Build());
+        return this;
+    }
+
+    public QueryBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration)
+    {
+        var builder = new JoiningBuilder(_dataSource);
+        builder = configuration(builder);
+        _projection = Option<Joining>.Some(builder.Build());
         return this;
     }
 
@@ -88,12 +96,12 @@ public class ProjectionBuilder
     public ProjectionBuilder AddAttribute(string attributeId)
     {
         if (!_dataSource.ContainsAttribute(attributeId))
-            throw new ReferencedAttributeDoesNotExistException(attributeId, _dataSource.Name);
+            throw new AttributeDoesNotExistException(attributeId, _dataSource.Name);
         if(!_dataSource.Schemas
                        .SelectMany(schema => schema.Tableaus)
                        .Where(tableau => _referencedTableaus.Contains(tableau.Id))
                        .Any(tableau => tableau.Attributes.Any(attribute => attribute.Id.Equals(attributeId))))
-            throw new ReferencedAttributeNotInReferencedTableausException(attributeId);
+            throw new AttributeNotInReferencedTableausException(attributeId);
         if (_projectionAttributes.Contains(attributeId))
             throw new AttributeAlreadyAssignedToProjectionException(attributeId);
 
@@ -110,7 +118,29 @@ public class ProjectionBuilder
 
 public class JoiningBuilder
 {
+    private readonly DataSource _dataSource;
+    private Joining _joining;
     // TODO: check references, check circular joins
+    internal JoiningBuilder(DataSource dataSource!!)
+    {
+        _dataSource = dataSource;
+        _joining = new Joining(new List<Join>());
+    }
+
+    public JoiningBuilder AddJoin(Join join)
+    {
+        if (!_dataSource.ContainsAttribute(join.ForeignKeyAttributeId))
+            throw new AttributeDoesNotExistException(join.ForeignKeyAttributeId, _dataSource.Name);
+        if(!_dataSource.ContainsAttribute(join.PrimaryKeyAttributeId))
+            throw new AttributeDoesNotExistException(join.PrimaryKeyAttributeId, _dataSource.Name);
+        if(join.ForeignKeyTableauId == join.PrimaryKeyTableauId)
+            throw new SelfJoinNotSupportedException(join.PrimaryKeyTableauId);
+
+        _joining.AddJoin(join);
+
+        return this;
+    }
+
 }
 
 
