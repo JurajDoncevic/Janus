@@ -33,7 +33,7 @@ public class QueryBuilder
 
     public QueryBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration)
     {
-        var builder = new SelectionBuilder(_dataSource);
+        var builder = new SelectionBuilder(_dataSource, _referencedTableaus);
         builder = configuration(builder);
         _selection = Option<Selection>.Some(builder.Build());
         return this;
@@ -51,7 +51,7 @@ public class QueryBuilder
     {
         var builder = new JoiningBuilder(_dataSource);
         builder = configuration(builder);
-        _projection = Option<Joining>.Some(builder.Build());
+        _joining = Option<Joining>.Some(builder.Build());
         return this;
     }
 
@@ -61,15 +61,18 @@ public class SelectionBuilder
 {
     private string _expression;
     private readonly DataSource _dataSource;
+    private readonly HashSet<string> _referencedTableaus;
 
-    internal SelectionBuilder(DataSource dataSource)
+    internal SelectionBuilder(DataSource dataSource,  HashSet<string> referencedTableaus)
     {
         _expression = "";
         _dataSource = dataSource;
+        _referencedTableaus = referencedTableaus;
     }
 
     public SelectionBuilder WithExpression(string expression)
     {
+        // TODO: do checks
         _expression = expression;
         return this;
     }
@@ -103,7 +106,7 @@ public class ProjectionBuilder
                        .Any(tableau => tableau.Attributes.Any(attribute => attribute.Id.Equals(attributeId))))
             throw new AttributeNotInReferencedTableausException(attributeId);
         if (_projectionAttributes.Contains(attributeId))
-            throw new AttributeAlreadyAssignedToProjectionException(attributeId);
+            throw new DuplicateAttributeAssignedToProjectionException(attributeId);
 
         _projectionAttributes.Add(attributeId);
 
@@ -124,7 +127,7 @@ public class JoiningBuilder
     internal JoiningBuilder(DataSource dataSource!!)
     {
         _dataSource = dataSource;
-        _joining = new Joining(new List<Join>());
+        _joining = new Joining();
     }
 
     public JoiningBuilder AddJoin(Join join)
@@ -135,10 +138,23 @@ public class JoiningBuilder
             throw new AttributeDoesNotExistException(join.PrimaryKeyAttributeId, _dataSource.Name);
         if(join.ForeignKeyTableauId == join.PrimaryKeyTableauId)
             throw new SelfJoinNotSupportedException(join.PrimaryKeyTableauId);
-
+        if(DoesCreateCycle(_joining, join))
+            throw new CyclicJoinNotSupportedException(join.ForeignKeyTableauId, join.ForeignKeyAttributeId, join.PrimaryKeyTableauId, join.PrimaryKeyAttributeId);
+        if (_joining.Joins.Contains(join))
+            throw new DuplicateJoinNotSupportedException(join.ForeignKeyTableauId, join.ForeignKeyAttributeId, join.PrimaryKeyTableauId, join.PrimaryKeyAttributeId);
         _joining.AddJoin(join);
 
         return this;
+    }
+
+    private bool DoesCreateCycle(Joining joining, Join join)
+    {
+        return false;
+    }
+
+    public Joining Build()
+    {
+        return _joining;
     }
 
 }
