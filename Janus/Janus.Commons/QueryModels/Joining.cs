@@ -24,7 +24,6 @@ namespace Janus.Commons.QueryModels
 
         internal bool AddJoin(Join join)
         {
-            // TODO: check logic for joins
             _joins.Add(join);
             return true;
         }

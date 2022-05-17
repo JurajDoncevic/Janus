@@ -55,6 +55,11 @@ public class QueryBuilder
         return this;
     }
 
+    public Query Build()
+    {
+        return new Query(_queryOnTableauId, _projection, _selection, _joining);
+    }
+
 }
 
 public class SelectionBuilder
@@ -130,25 +135,127 @@ public class JoiningBuilder
         _joining = new Joining();
     }
 
-    public JoiningBuilder AddJoin(Join join)
+    public JoiningBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
     {
-        if (!_dataSource.ContainsAttribute(join.ForeignKeyAttributeId))
-            throw new AttributeDoesNotExistException(join.ForeignKeyAttributeId, _dataSource.Name);
-        if(!_dataSource.ContainsAttribute(join.PrimaryKeyAttributeId))
-            throw new AttributeDoesNotExistException(join.PrimaryKeyAttributeId, _dataSource.Name);
-        if(join.ForeignKeyTableauId == join.PrimaryKeyTableauId)
-            throw new SelfJoinNotSupportedException(join.PrimaryKeyTableauId);
+        // check if given ids are ok
+        if (!foreignKeyAttributeId.Contains('.'))
+            throw new InvalidAttributeIdException(foreignKeyAttributeId);
+        if (!primaryKeyAttributeId.Contains('.'))
+            throw new InvalidAttributeIdException(primaryKeyAttributeId);
+
+        //get tableau ids from the supposed attribute ids
+        var foreignKeyTableauId = foreignKeyAttributeId.Remove(foreignKeyAttributeId.LastIndexOf('.')); 
+        var primaryKeyTableauId = primaryKeyAttributeId.Remove(primaryKeyAttributeId.LastIndexOf('.'));
+
+        if (!_dataSource.ContainsAttribute(foreignKeyAttributeId))
+            throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSource.Name);
+        if(!_dataSource.ContainsAttribute(primaryKeyAttributeId))
+            throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSource.Name);
+        if(foreignKeyTableauId.Equals(primaryKeyTableauId))
+            throw new SelfJoinNotSupportedException(primaryKeyTableauId);
+
+        Join join = new Join(primaryKeyTableauId, primaryKeyAttributeId, foreignKeyTableauId, foreignKeyAttributeId);
+
+        if(!IsConnectedGraph(_joining, join)) // maybe move to build?
+            throw new JoinsNotConnectedException();
         if(DoesCreateCycle(_joining, join))
-            throw new CyclicJoinNotSupportedException(join.ForeignKeyTableauId, join.ForeignKeyAttributeId, join.PrimaryKeyTableauId, join.PrimaryKeyAttributeId);
+            throw new CyclicJoinNotSupportedException(join);
+        if (!ArePrimaryKeyReferencesUnique(_joining, join))
+            throw new TableauRereferencedAsPrimaryException(join);
         if (_joining.Joins.Contains(join))
-            throw new DuplicateJoinNotSupportedException(join.ForeignKeyTableauId, join.ForeignKeyAttributeId, join.PrimaryKeyTableauId, join.PrimaryKeyAttributeId);
+            throw new DuplicateJoinNotSupportedException(join);
         _joining.AddJoin(join);
 
         return this;
     }
 
+    private bool ArePrimaryKeyReferencesUnique(Joining joining, Join join)
+    {
+        var pkRefs = joining.Joins.Select(j => j.PrimaryKeyAttributeId)
+                                  .ToList();
+        pkRefs.Add(join.PrimaryKeyAttributeId);
+
+        return pkRefs.Distinct().Count() == pkRefs.Count;
+    }
+
+    private bool IsConnectedGraph(Joining joining, Join join)
+    {
+        // vertices are tableaus
+        // joins on tableaus are edges
+        List<(string, string)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
+        edges.Add((join.ForeignKeyTableauId, join.PrimaryKeyTableauId));
+        edges = edges.OrderBy(e => e.Item1).ToList();
+
+        var getNeighbouringVertices =
+            (string edge) => edges.Where(e => e.Item1.Equals(edge))
+                                  .Select(e => e.Item2)
+                                  .ToList();
+
+        Stack<string> verticesToVisit = new Stack<string>();
+        HashSet<string> visitedVertices = new HashSet<string>();
+
+        visitedVertices.Add(edges.First().Item1);
+
+        getNeighbouringVertices(edges.First().Item1)
+            .ForEach(v => verticesToVisit.Push(v));
+
+        while (verticesToVisit.Count > 0)
+        {
+            var vertex = verticesToVisit.Pop();
+            visitedVertices.Add(vertex);
+
+            var neighbouringVertices = getNeighbouringVertices(vertex).ToHashSet();
+
+            
+            neighbouringVertices.Except(visitedVertices)
+                                .ToList()
+                                .ForEach(v => verticesToVisit.Push(v));
+
+        }
+
+        var allVertices = edges.SelectMany(e => new[] { e.Item1, e.Item2 })
+                               .Distinct()
+                               .ToHashSet();
+
+        return allVertices.SetEquals(visitedVertices);
+    }
+
     private bool DoesCreateCycle(Joining joining, Join join)
     {
+        // vertices are tableaus
+        // joins on tableaus are edges
+        List<(string, string)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
+        edges.Add((join.ForeignKeyTableauId, join.PrimaryKeyTableauId));
+        edges = edges.OrderBy(e => e.Item1).ToList();
+
+        var getNeighbouringVertices =
+            (string edge) => edges.Where(e => e.Item1.Equals(edge))
+                                  .Select(e => e.Item2)
+                                  .ToList();
+
+        Stack<string> verticesToVisit = new Stack<string>();
+        HashSet<string> visitedVertices = new HashSet<string>();
+
+        visitedVertices.Add(edges.First().Item1);
+
+        getNeighbouringVertices(edges.First().Item1)
+            .ForEach(v => verticesToVisit.Push(v));
+
+        while (verticesToVisit.Count > 0)
+        {
+            var vertex = verticesToVisit.Pop();
+            visitedVertices.Add(vertex);
+
+            var neighbouringVertices = getNeighbouringVertices(vertex);
+
+            if (visitedVertices.Intersect(neighbouringVertices).Count() > 0)
+                return true;
+            
+            neighbouringVertices.ForEach(v => verticesToVisit.Push(v));
+        }
+
+
+
         return false;
     }
 
@@ -156,6 +263,7 @@ public class JoiningBuilder
     {
         return _joining;
     }
+
 
 }
 

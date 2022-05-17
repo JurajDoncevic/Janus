@@ -8,8 +8,8 @@ namespace Janus.Commons.QueryModels.Exceptions
 {
     public class CyclicJoinNotSupportedException : Exception
     {
-        public CyclicJoinNotSupportedException(string tableauIdFK, string attributeIdFK, string tableauIdPK, string attributeIdPK) 
-            : base($"Cyclic joins are not supported. Join cycle detected adding join between tableaus {tableauIdFK} and {tableauIdPK} with {attributeIdFK} and {attributeIdPK}")
+        public CyclicJoinNotSupportedException(Join join) 
+            : base($"Cyclic joins are not supported. Join cycle detected adding join between tableaus {join.ForeignKeyTableauId} and {join.PrimaryKeyTableauId} with: {join.ForeignKeyAttributeId}-{join.PrimaryKeyAttributeId}")
         {
         }
     }
