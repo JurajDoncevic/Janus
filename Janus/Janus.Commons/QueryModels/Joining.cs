@@ -61,5 +61,10 @@ namespace Janus.Commons.QueryModels
                    _foreignKeyTableauId == join._foreignKeyTableauId &&
                    _foreignKeyAttributeId == join._foreignKeyAttributeId;
         }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_primaryKeyTableauId, _primaryKeyAttributeId, _foreignKeyTableauId, _foreignKeyAttributeId);
+        }
     }
 }

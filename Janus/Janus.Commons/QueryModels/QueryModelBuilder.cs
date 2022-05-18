@@ -110,6 +110,9 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
         var builder = new JoiningBuilder(_dataSource);
         builder = configuration(builder);
         _joining = Option<Joining>.Some(builder.Build());
+        _joining.Value.Joins.SelectMany(j => new[] { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
+                            .ToList()
+                            .ForEach(tableauId => _referencedTableaus.Add(tableauId));
         return this;
     }
 
