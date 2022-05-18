@@ -26,6 +26,8 @@ public interface IPostJoiningBuilder
 public interface IPostInitBuilder
 {
     public IPostJoiningBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration);
+    public IPostProjectionBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration);
+    public IPostSelectionBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration);
     public Query Build();
 }
 #endregion
@@ -65,7 +67,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <returns>QueryModelBuilder</returns>
     /// <exception cref="TableauDoesNotExistException"></exception>
-    public static QueryModelBuilder InitQueryOnTableau(string tableauId!!, DataSource dataSource!!)
+    public static IPostInitBuilder InitQueryOnTableau(string tableauId!!, DataSource dataSource!!)
     {
         if(!dataSource.ContainsTableau(tableauId))
             throw new TableauDoesNotExistException(tableauId, dataSource.Name);
