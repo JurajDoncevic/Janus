@@ -66,6 +66,22 @@ namespace Janus.Commons.Tests
 
         }
 
+        [Fact(DisplayName = "Create query on multiple tableaus")]
+        public void CreateQueryOnMultipleTableaus()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+            QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                        .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr2")
+                                                    .AddAttribute("testDataSource.schema1.tableau1.attr1"))
+                        .WithSelection(conf => conf.WithExpression("EXPRESSION"))
+                        .Build();
+
+
+        }
+
 
         [Fact(DisplayName = "Fail to create a self join query")]
         public void CreateSelfJoinQuery()

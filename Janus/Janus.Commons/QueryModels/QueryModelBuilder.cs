@@ -3,10 +3,37 @@ using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.QueryModels;
 
+#region BUILDER SEQUENCE INTERFACES
+public interface IPostProjectionBuilder
+{
+    public IPostSelectionBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration);
+    public Query Build();
+}
+
+public interface IPostSelectionBuilder
+{
+    public IPostProjectionBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration);
+    public Query Build();
+}
+
+public interface IPostJoiningBuilder
+{
+    public IPostProjectionBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration);
+    public IPostSelectionBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration);
+    public Query Build();
+}
+
+public interface IPostInitBuilder
+{
+    public IPostJoiningBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration);
+    public Query Build();
+}
+#endregion
+
 /// <summary>
 /// Query model builer class used to create a query
 /// </summary>
-public class QueryModelBuilder
+public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSelectionBuilder, IPostProjectionBuilder
 {
     private Option<Projection> _projection;
     private Option<Selection> _selection;
@@ -51,7 +78,7 @@ public class QueryModelBuilder
     /// </summary>
     /// <param name="configuration">Selection configuration over a <see cref="SelectionBuilder"/></param>
     /// <returns>QueryModelBuilder</returns>
-    public QueryModelBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration)
+    public IPostSelectionBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration)
     {
         var builder = new SelectionBuilder(_dataSource, _referencedTableaus);
         builder = configuration(builder);
@@ -63,7 +90,7 @@ public class QueryModelBuilder
     /// </summary>
     /// <param name="configuration">Projection configuration over a <see cref="ProjectionBuilder"/></param>
     /// <returns>QueryModelBuilder</returns>
-    public QueryModelBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration)
+    public IPostProjectionBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration)
     {
         var builder = new ProjectionBuilder(_dataSource, _referencedTableaus);
         builder = configuration(builder);
@@ -76,7 +103,7 @@ public class QueryModelBuilder
     /// </summary>
     /// <param name="configuration">Joining configuration over a <see cref="JoiningBuilder"/></param>
     /// <returns>QueryModelBuilder</returns>
-    public QueryModelBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration)
+    public IPostJoiningBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration)
     {
         var builder = new JoiningBuilder(_dataSource);
         builder = configuration(builder);
@@ -92,7 +119,6 @@ public class QueryModelBuilder
     {
         return new Query(_queryOnTableauId, _projection, _selection, _joining);
     }
-
 }
 
 /// <summary>
