@@ -63,6 +63,12 @@ namespace Janus.Commons.Tests
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
                         .Build();
 
+            Assert.True(query.Selection.IsSome);
+            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);            
+            Assert.True(query.Projection.IsSome);
+            Assert.Equal(2, query.Projection.Value.IncludedAttributeIds.Count);
+            Assert.Equal(tableauId, query.OnTableauId);
+            Assert.False(query.Joining.IsSome);
 
         }
 
@@ -74,12 +80,24 @@ namespace Janus.Commons.Tests
 
             var query =
             QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
-                        .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr2")
-                                                    .AddAttribute("testDataSource.schema1.tableau1.attr1"))
+                        .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr2", "testDataSource.schema1.tableau2.attr1")
+                                                 .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
+                        .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                    .AddAttribute("testDataSource.schema1.tableau1.attr2")
+                                                    .AddAttribute("testDataSource.schema1.tableau2.attr1")
+                                                    .AddAttribute("testDataSource.schema1.tableau2.attr2")
+                                                    .AddAttribute("testDataSource.schema1.tableau3.attr1")
+                                                    .AddAttribute("testDataSource.schema1.tableau3.attr2"))
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
                         .Build();
 
-
+            Assert.True(query.Selection.IsSome);
+            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
+            Assert.True(query.Projection.IsSome);
+            Assert.Equal(6, query.Projection.Value.IncludedAttributeIds.Count);
+            Assert.Equal(tableauId, query.OnTableauId);
+            Assert.True(query.Joining.IsSome);
+            Assert.Equal(2, query.Joining.Value.Joins.Count);
         }
 
 
