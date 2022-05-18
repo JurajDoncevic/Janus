@@ -52,5 +52,14 @@ namespace Janus.Commons.QueryModels
             _foreignKeyTableauId = foreignKeyTableauId;
             _foreignKeyAttributeId = foreignKeyAttributeId;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Join join &&
+                   _primaryKeyTableauId == join._primaryKeyTableauId &&
+                   _primaryKeyAttributeId == join._primaryKeyAttributeId &&
+                   _foreignKeyTableauId == join._foreignKeyTableauId &&
+                   _foreignKeyAttributeId == join._foreignKeyAttributeId;
+        }
     }
 }

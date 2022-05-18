@@ -3,7 +3,10 @@ using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.QueryModels;
 
-public class QueryBuilder
+/// <summary>
+/// Query model builer class used to create a query
+/// </summary>
+public class QueryModelBuilder
 {
     private Option<Projection> _projection;
     private Option<Selection> _selection;
@@ -12,7 +15,12 @@ public class QueryBuilder
     private readonly DataSource _dataSource;
     private HashSet<string> _referencedTableaus;
 
-    private QueryBuilder(string queryOnTableauId!!, DataSource dataSource!!)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="queryOnTableauId">Id of tableau on which the query is initialized</param>
+    /// <param name="dataSource">Data source on which the query will be executed</param>
+    private QueryModelBuilder(string queryOnTableauId!!, DataSource dataSource!!)
     {
         _projection = Option<Projection>.None;
         _selection = Option<Selection>.None;
@@ -23,23 +31,39 @@ public class QueryBuilder
         _referencedTableaus.Add(queryOnTableauId);
     }
 
-    public static QueryBuilder InitQueryOnTableau(string tableauId, DataSource dataSource)
+    /// <summary>
+    /// Initializes the query on a tableau found in the given data source
+    /// </summary>
+    /// <param name="tableauId">Id of tableau on which the query is initialized</param>
+    /// <param name="dataSource">Data source on which the query will be executed</param>
+    /// <returns>QueryModelBuilder</returns>
+    /// <exception cref="TableauDoesNotExistException"></exception>
+    public static QueryModelBuilder InitQueryOnTableau(string tableauId!!, DataSource dataSource!!)
     {
         if(!dataSource.ContainsTableau(tableauId))
             throw new TableauDoesNotExistException(tableauId, dataSource.Name);
 
-        return new QueryBuilder(tableauId, dataSource);
+        return new QueryModelBuilder(tableauId, dataSource);
     }
 
-    public QueryBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration)
+    /// <summary>
+    /// Specifies a selection clause of the query
+    /// </summary>
+    /// <param name="configuration">Selection configuration over a <see cref="SelectionBuilder"/></param>
+    /// <returns>QueryModelBuilder</returns>
+    public QueryModelBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration)
     {
         var builder = new SelectionBuilder(_dataSource, _referencedTableaus);
         builder = configuration(builder);
         _selection = Option<Selection>.Some(builder.Build());
         return this;
     }
-
-    public QueryBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration)
+    /// <summary>
+    /// Specifies a projection clause of the query 
+    /// </summary>
+    /// <param name="configuration">Projection configuration over a <see cref="ProjectionBuilder"/></param>
+    /// <returns>QueryModelBuilder</returns>
+    public QueryModelBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration)
     {
         var builder = new ProjectionBuilder(_dataSource, _referencedTableaus);
         builder = configuration(builder);
@@ -47,7 +71,12 @@ public class QueryBuilder
         return this;
     }
 
-    public QueryBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration)
+    /// <summary>
+    /// Specifies a joining clause of the query
+    /// </summary>
+    /// <param name="configuration">Joining configuration over a <see cref="JoiningBuilder"/></param>
+    /// <returns>QueryModelBuilder</returns>
+    public QueryModelBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration)
     {
         var builder = new JoiningBuilder(_dataSource);
         builder = configuration(builder);
@@ -55,6 +84,10 @@ public class QueryBuilder
         return this;
     }
 
+    /// <summary>
+    /// Builds the specified query
+    /// </summary>
+    /// <returns>Query</returns>
     public Query Build()
     {
         return new Query(_queryOnTableauId, _projection, _selection, _joining);
@@ -62,19 +95,32 @@ public class QueryBuilder
 
 }
 
+/// <summary>
+/// Builder class for query selection
+/// </summary>
 public class SelectionBuilder
 {
     private string _expression;
     private readonly DataSource _dataSource;
     private readonly HashSet<string> _referencedTableaus;
 
-    internal SelectionBuilder(DataSource dataSource,  HashSet<string> referencedTableaus)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="dataSource">Data source on which the query will be executed</param>
+    /// <param name="referencedTableaus">Ids of tableaus referenced in the query</param>
+    internal SelectionBuilder(DataSource dataSource!!,  HashSet<string> referencedTableaus!!)
     {
         _expression = "";
         _dataSource = dataSource;
         _referencedTableaus = referencedTableaus;
     }
 
+    /// <summary>
+    /// Creates the selection expression
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <returns>SelectionBuilder</returns>
     public SelectionBuilder WithExpression(string expression)
     {
         // TODO: do checks
@@ -82,18 +128,30 @@ public class SelectionBuilder
         return this;
     }
 
+    /// <summary>
+    /// Builds the specified selection
+    /// </summary>
+    /// <returns></returns>
     internal Selection Build()
     {
         return new Selection(_expression);
     }
 }
 
+/// <summary>
+/// Builder class for query projection
+/// </summary>
 public class ProjectionBuilder
 {
     private readonly DataSource _dataSource;
     private HashSet<string> _projectionAttributes;
     private readonly HashSet<string> _referencedTableaus;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="dataSource">Data source on which the query will be executed</param>
+    /// <param name="referencedTableaus">Ids of tableaus referenced in the query</param>
     internal ProjectionBuilder(DataSource dataSource!!, HashSet<string> referencedTableaus!!)
     {
         _dataSource = dataSource;
@@ -101,6 +159,14 @@ public class ProjectionBuilder
         _referencedTableaus = referencedTableaus;
     }
 
+    /// <summary>
+    /// Adds an attribute to the projection
+    /// </summary>
+    /// <param name="attributeId">Attribute id</param>
+    /// <returns>ProjectionBuilder</returns>
+    /// <exception cref="AttributeDoesNotExistException"></exception>
+    /// <exception cref="AttributeNotInReferencedTableausException"></exception>
+    /// <exception cref="DuplicateAttributeAssignedToProjectionException"></exception>
     public ProjectionBuilder AddAttribute(string attributeId)
     {
         if (!_dataSource.ContainsAttribute(attributeId))
@@ -118,23 +184,46 @@ public class ProjectionBuilder
         return this;
     }
 
+    /// <summary>
+    /// Builds the specified projection
+    /// </summary>
+    /// <returns>Projection</returns>
     internal Projection Build()
     {
         return new Projection(_projectionAttributes);
     }
 }
 
+/// <summary>
+/// Builder class for query joins
+/// </summary>
 public class JoiningBuilder
 {
     private readonly DataSource _dataSource;
     private Joining _joining;
-    // TODO: check references, check circular joins
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="dataSource">Data source on which the query will be executed</param>
     internal JoiningBuilder(DataSource dataSource!!)
     {
         _dataSource = dataSource;
         _joining = new Joining();
     }
 
+    /// <summary>
+    /// Adds a join to the joining clause
+    /// </summary>
+    /// <param name="foreignKeyAttributeId">Attribute id of the foreign key</param>
+    /// <param name="primaryKeyAttributeId">Attribute id of the primary key</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidAttributeIdException"></exception>
+    /// <exception cref="AttributeDoesNotExistException"></exception>
+    /// <exception cref="SelfJoinNotSupportedException"></exception>
+    /// <exception cref="CyclicJoinNotSupportedException"></exception>
+    /// <exception cref="TableauPrimaryKeyReferenceNotUniqueException"></exception>
+    /// <exception cref="DuplicateJoinNotSupportedException"></exception>
     public JoiningBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
     {
         // check if given ids are ok
@@ -143,32 +232,40 @@ public class JoiningBuilder
         if (!primaryKeyAttributeId.Contains('.'))
             throw new InvalidAttributeIdException(primaryKeyAttributeId);
 
-        //get tableau ids from the supposed attribute ids
+        // get tableau ids from the supposed attribute ids
         var foreignKeyTableauId = foreignKeyAttributeId.Remove(foreignKeyAttributeId.LastIndexOf('.')); 
         var primaryKeyTableauId = primaryKeyAttributeId.Remove(primaryKeyAttributeId.LastIndexOf('.'));
 
+        // check attribute (and tableau) existence
         if (!_dataSource.ContainsAttribute(foreignKeyAttributeId))
             throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSource.Name);
         if(!_dataSource.ContainsAttribute(primaryKeyAttributeId))
             throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSource.Name);
+
+        // check for self-join
         if(foreignKeyTableauId.Equals(primaryKeyTableauId))
             throw new SelfJoinNotSupportedException(primaryKeyTableauId);
 
         Join join = new Join(primaryKeyTableauId, primaryKeyAttributeId, foreignKeyTableauId, foreignKeyAttributeId);
 
-        if(!IsConnectedGraph(_joining, join)) // maybe move to build?
-            throw new JoinsNotConnectedException();
-        if(DoesCreateCycle(_joining, join))
-            throw new CyclicJoinNotSupportedException(join);
-        if (!ArePrimaryKeyReferencesUnique(_joining, join))
-            throw new TableauRereferencedAsPrimaryException(join);
+        // check for cycle joins, pk tableaus multiple references, duplicate joins
         if (_joining.Joins.Contains(join))
             throw new DuplicateJoinNotSupportedException(join);
+        if (IsJoiningCyclic(_joining, join))
+            throw new CyclicJoinNotSupportedException(join);
+        if (!ArePrimaryKeyReferencesUnique(_joining, join))
+            throw new TableauPrimaryKeyReferenceNotUniqueException(join);
         _joining.AddJoin(join);
 
         return this;
     }
 
+    /// <summary>
+    /// Checks if all the primary key tableau references are unique. Each table can be used only once in a query.
+    /// </summary>
+    /// <param name="joining">Current joining clause</param>
+    /// <param name="join">New join</param>
+    /// <returns><c>true</c> or <c>false</c></returns>
     private bool ArePrimaryKeyReferencesUnique(Joining joining, Join join)
     {
         var pkRefs = joining.Joins.Select(j => j.PrimaryKeyAttributeId)
@@ -178,12 +275,16 @@ public class JoiningBuilder
         return pkRefs.Distinct().Count() == pkRefs.Count;
     }
 
-    private bool IsConnectedGraph(Joining joining, Join join)
+    /// <summary>
+    /// Checks if the joining creates a connected join graph.
+    /// </summary>
+    /// <param name="joining">Current joining clause</param>
+    /// <returns><c>true</c> or <c>false</c></returns>
+    private bool IsJoiningConnectedGraph(Joining joining)
     {
         // vertices are tableaus
         // joins on tableaus are edges
         List<(string, string)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
-        edges.Add((join.ForeignKeyTableauId, join.PrimaryKeyTableauId));
         edges = edges.OrderBy(e => e.Item1).ToList();
 
         var getNeighbouringVertices =
@@ -220,7 +321,13 @@ public class JoiningBuilder
         return allVertices.SetEquals(visitedVertices);
     }
 
-    private bool DoesCreateCycle(Joining joining, Join join)
+    /// <summary>
+    /// Checks if the added join creates a cycle
+    /// </summary>
+    /// <param name="joining">Current joining clause</param>
+    /// <param name="join">New join</param>
+    /// <returns><c>true</c> or <c>false</c></returns>
+    private bool IsJoiningCyclic(Joining joining, Join join)
     {
         // vertices are tableaus
         // joins on tableaus are edges
@@ -259,8 +366,15 @@ public class JoiningBuilder
         return false;
     }
 
+    /// <summary>
+    /// Builds the joining clause
+    /// </summary>
+    /// <returns>Joining</returns>
+    /// <exception cref="JoinsNotConnectedException"></exception>
     public Joining Build()
     {
+        if (!IsJoiningConnectedGraph(_joining)) // maybe move to build?
+            throw new JoinsNotConnectedException();
         return _joining;
     }
 
