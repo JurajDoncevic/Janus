@@ -42,6 +42,11 @@ namespace Janus.Commons.Tests
                                             tableauBuilder
                                                 .AddAttribute("attr1", attributeBuilder => attributeBuilder)
                                                 .AddAttribute("attr2", attributeBuilder => attributeBuilder)
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder))
+                                        .AddTableau("tableau3", tableauBuilder =>
+                                            tableauBuilder
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder)
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder)
                                                 .AddAttribute("attr3", attributeBuilder => attributeBuilder)))
                                 .Build();
 
@@ -52,7 +57,7 @@ namespace Janus.Commons.Tests
             string tableauId = dataSource["schema1"]["tableau1"].Id;
 
             var query =
-            QueryBuilder.InitQueryOnTableau(tableauId, dataSource)
+            QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
                         .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr2")
                                                     .AddAttribute("testDataSource.schema1.tableau1.attr1"))
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
@@ -62,8 +67,25 @@ namespace Janus.Commons.Tests
         }
 
 
-        [Fact(DisplayName = "Create cycle query")]
-        public void CreateCycleQuery()
+        [Fact(DisplayName = "Fail to create a self join query")]
+        public void CreateSelfJoinQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<SelfJoinNotSupportedException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                            .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau1.attr1")
+                                                     .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
+                            .Build();
+            });
+
+        }
+
+        [Fact(DisplayName = "Fail to create a cycle join query")]
+        public void CreateCycleJoinQuery()
         {
             var dataSource = GetExampleSchema();
             string tableauId = dataSource["schema1"]["tableau1"].Id;
@@ -71,7 +93,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<CyclicJoinNotSupportedException>(() =>
             {
                 var query =
-                QueryBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
                             .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau3.attr1", "testDataSource.schema2.tableau1.attr1")
@@ -80,5 +102,109 @@ namespace Janus.Commons.Tests
             });
 
         }
+
+        [Fact(DisplayName = "Fail to create a disconnected join query")]
+        public void CreateDisconnectedJoinQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<JoinsNotConnectedException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                            .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
+                                                     .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1")
+                                                     .AddJoin("testDataSource.schema2.tableau1.attr1", "testDataSource.schema2.tableau2.attr1")
+                                                     .AddJoin("testDataSource.schema2.tableau1.attr1", "testDataSource.schema2.tableau3.attr1"))
+                            .Build();
+            });
+
+        }
+
+        [Fact(DisplayName = "Fail to create a disconnected join query")]
+        public void CreateDuplicatePkTableauJoinQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<TableauPrimaryKeyReferenceNotUniqueException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                            .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
+                                                     .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema2.tableau3.attr1")
+                                                     .AddJoin("testDataSource.schema2.tableau3.attr1", "testDataSource.schema1.tableau2.attr1"))
+                            .Build();
+            });
+
+        }
+
+        [Fact(DisplayName = "Fail to create a duplicate join query")]
+        public void CreateDuplicateJoinQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<DuplicateJoinNotSupportedException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                            .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
+                                                     .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1"))
+                            .Build();
+            });
+
+        }
+
+        [Fact(DisplayName = "Fail to create a query with a non-existing attribute in the projection")]
+        public void CreateProjectionWithNonExistingAttribute()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<AttributeDoesNotExistException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                            .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                        .AddAttribute("testDataSource.schema1.tableau1.attrFAIL"))
+                            .Build();
+            });
+
+        }
+
+        [Fact(DisplayName = "Fail to create a query with a duplicate attribute in the projection")]
+        public void CreateProjectionWitDuplicateAttribute()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<DuplicateAttributeAssignedToProjectionException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                            .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                        .AddAttribute("testDataSource.schema1.tableau1.attr1"))
+                            .Build();
+            });
+        }
+
+        [Fact(DisplayName = "Fail to create a query with a projection attribute from a tableau not referenced in the query beforehand")]
+        public void CreateProjectionWithAttributeFromNonReferencedTableau()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<AttributeNotInReferencedTableausException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                            .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                        .AddAttribute("testDataSource.schema1.tableau2.attr1"))
+                            .Build();
+            });
+        }
+
     }
 }
