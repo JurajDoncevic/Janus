@@ -25,4 +25,4 @@ The MMW architecture extends the mediator-wrapper architecture by the addition o
 
 ![MMW example](/wiki/figures/mask_mediator_wrapper_layered_arch.png)
 
-Janus' development extendively uses my **[Functional extensions base library](https://github.com/JurajDoncevic/FunctionalExtensions)**. Feel free to take a look at the latest nuget package :-)
+Janus' development extensively uses my **[Functional extensions base library](https://github.com/JurajDoncevic/FunctionalExtensions)**. Feel free to take a look at the latest nuget package :-)
