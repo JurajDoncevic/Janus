@@ -3,6 +3,7 @@ using Janus.Communication.Messages;
 using Xunit;
 using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
+using Janus.Commons.QueryModels;
 
 namespace Janus.Communication.Tests;
 
@@ -115,6 +116,34 @@ public class MessageTests
         Assert.Equal(GetTestDataSource(), message.DataSource);
     }
 
+    [Fact(DisplayName = "Test QUERY_REQ serialization and deserialization")]
+    public void QueryReqSerializationTest()
+    {
+        var exchangeId = "test_exchange";
+        var nodeId = "test_node";
+
+        var dataSource = GetTestDataSource();
+
+        var query = 
+            QueryModelBuilder.InitQueryOnDataSource("datasource1.schema1.tableau1", dataSource)
+                .WithJoining(conf => conf.AddJoin("datasource1.schema1.tableau1.attr1_FK", "datasource1.schema1.tableau2.attr1"))
+                .WithProjection(conf => conf.AddAttribute("datasource1.schema1.tableau1.attr1_FK")
+                                            .AddAttribute("datasource1.schema1.tableau2.attr1"))
+                .Build();
+
+        var queryReqMessage = new QueryReqMessage(exchangeId, nodeId, query);
+
+        var messageBytes = queryReqMessage.ToBson();
+
+        var result = messageBytes.ToQueryReqMessage();
+
+        var message = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Preambles.QUERY_REQUEST, message.Preamble);
+        Assert.Equal(exchangeId, message.ExchangeId);
+        Assert.Equal(query, message.Query);
+    }
 
     private DataSource GetTestDataSource()
         => SchemaModelBuilder.InitDataSource("datasource1")
@@ -135,7 +164,10 @@ public class MessageTests
                                                                          .WithDataType(DataTypes.DECIMAL)
                                                                          .WithOrdinal(2)
                                                                          .WithIsPrimaryKey(false)))
-                                            .AddTableau("tableau2", tableauBuilder => tableauBuilder)
+                                            .AddTableau("tableau2", tableauBuilder => 
+                                                tableauBuilder.AddAttribute("attr1", attributeBuilder => 
+                                                        attributeBuilder.WithDataType(DataTypes.INT)
+                                                                        .WithIsNullable(false)))
                                             .AddTableau("tableau3", tableauBuilder => tableauBuilder))
                              .AddSchema("schema2", schemaBuilder => schemaBuilder)
                              .AddSchema("schema3", schemaBuilder => schemaBuilder)
