@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="FunctionalExtensions.Base" Version="1.0.3" />
+	  <PackageReference Include="FunctionalExtensions.Base" Version="1.0.4" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
 	</ItemGroup>
 

@@ -18,36 +18,53 @@ namespace Janus.Commons.Tests
                                     schemaBuilder
                                         .AddTableau("tableau1", tableauBuilder =>
                                             tableauBuilder
-                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder))
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT)))
                                         .AddTableau("tableau2", tableauBuilder =>
                                             tableauBuilder
-                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder))
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT)))
                                         .AddTableau("tableau3", tableauBuilder =>
                                             tableauBuilder
-                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder)))
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))))
                                 .AddSchema("schema2", schemaBuilder =>
                                     schemaBuilder
                                         .AddTableau("tableau1", tableauBuilder =>
                                             tableauBuilder
-                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder)
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
                                                 .AddAttribute("attr3", attributeBuilder => attributeBuilder))
                                         .AddTableau("tableau2", tableauBuilder =>
                                             tableauBuilder
-                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder))
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT)))
                                         .AddTableau("tableau3", tableauBuilder =>
                                             tableauBuilder
-                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder)
-                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder)))
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))))
                                 .Build();
 
         [Fact(DisplayName = "Create query on one tableau")]
@@ -57,7 +74,7 @@ namespace Janus.Commons.Tests
             string tableauId = dataSource["schema1"]["tableau1"].Id;
 
             var query =
-            QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+            QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                         .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr2")
                                                     .AddAttribute("testDataSource.schema1.tableau1.attr1"))
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
@@ -79,7 +96,7 @@ namespace Janus.Commons.Tests
             string tableauId = dataSource["schema1"]["tableau1"].Id;
 
             var query =
-            QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+            QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                         .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr2", "testDataSource.schema1.tableau2.attr1")
                                                  .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
                         .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
@@ -110,7 +127,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<SelfJoinNotSupportedException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau1.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
                             .Build();
@@ -127,7 +144,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<CyclicJoinNotSupportedException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau3.attr1", "testDataSource.schema2.tableau1.attr1")
@@ -146,7 +163,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<JoinsNotConnectedException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1")
                                                      .AddJoin("testDataSource.schema2.tableau1.attr1", "testDataSource.schema2.tableau2.attr1")
@@ -165,7 +182,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<TableauPrimaryKeyReferenceNotUniqueException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema2.tableau3.attr1")
                                                      .AddJoin("testDataSource.schema2.tableau3.attr1", "testDataSource.schema1.tableau2.attr1"))
@@ -183,7 +200,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<DuplicateJoinNotSupportedException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
                                                      .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1"))
                             .Build();
@@ -200,7 +217,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<AttributeDoesNotExistException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
                                                         .AddAttribute("testDataSource.schema1.tableau1.attrFAIL"))
                             .Build();
@@ -217,7 +234,7 @@ namespace Janus.Commons.Tests
             Assert.Throws<DuplicateAttributeAssignedToProjectionException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
                                                         .AddAttribute("testDataSource.schema1.tableau1.attr1"))
                             .Build();
@@ -233,12 +250,64 @@ namespace Janus.Commons.Tests
             Assert.Throws<AttributeNotInReferencedTableausException>(() =>
             {
                 var query =
-                QueryModelBuilder.InitQueryOnTableau(tableauId, dataSource)
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                             .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
                                                         .AddAttribute("testDataSource.schema1.tableau2.attr1"))
                             .Build();
             });
         }
 
+        [Fact(DisplayName = "Create valid open query")]
+        public void CreateValidOpenQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query = 
+            QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                        .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr2", "testDataSource.schema1.tableau2.attr1")
+                                                 .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
+                        .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                    .AddAttribute("testDataSource.schema1.tableau1.attr2")
+                                                    .AddAttribute("testDataSource.schema1.tableau2.attr1")
+                                                    .AddAttribute("testDataSource.schema1.tableau2.attr2")
+                                                    .AddAttribute("testDataSource.schema1.tableau3.attr1")
+                                                    .AddAttribute("testDataSource.schema1.tableau3.attr2"))
+                        .WithSelection(conf => conf.WithExpression("EXPRESSION"))
+                        .Build();
+
+            Assert.True(query.Selection.IsSome);
+            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
+            Assert.True(query.Projection.IsSome);
+            Assert.Equal(6, query.Projection.Value.IncludedAttributeIds.Count);
+            Assert.Equal(tableauId, query.OnTableauId);
+            Assert.True(query.Joining.IsSome);
+            Assert.Equal(2, query.Joining.Value.Joins.Count);
+            Assert.True(query.IsValidForDataSource(dataSource));
+        }
+
+
+        [Fact(DisplayName = "Create valid open query on one tableau")]
+        public void CreateOneTableauOpenQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+            QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                        .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr2")
+                                                    .AddAttribute("testDataSource.schema1.tableau1.attr1"))
+                        .WithSelection(conf => conf.WithExpression("EXPRESSION"))
+                        .Build();
+
+            Assert.True(query.Selection.IsSome);
+            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
+            Assert.True(query.Projection.IsSome);
+            Assert.Equal(2, query.Projection.Value.IncludedAttributeIds.Count);
+            Assert.Equal(tableauId, query.OnTableauId);
+            Assert.False(query.Joining.IsSome);
+            Assert.True(query.IsValidForDataSource(dataSource));
+
+        }
     }
 }

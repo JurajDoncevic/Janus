@@ -9,4 +9,15 @@ public class Selection
     {
         _expression = expression;
     }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Selection selection &&
+               _expression == selection._expression;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_expression);
+    }
 }

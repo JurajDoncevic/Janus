@@ -26,4 +26,14 @@ public class Projection
         return _includedAttributeIds.Remove(attributeId);
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj is Projection projection &&
+               projection.IncludedAttributeIds.SequenceEqual(_includedAttributeIds);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_includedAttributeIds);
+    }
 }
