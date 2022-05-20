@@ -8,14 +8,41 @@ using System.Threading.Tasks;
 namespace Janus.Commons.QueryModels;
 
 #region OPEN QUERY BUILDER SEQUENCE INTERFACES
+
+/// <summary>
+/// Determines what declarations can be made after an open query initialization
+/// </summary>
 public interface IPostInitOpenBuilder
 {
+    /// <summary>
+    /// Specifies a joining clause of the query
+    /// </summary>
+    /// <param name="configuration">Joining configuration over a <see cref="JoiningBuilder"/></param>
+    /// <returns>IPostInitOpenBuilder</returns>
     public IPostInitOpenBuilder WithJoining(Func<JoiningOpenBuilder, JoiningOpenBuilder> configuration);
+
+    /// <summary>
+    /// Specifies a projection clause of the query 
+    /// </summary>
+    /// <param name="configuration">Projection configuration over a <see cref="ProjectionBuilder"/></param>
+    /// <returns>IPostInitOpenBuilder</returns>
     public IPostInitOpenBuilder WithProjection(Func<ProjectionOpenBuilder, ProjectionOpenBuilder> configuration);
+
+    /// <summary>
+    /// Specifies a selection clause of the query
+    /// </summary>
+    /// <param name="configuration">Selection configuration over a <see cref="SelectionBuilder"/></param>
+    /// <returns>IPostInitOpenBuilder</returns>
     public IPostInitOpenBuilder WithSelection(Func<SelectionOpenBuilder, SelectionOpenBuilder> configuration);
+
+    /// <summary>
+    /// Builds the specified query
+    /// </summary>
+    /// <returns>Query</returns>
     public Query Build();
 }
 #endregion
+
 public class QueryModelOpenBuilder : IPostInitOpenBuilder
 {
     private Option<Projection> _projection;
@@ -48,6 +75,11 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
         return new QueryModelOpenBuilder(onTableauId);
     }
 
+    /// <summary>
+    /// Specifies a joining clause of the query
+    /// </summary>
+    /// <param name="configuration">Joining configuration over a <see cref="JoiningBuilder"/></param>
+    /// <returns>IPostInitOpenBuilder</returns>
     public IPostInitOpenBuilder WithJoining(Func<JoiningOpenBuilder, JoiningOpenBuilder> configuration)
     {
         var builder = new JoiningOpenBuilder();
@@ -59,6 +91,11 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
         return this;
     }
 
+    /// <summary>
+    /// Specifies a projection clause of the query 
+    /// </summary>
+    /// <param name="configuration">Projection configuration over a <see cref="ProjectionBuilder"/></param>
+    /// <returns>IPostInitOpenBuilder</returns>
     public IPostInitOpenBuilder WithProjection(Func<ProjectionOpenBuilder, ProjectionOpenBuilder> configuration)
     {
         var builder = new ProjectionOpenBuilder();
@@ -70,6 +107,11 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
         return this;
     }
 
+    /// <summary>
+    /// Specifies a selection clause of the query
+    /// </summary>
+    /// <param name="configuration">Selection configuration over a <see cref="SelectionBuilder"/></param>
+    /// <returns>IPostInitOpenBuilder</returns>
     public IPostInitOpenBuilder WithSelection(Func<SelectionOpenBuilder, SelectionOpenBuilder> configuration)
     {
         var builder = new SelectionOpenBuilder();
@@ -81,6 +123,10 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
         return this;
     }
 
+    /// <summary>
+    /// Builds the specified query
+    /// </summary>
+    /// <returns>Query</returns>
     public Query Build()
     {
         return new Query(_queryOnTableauId, _projection, _selection, _joining);
