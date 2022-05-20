@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.QueryModels;
 
+/// <summary>
+/// Describes a query
+/// </summary>
 [JsonConverter(typeof(QueryJsonConverter))]
 public class Query
 {
@@ -19,20 +22,39 @@ public class Query
     private Option<Joining> _joining;
     private string _onTableauId;
 
-    public Query(string OnTableuId, Option<Projection> projection, Option<Selection> selection, Option<Joining> joining)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="onTableuId">Initial query tableau</param>
+    /// <param name="projection">Projection clause</param>
+    /// <param name="selection">Selection clause</param>
+    /// <param name="joining">Joining clause</param>
+    internal Query(string onTableuId, Option<Projection> projection, Option<Selection> selection, Option<Joining> joining)
     {
-        _onTableauId = OnTableuId;
+        _onTableauId = onTableuId;
         _projection = projection;
         _selection = selection;
         _joining = joining;
     }
 
+    /// <summary>
+    /// Optional projection clause
+    /// </summary>
     public Option<Projection> Projection => _projection;
 
+    /// <summary>
+    /// Optional selection clause
+    /// </summary>
     public Option<Selection> Selection => _selection;
 
+    /// <summary>
+    /// Optional joining clause
+    /// </summary>
     public Option<Joining> Joining => _joining;
 
+    /// <summary>
+    /// Tableau on which the query is initialized
+    /// </summary>
     public string OnTableauId { get => _onTableauId; set => _onTableauId = value; }
 
     public override bool Equals(object? obj)
@@ -49,6 +71,22 @@ public class Query
         return HashCode.Combine(_projection, _selection, _joining, _onTableauId);
     }
 
+    /// <summary>
+    /// Checks validity of query over a data source
+    /// </summary>
+    /// <param name="dataSource">Data source over which the query should be run</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidAttributeIdException"></exception>
+    /// <exception cref="AttributeDoesNotExistException"></exception>
+    /// <exception cref="SelfJoinNotSupportedException"></exception>
+    /// <exception cref="JoinedAttributesNotOfSameTypeException"></exception>
+    /// <exception cref="PrimaryKeyAttributeNullableException"></exception>
+    /// <exception cref="DuplicateJoinNotSupportedException"></exception>
+    /// <exception cref="CyclicJoinNotSupportedException"></exception>
+    /// <exception cref="TableauPrimaryKeyReferenceNotUniqueException"></exception>
+    /// <exception cref="JoinsNotConnectedException"></exception>
+    /// <exception cref="DuplicateAttributeAssignedToProjectionException"></exception>
+    /// <exception cref="AttributeNotInReferencedTableausException"></exception>
     public Result IsValidForDataSource(DataSource dataSource!!)
     {
         return ResultExtensions.AsResult(() =>
@@ -107,16 +145,6 @@ public class Query
                                              .First();
                     throw new DuplicateJoinNotSupportedException(duplicateJoin);
                 }
-                // check for cycle joins
-                {
-                    var tempJoining = new Joining();
-                    foreach (var join in joins)
-                    {
-                        if (JoiningUtils.IsJoiningCyclic(tempJoining, join))
-                            throw new CyclicJoinNotSupportedException(join);
-                        tempJoining.AddJoin(join);
-                    }
-                }
                 // check for pk tableaus multiple references
                 {
                     var tempJoining = new Joining();
@@ -127,9 +155,19 @@ public class Query
                         tempJoining.AddJoin(join);
                     }
                 }
+                // check for cycle joins
+                {
+                    var tempJoining = new Joining();
+                    foreach (var join in joins)
+                    {
+                        if (JoiningUtils.IsJoiningCyclic(_onTableauId, tempJoining, join))
+                            throw new CyclicJoinNotSupportedException(join);
+                        tempJoining.AddJoin(join);
+                    }
+                }
 
                 // check for graph connectedness
-                if (!JoiningUtils.IsJoiningConnectedGraph(_joining.Value))
+                if (!JoiningUtils.IsJoiningConnectedGraph(_onTableauId, _joining.Value))
                     throw new JoinsNotConnectedException();
             }
 

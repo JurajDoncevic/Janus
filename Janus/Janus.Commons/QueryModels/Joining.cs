@@ -6,22 +6,40 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.QueryModels;
 
+/// <summary>
+/// Describes a query joining clause
+/// </summary>
 public class Joining
 {
     private List<Join> _joins;
 
+    /// <summary>
+    /// Joins in the clause
+    /// </summary>
     public IReadOnlyCollection<Join> Joins => _joins;
 
-    internal Joining(List<Join> joins)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="joins">Joins to be added to the clause</param>
+    internal Joining(IEnumerable<Join> joins)
     {
-        _joins = joins;
+        _joins = joins.ToList();
     }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
     internal Joining()
     {
         _joins = new List<Join>();
     }
 
+    /// <summary>
+    /// Adds a join to the joining clause
+    /// </summary>
+    /// <param name="join"></param>
+    /// <returns></returns>
     internal bool AddJoin(Join join)
     {
         _joins.Add(join);
@@ -40,6 +58,9 @@ public class Joining
     }
 }
 
+/// <summary>
+/// Describes a join specification
+/// </summary>
 public class Join
 {
     private readonly string _primaryKeyTableauId;
@@ -47,14 +68,33 @@ public class Join
     private readonly string _foreignKeyTableauId;
     private readonly string _foreignKeyAttributeId;
 
+    /// <summary>
+    /// Referenced tableau id
+    /// </summary>
     public string PrimaryKeyTableauId => _primaryKeyTableauId;
 
+    /// <summary>
+    /// Referenced attribute id
+    /// </summary>
     public string PrimaryKeyAttributeId => _primaryKeyAttributeId;
 
+    /// <summary>
+    /// Referencing tableau id
+    /// </summary>
     public string ForeignKeyTableauId => _foreignKeyTableauId;
 
+    /// <summary>
+    /// Referencing attribute id
+    /// </summary>
     public string ForeignKeyAttributeId => _foreignKeyAttributeId;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="primaryKeyTableauId">Referenced tableau id</param>
+    /// <param name="primaryKeyAttributeId">Referencing attribute id</param>
+    /// <param name="foreignKeyTableauId">Referenced tableau id</param>
+    /// <param name="foreignKeyAttributeId">Referenced attribute id</param>
     internal Join(string primaryKeyTableauId!!, string primaryKeyAttributeId!!, 
                   string foreignKeyTableauId!!, string foreignKeyAttributeId!!)
     {
@@ -112,9 +152,10 @@ internal static class JoiningUtils
     /// <summary>
     /// Checks if the joining creates a connected join graph.
     /// </summary>
+    /// <param name="initialTableauId">Query's initial tableau id</param>
     /// <param name="joining">Current joining clause</param>
     /// <returns><c>true</c> or <c>false</c></returns>
-    internal static bool IsJoiningConnectedGraph(Joining joining)
+    internal static bool IsJoiningConnectedGraph(string initialTableauId, Joining joining)
     {
         // vertices are tableaus
         // joins on tableaus are edges
@@ -133,6 +174,8 @@ internal static class JoiningUtils
 
         getNeighbouringVertices(edges.First().Item1)
             .ForEach(v => verticesToVisit.Push(v));
+
+        verticesToVisit.Push(initialTableauId);
 
         while (verticesToVisit.Count > 0)
         {
@@ -158,10 +201,11 @@ internal static class JoiningUtils
     /// <summary>
     /// Checks if the added join creates a cycle
     /// </summary>
+    /// <param name="initialTableauId">Query's initial tableau id</param>
     /// <param name="joining">Current joining clause</param>
     /// <param name="join">New join</param>
     /// <returns><c>true</c> or <c>false</c></returns>
-    internal static bool IsJoiningCyclic(Joining joining, Join join)
+    internal static bool IsJoiningCyclic(string initialTableauId, Joining joining, Join join)
     {
         // vertices are tableaus
         // joins on tableaus are edges
@@ -181,6 +225,8 @@ internal static class JoiningUtils
 
         getNeighbouringVertices(edges.First().Item1)
             .ForEach(v => verticesToVisit.Push(v));
+
+        verticesToVisit.Push(initialTableauId);
 
         while (verticesToVisit.Count > 0)
         {

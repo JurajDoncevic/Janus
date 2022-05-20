@@ -184,7 +184,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     /// <returns>QueryModelBuilder</returns>
     public IPostJoiningBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration)
     {
-        var builder = new JoiningBuilder(_dataSource);
+        var builder = new JoiningBuilder(_queryOnTableauId, _dataSource);
         builder = configuration(builder);
         _joining = builder.IsConfigured
                    ? Option<Joining>.Some(builder.Build())
@@ -316,6 +316,7 @@ public class ProjectionBuilder
 /// </summary>
 public class JoiningBuilder
 {
+    private readonly string _initialTableauId;
     private readonly DataSource _dataSource;
     private Joining _joining;
 
@@ -325,8 +326,9 @@ public class JoiningBuilder
     /// Constructor
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
-    internal JoiningBuilder(DataSource dataSource!!)
+    internal JoiningBuilder(string initialTableauId, DataSource dataSource!!)
     {
+        _initialTableauId = initialTableauId;
         _dataSource = dataSource;
         _joining = new Joining();
     }
@@ -382,10 +384,10 @@ public class JoiningBuilder
         // check for cycle joins, pk tableaus multiple references, duplicate joins
         if (_joining.Joins.Contains(join))
             throw new DuplicateJoinNotSupportedException(join);
-        if (JoiningUtils.IsJoiningCyclic(_joining, join))
-            throw new CyclicJoinNotSupportedException(join);
         if (!JoiningUtils.ArePrimaryKeyReferencesUnique(_joining, join))
             throw new TableauPrimaryKeyReferenceNotUniqueException(join);
+        if (JoiningUtils.IsJoiningCyclic(_initialTableauId, _joining, join))
+            throw new CyclicJoinNotSupportedException(join);
         _joining.AddJoin(join);
 
         return this;
@@ -398,7 +400,7 @@ public class JoiningBuilder
     /// <exception cref="JoinsNotConnectedException"></exception>
     public Joining Build()
     {
-        if (!JoiningUtils.IsJoiningConnectedGraph(_joining)) 
+        if (!JoiningUtils.IsJoiningConnectedGraph(_initialTableauId, _joining)) 
             throw new JoinsNotConnectedException();
         return _joining;
     }
