@@ -119,7 +119,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
                    ? Option<Joining>.Some(builder.Build())
                    : Option<Joining>.None;
 
-        if (_joining.IsSome)
+        if (_joining)
         {
             _joining.Value.Joins.SelectMany(j => new[] { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
                     .ToList()

@@ -51,7 +51,7 @@ public class Query
     public bool IsValidForDataSource(DataSource dataSource!!)
     {
         // check joining validity
-        if (_joining.IsSome)
+        if (_joining)
         {
             IReadOnlyCollection<Join> joins = _joining.Value.Joins;
             foreach (var join in joins)
@@ -137,7 +137,7 @@ public class Query
         referencedTableauIds.Add(_onTableauId);
 
         // check projection validity
-        if (_projection.IsSome)
+        if (_projection)
         {
             var projection = _projection.Value;
             foreach (var attributeId in projection.IncludedAttributeIds)
@@ -158,7 +158,7 @@ public class Query
         }
 
         // check selection validity
-        if (_selection.IsSome)
+        if (_selection)
         {
             // no checks so far
         }

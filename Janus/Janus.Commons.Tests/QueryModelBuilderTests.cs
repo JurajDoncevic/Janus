@@ -80,12 +80,12 @@ namespace Janus.Commons.Tests
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
                         .Build();
 
-            Assert.True(query.Selection.IsSome);
+            Assert.True(query.Selection);
             Assert.Equal("EXPRESSION", query.Selection.Value.Expression);            
-            Assert.True(query.Projection.IsSome);
+            Assert.True(query.Projection);
             Assert.Equal(2, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
-            Assert.False(query.Joining.IsSome);
+            Assert.False(query.Joining);
 
         }
 
@@ -108,12 +108,12 @@ namespace Janus.Commons.Tests
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
                         .Build();
 
-            Assert.True(query.Selection.IsSome);
+            Assert.True(query.Selection);
             Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
-            Assert.True(query.Projection.IsSome);
+            Assert.True(query.Projection);
             Assert.Equal(6, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
-            Assert.True(query.Joining.IsSome);
+            Assert.True(query.Joining);
             Assert.Equal(2, query.Joining.Value.Joins.Count);
         }
 
@@ -276,12 +276,12 @@ namespace Janus.Commons.Tests
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
                         .Build();
 
-            Assert.True(query.Selection.IsSome);
+            Assert.True(query.Selection);
             Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
-            Assert.True(query.Projection.IsSome);
+            Assert.True(query.Projection);
             Assert.Equal(6, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
-            Assert.True(query.Joining.IsSome);
+            Assert.True(query.Joining);
             Assert.Equal(2, query.Joining.Value.Joins.Count);
             Assert.True(query.IsValidForDataSource(dataSource));
         }
@@ -300,12 +300,12 @@ namespace Janus.Commons.Tests
                         .WithSelection(conf => conf.WithExpression("EXPRESSION"))
                         .Build();
 
-            Assert.True(query.Selection.IsSome);
+            Assert.True(query.Selection);
             Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
-            Assert.True(query.Projection.IsSome);
+            Assert.True(query.Projection);
             Assert.Equal(2, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
-            Assert.False(query.Joining.IsSome);
+            Assert.False(query.Joining);
             Assert.True(query.IsValidForDataSource(dataSource));
 
         }
