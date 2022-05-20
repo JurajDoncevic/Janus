@@ -4,30 +4,101 @@ using Janus.Commons.SchemaModels;
 namespace Janus.Commons.QueryModels;
 
 #region BUILDER SEQUENCE INTERFACES
+
+/// <summary>
+/// Determines what declarations can be made after a projection declaration
+/// </summary>
 public interface IPostProjectionBuilder
 {
+    /// <summary>
+    /// Specifies a selection clause of the query
+    /// </summary>
+    /// <param name="configuration">Selection configuration over a <see cref="SelectionBuilder"/></param>
+    /// <returns>IPostSelectionBuilder</returns>
     public IPostSelectionBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration);
+
+    /// <summary>
+    /// Builds the specified query
+    /// </summary>
+    /// <returns>Query</returns>
     public Query Build();
 }
 
+/// <summary>
+/// Determines what declarations can be made after a selection declaration
+/// </summary>
 public interface IPostSelectionBuilder
 {
+    /// <summary>
+    /// Specifies a projection clause of the query 
+    /// </summary>
+    /// <param name="configuration">Projection configuration over a <see cref="ProjectionBuilder"/></param>
+    /// <returns>IPostProjectionBuilder</returns>
     public IPostProjectionBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration);
+
+    /// <summary>
+    /// Builds the specified query
+    /// </summary>
+    /// <returns>Query</returns>
     public Query Build();
 }
 
+/// <summary>
+/// Determines what declarations can be made after a joining declaration
+/// </summary>
 public interface IPostJoiningBuilder
 {
+    /// <summary>
+    /// Specifies a projection clause of the query 
+    /// </summary>
+    /// <param name="configuration">Projection configuration over a <see cref="ProjectionBuilder"/></param>
+    /// <returns>IPostProjectionBuilder</returns>
     public IPostProjectionBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration);
+
+    /// <summary>
+    /// Specifies a selection clause of the query
+    /// </summary>
+    /// <param name="configuration">Selection configuration over a <see cref="SelectionBuilder"/></param>
+    /// <returns>IPostSelectionBuilder</returns>
     public IPostSelectionBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration);
+
+    /// <summary>
+    /// Builds the specified query
+    /// </summary>
+    /// <returns>Query</returns>
     public Query Build();
 }
 
+/// <summary>
+/// Determines what declarations can be made after a query initialization
+/// </summary>
 public interface IPostInitBuilder
 {
+    /// <summary>
+    /// Specifies a joining clause of the query
+    /// </summary>
+    /// <param name="configuration">Joining configuration over a <see cref="JoiningBuilder"/></param>
+    /// <returns>IPostJoiningBuilder</returns>
     public IPostJoiningBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration);
+
+    /// <summary>
+    /// Specifies a projection clause of the query 
+    /// </summary>
+    /// <param name="configuration">Projection configuration over a <see cref="ProjectionBuilder"/></param>
+    /// <returns>IPostProjectionBuilder</returns>
     public IPostProjectionBuilder WithProjection(Func<ProjectionBuilder, ProjectionBuilder> configuration);
+
+    /// <summary>
+    /// Specifies a selection clause of the query
+    /// </summary>
+    /// <param name="configuration">Selection configuration over a <see cref="SelectionBuilder"/></param>
+    /// <returns>IPostSelectionBuilder</returns>
     public IPostSelectionBuilder WithSelection(Func<SelectionBuilder, SelectionBuilder> configuration);
+
+    /// <summary>
+    /// Builds the specified query
+    /// </summary>
+    /// <returns>Query</returns>
     public Query Build();
 }
 #endregion
