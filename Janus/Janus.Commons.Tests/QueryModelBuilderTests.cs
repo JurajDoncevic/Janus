@@ -1,4 +1,5 @@
-﻿using Janus.Commons.QueryModels;
+﻿using FunctionalExtensions.Base.Results;
+using Janus.Commons.QueryModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using System;
@@ -64,6 +65,22 @@ namespace Janus.Commons.Tests
                                                 .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
                                                                                                            .WithDataType(DataTypes.INT))
                                                 .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT)))
+                                        .AddTableau("tableau4", tableauBuilder =>
+                                            tableauBuilder
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.STRING))
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT)))
+                                        .AddTableau("tableau5", tableauBuilder =>
+                                            tableauBuilder
+                                                .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
+                                                                                                           .WithDataType(DataTypes.INT))
+                                                .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(true)
+                                                                                                           .WithDataType(DataTypes.STRING))
+                                                .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
                                                                                                            .WithDataType(DataTypes.INT))))
                                 .Build();
 
@@ -81,7 +98,7 @@ namespace Janus.Commons.Tests
                         .Build();
 
             Assert.True(query.Selection);
-            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);            
+            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
             Assert.True(query.Projection);
             Assert.Equal(2, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
@@ -257,13 +274,43 @@ namespace Janus.Commons.Tests
             });
         }
 
+        [Fact(DisplayName = "Fail to create a query with incompatible types in join")]
+        public void CreateJoinWithIncompatibleTypesInJoin()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<JoinedAttributesNotOfSameTypeException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
+                        .WithJoining(conf => conf.AddJoin("testDataSource.schema2.tableau4.attr1", "testDataSource.schema2.tableau5.attr2"))
+                        .Build();
+            });
+        }
+
+        [Fact(DisplayName = "Fail to create a query with primary key nullable in join")]
+        public void CreateJoinWithPrimaryKeyNullableInJoin()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<PrimaryKeyAttributeNullableException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
+                        .WithJoining(conf => conf.AddJoin("testDataSource.schema2.tableau4.attr2", "testDataSource.schema2.tableau5.attr2"))
+                        .Build();
+            });
+        }
+
         [Fact(DisplayName = "Create valid open query")]
         public void CreateValidOpenQuery()
         {
             var dataSource = GetExampleSchema();
             string tableauId = dataSource["schema1"]["tableau1"].Id;
 
-            var query = 
+            var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
                         .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr2", "testDataSource.schema1.tableau2.attr1")
                                                  .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
@@ -308,6 +355,189 @@ namespace Janus.Commons.Tests
             Assert.False(query.Joining);
             Assert.True(query.IsValidForDataSource(dataSource));
 
+        }
+
+
+        [Fact(DisplayName = "Fail to create a self join open query")]
+        public void CreateSelfJoinOpenQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau1.attr1")
+                                             .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+
+        }
+
+        [Fact(DisplayName = "Fail to create a cycle join open query")]
+        public void CreateCycleJoinOpenQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
+                                             .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1")
+                                             .AddJoin("testDataSource.schema1.tableau3.attr1", "testDataSource.schema2.tableau1.attr1")
+                                             .AddJoin("testDataSource.schema2.tableau1.attr1", "testDataSource.schema1.tableau1.attr1"))
+                    .Build();
+            var result = query.IsValidForDataSource(dataSource);
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Fail to create a disconnected join open query")]
+        public void CreateDisconnectedJoinOpenQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
+                                             .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1")
+                                             .AddJoin("testDataSource.schema2.tableau1.attr1", "testDataSource.schema2.tableau2.attr1")
+                                             .AddJoin("testDataSource.schema2.tableau1.attr1", "testDataSource.schema2.tableau3.attr1"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+
+        }
+
+        [Fact(DisplayName = "Fail to create a disconnected join open query")]
+        public void CreateDuplicatePkTableauJoinOpenQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
+                                             .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema2.tableau3.attr1")
+                                             .AddJoin("testDataSource.schema2.tableau3.attr1", "testDataSource.schema1.tableau2.attr1"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Fail to create a duplicate join open query")]
+        public void CreateDuplicateJoinOpenQuery()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1")
+                                             .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr1"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Fail to create an open query with a non-existing attribute in the projection")]
+        public void CreateOpenQueryProjectionWithNonExistingAttribute()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                .AddAttribute("testDataSource.schema1.tableau1.attrFAIL"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Create an open query with a duplicate attribute in the projection")]
+        public void CreateOpenQueryProjectionWitDuplicateAttribute()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                .AddAttribute("testDataSource.schema1.tableau1.attr1"))
+                    .Build();
+
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.True(result);
+        }
+
+        [Fact(DisplayName = "Fail to create an open query with a projection attribute from a tableau not referenced in the query beforehand")]
+        public void CreateOpenQueryProjectionWithAttributeFromNonReferencedTableau()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+            QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                        .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
+                                                    .AddAttribute("testDataSource.schema1.tableau2.attr1"))
+                        .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Fail to create an open query with incompatible types in join")]
+        public void CreateOpenQueryJoinWithIncompatibleTypesInJoin()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema2.tableau4.attr1", "testDataSource.schema2.tableau5.attr2"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Fail to create an open query with primary key nullable in join")]
+        public void CreateOpenQueryJoinWithPrimaryKeyNullableInJoin()
+        {
+            var dataSource = GetExampleSchema();
+            string tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var query =
+                QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema2.tableau4.attr2", "testDataSource.schema2.tableau5.attr2"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
         }
     }
 }
