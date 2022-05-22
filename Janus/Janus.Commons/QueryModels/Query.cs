@@ -207,7 +207,13 @@ public class Query
             // check selection validity
             if (_selection)
             {
-                // no checks so far
+                var expression = _selection.Value.Expression;
+                var referencableAttrs = referencedTableauIds.Select(tId => Utils.GetNamesFromTableauId(tId))
+                                             .SelectMany(names => dataSource[names.schemaName][names.tableauName].Attributes.Map(a => (a.Id, a.DataType)))
+                                             .ToDictionary(x => x.Id, x => x.DataType);
+
+                SelectionUtils.CheckAttributeReferences(expression, referencableAttrs.Keys.ToHashSet());
+                SelectionUtils.CheckAttributeTypesOnComparison(expression, referencableAttrs);
             }
 
             return true;

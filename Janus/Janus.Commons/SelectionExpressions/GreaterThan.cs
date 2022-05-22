@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Janus.Commons.SchemaModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace Janus.Commons.SelectionExpressions;
 /// </summary>
 public class GreaterThan : ComparisonOperation
 {
+    protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.DATETIME };
     internal GreaterThan(string attributeId, object value) : base(attributeId, value)
     {
     }

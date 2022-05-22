@@ -34,4 +34,7 @@ public class SelectionExpressions
 
     public static LesserThan LT(string attributeId, object value)
         => new LesserThan(attributeId, value);
+
+    public static TrueLiteral TRUE()
+        => new TrueLiteral();
 }

@@ -1,4 +1,5 @@
 ﻿using static Janus.Communication.Messages.MessageExtensions;
+using static Janus.Commons.SelectionExpressions.SelectionExpressions;
 using Janus.Communication.Messages;
 using Xunit;
 using FunctionalExtensions.Base.Results;
@@ -129,6 +130,7 @@ public class MessageTests
                 .WithJoining(conf => conf.AddJoin("datasource1.schema1.tableau1.attr1_FK", "datasource1.schema1.tableau2.attr1"))
                 .WithProjection(conf => conf.AddAttribute("datasource1.schema1.tableau1.attr1_FK")
                                             .AddAttribute("datasource1.schema1.tableau2.attr1"))
+                .WithSelection(conf => conf.WithExpression(AND(GT("datasource1.schema1.tableau2.attr1", 1), TRUE())))
                 .Build();
 
         var queryReqMessage = new QueryReqMessage(exchangeId, nodeId, query);

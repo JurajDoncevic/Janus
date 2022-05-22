@@ -1,4 +1,5 @@
 ﻿using Janus.Commons.QueryModels.Exceptions;
+using Janus.Commons.SelectionExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -138,15 +139,15 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
 /// </summary>
 public class SelectionOpenBuilder
 {
-    private string _expression;
-    internal bool IsConfigured => !string.IsNullOrEmpty(_expression);
+    private SelectionExpression _expression;
+    internal bool IsConfigured => _expression != null;
 
     /// <summary>
     /// Constructor
     /// </summary>
     internal SelectionOpenBuilder()
     {
-        _expression = "";
+        _expression = null;
     }
 
     /// <summary>
@@ -154,9 +155,8 @@ public class SelectionOpenBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public SelectionOpenBuilder WithExpression(string expression!!)
+    public SelectionOpenBuilder WithExpression(SelectionExpression expression!!)
     {
-        // TODO: do checks
         _expression = expression;
         return this;
     }
@@ -167,7 +167,7 @@ public class SelectionOpenBuilder
     /// <returns></returns>
     internal Selection Build()
     {
-        return new Selection(_expression);
+        return new Selection(_expression ?? new TrueLiteral());
     }
 }
 

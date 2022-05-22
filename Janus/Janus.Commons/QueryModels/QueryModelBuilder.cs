@@ -1,5 +1,6 @@
 ﻿using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
+using Janus.Commons.SelectionExpressions;
 
 namespace Janus.Commons.QueryModels;
 
@@ -141,7 +142,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     /// <exception cref="TableauDoesNotExistException"></exception>
     public static IPostInitBuilder InitQueryOnDataSource(string onTableauId!!, DataSource dataSource!!)
     {
-        if(!dataSource.ContainsTableau(onTableauId))
+        if (!dataSource.ContainsTableau(onTableauId))
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
 
         return new QueryModelBuilder(onTableauId, dataSource);
@@ -156,7 +157,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     {
         var builder = new SelectionBuilder(_dataSource, _referencedTableauIds);
         builder = configuration(builder);
-        
+
         _selection = builder.IsConfigured
                      ? Option<Selection>.Some(builder.Build())
                      : Option<Selection>.None;
@@ -172,7 +173,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
         var builder = new ProjectionBuilder(_dataSource, _referencedTableauIds);
         builder = configuration(builder);
         _projection = builder.IsConfigured
-                     ? Option<Projection>.Some(builder.Build())  
+                     ? Option<Projection>.Some(builder.Build())
                      : Option<Projection>.None;
         return this;
     }
@@ -215,10 +216,10 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
 /// </summary>
 public class SelectionBuilder
 {
-    private string _expression;
+    private SelectionExpression? _expression;
     private readonly DataSource _dataSource;
     private readonly HashSet<string> _referencedTableauIds;
-    internal bool IsConfigured => !string.IsNullOrEmpty(_expression);
+    internal bool IsConfigured => _expression != null;
 
     /// <summary>
     /// Constructor
@@ -227,7 +228,7 @@ public class SelectionBuilder
     /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
     internal SelectionBuilder(DataSource dataSource!!, HashSet<string> referencedTableauIds!!)
     {
-        _expression = "";
+        _expression = null;
         _dataSource = dataSource;
         _referencedTableauIds = referencedTableauIds;
     }
@@ -237,9 +238,16 @@ public class SelectionBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public SelectionBuilder WithExpression(string expression)
+    public SelectionBuilder WithExpression(SelectionExpression expression)
     {
-        // TODO: do checks
+        var referencableAttrs = _referencedTableauIds.Select(tId => Utils.GetNamesFromTableauId(tId))
+                                                     .SelectMany(names => _dataSource[names.schemaName][names.tableauName].Attributes.Map(a => (a.Id, a.DataType)))
+                                                     .ToDictionary(x => x.Id, x => x.DataType);
+        
+        SelectionUtils.CheckAttributeReferences(expression, referencableAttrs.Keys.ToHashSet());
+        SelectionUtils.CheckAttributeTypesOnComparison(expression, referencableAttrs);
+
+
         _expression = expression;
         return this;
     }
@@ -250,7 +258,7 @@ public class SelectionBuilder
     /// <returns></returns>
     internal Selection Build()
     {
-        return new Selection(_expression);
+        return new Selection(_expression ?? new TrueLiteral());
     }
 }
 
@@ -400,7 +408,7 @@ public class JoiningBuilder
     /// <exception cref="JoinsNotConnectedException"></exception>
     public Joining Build()
     {
-        if (!JoiningUtils.IsJoiningConnectedGraph(_initialTableauId, _joining)) 
+        if (!JoiningUtils.IsJoiningConnectedGraph(_initialTableauId, _joining))
             throw new JoinsNotConnectedException();
         return _joining;
     }

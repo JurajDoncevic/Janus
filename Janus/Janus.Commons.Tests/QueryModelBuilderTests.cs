@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.QueryModels;
+using static Janus.Commons.SelectionExpressions.SelectionExpressions;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using System;
@@ -94,11 +95,11 @@ namespace Janus.Commons.Tests
             QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
                         .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr2")
                                                     .AddAttribute("testDataSource.schema1.tableau1.attr1"))
-                        .WithSelection(conf => conf.WithExpression("EXPRESSION"))
+                        .WithSelection(conf => conf.WithExpression(TRUE()))
                         .Build();
 
             Assert.True(query.Selection);
-            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
+            Assert.Equal(TRUE(), query.Selection.Value.Expression);
             Assert.True(query.Projection);
             Assert.Equal(2, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
@@ -122,11 +123,11 @@ namespace Janus.Commons.Tests
                                                     .AddAttribute("testDataSource.schema1.tableau2.attr2")
                                                     .AddAttribute("testDataSource.schema1.tableau3.attr1")
                                                     .AddAttribute("testDataSource.schema1.tableau3.attr2"))
-                        .WithSelection(conf => conf.WithExpression("EXPRESSION"))
+                        .WithSelection(conf => conf.WithExpression(TRUE()))
                         .Build();
 
             Assert.True(query.Selection);
-            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
+            Assert.Equal(TRUE(), query.Selection.Value.Expression);
             Assert.True(query.Projection);
             Assert.Equal(6, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
@@ -320,11 +321,11 @@ namespace Janus.Commons.Tests
                                                     .AddAttribute("testDataSource.schema1.tableau2.attr2")
                                                     .AddAttribute("testDataSource.schema1.tableau3.attr1")
                                                     .AddAttribute("testDataSource.schema1.tableau3.attr2"))
-                        .WithSelection(conf => conf.WithExpression("EXPRESSION"))
+                        .WithSelection(conf => conf.WithExpression(TRUE()))
                         .Build();
 
             Assert.True(query.Selection);
-            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
+            Assert.Equal(TRUE(), query.Selection.Value.Expression);
             Assert.True(query.Projection);
             Assert.Equal(6, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
@@ -344,11 +345,11 @@ namespace Janus.Commons.Tests
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
                         .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr2")
                                                     .AddAttribute("testDataSource.schema1.tableau1.attr1"))
-                        .WithSelection(conf => conf.WithExpression("EXPRESSION"))
+                        .WithSelection(conf => conf.WithExpression(TRUE()))
                         .Build();
 
             Assert.True(query.Selection);
-            Assert.Equal("EXPRESSION", query.Selection.Value.Expression);
+            Assert.Equal(TRUE(), query.Selection.Value.Expression);
             Assert.True(query.Projection);
             Assert.Equal(2, query.Projection.Value.IncludedAttributeIds.Count);
             Assert.Equal(tableauId, query.OnTableauId);
