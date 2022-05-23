@@ -13,6 +13,6 @@ namespace Janus.Commons.SelectionExpressions
         {
         }
 
-        public override string LiteralToken => "TRUE";   
+        public override string LiteralToken => "TRUE";
     }
 }
