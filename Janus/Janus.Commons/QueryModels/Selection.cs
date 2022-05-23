@@ -20,7 +20,7 @@ public class Selection
     public override bool Equals(object? obj)
     {
         return obj is Selection selection &&
-               _expression == selection._expression;
+               _expression.ToString().Equals(selection._expression.ToString());
     }
 
     public override int GetHashCode()
