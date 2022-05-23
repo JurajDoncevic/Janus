@@ -18,7 +18,7 @@ public class SelectionExpressionTests
         int value = 2;
         SelectionExpression expression = EQ(attribute, value);
 
-        Assert.Equal($"{attribute} == {value}", expression.ToString());
+        Assert.Equal($"EQ({attribute},{value})", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using NEQ")]
@@ -28,7 +28,7 @@ public class SelectionExpressionTests
         int value = 2;
         SelectionExpression expression = NEQ(attribute, value);
 
-        Assert.Equal($"{attribute} != {value}", expression.ToString());
+        Assert.Equal($"NEQ({attribute},{value})", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using GE")]
@@ -38,7 +38,7 @@ public class SelectionExpressionTests
         int value = 2;
         SelectionExpression expression = GE(attribute, value);
 
-        Assert.Equal($"{attribute} >= {value}", expression.ToString());
+        Assert.Equal($"GE({attribute},{value})", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using GT")]
@@ -48,7 +48,7 @@ public class SelectionExpressionTests
         int value = 2;
         SelectionExpression expression = GT(attribute, value);
 
-        Assert.Equal($"{attribute} > {value}", expression.ToString());
+        Assert.Equal($"GT({attribute},{value})", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using LT")]
@@ -58,7 +58,7 @@ public class SelectionExpressionTests
         int value = 2;
         SelectionExpression expression = LT(attribute, value);
 
-        Assert.Equal($"{attribute} < {value}", expression.ToString());
+        Assert.Equal($"LT({attribute},{value})", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using LE")]
@@ -68,7 +68,7 @@ public class SelectionExpressionTests
         int value = 2;
         SelectionExpression expression = LE(attribute, value);
 
-        Assert.Equal($"{attribute} <= {value}", expression.ToString());
+        Assert.Equal($"LE({attribute},{value})", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using OR")]
@@ -82,7 +82,7 @@ public class SelectionExpressionTests
         SelectionExpression expression =
             OR(EQ(attribute1, value1), EQ(attribute2, value2));
 
-        Assert.Equal($"({attribute1} == {value1} OR {attribute2} == {value2})", expression.ToString());
+        Assert.Equal($"OR(EQ({attribute1},{value1}),EQ({attribute2},{value2}))", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using AND")]
@@ -96,7 +96,7 @@ public class SelectionExpressionTests
         SelectionExpression expression =
             AND(EQ(attribute1, value1), EQ(attribute2, value2));
 
-        Assert.Equal($"({attribute1} == {value1} AND {attribute2} == {value2})", expression.ToString());
+        Assert.Equal($"AND(EQ({attribute1},{value1}),EQ({attribute2},{value2}))", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a selection expression using NOT")]
@@ -108,7 +108,7 @@ public class SelectionExpressionTests
         SelectionExpression expression =
             NOT(EQ(attribute1, value1));
 
-        Assert.Equal($"NOT({attribute1} == {value1})", expression.ToString());
+        Assert.Equal($"NOT(EQ({attribute1},{value1}))", expression.ToString());
     }
 
     [Fact(DisplayName = "Create a complex expression")]
@@ -131,6 +131,6 @@ public class SelectionExpressionTests
             AND(OR(AND(OR(LT(attribute1, value1),EQ(attribute2, value2)), OR(GE(attribute3, value3), EQ(attribute4, value4))), EQ(attribute6, value6)), EQ(attribute5, value5));
 
 
-        Assert.Equal("((((attr1 < 1 OR attr2 == STRING_VAL) AND (attr3 >= 3,14 OR attr4 == 20.5.2022. 0:00:00)) OR attr6 == 6) AND attr5 == False)", expression.ToString());
+        Assert.Equal("AND(OR(AND(OR(LT(attr1,1),EQ(attr2,STRING_VAL)),OR(GE(attr3,3,14),EQ(attr4,20.5.2022. 0:00:00))),EQ(attr6,6)),EQ(attr5,False))", expression.ToString());
     }
 }

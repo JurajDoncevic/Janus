@@ -8,12 +8,18 @@ namespace Janus.Commons.SelectionExpressions;
 
 public abstract class LogicalUnaryOperation : LogicalOperation
 {
-    private readonly SelectionExpression _expression;
+    private readonly SelectionExpression _operand;
 
-    protected LogicalUnaryOperation(SelectionExpression expression) : base()
+    protected LogicalUnaryOperation(SelectionExpression operand) : base()
     {
-        _expression = expression;
+        _operand = operand;
     }
 
-    public SelectionExpression Expression => _expression;
+    public SelectionExpression Operand => _operand;
+
+    public override string ToPrettyString()
+        => $"{OperatorString}({Operand})";
+
+    public override string ToString()
+        => $"{OperatorString}({Operand})";
 }

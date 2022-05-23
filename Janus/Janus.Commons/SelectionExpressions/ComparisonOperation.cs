@@ -43,5 +43,13 @@ namespace Janus.Commons.SelectionExpressions
         /// </summary>
         public abstract string OperatorString { get; }
 
+        public abstract string PrettyOperatorString { get; }
+
+        public override string ToPrettyString()
+            => $"{AttributeId} {OperatorString} {Value.ToString()}";
+
+        public override string ToString()
+            => $"{OperatorString}({AttributeId},{Value.ToString()})";
+
     }
 }

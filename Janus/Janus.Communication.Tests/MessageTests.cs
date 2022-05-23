@@ -136,7 +136,7 @@ public class MessageTests
         var queryReqMessage = new QueryReqMessage(exchangeId, nodeId, query);
 
         var messageBytes = queryReqMessage.ToBson();
-
+        var messageString = Encoding.UTF8.GetString(messageBytes);
         var result = messageBytes.ToQueryReqMessage();
 
         var message = result.Data;

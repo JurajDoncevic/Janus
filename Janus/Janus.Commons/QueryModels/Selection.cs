@@ -41,7 +41,7 @@ public static class SelectionUtils
     internal static bool CheckAttributeReferences(SelectionExpression selectionExpression, HashSet<string> referencableAttributes)
         => selectionExpression switch
         {
-            LogicalUnaryOperation unaryOp => CheckAttributeReferences(unaryOp.Expression, referencableAttributes),
+            LogicalUnaryOperation unaryOp => CheckAttributeReferences(unaryOp.Operand, referencableAttributes),
             LogicalBinaryOperation binaryOp => CheckAttributeReferences(binaryOp.LeftOperand, referencableAttributes) && CheckAttributeReferences(binaryOp.RightOperand, referencableAttributes),
             ComparisonOperation compareOp => referencableAttributes.Contains(compareOp.AttributeId) ? true : throw new AttributeNotInReferencedTableausException(compareOp.AttributeId),
             Literal literal => true
@@ -57,7 +57,7 @@ public static class SelectionUtils
     internal static bool CheckAttributeTypesOnComparison(SelectionExpression selectionExpression, Dictionary<string, DataTypes> referencableAttrsTypes)
         => selectionExpression switch
         {
-            LogicalUnaryOperation unaryOp => CheckAttributeTypesOnComparison(unaryOp.Expression, referencableAttrsTypes),
+            LogicalUnaryOperation unaryOp => CheckAttributeTypesOnComparison(unaryOp.Operand, referencableAttrsTypes),
             LogicalBinaryOperation binaryOp => CheckAttributeTypesOnComparison(binaryOp.LeftOperand, referencableAttrsTypes) && CheckAttributeTypesOnComparison(binaryOp.RightOperand, referencableAttrsTypes),
             ComparisonOperation compareOp => compareOp.IsCompatibleDataType(referencableAttrsTypes[compareOp.AttributeId]) ? true : throw new IncompatibleDataTypeComparisonException(compareOp.AttributeId, referencableAttrsTypes[compareOp.AttributeId], compareOp),
             Literal literal => true

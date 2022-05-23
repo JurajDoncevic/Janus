@@ -16,7 +16,4 @@ public class OrOperation : LogicalBinaryOperation
     }
 
     public override string OperatorString => "OR";
-
-    public override string ToString()
-        => $"({LeftOperand.ToString()} {OperatorString} {RightOperand.ToString()})";
 }

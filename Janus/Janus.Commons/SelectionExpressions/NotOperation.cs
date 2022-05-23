@@ -18,5 +18,5 @@ public sealed class NotOperation : LogicalUnaryOperation
     public override string OperatorString => "NOT";
 
     public override string ToString() 
-        => $"{OperatorString}({Expression.ToString()})";
+        => $"{OperatorString}({Operand.ToString()})";
 }

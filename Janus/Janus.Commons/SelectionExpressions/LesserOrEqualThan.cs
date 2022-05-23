@@ -17,8 +17,7 @@ public sealed class LesserOrEqualThan : ComparisonOperation
     {
     }
 
-    public override string OperatorString => "<=";
+    public override string OperatorString => "LE";
 
-    public override string ToString()
-        => $"{AttributeId} {OperatorString} {Value.ToString()}";
+    public override string PrettyOperatorString => "<=";
 }

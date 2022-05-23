@@ -16,10 +16,9 @@ public sealed class EqualAs : ComparisonOperation
     {
     }
 
-    public override string OperatorString => "==";
+    public override string OperatorString => "EQ";
+
+    public override string PrettyOperatorString => "==";
 
     protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.BINARY, DataTypes.DATETIME, DataTypes.BOOLEAN, DataTypes.STRING };
-
-    public override string ToString()
-        => $"{AttributeId} {OperatorString} {Value.ToString()}";
 }

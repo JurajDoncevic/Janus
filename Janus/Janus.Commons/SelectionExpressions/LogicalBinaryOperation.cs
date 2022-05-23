@@ -26,4 +26,10 @@ public abstract class LogicalBinaryOperation : LogicalOperation
     /// Right operand of the binary operation
     /// </summary>
     public SelectionExpression RightOperand => _rightOperand;
+
+    public override string ToPrettyString()
+        => $"({LeftOperand} {OperatorString} {RightOperand})";
+
+    public override string ToString()
+        => $"{OperatorString}({LeftOperand},{RightOperand})";
 }
