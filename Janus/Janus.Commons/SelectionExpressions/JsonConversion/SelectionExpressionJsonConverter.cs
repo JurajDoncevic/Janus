@@ -133,7 +133,7 @@ public class SelectionExpressionJsonConverter : JsonConverter<SelectionExpressio
         {
             if (int.TryParse(exp, out var intValue))
                 return intValue;
-            if (decimal.TryParse(exp, out var decimalValue))
+            if (float.TryParse(exp, out var decimalValue))
                 return decimalValue;
             if (bool.TryParse(exp, out var boolValue))
                 return boolValue;
