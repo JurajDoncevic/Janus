@@ -3,7 +3,7 @@
 namespace Janus.Commons.DataModels.Exceptions
 {
     [Serializable]
-    internal class IncompatibleRowDataTypeException : Exception
+    public class IncompatibleRowDataTypeException : Exception
     {
         public IncompatibleRowDataTypeException(List<string> valueKeys, List<string> typeKeys)
             : base($"Expected row data to be of type ({string.Join(",", typeKeys)}), " +

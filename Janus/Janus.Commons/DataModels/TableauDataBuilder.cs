@@ -64,13 +64,20 @@ public class RowDataBuilder
             || !attributeValues.Keys.All(_attributeDataTypes.ContainsKey))
             throw new IncompatibleRowDataTypeException(attributeValues.Keys.ToList(), _attributeDataTypes.Keys.ToList());
 
+        var types = attributeValues.Values.Select(v => v.GetType()).ToList();
+
+        var attrValue = attributeValues.Where(kvp => !kvp.Value.GetType().IsEquivalentTo(TypeMappings.MapToType(_attributeDataTypes[kvp.Key])))
+                                       .Select(kvp => (attrId: kvp.Key, attrValue: kvp.Value))
+                                       .FirstOrDefault();
+        if (attrValue != default)
+            throw new IncompatibleDotNetTypeException(attrValue.attrId, attrValue.GetType());
         _attributeValues = attributeValues;
 
         return this;
     }
 
-    public RowData Build()
+    internal RowData Build()
         => _attributeValues == null && _attributeDataTypes.Count != 0
            ? throw new IncompatibleRowDataTypeException(new List<string>(), _attributeDataTypes.Keys.ToList())
-           : new RowData(_attributeDataTypes, _attributeValues ?? new Dictionary<string, object>());
+           : new RowData(_attributeValues ?? new Dictionary<string, object>());
 }
