@@ -305,6 +305,35 @@ namespace Janus.Commons.Tests
             });
         }
 
+        [Fact(DisplayName = "Fail to create a query with an attribute that does not exist in referenced tableaus")]
+        public void CreateSelectionWithNonReferencedAttribute()
+        {
+            var dataSource = GetExampleSchema();
+
+            Assert.Throws<AttributeNotInReferencedTableausException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnDataSource("testDataSource.schema1.tableau1", dataSource)
+                        .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr2"))
+                        .WithSelection(conf => conf.WithExpression(GT("testDataSource.schema1.tableau3.attr1", 0)))
+                        .Build();
+            });
+        }
+
+        [Fact(DisplayName = "Fail to create a query with an incompatible data type comparison")]
+        public void CreateSelectionWithIncompatibleOperatorAndType()
+        {
+            var dataSource = GetExampleSchema();
+
+            Assert.Throws<IncompatibleDataTypeComparisonException>(() =>
+            {
+                var query =
+                QueryModelBuilder.InitQueryOnDataSource("testDataSource.schema2.tableau4", dataSource)
+                        .WithSelection(conf => conf.WithExpression(GT("testDataSource.schema2.tableau4.attr2", 0)))
+                        .Build();
+            });
+        }
+
         [Fact(DisplayName = "Create valid open query")]
         public void CreateValidOpenQuery()
         {
@@ -533,6 +562,40 @@ namespace Janus.Commons.Tests
             var query =
                 QueryModelOpenBuilder.InitOpenQuery(tableauId)
                     .WithJoining(conf => conf.AddJoin("testDataSource.schema2.tableau4.attr2", "testDataSource.schema2.tableau5.attr2"))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Fail to create a query with an attribute that does not exist in referenced tableaus")]
+        public void CreateOpenQuerySelectionWithNonReferencedAttribute()
+        {
+            var dataSource = GetExampleSchema();
+
+
+            var query =
+            QueryModelOpenBuilder.InitOpenQuery("testDataSource.schema1.tableau1")
+                    .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau2.attr2"))
+                    .WithSelection(conf => conf.WithExpression(GT("testDataSource.schema1.tableau3.attr1", 0)))
+                    .Build();
+
+            var result = query.IsValidForDataSource(dataSource);
+
+            Assert.False(result);
+            Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        }
+
+        [Fact(DisplayName = "Fail to create a query with an incompatible data type comparison")]
+        public void CreateOpenQuerySelectionWithIncompatibleOperatorAndType()
+        {
+            var dataSource = GetExampleSchema();
+
+            var query =
+            QueryModelOpenBuilder.InitOpenQuery("testDataSource.schema2.tableau4")
+                    .WithSelection(conf => conf.WithExpression(GT("testDataSource.schema2.tableau4.attr2", 0)))
                     .Build();
 
             var result = query.IsValidForDataSource(dataSource);
