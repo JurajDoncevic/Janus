@@ -37,6 +37,8 @@ public class TableauData
 
     public RowData this[int index] => _rowData[index];
 
+    public HashSet<string> AttributeNames => _attributeDataTypes.Keys.ToHashSet();
+
     public override string ToString()
         => string.Join("\n", _rowData);
 }
