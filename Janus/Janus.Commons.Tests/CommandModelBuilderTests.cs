@@ -41,7 +41,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
                                   .Build();
@@ -63,7 +63,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
                                   .Build();
@@ -86,7 +86,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", "TEST_STRING2" } }))
                                   .Build();
@@ -106,7 +106,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", "TEST_STRING2" } }))
                                   .Build();
@@ -126,7 +126,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.DECIMAL }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.DECIMAL }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1.2 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2.3 }, { "attr2", "TEST_STRING2" }, { "attr3", 2.3 } }))
                                   .Build();
@@ -146,7 +146,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.DECIMAL }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.DECIMAL }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1.2 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2.3 }, { "attr2", "TEST_STRING2" }, { "attr3", 2.3 } }))
                                   .Build();
@@ -166,7 +166,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau2"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
                                   .Build();
@@ -186,7 +186,7 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau2"].Id;
             var dataToInsert =
-                TableauDataBuilder.InitTableauData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
                                   .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
                                   .Build();

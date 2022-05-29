@@ -60,7 +60,7 @@ public class InstantiationBuilder
 {
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
-    private TableauData? _tableauDataToInsert;
+    private TabularData? _tableauDataToInsert;
 
     internal InstantiationBuilder(string onTableauId, DataSource dataSource)
     {
@@ -69,7 +69,7 @@ public class InstantiationBuilder
         _tableauDataToInsert = null;
     }
 
-    public InstantiationBuilder WithValues(TableauData tableauData)
+    public InstantiationBuilder WithValues(TabularData tableauData)
     {
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 

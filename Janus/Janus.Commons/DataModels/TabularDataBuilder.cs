@@ -8,29 +8,37 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.DataModels;
 
-public interface IPostInitTableauDataBuilder
+public interface IPostInitTabularDataBuilder
 {
-    IPostInitTableauDataBuilder AddRow(Func<RowDataBuilder, RowDataBuilder> configuration);
-    TableauData Build();
+    /// <summary>
+    /// Adds the configured row of data to the tabular data
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <returns></returns>
+    IPostInitTabularDataBuilder AddRow(Func<RowDataBuilder, RowDataBuilder> configuration);
+    TabularData Build();
 }
 
-public class TableauDataBuilder : IPostInitTableauDataBuilder
+/// <summary>
+/// Builder for tabular data
+/// </summary>
+public class TabularDataBuilder : IPostInitTabularDataBuilder
 {
     private readonly Dictionary<string, DataTypes> _attributeDataTypes;
     private readonly List<RowData> _rows;
 
-    private TableauDataBuilder(Dictionary<string, DataTypes> attributeDataTypes!!)
+    private TabularDataBuilder(Dictionary<string, DataTypes> attributeDataTypes!!)
     {
         _attributeDataTypes = attributeDataTypes;
         _rows = new List<RowData>();
     }
 
-    public static IPostInitTableauDataBuilder InitTableauData(Dictionary<string, DataTypes> attributeDataTypes!!)
+    public static IPostInitTabularDataBuilder InitTabularData(Dictionary<string, DataTypes> attributeDataTypes!!)
     {
-        return new TableauDataBuilder(attributeDataTypes);
+        return new TabularDataBuilder(attributeDataTypes);
     }
 
-    public IPostInitTableauDataBuilder AddRow(Func<RowDataBuilder, RowDataBuilder> configuration)
+    public IPostInitTabularDataBuilder AddRow(Func<RowDataBuilder, RowDataBuilder> configuration)
     {
         var rowDataBuilder = RowDataBuilder.InitRowWithDataTypes(_attributeDataTypes);
         var row = configuration(rowDataBuilder).Build();
@@ -39,7 +47,7 @@ public class TableauDataBuilder : IPostInitTableauDataBuilder
         return this;
     }
 
-    public TableauData Build() => new TableauData(_rows, _attributeDataTypes);
+    public TabularData Build() => new TabularData(_rows, _attributeDataTypes);
 }
 
 public class RowDataBuilder

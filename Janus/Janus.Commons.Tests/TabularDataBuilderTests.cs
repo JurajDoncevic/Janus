@@ -10,14 +10,14 @@ using Xunit;
 
 namespace Janus.Commons.Tests;
 
-public class TableauDataBuilderTests
+public class TabularDataBuilderTests
 {
 
-    [Fact(DisplayName = "Create valid tableau data")]
-    public void CreateValidTableauData()
+    [Fact(DisplayName = "Create valid tabular data")]
+    public void CreateValidTabularData()
     {
-        var tableauData =
-            TableauDataBuilder.InitTableauData(new Dictionary<string, DataTypes>
+        var tabularData =
+            TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>
             {
                 { "attrINT", DataTypes.INT },
                 { "attrDECIMAL", DataTypes.DECIMAL },
@@ -50,20 +50,20 @@ public class TableauDataBuilderTests
                 { "attrSTRING", "test_string3" }
             }))
             .Build();
-        Type targetType = TypeMappings.MapToType(tableauData.AttributeDataTypes["attrDATETIME"]);
+        Type targetType = TypeMappings.MapToType(tabularData.AttributeDataTypes["attrDATETIME"]);
 
-        Assert.NotNull(tableauData);
-        Assert.Equal(3, tableauData.RowData.Count);
-        Assert.Equal(new DateTime(2022, 5, 28), Convert.ChangeType(tableauData[1]["attrDATETIME"], targetType));
+        Assert.NotNull(tabularData);
+        Assert.Equal(3, tabularData.RowData.Count);
+        Assert.Equal(new DateTime(2022, 5, 28), Convert.ChangeType(tabularData[1]["attrDATETIME"], targetType));
     }
 
-    [Fact(DisplayName = "Create tableau data with invalid attribute in row")]
-    public void CreateTableauDataWithInvalidAttributeInRow()
+    [Fact(DisplayName = "Create tabular data with invalid attribute in row")]
+    public void CreateTabularDataWithInvalidAttributeInRow()
     {
         Assert.Throws<IncompatibleRowDataTypeException>(() =>
         {
-            var tableauData =
-            TableauDataBuilder.InitTableauData(new Dictionary<string, DataTypes>
+            var tabularData =
+            TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>
             {
                         { "attrINT", DataTypes.INT },
                         { "attrDECIMAL", DataTypes.DECIMAL },
@@ -99,13 +99,13 @@ public class TableauDataBuilderTests
         });
     }
 
-    [Fact(DisplayName = "Create tableau data with invalid type in row")]
-    public void CreateTableauDataWithInvalidTypeInRow()
+    [Fact(DisplayName = "Create tabular data with invalid type in row")]
+    public void CreateTabularDataWithInvalidTypeInRow()
     {
         Assert.Throws<IncompatibleDotNetTypeException>(() =>
         {
-            var tableauData =
-            TableauDataBuilder.InitTableauData(new Dictionary<string, DataTypes>
+            var tabularData =
+            TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>
             {
                         { "attrINT", DataTypes.INT },
                         { "attrDECIMAL", DataTypes.DECIMAL },

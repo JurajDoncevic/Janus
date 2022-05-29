@@ -9,12 +9,12 @@ namespace Janus.Commons.CommandModels;
 
 public class Instantiation
 {
-    private readonly TableauData _tableauData;
+    private readonly TabularData _tableauData;
 
-    internal Instantiation(TableauData tableauData!!)
+    internal Instantiation(TabularData tableauData!!)
     {
         _tableauData = tableauData;
     }
 
-    public TableauData TableauData => _tableauData;
+    public TabularData TableauData => _tableauData;
 }

@@ -9,6 +9,12 @@ namespace Janus.Commons.DataModels;
 
 public static class TypeMappings
 {
+    /// <summary>
+    /// Maps a <see cref="DataTypes"/> value to a <see cref="Type"/>
+    /// </summary>
+    /// <param name="dataType"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     public static Type MapToType(DataTypes dataType)
         => dataType switch
         {
@@ -21,6 +27,12 @@ public static class TypeMappings
             _ => throw new ArgumentException($"No mapping for DataType {dataType}")
         };
 
+    /// <summary>
+    /// Maps a <see cref="Type"/> to a <see cref="DataTypes"/> value
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     public static DataTypes MapToDataType(Type type)
         => type switch
         {

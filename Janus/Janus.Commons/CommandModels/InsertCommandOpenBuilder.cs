@@ -44,7 +44,7 @@ public class InsertCommandOpenBuilder
 public class InstantiationOpenBuilder
 {
     private readonly string _onTableauId;
-    private TableauData? _tableauDataToInsert;
+    private TabularData? _tableauDataToInsert;
 
     internal InstantiationOpenBuilder(string onTableauId)
     {
@@ -52,7 +52,7 @@ public class InstantiationOpenBuilder
         _tableauDataToInsert = null;
     }
 
-    public InstantiationOpenBuilder WithValues(TableauData tableauData)
+    public InstantiationOpenBuilder WithValues(TabularData tableauData)
     {
         _tableauDataToInsert = tableauData;
         return this;
