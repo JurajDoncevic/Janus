@@ -51,7 +51,7 @@ public class UpdateCommand
                     var referencingDataType = TypeMappings.MapToDataType(_mutation.ValueUpdates[referencedAttr].GetType());
                     if (referencedDataType != referencingDataType)
                     {
-                        throw new IncompatibleInstantiationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
+                        throw new IncompatibleMutationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
                     }
                 }
             }
