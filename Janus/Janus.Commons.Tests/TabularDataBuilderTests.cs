@@ -25,7 +25,7 @@ public class TabularDataBuilderTests
                 { "attrBOOLEAN", DataTypes.BOOLEAN },
                 { "attrSTRING", DataTypes.STRING }
             })
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                 { "attrINT", 0 },
                 { "attrDECIMAL", 2.0 },
@@ -33,7 +33,7 @@ public class TabularDataBuilderTests
                 { "attrBOOLEAN", false },
                 { "attrSTRING", "test_string1" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                 { "attrINT", 1 },
                 { "attrDECIMAL", 2.1 },
@@ -41,7 +41,7 @@ public class TabularDataBuilderTests
                 { "attrBOOLEAN", true },
                 { "attrSTRING", "test_string2" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                 { "attrINT", 2 },
                 { "attrDECIMAL", 2.2 },
@@ -71,7 +71,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", DataTypes.BOOLEAN },
                         { "attrSTRING", DataTypes.STRING }
             })
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 0 },
                         { "attrDECIMAL", 2.0 },
@@ -79,7 +79,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", false },
                         { "attrSTRING", "test_string1" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 1 },
                         { "attrDECIMAL", 2.1 },
@@ -87,7 +87,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", true },
                         { "attrSTRING", "test_string2" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 2 },
                         { "attrDECIMAL", 2.2 },
@@ -113,7 +113,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", DataTypes.BOOLEAN },
                         { "attrSTRING", DataTypes.STRING }
             })
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 0 },
                         { "attrDECIMAL", 2.0 },
@@ -121,7 +121,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", false },
                         { "attrSTRING", "test_string1" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 1 },
                         { "attrDECIMAL", 2.1m },
@@ -129,7 +129,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", true },
                         { "attrSTRING", "test_string2" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 2 },
                         { "attrDECIMAL", 2.2 },
@@ -153,7 +153,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", DataTypes.BOOLEAN },
                         { "attrSTRING", DataTypes.STRING }
             })
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 0 },
                         { "attrDECIMAL", 2.0 },
@@ -161,7 +161,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", false },
                         { "attrSTRING", "test_string1" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 1 },
                         { "attrDECIMAL", 2.1 },
@@ -169,7 +169,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", true },
                         { "attrSTRING", "test_string2" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 2 },
                         { "attrDECIMAL", 2.2 },
@@ -195,7 +195,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", DataTypes.BOOLEAN },
                         { "attrSTRING", DataTypes.STRING }
             })
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 0 },
                         { "attrDECIMAL", 2.0 },
@@ -203,7 +203,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", false },
                         { "attrSTRING", "test_string1" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 1 },
                         { "attrDECIMAL", 2.1 },
@@ -211,7 +211,7 @@ public class TabularDataBuilderTests
                         { "attrBOOLEAN", true },
                         { "attrSTRING", "test_string2" }
             }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                         { "attrINT", 2 },
                         { "attrDECIMAL", 2.2 },
