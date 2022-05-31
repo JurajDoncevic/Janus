@@ -13,13 +13,13 @@ namespace Janus.Commons.DataModels;
 /// </summary>
 public class RowData
 {
-    private readonly Dictionary<string, object> _attributeValues;
+    private readonly Dictionary<string, object?> _attributeValues;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="attributeValues">Values of attributes in the row</param>
-    internal RowData(Dictionary<string, object> attributeValues!!)
+    internal RowData(Dictionary<string, object?> attributeValues!!)
     {
         _attributeValues = attributeValues;
     }
@@ -27,7 +27,7 @@ public class RowData
     /// <summary>
     /// Values of attributes in the row
     /// </summary>
-    public IReadOnlyDictionary<string, object> AttributeValues => _attributeValues;
+    public IReadOnlyDictionary<string, object?> AttributeValues => _attributeValues;
 
     public object this[string attributeId] => _attributeValues[attributeId];
 

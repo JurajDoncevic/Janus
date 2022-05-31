@@ -24,7 +24,9 @@ public class TabularDataJsonConverter : JsonConverter<TabularData>
                 (attrVals, builder) => builder.AddRow(
                     conf => conf.WithRowData(attrVals.ToDictionary(
                         av => av.Key,
-                        av => JsonSerializer.Deserialize(((JsonElement)av.Value), TypeMappings.MapToType(tabularDataDto.AttributeDataTypes[av.Key]) ?? default)
+                        av => av.Value != null 
+                              ? JsonSerializer.Deserialize(((JsonElement)av.Value), TypeMappings.MapToType(tabularDataDto.AttributeDataTypes[av.Key]))
+                              : null
                         )))
                 ).Build();
 

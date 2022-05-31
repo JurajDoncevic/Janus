@@ -53,7 +53,7 @@ public class TabularDataBuilder : IPostInitTabularDataBuilder
 public class RowDataBuilder
 {
     private readonly Dictionary<string, DataTypes> _attributeDataTypes;
-    private Dictionary<string, object>? _attributeValues;
+    private Dictionary<string, object?>? _attributeValues;
 
     internal RowDataBuilder(Dictionary<string, DataTypes> attributeDataTypes!!)
     {
@@ -66,7 +66,7 @@ public class RowDataBuilder
         return new RowDataBuilder(attributeDataTypes);
     }
 
-    public RowDataBuilder WithRowData(Dictionary<string, object> attributeValues)
+    public RowDataBuilder WithRowData(Dictionary<string, object?> attributeValues)
     {
         if (_attributeDataTypes.Count != attributeValues.Count
             || !attributeValues.Keys.All(_attributeDataTypes.ContainsKey))
@@ -87,5 +87,5 @@ public class RowDataBuilder
     internal RowData Build()
         => _attributeValues == null && _attributeDataTypes.Count != 0
            ? throw new IncompatibleRowDataTypeException(new List<string>(), _attributeDataTypes.Keys.ToList())
-           : new RowData(_attributeValues ?? new Dictionary<string, object>());
+           : new RowData(_attributeValues ?? new Dictionary<string, object?>());
 }
