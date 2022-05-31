@@ -19,7 +19,6 @@ public class RowData
     /// Constructor
     /// </summary>
     /// <param name="attributeValues">Values of attributes in the row</param>
-    [JsonConstructor]
     internal RowData(Dictionary<string, object> attributeValues!!)
     {
         _attributeValues = attributeValues;

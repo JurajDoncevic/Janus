@@ -140,4 +140,88 @@ public class TabularDataBuilderTests
             .Build();
         });
     }
+
+    [Fact]
+    public void TestJsonSerialization()
+    {
+        var tabularData =
+            TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>
+            {
+                        { "attrINT", DataTypes.INT },
+                        { "attrDECIMAL", DataTypes.DECIMAL },
+                        { "attrDATETIME", DataTypes.DATETIME },
+                        { "attrBOOLEAN", DataTypes.BOOLEAN },
+                        { "attrSTRING", DataTypes.STRING }
+            })
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            {
+                        { "attrINT", 0 },
+                        { "attrDECIMAL", 2.0 },
+                        { "attrDATETIME", new DateTime(2022, 5, 27) },
+                        { "attrBOOLEAN", false },
+                        { "attrSTRING", "test_string1" }
+            }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            {
+                        { "attrINT", 1 },
+                        { "attrDECIMAL", 2.1 },
+                        { "attrDATETIME", new DateTime(2022, 5, 28) },
+                        { "attrBOOLEAN", true },
+                        { "attrSTRING", "test_string2" }
+            }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            {
+                        { "attrINT", 2 },
+                        { "attrDECIMAL", 2.2 },
+                        { "attrDATETIME", new DateTime(2022, 5, 29) },
+                        { "attrBOOLEAN", true },
+                        { "attrSTRING", "test_string3" }
+            }))
+            .Build();
+        var jsonString = System.Text.Json.JsonSerializer.Serialize(tabularData);
+
+        var desTabular = System.Text.Json.JsonSerializer.Deserialize<TabularData>(jsonString);
+    }
+
+    [Fact]
+    public void TestJsonSerializationWithNull()
+    {
+        var tabularData =
+            TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>
+            {
+                        { "attrINT", DataTypes.INT },
+                        { "attrDECIMAL", DataTypes.DECIMAL },
+                        { "attrDATETIME", DataTypes.DATETIME },
+                        { "attrBOOLEAN", DataTypes.BOOLEAN },
+                        { "attrSTRING", DataTypes.STRING }
+            })
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            {
+                        { "attrINT", 0 },
+                        { "attrDECIMAL", 2.0 },
+                        { "attrDATETIME", null },
+                        { "attrBOOLEAN", false },
+                        { "attrSTRING", "test_string1" }
+            }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            {
+                        { "attrINT", 1 },
+                        { "attrDECIMAL", 2.1 },
+                        { "attrDATETIME", new DateTime(2022, 5, 28) },
+                        { "attrBOOLEAN", true },
+                        { "attrSTRING", "test_string2" }
+            }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object>
+            {
+                        { "attrINT", 2 },
+                        { "attrDECIMAL", 2.2 },
+                        { "attrDATETIME", new DateTime(2022, 5, 29) },
+                        { "attrBOOLEAN", true },
+                        { "attrSTRING", "test_string3" }
+            }))
+            .Build();
+        var jsonString = System.Text.Json.JsonSerializer.Serialize(tabularData);
+
+        var desTabular = System.Text.Json.JsonSerializer.Deserialize<TabularData>(jsonString);
+    }
 }

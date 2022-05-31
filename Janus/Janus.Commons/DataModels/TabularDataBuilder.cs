@@ -72,8 +72,6 @@ public class RowDataBuilder
             || !attributeValues.Keys.All(_attributeDataTypes.ContainsKey))
             throw new IncompatibleRowDataTypeException(attributeValues.Keys.ToList(), _attributeDataTypes.Keys.ToList());
 
-        //var types = attributeValues.Values.Select(v => v.GetType()).ToList();
-
         var attrValue = attributeValues.Where(kvp => 
                                             kvp.Value !=null &&
                                             !kvp.Value.GetType().IsEquivalentTo(TypeMappings.MapToType(_attributeDataTypes[kvp.Key])))

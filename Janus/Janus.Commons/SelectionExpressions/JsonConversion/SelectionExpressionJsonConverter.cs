@@ -48,14 +48,14 @@ public class SelectionExpressionJsonConverter : JsonConverter<SelectionExpressio
         {
             var splits = exp[3..^1].Split(",");
 
-            return SelectionExpressions.NEQ(splits[0], ParseValueLiteral(splits[1]));
+            return SelectionExpressions.NEQ(splits[0], Utils.ParseStringValue(splits[1]));
         }
 
         private static EqualAs ParseEQ(string exp)
         {
             var splits = exp[3..^1].Split(",");
 
-            return SelectionExpressions.EQ(splits[0], ParseValueLiteral(splits[1]));
+            return SelectionExpressions.EQ(splits[0], Utils.ParseStringValue(splits[1]));
         }
 
         private static NotOperation ParseNOT(string exp)
@@ -79,28 +79,28 @@ public class SelectionExpressionJsonConverter : JsonConverter<SelectionExpressio
         {
             var splits = exp[3..^1].Split(",");
 
-            return SelectionExpressions.LE(splits[0], ParseValueLiteral(splits[1]));
+            return SelectionExpressions.LE(splits[0], Utils.ParseStringValue(splits[1]));
         }
 
         private static LesserThan ParseLT(string exp)
         {
             var splits = exp[3..^1].Split(",");
 
-            return SelectionExpressions.LT(splits[0], ParseValueLiteral(splits[1]));
+            return SelectionExpressions.LT(splits[0], Utils.ParseStringValue(splits[1]));
         }
 
         private static GreaterThan ParseGT(string exp)
         {
             var splits = exp[3..^1].Split(",");
 
-            return SelectionExpressions.GT(splits[0], ParseValueLiteral(splits[1]));
+            return SelectionExpressions.GT(splits[0], Utils.ParseStringValue(splits[1]));
         }
 
         private static GreaterOrEqualThan ParseGE(string exp)
         {
             var splits = exp[3..^1].Split(",");
 
-            return SelectionExpressions.GE(splits[0], ParseValueLiteral(splits[1]));
+            return SelectionExpressions.GE(splits[0], Utils.ParseStringValue(splits[1]));
         }
 
         private static OrOperation ParseOR(string exp)
@@ -127,19 +127,6 @@ public class SelectionExpressionJsonConverter : JsonConverter<SelectionExpressio
                 ParseSelectionExpression(matches[0].Value),
                 ParseSelectionExpression(matches[1].Value)
                 );
-        }
-
-        private static object ParseValueLiteral(string exp)
-        {
-            if (int.TryParse(exp, out var intValue))
-                return intValue;
-            if (double.TryParse(exp, out var decimalValue))
-                return decimalValue;
-            if (bool.TryParse(exp, out var boolValue))
-                return boolValue;
-            if (DateTime.TryParse(exp, out var dateTimeValue))
-                return dateTimeValue;
-            return exp;
         }
     }
 

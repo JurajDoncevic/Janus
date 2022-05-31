@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Janus.Commons
@@ -33,6 +34,19 @@ namespace Janus.Commons
                     );
             else
                 throw new InvalidDataException($"{tableauId} is not a valid tableau id");
+        }
+
+        internal static object ParseStringValue(string exp)
+        {
+            if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*$") && int.TryParse(exp, out var intValue)) // to ignore decimals 
+                return intValue;
+            if (Regex.IsMatch(exp.Trim(), @"^-?[0-9][1-9]*[\.|,][0-9]+$") && double.TryParse(exp, out var decimalValue))
+                return decimalValue;
+            if (bool.TryParse(exp.Trim(), out var boolValue))
+                return boolValue;
+            if (DateTime.TryParse(exp.Trim(), out var dateTimeValue))
+                return dateTimeValue;
+            return exp;
         }
     }
 }
