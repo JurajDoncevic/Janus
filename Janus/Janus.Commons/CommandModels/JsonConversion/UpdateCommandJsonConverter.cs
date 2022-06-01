@@ -21,7 +21,7 @@ public class UpdateCommandJsonConverter : JsonConverter<UpdateCommand>
 
         var retypedMutationDict = updateDto.Mutation.ToDictionary(
             kv => kv.Key,
-            kv => JsonSerializer.Deserialize(((JsonElement)kv.Value.Item1), kv.Value.Item2)
+            kv => kv.Value != null ? JsonSerializer.Deserialize(((JsonElement)kv.Value), TypeNameToType(updateDto.MutationTypes[kv.Key])) : null
             );
 
         var tempBuild =
@@ -38,15 +38,26 @@ public class UpdateCommandJsonConverter : JsonConverter<UpdateCommand>
 
     public override void Write(Utf8JsonWriter writer, UpdateCommand value, JsonSerializerOptions options)
     {
-        var updateDto = new UpdateCommandDto
-        {
-            OnTableauId = value.OnTableauId,
-            Mutation = value.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => (kv.Value, kv.Value?.GetType() ?? typeof(object))),
-            Selection = value.Selection.IsSome
+        var updateDto = new UpdateCommandDto(
+            value.OnTableauId,
+            value.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value),
+            value.Selection.IsSome
                         ? new CommandSelectionDto() { SelectionExpression = value.Selection.Value.Expression }
                         : new CommandSelectionDto()
-        };
-
-        writer.WriteRawValue(JsonSerializer.Serialize(updateDto));
+            );
+        var json = JsonSerializer.Serialize(updateDto);
+        writer.WriteRawValue(json);
     }
+
+    private Type TypeNameToType(string typeName) =>
+        typeName switch
+        {
+            string tn when tn.Equals(typeof(int).FullName) => typeof(int),
+            string tn when tn.Equals(typeof(double).FullName) => typeof(double),
+            string tn when tn.Equals(typeof(string).FullName) => typeof(string),
+            string tn when tn.Equals(typeof(DateTime).FullName) => typeof(DateTime),
+            string tn when tn.Equals(typeof(byte[]).FullName) => typeof(byte[]),
+            string tn when tn.Equals(typeof(bool).FullName) => typeof(bool),
+            _ => throw new Exception($"Unknown type name {typeName}")
+        };
 }

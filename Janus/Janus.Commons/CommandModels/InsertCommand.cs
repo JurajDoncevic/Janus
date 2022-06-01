@@ -38,7 +38,7 @@ public class InsertCommand
             (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 
             var referencableAttributes = dataSource[schemaName][tableauName].Attributes.Select(attr => attr.Name).ToHashSet();
-            var referencedAttributes = _instantiation.TableauData.AttributeNames;
+            var referencedAttributes = _instantiation.TabularData.AttributeNames;
 
             if (!referencedAttributes.All(referencableAttributes.Contains))
             {
@@ -55,7 +55,7 @@ public class InsertCommand
             foreach (var referencedAttr in referencedAttributes)
             {
                 var referencedDataType = dataSource[schemaName][tableauName][referencedAttr].DataType;
-                var referencingDataType = _instantiation.TableauData.AttributeDataTypes[referencedAttr];
+                var referencingDataType = _instantiation.TabularData.AttributeDataTypes[referencedAttr];
                 if (referencedDataType != referencingDataType)
                 {
                     throw new IncompatibleInstantiationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
@@ -66,7 +66,7 @@ public class InsertCommand
             {
                 if (!dataSource[schemaName][tableauName][referencedAttr].IsNullable)
                 {
-                    foreach (var row in _instantiation.TableauData.RowData)
+                    foreach (var row in _instantiation.TabularData.RowData)
                     {
                         if (row[referencedAttr] == null)
                             throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);

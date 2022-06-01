@@ -9,23 +9,23 @@ namespace Janus.Commons.CommandModels;
 
 public class Instantiation
 {
-    private readonly TabularData _tableauData;
+    private readonly TabularData _tabularData;
 
-    internal Instantiation(TabularData tableauData!!)
+    internal Instantiation(TabularData tabularData!!)
     {
-        _tableauData = tableauData;
+        _tabularData = tabularData;
     }
 
-    public TabularData TableauData => _tableauData;
+    public TabularData TabularData => _tabularData;
 
     public override bool Equals(object? obj)
     {
         return obj is Instantiation instantiation &&
-               _tableauData.Equals(instantiation._tableauData);
+               _tabularData.Equals(instantiation._tabularData);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_tableauData);
+        return HashCode.Combine(_tabularData);
     }
 }

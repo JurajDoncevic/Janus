@@ -352,7 +352,23 @@ namespace Janus.Commons.Tests
         [Fact(DisplayName = "Round-trip serialize an insert command")]
         public void SerializeAndDeserializeInsertCommand()
         {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+            var dataToInsert =
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
+                                  .Build();
 
+            var insertCommand =
+                InsertCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                    .WithInstantiation(conf => conf.WithValues(dataToInsert))
+                                    .Build();
+
+            var json = System.Text.Json.JsonSerializer.Serialize(insertCommand);
+            var deserializedInsert = System.Text.Json.JsonSerializer.Deserialize<InsertCommand>(json);
+
+            Assert.Equal(insertCommand, deserializedInsert);
         }
     }
 }
