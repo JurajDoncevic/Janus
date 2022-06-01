@@ -72,7 +72,7 @@ public class TabularData
     {
         return obj is TabularData data &&
             _attributeDataTypes.SequenceEqual(data._attributeDataTypes) &&
-            EqualityComparer<List<RowData>>.Default.Equals(_rowData, data._rowData);
+            _rowData.SequenceEqual(data._rowData);
                
     }
 
