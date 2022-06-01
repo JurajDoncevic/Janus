@@ -67,4 +67,17 @@ public class TabularData
 
     public override string ToString()
         => string.Join("\n", _rowData);
+
+    public override bool Equals(object? obj)
+    {
+        return obj is TabularData data &&
+            _attributeDataTypes.SequenceEqual(data._attributeDataTypes) &&
+            EqualityComparer<List<RowData>>.Default.Equals(_rowData, data._rowData);
+               
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_rowData, _attributeDataTypes);
+    }
 }

@@ -33,4 +33,15 @@ public class RowData
 
     public override string ToString()
         => "(" + string.Join(";", _attributeValues.Values) + ")";
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RowData data &&
+               _attributeValues.SequenceEqual(data._attributeValues);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_attributeValues);
+    }
 }
