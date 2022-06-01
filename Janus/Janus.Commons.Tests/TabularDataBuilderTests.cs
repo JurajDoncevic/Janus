@@ -141,7 +141,7 @@ public class TabularDataBuilderTests
         });
     }
 
-    [Fact(DisplayName = "Round-trip serialization of tabular data")]
+    [Fact(DisplayName = "Round-trip serialize tabular data")]
     public void TestJsonSerialization()
     {
         var tabularData =
@@ -185,7 +185,7 @@ public class TabularDataBuilderTests
         Assert.Equal(tabularData, deserializedTabular);
     }
 
-    [Fact(DisplayName = "Round-trip serialization of tabular data with a null value")]
+    [Fact(DisplayName = "Round-trip serialize tabular data with a null value")]
     public void TestJsonSerializationWithNull()
     {
         var tabularData =
