@@ -141,7 +141,7 @@ public class TabularDataBuilderTests
         });
     }
 
-    [Fact]
+    [Fact(DisplayName = "Round-trip serialization of tabular data")]
     public void TestJsonSerialization()
     {
         var tabularData =
@@ -178,12 +178,14 @@ public class TabularDataBuilderTests
                         { "attrSTRING", "test_string3" }
             }))
             .Build();
-        var jsonString = System.Text.Json.JsonSerializer.Serialize(tabularData);
 
-        var desTabular = System.Text.Json.JsonSerializer.Deserialize<TabularData>(jsonString);
+        var jsonString = System.Text.Json.JsonSerializer.Serialize(tabularData);
+        var deserializedTabular = System.Text.Json.JsonSerializer.Deserialize<TabularData>(jsonString);
+
+        Assert.Equal(tabularData, deserializedTabular);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Round-trip serialization of tabular data with a null value")]
     public void TestJsonSerializationWithNull()
     {
         var tabularData =
@@ -220,8 +222,10 @@ public class TabularDataBuilderTests
                         { "attrSTRING", "test_string3" }
             }))
             .Build();
+        
         var jsonString = System.Text.Json.JsonSerializer.Serialize(tabularData);
+        var deserializedTabular = System.Text.Json.JsonSerializer.Deserialize<TabularData>(jsonString);
 
-        var desTabular = System.Text.Json.JsonSerializer.Deserialize<TabularData>(jsonString);
+        Assert.Equal(tabularData, deserializedTabular);
     }
 }
