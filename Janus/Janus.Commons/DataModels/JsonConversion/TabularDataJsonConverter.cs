@@ -46,17 +46,3 @@ public class TabularDataJsonConverter : JsonConverter<TabularData>
     }
 
 }
-
-internal static class JsonElementExtensions
-{
-    public static object? ToObject(this JsonElement element, Type expectedType)
-    {
-            return JsonSerializer.Deserialize(element.GetRawText(), expectedType);
-    }
-
-    public static T? ToObject<T>(this JsonDocument document)
-    {
-        var json = document.RootElement.GetRawText();
-        return JsonSerializer.Deserialize<T>(json);
-    }
-}

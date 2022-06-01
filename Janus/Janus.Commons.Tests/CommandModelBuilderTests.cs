@@ -309,5 +309,50 @@ namespace Janus.Commons.Tests
             var result = updateCommand.IsValidOnDataSource(dataSource);
             Assert.False(result);
         }
+
+        [Fact(DisplayName = "Round-trip serialize an update command")]
+        public void SerializeAndDeserializeUpdateCommand()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+            var valueUpdates = new Dictionary<string, object>() { { "attr2", "TEST_STRING_MOD" }, { "attr3", 1.0 } };
+
+            var updateCommand =
+                UpdateCommandOpenBuilder.InitOpenUpdate(tableauId)
+                                    .WithMutation(conf => conf.WithValues(valueUpdates))
+                                    .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                    .Build();
+
+            var json = System.Text.Json.JsonSerializer.Serialize(updateCommand);
+            var deserializedUpdate = System.Text.Json.JsonSerializer.Deserialize<UpdateCommand>(json);
+
+            Assert.Equal(updateCommand, deserializedUpdate);
+        }
+
+        [Fact(DisplayName = "Round-trip serialize an update command with a null value")]
+        public void SerializeAndDeserializeUpdateCommandWithNullValue()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+            var valueUpdates = new Dictionary<string, object>() { { "attr2", null }, { "attr3", 1.0 } };
+
+            var updateCommand =
+                UpdateCommandOpenBuilder.InitOpenUpdate(tableauId)
+                                    .WithMutation(conf => conf.WithValues(valueUpdates))
+                                    .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                    .Build();
+
+            var json = System.Text.Json.JsonSerializer.Serialize(updateCommand);
+            var deserializedUpdate = System.Text.Json.JsonSerializer.Deserialize<UpdateCommand>(json);
+
+            Assert.Equal(updateCommand, deserializedUpdate);
+
+        }
+
+        [Fact(DisplayName = "Round-trip serialize an insert command")]
+        public void SerializeAndDeserializeInsertCommand()
+        {
+
+        }
     }
 }

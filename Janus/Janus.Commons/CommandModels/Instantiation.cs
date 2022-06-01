@@ -17,4 +17,15 @@ public class Instantiation
     }
 
     public TabularData TableauData => _tableauData;
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Instantiation instantiation &&
+               _tableauData.Equals(instantiation._tableauData);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_tableauData);
+    }
 }

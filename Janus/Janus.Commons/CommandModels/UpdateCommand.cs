@@ -1,4 +1,5 @@
 ﻿using Janus.Commons.CommandModels.Exceptions;
+using Janus.Commons.CommandModels.JsonConversion;
 using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
@@ -6,10 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
+[JsonConverter(typeof(UpdateCommandJsonConverter))]
 public class UpdateCommand
 {
     private readonly string _onTableauId;
@@ -74,4 +77,18 @@ public class UpdateCommand
             }
             return true;
         });
+
+    public override bool Equals(object? obj)
+    {
+        return obj is UpdateCommand command &&
+               _onTableauId == command._onTableauId &&
+               EqualityComparer<Mutation>.Default.Equals(_mutation, command._mutation) &&
+               EqualityComparer<Option<CommandSelection>>.Default.Equals(_selection, command._selection);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_onTableauId, _mutation, _selection);
+    }
+
 }

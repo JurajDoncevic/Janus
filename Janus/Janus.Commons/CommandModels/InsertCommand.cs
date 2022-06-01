@@ -1,14 +1,17 @@
 ﻿using Janus.Commons.CommandModels.Exceptions;
+using Janus.Commons.CommandModels.JsonConversion;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
+[JsonConverter(typeof(InsertCommandJsonConverter))]
 public class InsertCommand
 {
     private readonly string _onTableauId;
@@ -73,4 +76,16 @@ public class InsertCommand
 
             return true;
         });
+
+    public override bool Equals(object? obj)
+    {
+        return obj is InsertCommand command &&
+               _onTableauId.Equals(command._onTableauId) &&
+               _instantiation.Equals(command._instantiation);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_onTableauId, _instantiation);
+    }
 }

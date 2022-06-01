@@ -3,6 +3,7 @@ using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.SelectionExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,13 +59,13 @@ public class UpdateCommandOpenBuilder
 
 public class MutationOpenBuilder
 {
-    private Dictionary<string, object>? _valueUpdates;
+    private Dictionary<string, object?>? _valueUpdates;
 
     internal MutationOpenBuilder()
     {
     }
 
-    public MutationOpenBuilder WithValues(Dictionary<string, object> valueUpdates)
+    public MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates)
     {
         _valueUpdates = valueUpdates;
         return this;
@@ -87,7 +88,7 @@ public class CommandSelectionOpenBuilder
     /// </summary>
     internal CommandSelectionOpenBuilder()
     {
-        _expression = null;
+        _expression = TRUE();
     }
 
     /// <summary>

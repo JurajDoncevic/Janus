@@ -79,7 +79,7 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
 
 public class MutationBuilder
 {
-    private Dictionary<string, object>? _valueUpdates;
+    private Dictionary<string, object?>? _valueUpdates;
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
 
@@ -89,7 +89,7 @@ public class MutationBuilder
         _dataSource = dataSource;
     }
 
-    public MutationBuilder WithValues(Dictionary<string, object> valueUpdates)
+    public MutationBuilder WithValues(Dictionary<string, object?> valueUpdates)
     {
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 
@@ -107,7 +107,9 @@ public class MutationBuilder
             if (valueUpdates[referencedAttr] != null) // can't get null type
             {
                 var referencedDataType = _dataSource[schemaName][tableauName][referencedAttr].DataType;
-                var referencingDataType = TypeMappings.MapToDataType(valueUpdates[referencedAttr].GetType());
+                var referencingDataType = valueUpdates[referencedAttr] != null
+                                          ? TypeMappings.MapToDataType(valueUpdates[referencedAttr].GetType())
+                                          : _dataSource[schemaName][tableauName][referencedAttr].DataType;
                 if (referencedDataType != referencingDataType)
                 {
                     throw new IncompatibleMutationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
