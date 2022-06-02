@@ -5,10 +5,11 @@ using Xunit;
 using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.QueryModels;
+using Janus.Commons.DataModels;
 
 namespace Janus.Communication.Tests;
 
-public class MessageTests
+public class MessageSerializationTests
 {
     [Fact(DisplayName = "Test HELLO_REQ serialization and deserialization")]
     public void HelloReqSerializationTest()
@@ -147,6 +148,27 @@ public class MessageTests
         Assert.Equal(query, message.Query);
     }
 
+    [Fact(DisplayName = "Test QUERY_RES serialization and deserialization")]
+    public void QueryResSerializationTest()
+    {
+        var exchangeId = "test_exchange";
+        var nodeId = "test_node";
+        var tabularData = GetTestTabularData();
+
+        var queryResMessage = new QueryResMessage(exchangeId, nodeId, tabularData, null);
+
+        var messageBytes = queryResMessage.ToBson();
+        var messageString = Encoding.UTF8.GetString(messageBytes);
+        var result = messageBytes.ToQueryResMessage();
+
+        var message = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Preambles.QUERY_RESPONSE, message.Preamble);
+        Assert.Equal(exchangeId, message.ExchangeId);
+        Assert.Equal(tabularData, message.TabularData);
+    }
+
     private DataSource GetTestDataSource()
         => SchemaModelBuilder.InitDataSource("datasource1")
                              .AddSchema("schema1", schemaBuilder =>
@@ -174,4 +196,10 @@ public class MessageTests
                              .AddSchema("schema2", schemaBuilder => schemaBuilder)
                              .AddSchema("schema3", schemaBuilder => schemaBuilder)
                              .Build();
+    private TabularData GetTestTabularData()
+        => TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { {"attr1", 1 }, {"attr2", "TEST1" }, {"attr3", 1.0 } }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { {"attr1", 2 }, {"attr2", null }, {"attr3", 2.1 } }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { {"attr1", 3 }, {"attr2", "TEST3" }, {"attr3", 3.1 } }))
+            .Build();
 }
