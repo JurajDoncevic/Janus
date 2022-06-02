@@ -13,20 +13,16 @@ using System.Threading.Tasks;
 namespace Janus.Commons.CommandModels;
 
 [JsonConverter(typeof(UpdateCommandJsonConverter))]
-public class UpdateCommand
+public class UpdateCommand : BaseCommand
 {
-    private readonly string _onTableauId;
     private readonly Mutation _mutation;
     private readonly Option<CommandSelection> _selection;
 
-    internal UpdateCommand(string onTableauId!!, Mutation mutation!!, Option<CommandSelection> selection)
+    internal UpdateCommand(string onTableauId!!, Mutation mutation!!, Option<CommandSelection> selection) : base(onTableauId)
     {
-        _onTableauId = onTableauId;
         _mutation = mutation;
         _selection = selection;
     }
-
-    public string OnTableauId => _onTableauId;
 
     public Mutation Mutation => _mutation;
 

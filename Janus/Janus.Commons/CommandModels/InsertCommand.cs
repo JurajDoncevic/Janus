@@ -12,18 +12,15 @@ using System.Threading.Tasks;
 namespace Janus.Commons.CommandModels;
 
 [JsonConverter(typeof(InsertCommandJsonConverter))]
-public class InsertCommand
+public class InsertCommand : BaseCommand
 {
-    private readonly string _onTableauId;
+
     private readonly Instantiation _instantiation;
 
-    internal InsertCommand(string onTableauId!!, Instantiation instantiation!!)
+    internal InsertCommand(string onTableauId!!, Instantiation instantiation!!) : base(onTableauId)
     {
-        _onTableauId = onTableauId;
         _instantiation = instantiation;
     }
-
-    public string OnTableauId => _onTableauId;
 
     public Instantiation Instantiation => _instantiation;
 

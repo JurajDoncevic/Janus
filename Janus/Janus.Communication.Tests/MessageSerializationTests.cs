@@ -155,7 +155,7 @@ public class MessageSerializationTests
         var nodeId = "test_node";
         var tabularData = GetTestTabularData();
 
-        var queryResMessage = new QueryResMessage(exchangeId, nodeId, tabularData, null);
+        var queryResMessage = new QueryResMessage(exchangeId, nodeId, tabularData);
 
         var messageBytes = queryResMessage.ToBson();
         var messageString = Encoding.UTF8.GetString(messageBytes);
