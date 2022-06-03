@@ -1,6 +1,7 @@
 ﻿using Janus.Commons.CommandModels;
 using Janus.Commons.CommandModels.Exceptions;
 using Janus.Commons.DataModels;
+using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using System;
 using System.Collections.Generic;
@@ -272,7 +273,7 @@ namespace Janus.Commons.Tests
             Assert.Equal(tableauId, updateCommand.OnTableauId);
             Assert.NotNull(updateCommand.Mutation);
             Assert.True(updateCommand.Selection);
-            Assert.True(updateCommand.IsValidOnDataSource(dataSource));
+            Assert.True(updateCommand.IsValidForDataSource(dataSource));
 
         }
 
@@ -288,7 +289,7 @@ namespace Janus.Commons.Tests
                                         .WithMutation(conf => conf.WithValues(valueUpdates))
                                         .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
                                         .Build();
-            var result = updateCommand.IsValidOnDataSource(dataSource);
+            var result = updateCommand.IsValidForDataSource(dataSource);
             Assert.False(result);
         }
 
@@ -306,7 +307,7 @@ namespace Janus.Commons.Tests
                         .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
                         .Build();
 
-            var result = updateCommand.IsValidOnDataSource(dataSource);
+            var result = updateCommand.IsValidForDataSource(dataSource);
             Assert.False(result);
         }
 
@@ -369,6 +370,88 @@ namespace Janus.Commons.Tests
             var deserializedInsert = System.Text.Json.JsonSerializer.Deserialize<InsertCommand>(json);
 
             Assert.Equal(insertCommand, deserializedInsert);
+        }
+
+        [Fact(DisplayName ="Construct a valid delete command")]
+        public void CreateValidDeleteCommand()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var deleteCommand =
+                DeleteCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                    .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                    .Build();
+
+            Assert.NotNull(deleteCommand);
+            Assert.Equal(tableauId, deleteCommand.OnTableauId);
+            Assert.True(deleteCommand.Selection);
+        }
+
+        [Fact(DisplayName = "Fail to create a delete command with unknown attribute")]
+        public void CreateInvalidDeleteCommand()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            Assert.Throws<AttributeNotInReferencedTableausException>(() =>
+            {
+                var deleteCommand =
+                    DeleteCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                        .WithSelection(conf => conf.WithExpression(EQ("attrX", 1)))
+                                        .Build();
+            });
+        }
+
+        [Fact(DisplayName = "Fail to create a delete command with unknown attribute with open builder")]
+        public void CreateInvalidDeleteCommandWithOpenBuilder()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var deleteCommand =
+                DeleteCommandOpenBuilder
+                    .InitOpenDelete(tableauId)
+                    .WithSelection(conf => conf.WithExpression(EQ("attrX", 1)))
+                    .Build();
+
+            Assert.False(deleteCommand.IsValidForDataSource(dataSource));
+        }
+
+        [Fact(DisplayName = "Construct a valid delete command with open builder")]
+        public void CreateValidDeleteCommandWithOpenBuilder()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var deleteCommand =
+                DeleteCommandOpenBuilder
+                    .InitOpenDelete(tableauId)
+                    .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                    .Build();
+
+            Assert.NotNull(deleteCommand);
+            Assert.Equal(tableauId, deleteCommand.OnTableauId);
+            Assert.True(deleteCommand.Selection);
+            Assert.True(deleteCommand.IsValidForDataSource(dataSource));
+        }
+
+        [Fact(DisplayName = "Round-trip serialize a delete command")]
+        public void SerializeAndDeserializeDeleteCommand()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+
+            var deleteCommand =
+                DeleteCommandOpenBuilder
+                    .InitOpenDelete(tableauId)
+                    .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                    .Build();
+
+            var json = System.Text.Json.JsonSerializer.Serialize(deleteCommand);
+            var deserializedDelete = System.Text.Json.JsonSerializer.Deserialize<DeleteCommand>(json);
+
+            Assert.Equal(deleteCommand, deserializedDelete);
         }
     }
 }

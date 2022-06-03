@@ -13,9 +13,9 @@ namespace Janus.Commons.CommandModels.JsonConversion.DTOs
 
         public Dictionary<string, string> MutationTypes { get; set; } = new();
 
-        public CommandSelectionDto Selection { get; set; } = new CommandSelectionDto();
+        public CommandSelectionDto? Selection { get; set; } = null;
 
-        public UpdateCommandDto(string onTableauId, Dictionary<string, object?> mutation, CommandSelectionDto selection)
+        public UpdateCommandDto(string onTableauId, Dictionary<string, object?> mutation, CommandSelectionDto? selection)
         {
             OnTableauId = onTableauId;
             Mutation = mutation;

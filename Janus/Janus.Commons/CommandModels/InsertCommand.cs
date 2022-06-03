@@ -24,7 +24,7 @@ public class InsertCommand : BaseCommand
 
     public Instantiation Instantiation => _instantiation;
 
-    public Result IsValidForDataSource(DataSource dataSource)
+    public override Result IsValidForDataSource(DataSource dataSource)
         => ResultExtensions.AsResult(() =>
         {
             if (!dataSource.ContainsTableau(_onTableauId))

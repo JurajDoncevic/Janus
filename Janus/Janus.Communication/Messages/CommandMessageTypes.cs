@@ -1,20 +1,23 @@
 ﻿using Janus.Commons.CommandModels;
+using System.Text.Json.Serialization;
 
-namespace Janus.Communication.Messages
+namespace Janus.Communication.Messages;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum CommandMessageTypes
 {
-    public static class CommandMessageTypes
-    {
-        public static string INSERT => "INSERT";
-        public static string UPDATE => "UPDATE";
-        public static string DELETE => "DELETE";
-
-        public static string DetermineMessageType(BaseCommand command)
-            => command.GetType() switch
-            {
-                typeof(InsertCommand) => INSERT,
-                typeof(UpdateCommand) => UPDATE,
-                _ => throw new NotImplementedException()
-            };
-
-    }
+    INSERT,
+    UPDATE,
+    DELETE
+}
+public static class CommandMessageTypesExtensions
+{
+    public static CommandMessageTypes DetermineMessageType(this BaseCommand command)
+        => command.GetType() switch
+        {
+            Type t when t.Equals(typeof(InsertCommand)) => CommandMessageTypes.INSERT,
+            Type t when t.Equals(typeof(UpdateCommand)) => CommandMessageTypes.UPDATE,
+            Type t when t.Equals(typeof(DeleteCommand)) => CommandMessageTypes.DELETE,
+            _ => throw new NotImplementedException()
+        };
 }

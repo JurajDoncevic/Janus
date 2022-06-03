@@ -6,6 +6,7 @@ using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.DataModels;
+using Janus.Commons.CommandModels;
 
 namespace Janus.Communication.Tests;
 
@@ -167,6 +168,36 @@ public class MessageSerializationTests
         Assert.Equal(Preambles.QUERY_RESPONSE, message.Preamble);
         Assert.Equal(exchangeId, message.ExchangeId);
         Assert.Equal(tabularData, message.TabularData);
+    }
+
+    [Fact(DisplayName = "Test COMMAND_REQ serialization and deserialization")]
+    public void CommandReqInsertSerializationTest()
+    {
+        var exchangeId = "test_exchange";
+        var nodeId = "test_node";
+        var dataSource = GetTestDataSource();
+
+        var dataToInsert = TabularDataBuilder.InitTabularData(new() { { "attr1_FK", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
+                                .AddRow(conf => conf.WithRowData(new() { { "attr1_FK", 1 }, { "attr2", null }, { "attr3", 2.0 } }))
+                                .Build();
+
+        var insertCommand = InsertCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
+                                .WithInstantiation(conf => conf.WithValues(dataToInsert))
+                                .Build();
+
+
+        var commandReqMessage = new CommandReqMessage(exchangeId, nodeId, insertCommand);
+
+        var messageBytes = commandReqMessage.ToBson();
+        var messageString = Encoding.UTF8.GetString(messageBytes);
+        var result = messageBytes.ToCommandReqMessage();
+
+        var message = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Preambles.QUERY_RESPONSE, message.Preamble);
+        Assert.Equal(exchangeId, message.ExchangeId);
+        Assert.Equal(insertCommand, (InsertCommand)message.Command);
     }
 
     private DataSource GetTestDataSource()

@@ -16,8 +16,8 @@ namespace Janus.Commons.CommandModels;
 public class UpdateCommandOpenBuilder 
 {
     private readonly string _onTableauId;
-    private Mutation? _mutation;
-    private CommandSelection? _selection;
+    private Option<Mutation> _mutation;
+    private Option<CommandSelection> _selection;
 
     internal UpdateCommandOpenBuilder(string onTableauId)
     {
@@ -33,7 +33,7 @@ public class UpdateCommandOpenBuilder
     {
         var mutationBuilder = new MutationOpenBuilder();
 
-        _mutation = configuration(mutationBuilder).Build();
+        _mutation = Option<Mutation>.Some(configuration(mutationBuilder).Build());
 
         return this;
     }
@@ -41,54 +41,54 @@ public class UpdateCommandOpenBuilder
     public UpdateCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
     {
         var selectionBuilder = new CommandSelectionOpenBuilder();
-        _selection = configuration(selectionBuilder).Build();
+        _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());
 
         return this;
     }
 
     public UpdateCommand Build()
     {
-        if (_mutation == null)
+        if (!_mutation)
             throw new MutationNotSetException();
         return new UpdateCommand(_onTableauId,
-                                 _mutation,
-                                 _selection == null ? Option<CommandSelection>.None : Option<CommandSelection>.Some(_selection));
+                                 _mutation.Value,
+                                 _selection);
 
     }
 }
 
 public class MutationOpenBuilder
 {
-    private Dictionary<string, object?>? _valueUpdates;
+    private Option<Dictionary<string, object?>> _valueUpdates;
 
     internal MutationOpenBuilder()
     {
     }
 
-    public MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates)
+    public MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
     {
-        _valueUpdates = valueUpdates;
+        _valueUpdates = Option<Dictionary<string, object?>>.Some(valueUpdates);
         return this;
     }
 
     internal Mutation Build()
-        => _valueUpdates != null
-           ? new Mutation(_valueUpdates)
+        => _valueUpdates
+           ? new Mutation(_valueUpdates.Value)
            : new Mutation(new());
 }
 
 
 public class CommandSelectionOpenBuilder
 {
-    private SelectionExpression _expression;
-    internal bool IsConfigured => _expression != null;
+    private Option<SelectionExpression> _expression;
+    internal bool IsConfigured => _expression.IsSome;
 
     /// <summary>
     /// Constructor
     /// </summary>
     internal CommandSelectionOpenBuilder()
     {
-        _expression = TRUE();
+        _expression = Option<SelectionExpression>.Some(TRUE());
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public class CommandSelectionOpenBuilder
     /// <returns>SelectionBuilder</returns>
     public CommandSelectionOpenBuilder WithExpression(SelectionExpression expression!!)
     {
-        _expression = expression;
+        _expression = Option<SelectionExpression>.Some(expression);
         return this;
     }
 
@@ -107,7 +107,7 @@ public class CommandSelectionOpenBuilder
     /// </summary>
     /// <returns></returns>
     internal CommandSelection Build()
-    {
-        return new CommandSelection(_expression ?? new TrueLiteral());
-    }
+        => _expression
+            ? new CommandSelection(_expression.Value)
+            : new CommandSelection(TRUE());
 }

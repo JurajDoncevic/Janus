@@ -11,7 +11,11 @@ namespace Janus.Communication.Messages;
 public class CommandReqMessage : BaseMessage
 {
     private readonly BaseCommand _command;
-    private readonly string _commandMessageType;
+    private readonly CommandMessageTypes _commandMessageType;
+
+    public BaseCommand Command => _command;
+
+    public CommandMessageTypes CommandMessageType => _commandMessageType;
 
     /// <summary>
     /// Constructor
@@ -22,14 +26,16 @@ public class CommandReqMessage : BaseMessage
     public CommandReqMessage(string exchangeId, string nodeId, BaseCommand command!!) : base(exchangeId, nodeId, Preambles.COMMAND_REQUEST)
     {
         _command = command;
-        _commandMessageType
+        _commandMessageType = command.DetermineMessageType();
     }
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="nodeId">Sender's node ID</param>
-    public CommandReqMessage(string nodeId) : base(nodeId, Preambles.COMMAND_REQUEST)
+    public CommandReqMessage(string nodeId, BaseCommand command) : base(nodeId, Preambles.COMMAND_REQUEST)
     {
+        _command = command;
+        _commandMessageType = command.DetermineMessageType();
     }
 }
 

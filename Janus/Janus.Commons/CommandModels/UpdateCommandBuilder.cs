@@ -4,6 +4,7 @@ using Janus.Commons.QueryModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.SelectionExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +33,8 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
 {
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
-    private Mutation? _mutation;
-    private CommandSelection? _selection;
+    private Option<Mutation> _mutation;
+    private Option<CommandSelection> _selection;
 
     internal UpdateCommandBuilder(string onTableauId, DataSource dataSource)
     {
@@ -53,7 +54,7 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
     {
         var mutationBuilder = new MutationBuilder(_onTableauId, _dataSource);
 
-        _mutation = configuration(mutationBuilder).Build();
+        _mutation = Option<Mutation>.Some(configuration(mutationBuilder).Build());
 
         return this;
     }
@@ -61,18 +62,18 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
     public IPostSelectionUpdateCommandBuilder WithSelection(Func<CommandSelectionBuilder, CommandSelectionBuilder> configuration)
     {
         var selectionBuilder = new CommandSelectionBuilder(_dataSource, new() { _onTableauId });
-        _selection = configuration(selectionBuilder).Build();
+        _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());
 
         return this;
     }
 
     public UpdateCommand Build()
     {
-        if (_mutation == null)
+        if (!_mutation)
             throw new MutationNotSetException();
         return new UpdateCommand(_onTableauId,
-                                 _mutation,
-                                 _selection == null ? Option<CommandSelection>.None : Option<CommandSelection>.Some(_selection));
+                                 _mutation.Value,
+                                 _selection);
 
     }
 }
@@ -89,7 +90,7 @@ public class MutationBuilder
         _dataSource = dataSource;
     }
 
-    public MutationBuilder WithValues(Dictionary<string, object?> valueUpdates)
+    public MutationBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
     {
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 
@@ -136,10 +137,10 @@ public class MutationBuilder
 
 public class CommandSelectionBuilder
 {
-    private SelectionExpression? _expression;
+    private Option<SelectionExpression> _expression;
     private readonly DataSource _dataSource;
     private readonly HashSet<string> _referencedTableauIds;
-    internal bool IsConfigured => _expression != null;
+    internal bool IsConfigured => _expression.IsSome;
 
     /// <summary>
     /// Constructor
@@ -148,7 +149,7 @@ public class CommandSelectionBuilder
     /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
     internal CommandSelectionBuilder(DataSource dataSource!!, HashSet<string> referencedTableauIds!!)
     {
-        _expression = null;
+        _expression = Option<SelectionExpression>.None;
         _dataSource = dataSource;
         _referencedTableauIds = referencedTableauIds;
     }
@@ -158,7 +159,7 @@ public class CommandSelectionBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public CommandSelectionBuilder WithExpression(SelectionExpression expression)
+    public CommandSelectionBuilder WithExpression(SelectionExpression expression!!)
     {
         var referencableAttrNames = _referencedTableauIds.Select(tId => Utils.GetNamesFromTableauId(tId))
                                                      .SelectMany(names => _dataSource[names.schemaName][names.tableauName].Attributes.Map(a => (a.Name, a.DataType)))
@@ -168,7 +169,7 @@ public class CommandSelectionBuilder
         CommandSelectionUtils.CheckAttributeTypesOnComparison(expression, referencableAttrNames ?? new());
 
 
-        _expression = expression;
+        _expression = Option<SelectionExpression>.Some(expression);
         return this;
     }
 
@@ -177,7 +178,8 @@ public class CommandSelectionBuilder
     /// </summary>
     /// <returns></returns>
     internal CommandSelection Build()
-    {
-        return new CommandSelection(_expression ?? new TrueLiteral());
-    }
+        => _expression
+            ? new CommandSelection(_expression.Value)
+            : new CommandSelection(FALSE());
+    
 }

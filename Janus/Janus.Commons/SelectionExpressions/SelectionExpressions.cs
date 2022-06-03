@@ -37,4 +37,7 @@ public class SelectionExpressions
 
     public static TrueLiteral TRUE()
         => new TrueLiteral();
+
+    public static FalseLiteral FALSE()
+        => new FalseLiteral();
 }

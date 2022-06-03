@@ -15,16 +15,16 @@ namespace Janus.Commons.CommandModels;
 public class InsertCommandOpenBuilder
 {
     private readonly string _onTableauId;
-    private Instantiation? _instantiation;
+    private Option<Instantiation> _instantiation;
     internal InsertCommandOpenBuilder(string onTableauId)
     {
         _onTableauId = onTableauId;
-        _instantiation = null;
+        _instantiation = Option<Instantiation>.None;
     }
 
     public InsertCommand Build()
-        => _instantiation != null
-           ? new InsertCommand(_onTableauId, _instantiation)
+        => _instantiation
+           ? new InsertCommand(_onTableauId, _instantiation.Value)
            : throw new InstantiationNotSetException();
 
     public static InsertCommandOpenBuilder InitOpenInsert(string onTableauId)
@@ -35,7 +35,7 @@ public class InsertCommandOpenBuilder
     public InsertCommandOpenBuilder WithInstantiation(Func<InstantiationOpenBuilder, InstantiationOpenBuilder> configuration)
     {
         var instantiationBuilder = new InstantiationOpenBuilder(_onTableauId);
-        _instantiation = configuration(instantiationBuilder).Build();
+        _instantiation = Option<Instantiation>.Some(configuration(instantiationBuilder).Build());
 
         return this;
     }

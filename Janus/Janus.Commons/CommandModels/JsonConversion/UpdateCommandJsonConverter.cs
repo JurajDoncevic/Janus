@@ -43,7 +43,7 @@ public class UpdateCommandJsonConverter : JsonConverter<UpdateCommand>
             value.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value),
             value.Selection.IsSome
                         ? new CommandSelectionDto() { SelectionExpression = value.Selection.Value.Expression }
-                        : new CommandSelectionDto()
+                        : null
             );
         var json = JsonSerializer.Serialize(updateDto);
         writer.WriteRawValue(json);

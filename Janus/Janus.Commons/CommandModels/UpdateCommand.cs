@@ -3,6 +3,7 @@ using Janus.Commons.CommandModels.JsonConversion;
 using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.SelectionExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ public class UpdateCommand : BaseCommand
 
     public Option<CommandSelection> Selection => _selection;
 
-    public Result IsValidOnDataSource(DataSource dataSource)
+    public override Result IsValidForDataSource(DataSource dataSource)
         => ResultExtensions.AsResult(() =>
         {
             (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);

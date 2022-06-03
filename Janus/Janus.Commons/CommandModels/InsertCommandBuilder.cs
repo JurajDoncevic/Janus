@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
-public interface IInsertCommandBuilder
+public interface IPostInitInsertCommandBuilder
 {
     IPostInstatiationBuilder WithInstantiation(Func<InstantiationBuilder, InstantiationBuilder> configuration);
 }
@@ -21,24 +21,24 @@ public interface IPostInstatiationBuilder
     InsertCommand Build();
 }
 
-public class InsertCommandBuilder : IInsertCommandBuilder, IPostInstatiationBuilder
+public class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostInstatiationBuilder
 {
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
-    private Instantiation? _instantiation;
+    private Option<Instantiation> _instantiation;
     internal InsertCommandBuilder(string onTableauId, DataSource dataSource)
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
-        _instantiation = null;
+        _instantiation = Option<Instantiation>.None;
     }
 
     public InsertCommand Build()
-        => _instantiation != null
-           ? new InsertCommand(_onTableauId, _instantiation)
+        => _instantiation.IsSome
+           ? new InsertCommand(_onTableauId, _instantiation.Value)
            : throw new InstantiationNotSetException();
 
-    public static IInsertCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
+    public static IPostInitInsertCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
     {
         if (!dataSource.ContainsTableau(onTableauId))
         {
@@ -50,7 +50,7 @@ public class InsertCommandBuilder : IInsertCommandBuilder, IPostInstatiationBuil
     public IPostInstatiationBuilder WithInstantiation(Func<InstantiationBuilder, InstantiationBuilder> configuration)
     {
         var instantiationBuilder = new InstantiationBuilder(_onTableauId, _dataSource);
-        _instantiation = configuration(instantiationBuilder).Build();
+        _instantiation = Option<Instantiation>.Some(configuration(instantiationBuilder).Build());
 
         return this;
     }
@@ -69,12 +69,12 @@ public class InstantiationBuilder
         _tableauDataToInsert = null;
     }
 
-    public InstantiationBuilder WithValues(TabularData tableauData)
+    public InstantiationBuilder WithValues(TabularData tabularData)
     {
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 
         var referencableAttributes = _dataSource[schemaName][tableauName].Attributes.Select(attr => attr.Name).ToHashSet();
-        var referencedAttributes = tableauData.AttributeNames;
+        var referencedAttributes = tabularData.AttributeNames;
 
         if(!referencedAttributes.All(referencableAttributes.Contains))
         {
@@ -90,7 +90,7 @@ public class InstantiationBuilder
         foreach (var referencedAttr in referencedAttributes)
         {
             var referencedDataType = _dataSource[schemaName][tableauName][referencedAttr].DataType;
-            var referencingDataType = tableauData.AttributeDataTypes[referencedAttr];
+            var referencingDataType = tabularData.AttributeDataTypes[referencedAttr];
             if(referencedDataType != referencingDataType)
             {
                 throw new IncompatibleInstantiationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
@@ -100,14 +100,14 @@ public class InstantiationBuilder
         {
             if (!_dataSource[schemaName][tableauName][referencedAttr].IsNullable)
             {
-                foreach (var row in tableauData.RowData)
+                foreach (var row in tabularData.RowData)
                 {
                     if (row[referencedAttr] == null)
                         throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);
                 }
             }
         }
-        _tableauDataToInsert = tableauData;
+        _tableauDataToInsert = tabularData;
 
         return this;
     }
