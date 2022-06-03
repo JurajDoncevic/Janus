@@ -170,7 +170,7 @@ public class MessageSerializationTests
         Assert.Equal(tabularData, message.TabularData);
     }
 
-    [Fact(DisplayName = "Test COMMAND_REQ serialization and deserialization")]
+    [Fact(DisplayName = "Test COMMAND_REQ with insert serialization and deserialization")]
     public void CommandReqInsertSerializationTest()
     {
         var exchangeId = "test_exchange";
@@ -195,9 +195,63 @@ public class MessageSerializationTests
         var message = result.Data;
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(Preambles.QUERY_RESPONSE, message.Preamble);
+        Assert.Equal(Preambles.COMMAND_REQUEST, message.Preamble);
         Assert.Equal(exchangeId, message.ExchangeId);
         Assert.Equal(insertCommand, (InsertCommand)message.Command);
+    }
+
+    [Fact(DisplayName = "Test COMMAND_REQ with update serialization and deserialization")]
+    public void CommandReqUpdateSerializationTest()
+    {
+        var exchangeId = "test_exchange";
+        var nodeId = "test_node";
+        var dataSource = GetTestDataSource();
+
+        var updateCommand = UpdateCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
+                                .WithMutation(conf => conf.WithValues(new() { { "attr1_FK", 2 }, { "attr2", null }, { "attr3", 2.0 } }))
+                                .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
+                                .Build();
+
+
+        var commandReqMessage = new CommandReqMessage(exchangeId, nodeId, updateCommand);
+
+        var messageBytes = commandReqMessage.ToBson();
+        var messageString = Encoding.UTF8.GetString(messageBytes);
+        var result = messageBytes.ToCommandReqMessage();
+
+        var message = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Preambles.COMMAND_REQUEST, message.Preamble);
+        Assert.Equal(exchangeId, message.ExchangeId);
+        Assert.Equal(updateCommand, (UpdateCommand)message.Command);
+    }
+
+    [Fact(DisplayName = "Test COMMAND_REQ with delete serialization and deserialization")]
+    public void CommandReqDeleteSerializationTest()
+    {
+        var exchangeId = "test_exchange";
+        var nodeId = "test_node";
+        var dataSource = GetTestDataSource();
+
+
+        var deleteCommand = DeleteCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
+                                .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
+                                .Build();
+
+
+        var commandReqMessage = new CommandReqMessage(exchangeId, nodeId, deleteCommand);
+
+        var messageBytes = commandReqMessage.ToBson();
+        var messageString = Encoding.UTF8.GetString(messageBytes);
+        var result = messageBytes.ToCommandReqMessage();
+
+        var message = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Preambles.COMMAND_REQUEST, message.Preamble);
+        Assert.Equal(exchangeId, message.ExchangeId);
+        Assert.Equal(deleteCommand, (DeleteCommand)message.Command);
     }
 
     private DataSource GetTestDataSource()

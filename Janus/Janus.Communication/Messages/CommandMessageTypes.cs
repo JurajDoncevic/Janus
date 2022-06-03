@@ -20,4 +20,13 @@ public static class CommandMessageTypesExtensions
             Type t when t.Equals(typeof(DeleteCommand)) => CommandMessageTypes.DELETE,
             _ => throw new NotImplementedException()
         };
+
+    public static Type DetermineCommandType(this CommandMessageTypes commandMessageType)
+        => commandMessageType switch
+        {
+            CommandMessageTypes.INSERT => typeof(InsertCommand),
+            CommandMessageTypes.UPDATE => typeof(UpdateCommand),
+            CommandMessageTypes.DELETE => typeof(DeleteCommand),
+            _ => throw new NotImplementedException()
+        };
 }
