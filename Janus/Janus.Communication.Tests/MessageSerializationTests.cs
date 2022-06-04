@@ -254,6 +254,26 @@ public class MessageSerializationTests
         Assert.Equal(deleteCommand, (DeleteCommand)message.Command);
     }
 
+    [Fact(DisplayName = "Test COMMAND_RES serialization and deserialization")]
+    public void CommandResSerializationTest()
+    {
+        var exchangeId = "test_exchange";
+        var nodeId = "test_node";
+        var outcomeString = "TEST_STRING";
+
+        var commandResMessage = new CommandResMessage(exchangeId, nodeId, true, outcomeString);
+
+        var messageBytes = commandResMessage.ToBson();
+        var messageString = Encoding.UTF8.GetString(messageBytes);
+        var result = messageBytes.ToCommandResMessage();
+
+        var message = result.Data;
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Preambles.COMMAND_RESPONSE, message.Preamble);
+        Assert.Equal(exchangeId, message.ExchangeId);
+    }
+
     private DataSource GetTestDataSource()
         => SchemaModelBuilder.InitDataSource("datasource1")
                              .AddSchema("schema1", schemaBuilder =>

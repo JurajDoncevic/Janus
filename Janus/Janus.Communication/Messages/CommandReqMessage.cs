@@ -14,33 +14,41 @@ namespace Janus.Communication.Messages;
 [JsonConverter(typeof(CommandReqMessageJsonConverter))]
 public class CommandReqMessage : BaseMessage
 {
+
     private readonly BaseCommand _command;
+    private readonly CommandReqTypes _commandReqType;
 
-    private readonly CommandMessageTypes _commandMessageType;
-
+    /// <summary>
+    /// The requested command
+    /// </summary>
     public BaseCommand Command => _command;
 
-    public CommandMessageTypes CommandMessageType => _commandMessageType;
+    /// <summary>
+    /// Command type
+    /// </summary>
+    public CommandReqTypes CommandReqType => _commandReqType;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
     /// <param name="nodeId">Sender's node ID</param>
+    /// <param name="command">The requested command</param>
     [JsonConstructor]
     public CommandReqMessage(string exchangeId, string nodeId, BaseCommand command!!) : base(exchangeId, nodeId, Preambles.COMMAND_REQUEST)
     {
         _command = command;
-        _commandMessageType = command.DetermineMessageType();
+        _commandReqType = command.DetermineMessageType();
     }
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="nodeId">Sender's node ID</param>
+    /// <param name="command">The requested command</param>
     public CommandReqMessage(string nodeId, BaseCommand command) : base(nodeId, Preambles.COMMAND_REQUEST)
     {
         _command = command;
-        _commandMessageType = command.DetermineMessageType();
+        _commandReqType = command.DetermineMessageType();
     }
 }
 
@@ -75,21 +83,25 @@ internal class CommandReqMessageJsonConverter : JsonConverter<CommandReqMessage>
         if (!preamble.Equals(Preambles.COMMAND_REQUEST))
             throw new Exception($"Error during COMMAND_REQ deserialization. Received wrong preamble: {preamble}");
 
-        var commandMessageType = jsonDocument.RootElement.GetProperty("CommandMessageType").Deserialize<CommandMessageTypes>();
+        // determine the command req type
+        var commandReqType = jsonDocument.RootElement.GetProperty("CommandReqType").Deserialize<CommandReqTypes>();
+        // use the type to unbox the correct command type for deserialization, and box it again to fit the message model
         var command =
-            (BaseCommand)jsonDocument.RootElement.GetProperty("Command").Deserialize(commandMessageType.DetermineCommandType());
+            (BaseCommand)jsonDocument.RootElement.GetProperty("Command").Deserialize(commandReqType.DetermineCommandType());
 
         return new CommandReqMessage(exchangeId, nodeId, command);
     }
 
     public override void Write(Utf8JsonWriter writer, CommandReqMessage value, JsonSerializerOptions options)
     {
+        // since system.text.json doesn't work well with polymorphism, a typization is required over the message's underlying command
+        // a anonymous class object is created as a shorthand DTO, serialized into a JsonNode and the correct command serialization placed inside
         var dto = new
         {
             value.Preamble,
             value.ExchangeId,
             value.NodeId,
-            value.CommandMessageType,
+            value.CommandReqType,
             value.Command
         };
         var jsonNode = JsonSerializer.SerializeToNode(dto);
