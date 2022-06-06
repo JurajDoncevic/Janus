@@ -10,9 +10,9 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
     {
     }
 
-    public event EventHandler<CommandResReceivedEventArgs> CommandResponseReceived;
-    public event EventHandler<QueryResReceivedEventArgs> QueryResponseReceived;
-    public event EventHandler<SchemaResReceivedEventArgs> SchemaResponseReceived;
+    public event EventHandler<CommandResReceivedEventArgs>? CommandResponseReceived;
+    public event EventHandler<QueryResReceivedEventArgs>? QueryResponseReceived;
+    public event EventHandler<SchemaResReceivedEventArgs>? SchemaResponseReceived;
 
     public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
     {

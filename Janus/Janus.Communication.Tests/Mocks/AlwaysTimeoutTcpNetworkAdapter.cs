@@ -14,14 +14,12 @@ namespace Janus.Communication.Tests.Mocks
             _tcpListener.Server.SendTimeout = 1;
         }
 
-        public event EventHandler<HelloReqReceivedEventArgs> HelloRequestMessageReceived;
-        public event EventHandler<HelloResReceivedEventArgs> HelloResponseMessageReceived;
-        public event EventHandler<QueryReqReceivedEventArgs> QueryRequestReceived;
-        public event EventHandler<QueryResReceivedEventArgs> QueryResponseReceived;
-        public event EventHandler<SchemaReqReceivedEventArgs> SchemaRequestReceived;
-        public event EventHandler<SchemaResReceivedEventArgs> SchemaResponseReceived;
-        public event EventHandler<CommandReqReceivedEventArgs> CommandRequestReceived;
-        public event EventHandler<CommandResReceivedEventArgs> CommandResponseReceived;
+        public event EventHandler<QueryReqReceivedEventArgs>? QueryRequestReceived;
+        public event EventHandler<QueryResReceivedEventArgs>? QueryResponseReceived;
+        public event EventHandler<SchemaReqReceivedEventArgs>? SchemaRequestReceived;
+        public event EventHandler<SchemaResReceivedEventArgs>? SchemaResponseReceived;
+        public event EventHandler<CommandReqReceivedEventArgs>? CommandRequestReceived;
+        public event EventHandler<CommandResReceivedEventArgs>? CommandResponseReceived;
 
         public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
         {

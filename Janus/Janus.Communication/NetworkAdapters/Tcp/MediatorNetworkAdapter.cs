@@ -10,12 +10,12 @@ public sealed class MediatorNetworkAdapter : NetworkAdapter, IMediatorNetworkAda
     {
     }
 
-    public event EventHandler<QueryReqReceivedEventArgs> QueryRequestReceived;
-    public event EventHandler<QueryResReceivedEventArgs> QueryResponseReceived;
-    public event EventHandler<SchemaReqReceivedEventArgs> SchemaRequestReceived;
-    public event EventHandler<SchemaResReceivedEventArgs> SchemaResponseReceived;
-    public event EventHandler<CommandReqReceivedEventArgs> CommandRequestReceived;
-    public event EventHandler<CommandResReceivedEventArgs> CommandResponseReceived;
+    public event EventHandler<QueryReqReceivedEventArgs>? QueryRequestReceived;
+    public event EventHandler<QueryResReceivedEventArgs>? QueryResponseReceived;
+    public event EventHandler<SchemaReqReceivedEventArgs>? SchemaRequestReceived;
+    public event EventHandler<SchemaResReceivedEventArgs>? SchemaResponseReceived;
+    public event EventHandler<CommandReqReceivedEventArgs>? CommandRequestReceived;
+    public event EventHandler<CommandResReceivedEventArgs>? CommandResponseReceived;
 
     public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
     {

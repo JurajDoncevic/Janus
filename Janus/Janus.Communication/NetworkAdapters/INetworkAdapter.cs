@@ -9,15 +9,15 @@ public interface INetworkAdapter : IDisposable
     /// <summary>
     /// Invoked when a HELLO_REQ message is received
     /// </summary>
-    event EventHandler<HelloReqReceivedEventArgs> HelloRequestReceived;
+    event EventHandler<HelloReqReceivedEventArgs>? HelloRequestReceived;
     /// <summary>
     /// Invoked when a HELLO_RES message is received
     /// </summary>
-    event EventHandler<HelloResReceivedEventArgs> HelloResponseReceived;
+    event EventHandler<HelloResReceivedEventArgs>? HelloResponseReceived;
     /// <summary>
     /// Invoked when a BYE_REQ message is received
     /// </summary>
-    event EventHandler<ByeReqReceivedEventArgs> ByeRequestReceived;
+    event EventHandler<ByeReqReceivedEventArgs>? ByeRequestReceived;
     /// <summary>
     /// Sends a HELLO_REQ
     /// </summary>

@@ -80,40 +80,40 @@ public interface IReceivesCommandReq
     /// <summary>
     /// Invoked when a COMMAND_REQ message is received
     /// </summary>
-    event EventHandler<CommandReqReceivedEventArgs> CommandRequestReceived;
+    event EventHandler<CommandReqReceivedEventArgs>? CommandRequestReceived;
 }
 public interface IReceivesCommandRes
 {
     /// <summary>
     /// Invoked when a COMMAND_RES message is received
     /// </summary>
-    event EventHandler<CommandResReceivedEventArgs> CommandResponseReceived;
+    event EventHandler<CommandResReceivedEventArgs>? CommandResponseReceived;
 }
 public interface IReceivesQueryReq
 {
     /// <summary>
     /// Invoked when a QUERY_REQ message is received
     /// </summary>
-    event EventHandler<QueryReqReceivedEventArgs> QueryRequestReceived;
+    event EventHandler<QueryReqReceivedEventArgs>? QueryRequestReceived;
 }
 public interface IReceivesQueryRes
 {
     /// <summary>
     /// Invoked when a QUERY_RES message is received
     /// </summary>
-    event EventHandler<QueryResReceivedEventArgs> QueryResponseReceived;
+    event EventHandler<QueryResReceivedEventArgs>? QueryResponseReceived;
 }
 public interface IReceivesSchemaReq
 {
     /// <summary>
     /// Invoked when a SCHEMA_REQ message is received
     /// </summary>
-    event EventHandler<SchemaReqReceivedEventArgs> SchemaRequestReceived;
+    event EventHandler<SchemaReqReceivedEventArgs>? SchemaRequestReceived;
 }
 public interface IReceivesSchemaRes
 {
     /// <summary>
     /// Invoked when a SCHEMA_RES message is received
     /// </summary>
-    event EventHandler<SchemaResReceivedEventArgs> SchemaResponseReceived;
+    event EventHandler<SchemaResReceivedEventArgs>? SchemaResponseReceived;
 }

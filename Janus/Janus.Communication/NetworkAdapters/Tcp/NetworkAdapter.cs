@@ -67,15 +67,15 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <summary>
     /// Invoked when a HELLO_REQ message is received
     /// </summary>
-    public event EventHandler<HelloReqReceivedEventArgs> HelloRequestReceived;
+    public event EventHandler<HelloReqReceivedEventArgs>? HelloRequestReceived;
     /// <summary>
     /// Invoked when a HELLO_RES message is received
     /// </summary>
-    public event EventHandler<HelloResReceivedEventArgs> HelloResponseReceived;
+    public event EventHandler<HelloResReceivedEventArgs>? HelloResponseReceived;
     /// <summary>
     /// Invoked when a BYE_REQ message is received
     /// </summary>
-    public event EventHandler<ByeReqReceivedEventArgs> ByeRequestReceived;
+    public event EventHandler<ByeReqReceivedEventArgs>? ByeRequestReceived;
     #endregion
 
     #region SEND HELLO MESSAGES

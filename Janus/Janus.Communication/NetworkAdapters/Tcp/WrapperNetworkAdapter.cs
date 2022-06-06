@@ -10,9 +10,9 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
     {
     }
 
-    public event EventHandler<CommandReqReceivedEventArgs> CommandRequestReceived;
-    public event EventHandler<QueryReqReceivedEventArgs> QueryRequestReceived;
-    public event EventHandler<SchemaReqReceivedEventArgs> SchemaRequestReceived;
+    public event EventHandler<CommandReqReceivedEventArgs>? CommandRequestReceived;
+    public event EventHandler<QueryReqReceivedEventArgs>? QueryRequestReceived;
+    public event EventHandler<SchemaReqReceivedEventArgs>? SchemaRequestReceived;
 
     public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
     {
