@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Janus.Communication.NetworkAdapters
+namespace Janus.Communication.NetworkAdapters;
+
+public interface IWrapperNetworkAdapter 
+    : INetworkAdapter,
+    ISendsCommandRes, ISendsQueryRes, ISendsSchemaRes,
+    IReceivesCommandReq, IReceivesQueryReq, IReceivesSchemaReq
 {
-    public interface IWrapperNetworkAdapter : INetworkAdapter
-    {
-    }
 }

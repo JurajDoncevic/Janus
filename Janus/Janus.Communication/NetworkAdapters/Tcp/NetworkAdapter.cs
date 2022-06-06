@@ -67,15 +67,15 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <summary>
     /// Invoked when a HELLO_REQ message is received
     /// </summary>
-    public event EventHandler<HelloReqReceivedEventArgs> HelloRequestMessageReceived;
+    public event EventHandler<HelloReqReceivedEventArgs> HelloRequestReceived;
     /// <summary>
     /// Invoked when a HELLO_RES message is received
     /// </summary>
-    public event EventHandler<HelloResReceivedEventArgs> HelloResponseMessageReceived;
+    public event EventHandler<HelloResReceivedEventArgs> HelloResponseReceived;
     /// <summary>
     /// Invoked when a BYE_REQ message is received
     /// </summary>
-    public event EventHandler<ByeReqReceivedEventArgs> ByeRequestMessageReceived;
+    public event EventHandler<ByeReqReceivedEventArgs> ByeRequestReceived;
     #endregion
 
     #region SEND HELLO MESSAGES
@@ -145,11 +145,11 @@ public abstract class NetworkAdapter : INetworkAdapter
     {
         switch (message.Preamble)
         {
-            case Preambles.HELLO_REQUEST:   HelloRequestMessageReceived?.Invoke(this, new HelloReqReceivedEventArgs((HelloReqMessage)message, address));
+            case Preambles.HELLO_REQUEST:   HelloRequestReceived?.Invoke(this, new HelloReqReceivedEventArgs((HelloReqMessage)message, address));
                                             break;
-            case Preambles.HELLO_RESPONSE:  HelloResponseMessageReceived?.Invoke(this, new HelloResReceivedEventArgs((HelloResMessage)message, address));
+            case Preambles.HELLO_RESPONSE:  HelloResponseReceived?.Invoke(this, new HelloResReceivedEventArgs((HelloResMessage)message, address));
                                             break;
-            case Preambles.BYE_REQUEST:     ByeRequestMessageReceived?.Invoke(this, new ByeReqReceivedEventArgs((ByeReqMessage)message, address));
+            case Preambles.BYE_REQUEST:     ByeRequestReceived?.Invoke(this, new ByeReqReceivedEventArgs((ByeReqMessage)message, address));
                                             break;
             default:        RaiseSpecializedMessageReceivedEvent(message, address);
                             break;

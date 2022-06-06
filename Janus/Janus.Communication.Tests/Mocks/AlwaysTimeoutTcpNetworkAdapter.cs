@@ -16,7 +16,12 @@ namespace Janus.Communication.Tests.Mocks
 
         public event EventHandler<HelloReqReceivedEventArgs> HelloRequestMessageReceived;
         public event EventHandler<HelloResReceivedEventArgs> HelloResponseMessageReceived;
-
+        public event EventHandler<QueryReqReceivedEventArgs> QueryRequestReceived;
+        public event EventHandler<QueryResReceivedEventArgs> QueryResponseReceived;
+        public event EventHandler<SchemaReqReceivedEventArgs> SchemaRequestReceived;
+        public event EventHandler<SchemaResReceivedEventArgs> SchemaResponseReceived;
+        public event EventHandler<CommandReqReceivedEventArgs> CommandRequestReceived;
+        public event EventHandler<CommandResReceivedEventArgs> CommandResponseReceived;
 
         public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
         {
@@ -24,6 +29,16 @@ namespace Janus.Communication.Tests.Mocks
         }
 
         public override void RaiseSpecializedMessageReceivedEvent(BaseMessage message, string address)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result SendCommandResponse(CommandResMessage message, RemotePoint remotePoint)
         {
             throw new NotImplementedException();
         }
@@ -53,5 +68,25 @@ namespace Janus.Communication.Tests.Mocks
                           }
                         )
                 );
+
+        public Result SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result SendQueryResponse(QueryResMessage message, RemotePoint remotePoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

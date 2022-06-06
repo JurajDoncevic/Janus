@@ -35,9 +35,9 @@ public abstract class CommunicationNode : IDisposable
         _receivedRequestMessages = new ConcurrentDictionary<string, BaseMessage>();
         _receivedResponseMessages = new ConcurrentDictionary<string, BaseMessage>();
 
-        _networkAdapter.HelloRequestMessageReceived += ManageHelloRequest;
-        _networkAdapter.HelloResponseMessageReceived += ManageHelloResponse;
-        _networkAdapter.ByeRequestMessageReceived += ManageByeRequest;
+        _networkAdapter.HelloRequestReceived += ManageHelloRequest;
+        _networkAdapter.HelloResponseReceived += ManageHelloResponse;
+        _networkAdapter.ByeRequestReceived += ManageByeRequest;
     }
 
     #region MANAGE INCOMING MESSAGES
