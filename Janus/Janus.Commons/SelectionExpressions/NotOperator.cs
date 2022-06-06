@@ -9,9 +9,9 @@ namespace Janus.Commons.SelectionExpressions;
 /// <summary>
 /// Describes a logical NOT
 /// </summary>
-public sealed class NotOperation : LogicalUnaryOperation
+public sealed class NotOperator : LogicalUnaryOperator
 {
-    internal NotOperation(SelectionExpression expression) : base(expression)
+    internal NotOperator(SelectionExpression expression) : base(expression)
     {
     }
 

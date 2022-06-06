@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.SelectionExpressions;
 
-public abstract class LogicalUnaryOperation : LogicalOperation
+public abstract class LogicalUnaryOperator : LogicalOperator
 {
     private readonly SelectionExpression _operand;
 
-    protected LogicalUnaryOperation(SelectionExpression operand) : base()
+    protected LogicalUnaryOperator(SelectionExpression operand) : base()
     {
         _operand = operand;
     }

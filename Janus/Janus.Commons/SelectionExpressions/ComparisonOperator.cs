@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.SelectionExpressions
 {
-    public abstract class ComparisonOperation : SelectionExpression
+    public abstract class ComparisonOperator : SelectionExpression
     {
         private readonly object _value;
         private readonly string _attributeId;
 
         protected abstract HashSet<DataTypes> _compatibleDataTypes { get; }
 
-        protected ComparisonOperation(string attributeId, object value)
+        protected ComparisonOperator(string attributeId, object value)
         {
             _value = value;
             _attributeId = attributeId;

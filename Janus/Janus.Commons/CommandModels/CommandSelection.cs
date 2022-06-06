@@ -9,10 +9,22 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
+/// <summary>
+/// Describes a selection clause used in the command model
+/// </summary>
 public class CommandSelection
 {
     private readonly SelectionExpression _expression;
+
+    /// <summary>
+    /// Selection clause expression
+    /// </summary>
     public SelectionExpression Expression => _expression;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="expression">Selection expression</param>
     internal CommandSelection(SelectionExpression expression)
     {
         _expression = expression;
@@ -42,10 +54,11 @@ internal static class CommandSelectionUtils
     internal static bool CheckAttributeReferences(SelectionExpression selectionExpression, HashSet<string> referencableAttributes)
         => selectionExpression switch
         {
-            LogicalUnaryOperation unaryOp => CheckAttributeReferences(unaryOp.Operand, referencableAttributes),
-            LogicalBinaryOperation binaryOp => CheckAttributeReferences(binaryOp.LeftOperand, referencableAttributes) && CheckAttributeReferences(binaryOp.RightOperand, referencableAttributes),
-            ComparisonOperation compareOp => referencableAttributes.Contains(compareOp.AttributeId) ? true : throw new AttributeNotInReferencedTableausException(compareOp.AttributeId),
-            Literal literal => true
+            LogicalUnaryOperator unaryOp => CheckAttributeReferences(unaryOp.Operand, referencableAttributes),
+            LogicalBinaryOperator binaryOp => CheckAttributeReferences(binaryOp.LeftOperand, referencableAttributes) && CheckAttributeReferences(binaryOp.RightOperand, referencableAttributes),
+            ComparisonOperator compareOp => referencableAttributes.Contains(compareOp.AttributeId) ? true : throw new AttributeNotInReferencedTableausException(compareOp.AttributeId),
+            Literal literal => true,
+            _ => throw new Exception($"Unkown operation or expression type {selectionExpression}")
         };
 
     /// <summary>
@@ -58,9 +71,10 @@ internal static class CommandSelectionUtils
     internal static bool CheckAttributeTypesOnComparison(SelectionExpression selectionExpression, Dictionary<string, DataTypes> referencableAttrsTypes)
         => selectionExpression switch
         {
-            LogicalUnaryOperation unaryOp => CheckAttributeTypesOnComparison(unaryOp.Operand, referencableAttrsTypes),
-            LogicalBinaryOperation binaryOp => CheckAttributeTypesOnComparison(binaryOp.LeftOperand, referencableAttrsTypes) && CheckAttributeTypesOnComparison(binaryOp.RightOperand, referencableAttrsTypes),
-            ComparisonOperation compareOp => compareOp.IsCompatibleDataType(referencableAttrsTypes[compareOp.AttributeId]) ? true : throw new IncompatibleDataTypeComparisonException(compareOp.AttributeId, referencableAttrsTypes[compareOp.AttributeId], compareOp),
-            Literal literal => true
+            LogicalUnaryOperator unaryOp => CheckAttributeTypesOnComparison(unaryOp.Operand, referencableAttrsTypes),
+            LogicalBinaryOperator binaryOp => CheckAttributeTypesOnComparison(binaryOp.LeftOperand, referencableAttrsTypes) && CheckAttributeTypesOnComparison(binaryOp.RightOperand, referencableAttrsTypes),
+            ComparisonOperator compareOp => compareOp.IsCompatibleDataType(referencableAttrsTypes[compareOp.AttributeId]) ? true : throw new IncompatibleDataTypeComparisonException(compareOp.AttributeId, referencableAttrsTypes[compareOp.AttributeId], compareOp),
+            Literal literal => true,
+            _ => throw new Exception($"Unkown operation or expression type {selectionExpression}")
         };
 }

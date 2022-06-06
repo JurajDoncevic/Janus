@@ -1,5 +1,5 @@
 ﻿using Janus.Commons.SelectionExpressions;
-using static Janus.Commons.SelectionExpressions.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

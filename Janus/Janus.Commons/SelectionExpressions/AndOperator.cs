@@ -9,9 +9,9 @@ namespace Janus.Commons.SelectionExpressions;
 /// <summary>
 /// Describes a logical AND
 /// </summary>
-public class AndOperation : LogicalBinaryOperation
+public class AndOperator : LogicalBinaryOperator
 {
-    internal AndOperation(SelectionExpression leftOperand, SelectionExpression rightOperand) : base(leftOperand, rightOperand)
+    internal AndOperator(SelectionExpression leftOperand, SelectionExpression rightOperand) : base(leftOperand, rightOperand)
     {
     }
 

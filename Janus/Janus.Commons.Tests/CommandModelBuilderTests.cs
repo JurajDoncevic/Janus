@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using static Janus.Commons.SelectionExpressions.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Commons.Tests
 {

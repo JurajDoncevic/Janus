@@ -3,7 +3,7 @@ using Janus.Commons.CommandModels.JsonConversion;
 using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
-using static Janus.Commons.SelectionExpressions.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,65 +13,49 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
+/// <summary>
+/// Describes an update command
+/// </summary>
 [JsonConverter(typeof(UpdateCommandJsonConverter))]
 public class UpdateCommand : BaseCommand
 {
     private readonly Mutation _mutation;
     private readonly Option<CommandSelection> _selection;
 
+    /// <summary>
+    /// Mutation clause
+    /// </summary>
+    public Mutation Mutation => _mutation;
+
+    /// <summary>
+    /// Selection clause
+    /// </summary>
+    public Option<CommandSelection> Selection => _selection;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="mutation">Mutation clause</param>
+    /// <param name="selection">Selection clause</param>
     internal UpdateCommand(string onTableauId!!, Mutation mutation!!, Option<CommandSelection> selection) : base(onTableauId)
     {
         _mutation = mutation;
         _selection = selection;
     }
 
-    public Mutation Mutation => _mutation;
-
-    public Option<CommandSelection> Selection => _selection;
-
     public override Result IsValidForDataSource(DataSource dataSource)
         => ResultExtensions.AsResult(() =>
         {
-            (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
+            UpdateCommandBuilder.InitOnDataSource(_onTableauId, dataSource)
+                .WithMutation(configuration => configuration.WithValues(_mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value)))
+                .WithSelection(configuration =>
+                    _selection.Match(
+                        selection => configuration.WithExpression(selection.Expression),
+                        () => configuration
+                        ))
+                .Build();
 
-            var referencedAttrs = _mutation.ValueUpdates.Keys.ToHashSet();
-            var referencableAttrs = dataSource[schemaName][tableauName].AttributeNames.ToHashSet();
-
-            if (!referencedAttrs.All(referencableAttrs.Contains))
-            {
-                var invalidAttrRef = referencedAttrs.Where(referencedAttr => !referencableAttrs.Contains(referencedAttr)).First();
-                throw new AttributeNotInTargetTableauException(invalidAttrRef, _onTableauId);
-            }
-
-            foreach (var referencedAttr in referencedAttrs)
-            {
-                if (_mutation.ValueUpdates[referencedAttr] != null) // can't get null type
-                {
-                    var referencedDataType = dataSource[schemaName][tableauName][referencedAttr].DataType;
-                    var referencingDataType = TypeMappings.MapToDataType(_mutation.ValueUpdates[referencedAttr].GetType());
-                    if (referencedDataType != referencingDataType)
-                    {
-                        throw new IncompatibleMutationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
-                    }
-                }
-            }
-
-            foreach (var referencedAttr in referencableAttrs.Intersect(_mutation.ValueUpdates.Keys))
-            {
-                if (!dataSource[schemaName][tableauName][referencedAttr].IsNullable && _mutation.ValueUpdates[referencedAttr] == null)
-                    throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);
-            }
-
-            if (_selection)
-            {
-                var selectionExpression = _selection.Value.Expression;
-
-                var referencableAttrsBySelection = dataSource[schemaName][tableauName].Attributes.Map(a => (a.Name, a.DataType))
-                                 .ToDictionary(x => x.Name, x => x.DataType);
-
-                CommandSelectionUtils.CheckAttributeReferences(selectionExpression, referencableAttrsBySelection.Keys.ToHashSet());
-                CommandSelectionUtils.CheckAttributeTypesOnComparison(selectionExpression, referencableAttrsBySelection);
-            }
             return true;
         });
 

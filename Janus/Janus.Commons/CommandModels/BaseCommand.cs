@@ -2,19 +2,33 @@
 using Janus.Commons.SchemaModels;
 using System.Text.Json.Serialization;
 
-namespace Janus.Commons.CommandModels
+namespace Janus.Commons.CommandModels;
+
+/// <summary>
+/// Base command class
+/// </summary>
+public abstract class BaseCommand
 {
-    public abstract class BaseCommand
+    protected readonly string _onTableauId;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="onTableauId">The command's starting tableau</param>
+    protected BaseCommand(string onTableauId!!)
     {
-        protected readonly string _onTableauId;
-
-        protected BaseCommand(string onTableauId!!)
-        {
-            _onTableauId = onTableauId;
-        }
-
-        public string OnTableauId => _onTableauId;
-
-        public abstract Result IsValidForDataSource(DataSource dataSource);
+        _onTableauId = onTableauId;
     }
+
+    /// <summary>
+    /// The command's starting tableau
+    /// </summary>
+    public string OnTableauId => _onTableauId;
+
+    /// <summary>
+    /// Checks if the command can be run on the given data source
+    /// </summary>
+    /// <param name="dataSource"></param>
+    /// <returns></returns>
+    public abstract Result IsValidForDataSource(DataSource dataSource);
 }

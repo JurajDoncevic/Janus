@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.SelectionExpressions;
 
-public abstract class LogicalOperation : SelectionExpression
+public abstract class LogicalOperator : SelectionExpression
 {
     /// <summary>
     /// String representation of the operator

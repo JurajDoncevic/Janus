@@ -9,9 +9,9 @@ namespace Janus.Commons.SelectionExpressions;
 /// <summary>
 /// Describes a logical OR
 /// </summary>
-public class OrOperation : LogicalBinaryOperation
+public class OrOperator : LogicalBinaryOperator
 {
-    internal OrOperation(SelectionExpression leftOperand, SelectionExpression rightOperand) : base(leftOperand, rightOperand)
+    internal OrOperator(SelectionExpression leftOperand, SelectionExpression rightOperand) : base(leftOperand, rightOperand)
     {
     }
 

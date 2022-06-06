@@ -1,5 +1,5 @@
 ﻿using static Janus.Communication.Messages.MessageExtensions;
-using static Janus.Commons.SelectionExpressions.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Communication.Messages;
 using Xunit;
 using FunctionalExtensions.Base.Results;

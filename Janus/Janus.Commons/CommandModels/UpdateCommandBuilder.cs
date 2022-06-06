@@ -4,7 +4,7 @@ using Janus.Commons.QueryModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
-using static Janus.Commons.SelectionExpressions.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,21 +13,42 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
+#region BUILDER SEQUENCE INTERFACES
 public interface IPostInitUpdateCommandBuilder
 {
+    /// <summary>
+    /// Sets the mutation clause
+    /// </summary>
+    /// <param name="configuration">Mutation configuration</param>
+    /// <returns></returns>
     IPostMutationUpdateCommandBuilder WithMutation(Func<MutationBuilder, MutationBuilder> configuration);
 }
 
 public interface IPostMutationUpdateCommandBuilder
 {
+    /// <summary>
+    /// Sets the selection clause
+    /// </summary>
+    /// <param name="configuration">Selection configuration</param>
+    /// <returns></returns>
     IPostSelectionUpdateCommandBuilder WithSelection(Func<CommandSelectionBuilder, CommandSelectionBuilder> configuration);
+
+    /// <summary>
+    /// Builds the specified update command
+    /// </summary>
+    /// <returns></returns>
     UpdateCommand Build();
 }
 
 public interface IPostSelectionUpdateCommandBuilder
 {
+    /// <summary>
+    /// Builds the specified update command
+    /// </summary>
+    /// <returns></returns>
     UpdateCommand Build();
 }
+#endregion
 
 public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutationUpdateCommandBuilder, IPostSelectionUpdateCommandBuilder
 {
@@ -36,12 +57,24 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
     private Option<Mutation> _mutation;
     private Option<CommandSelection> _selection;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="dataSource">Target data source</param>
     internal UpdateCommandBuilder(string onTableauId, DataSource dataSource)
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
     }
 
+    /// <summary>
+    /// Initializes the update command builder with starting tableau from the given data source
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="dataSource">Target data source</param>
+    /// <returns></returns>
+    /// <exception cref="TableauDoesNotExistException"></exception>
     public static IPostInitUpdateCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
     {
         if (!dataSource.ContainsTableau(onTableauId))
@@ -78,18 +111,34 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
     }
 }
 
+/// <summary>
+/// Builder for the mutation clause
+/// </summary>
 public class MutationBuilder
 {
     private Dictionary<string, object?>? _valueUpdates;
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="dataSource">Target data source</param>
     internal MutationBuilder(string onTableauId, DataSource dataSource)
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
     }
 
+    /// <summary>
+    /// Sets the value updates in the mutation clause
+    /// </summary>
+    /// <param name="valueUpdates">Value updates. <b>Attributes are referenced as names, not ids</b></param>
+    /// <returns></returns>
+    /// <exception cref="AttributeNotInTargetTableauException"></exception>
+    /// <exception cref="IncompatibleMutationDataTypesException"></exception>
+    /// <exception cref="NullGivenForNonNullableAttributeException"></exception>
     public MutationBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
     {
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
@@ -128,6 +177,10 @@ public class MutationBuilder
         return this;
     }
 
+    /// <summary>
+    /// Builds the specified mutation clause
+    /// </summary>
+    /// <returns></returns>
     internal Mutation Build()
         => _valueUpdates != null
            ? new Mutation(_valueUpdates)

@@ -14,63 +14,30 @@ namespace Janus.Commons.CommandModels;
 [JsonConverter(typeof(InsertCommandJsonConverter))]
 public class InsertCommand : BaseCommand
 {
-
     private readonly Instantiation _instantiation;
 
+    /// <summary>
+    /// Instantiation clause
+    /// </summary>
+    public Instantiation Instantiation => _instantiation;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="instantiation">Instantiation clause</param>
     internal InsertCommand(string onTableauId!!, Instantiation instantiation!!) : base(onTableauId)
     {
         _instantiation = instantiation;
     }
 
-    public Instantiation Instantiation => _instantiation;
-
     public override Result IsValidForDataSource(DataSource dataSource)
         => ResultExtensions.AsResult(() =>
         {
-            if (!dataSource.ContainsTableau(_onTableauId))
-            {
-                throw new TableauDoesNotExistException(_onTableauId, dataSource.Name);
-            }
-
-            (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
-
-            var referencableAttributes = dataSource[schemaName][tableauName].Attributes.Select(attr => attr.Name).ToHashSet();
-            var referencedAttributes = _instantiation.TabularData.AttributeNames;
-
-            if (!referencedAttributes.All(referencableAttributes.Contains))
-            {
-                var invalidAttrRef = referencedAttributes.Where(referencedAttr => !referencableAttributes.Contains(referencedAttr)).First();
-                throw new AttributeNotInTargetTableauException(invalidAttrRef, _onTableauId);
-            }
-
-            if (!referencableAttributes.All(referencedAttributes.Contains))
-            {
-                var unreferencedAttrs = referencableAttributes.Except(referencedAttributes).ToList();
-                throw new MissingInstantiationAttributesException(unreferencedAttrs, _onTableauId);
-            }
-
-            foreach (var referencedAttr in referencedAttributes)
-            {
-                var referencedDataType = dataSource[schemaName][tableauName][referencedAttr].DataType;
-                var referencingDataType = _instantiation.TabularData.AttributeDataTypes[referencedAttr];
-                if (referencedDataType != referencingDataType)
-                {
-                    throw new IncompatibleInstantiationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
-                }
-            }
-
-            foreach (var referencedAttr in referencableAttributes)
-            {
-                if (!dataSource[schemaName][tableauName][referencedAttr].IsNullable)
-                {
-                    foreach (var row in _instantiation.TabularData.RowData)
-                    {
-                        if (row[referencedAttr] == null)
-                            throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);
-                    }
-                }
-            }
-
+            InsertCommandBuilder.InitOnDataSource(_onTableauId, dataSource)
+                .WithInstantiation(configuration => configuration.WithValues(_instantiation.TabularData))
+                .Build();
+ 
             return true;
         });
 

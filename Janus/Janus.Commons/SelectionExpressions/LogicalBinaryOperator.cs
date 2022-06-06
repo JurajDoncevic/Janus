@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons.SelectionExpressions;
 
-public abstract class LogicalBinaryOperation : LogicalOperation
+public abstract class LogicalBinaryOperator : LogicalOperator
 {
     private readonly SelectionExpression _leftOperand;
     private readonly SelectionExpression _rightOperand;
 
-    protected LogicalBinaryOperation(SelectionExpression leftOperand, SelectionExpression rightOperand) : base()
+    protected LogicalBinaryOperator(SelectionExpression leftOperand, SelectionExpression rightOperand) : base()
     {
         _leftOperand = leftOperand;
         _rightOperand = rightOperand;

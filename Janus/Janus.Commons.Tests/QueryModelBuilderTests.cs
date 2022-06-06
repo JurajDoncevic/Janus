@@ -1,6 +1,6 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.QueryModels;
-using static Janus.Commons.SelectionExpressions.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using System;

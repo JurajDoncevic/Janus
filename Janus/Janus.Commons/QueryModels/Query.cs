@@ -81,23 +81,23 @@ public class Query
     public Result IsValidForDataSource(DataSource dataSource!!)
      => ResultExtensions.AsResult(() =>
      {
-         var builder = QueryModelBuilder.InitQueryOnDataSource(_onTableauId, dataSource)
-                        .WithJoining(configuration =>
-                            _joining.Match(
-                                joining => joining.Joins.Fold(configuration, (join, conf) => conf.AddJoin(join.ForeignKeyAttributeId, join.PrimaryKeyAttributeId)),
-                                () => configuration
-                                ))
-                        .WithProjection(configuration =>
-                            _projection.Match(
-                                projection => projection.IncludedAttributeIds.Fold(configuration, (attrId, conf) => conf.AddAttribute(attrId)),
-                                () => configuration
-                                ))
-                        .WithSelection(configuration =>
-                            _selection.Match(
-                                selection => configuration.WithExpression(selection.Expression),
-                                () => configuration
-                                ))
-                        .Build();
+        QueryModelBuilder.InitQueryOnDataSource(_onTableauId, dataSource)
+            .WithJoining(configuration =>
+                _joining.Match(
+                    joining => joining.Joins.Fold(configuration, (join, conf) => conf.AddJoin(join.ForeignKeyAttributeId, join.PrimaryKeyAttributeId)),
+                    () => configuration
+                    ))
+            .WithProjection(configuration =>
+                _projection.Match(
+                    projection => projection.IncludedAttributeIds.Fold(configuration, (attrId, conf) => conf.AddAttribute(attrId)),
+                    () => configuration
+                    ))
+            .WithSelection(configuration =>
+                _selection.Match(
+                    selection => configuration.WithExpression(selection.Expression),
+                    () => configuration
+                    ))
+            .Build();
 
          return true;
      });

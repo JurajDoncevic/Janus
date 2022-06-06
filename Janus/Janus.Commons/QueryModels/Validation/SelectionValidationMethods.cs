@@ -16,9 +16,9 @@ namespace Janus.Commons.QueryModels.Validation
         internal static bool CheckSelectionAttributeReferences(SelectionExpression selectionExpression, HashSet<string> referencableAttributes)
             => selectionExpression switch
             {
-                LogicalUnaryOperation unaryOp => CheckSelectionAttributeReferences(unaryOp.Operand, referencableAttributes),
-                LogicalBinaryOperation binaryOp => CheckSelectionAttributeReferences(binaryOp.LeftOperand, referencableAttributes) && CheckSelectionAttributeReferences(binaryOp.RightOperand, referencableAttributes),
-                ComparisonOperation compareOp => referencableAttributes.Contains(compareOp.AttributeId) ? true : throw new AttributeNotInReferencedTableausException(compareOp.AttributeId),
+                LogicalUnaryOperator unaryOp => CheckSelectionAttributeReferences(unaryOp.Operand, referencableAttributes),
+                LogicalBinaryOperator binaryOp => CheckSelectionAttributeReferences(binaryOp.LeftOperand, referencableAttributes) && CheckSelectionAttributeReferences(binaryOp.RightOperand, referencableAttributes),
+                ComparisonOperator compareOp => referencableAttributes.Contains(compareOp.AttributeId) ? true : throw new AttributeNotInReferencedTableausException(compareOp.AttributeId),
                 Literal literal => true
             };
 
@@ -32,9 +32,9 @@ namespace Janus.Commons.QueryModels.Validation
         internal static bool CheckSelectionAttributeTypesOnComparison(SelectionExpression selectionExpression, Dictionary<string, DataTypes> referencableAttrsTypes)
             => selectionExpression switch
             {
-                LogicalUnaryOperation unaryOp => CheckSelectionAttributeTypesOnComparison(unaryOp.Operand, referencableAttrsTypes),
-                LogicalBinaryOperation binaryOp => CheckSelectionAttributeTypesOnComparison(binaryOp.LeftOperand, referencableAttrsTypes) && CheckSelectionAttributeTypesOnComparison(binaryOp.RightOperand, referencableAttrsTypes),
-                ComparisonOperation compareOp => compareOp.IsCompatibleDataType(referencableAttrsTypes[compareOp.AttributeId]) ? true : throw new IncompatibleDataTypeComparisonException(compareOp.AttributeId, referencableAttrsTypes[compareOp.AttributeId], compareOp),
+                LogicalUnaryOperator unaryOp => CheckSelectionAttributeTypesOnComparison(unaryOp.Operand, referencableAttrsTypes),
+                LogicalBinaryOperator binaryOp => CheckSelectionAttributeTypesOnComparison(binaryOp.LeftOperand, referencableAttrsTypes) && CheckSelectionAttributeTypesOnComparison(binaryOp.RightOperand, referencableAttrsTypes),
+                ComparisonOperator compareOp => compareOp.IsCompatibleDataType(referencableAttrsTypes[compareOp.AttributeId]) ? true : throw new IncompatibleDataTypeComparisonException(compareOp.AttributeId, referencableAttrsTypes[compareOp.AttributeId], compareOp),
                 Literal literal => true
             };
     }

@@ -10,7 +10,7 @@ namespace Janus.Commons.SelectionExpressions;
 /// <summary>
 /// Describes a lesser than comparison
 /// </summary>
-public sealed class LesserThan : ComparisonOperation
+public sealed class LesserThan : ComparisonOperator
 {
 
     protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.DATETIME };

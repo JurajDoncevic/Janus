@@ -1,5 +1,5 @@
 ﻿using Janus.Commons.SelectionExpressions;
-using static Janus.Commons.SelectionExpressions.SelectionExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +13,23 @@ using Janus.Commons.CommandModels.JsonConversion;
 namespace Janus.Commons.CommandModels;
 
 /// <summary>
-/// Describes a DELETE command
+/// Describes a delete command
 /// </summary>
 [JsonConverter(typeof(DeleteCommandJsonConverter))]
 public class DeleteCommand : BaseCommand
 {
     private readonly Option<CommandSelection> _selection;
 
+    /// <summary>
+    /// Selection clause
+    /// </summary>
     public Option<CommandSelection> Selection => _selection;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="selection">Selection clause</param>
     internal DeleteCommand(string onTableauId, Option<CommandSelection> selection) : base(onTableauId)
     {
         _selection = selection;
@@ -42,21 +50,13 @@ public class DeleteCommand : BaseCommand
     public override Result IsValidForDataSource(DataSource dataSource)
         => ResultExtensions.AsResult(() =>
         {
-            (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
-
-            if (!dataSource.ContainsTableau(_onTableauId))
-                throw new TableauDoesNotExistException(_onTableauId, dataSource.Name);
-
-            if (_selection)
-            {
-                var selectionExpression = _selection.Value.Expression;
-
-                var referencableAttrsBySelection = dataSource[schemaName][tableauName].Attributes.Map(a => (a.Name, a.DataType))
-                                 .ToDictionary(x => x.Name, x => x.DataType);
-
-                CommandSelectionUtils.CheckAttributeReferences(selectionExpression, referencableAttrsBySelection.Keys.ToHashSet());
-                CommandSelectionUtils.CheckAttributeTypesOnComparison(selectionExpression, referencableAttrsBySelection);
-            }
+            DeleteCommandBuilder.InitOnDataSource(_onTableauId, dataSource)
+                .WithSelection(conf =>
+                    _selection.Match(
+                        selection => conf.WithExpression(selection.Expression),
+                        () => conf
+                    ))
+                .Build();
             return true;
         });
 }

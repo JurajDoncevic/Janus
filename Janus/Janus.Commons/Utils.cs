@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Janus.Commons
 {
-    internal static class Utils
+    public static class Utils
     {
-        internal static (string dataSourceName, string schemaName, string tableauName, string attributeName) GetNamesFromAttributeId(string attributeId)
+        public static (string dataSourceName, string schemaName, string tableauName, string attributeName) GetNamesFromAttributeId(string attributeId)
         {
             var splitNames = attributeId.Split(".", 4, StringSplitOptions.TrimEntries);
             if (splitNames.Length == 4)
@@ -23,7 +23,7 @@ namespace Janus.Commons
                 throw new InvalidDataException($"{attributeId} is not a valid attribute id");
         }
 
-        internal static (string dataSourceName, string schemaName, string tableauName) GetNamesFromTableauId(string tableauId)
+        public static (string dataSourceName, string schemaName, string tableauName) GetNamesFromTableauId(string tableauId)
         {
             var splitNames = tableauId.Split(".", 3, StringSplitOptions.TrimEntries);
             if (splitNames.Length == 3)
