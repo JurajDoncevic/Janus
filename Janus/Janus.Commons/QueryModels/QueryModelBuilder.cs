@@ -1,4 +1,5 @@
 ﻿using Janus.Commons.QueryModels.Exceptions;
+using Janus.Commons.QueryModels.Validation;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
 
@@ -243,9 +244,8 @@ public class SelectionBuilder
         var referencableAttrs = _referencedTableauIds.Select(tId => Utils.GetNamesFromTableauId(tId))
                                                      .SelectMany(names => _dataSource[names.schemaName][names.tableauName].Attributes.Map(a => (a.Id, a.DataType)))
                                                      .ToDictionary(x => x.Id, x => x.DataType);
-        
-        SelectionUtils.CheckAttributeReferences(expression, referencableAttrs.Keys.ToHashSet());
-        SelectionUtils.CheckAttributeTypesOnComparison(expression, referencableAttrs);
+        SelectionValidationMethods.CheckSelectionAttributeReferences(expression, referencableAttrs.Keys.ToHashSet());
+        SelectionValidationMethods.CheckSelectionAttributeTypesOnComparison(expression, referencableAttrs);
 
 
         _expression = expression;
