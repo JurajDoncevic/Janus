@@ -11,7 +11,16 @@ namespace Janus.Commons.QueryModels;
 public class Selection
 {
     private readonly SelectionExpression _expression;
+    
+    /// <summary>
+    /// The selection clause's expression
+    /// </summary>
     public SelectionExpression Expression => _expression;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="expression">Selection expression</param>
     public Selection(SelectionExpression expression)
     {
         _expression = expression;
