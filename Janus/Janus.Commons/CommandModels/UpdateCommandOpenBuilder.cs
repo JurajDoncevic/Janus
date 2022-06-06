@@ -13,23 +13,23 @@ using System.Threading.Tasks;
 namespace Janus.Commons.CommandModels;
 
 
-public class UpdateCommandOpenBuilder 
+internal class UpdateCommandOpenBuilder 
 {
     private readonly string _onTableauId;
     private Option<Mutation> _mutation;
     private Option<CommandSelection> _selection;
 
-    internal UpdateCommandOpenBuilder(string onTableauId)
+    private UpdateCommandOpenBuilder(string onTableauId)
     {
         _onTableauId = onTableauId;
     }
 
-    public static UpdateCommandOpenBuilder InitOpenUpdate(string onTableauId)
+    internal static UpdateCommandOpenBuilder InitOpenUpdate(string onTableauId)
     {
         return new UpdateCommandOpenBuilder(onTableauId);
     }
 
-    public UpdateCommandOpenBuilder WithMutation(Func<MutationOpenBuilder, MutationOpenBuilder> configuration)
+    internal UpdateCommandOpenBuilder WithMutation(Func<MutationOpenBuilder, MutationOpenBuilder> configuration)
     {
         var mutationBuilder = new MutationOpenBuilder();
 
@@ -38,7 +38,7 @@ public class UpdateCommandOpenBuilder
         return this;
     }
 
-    public UpdateCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
+    internal UpdateCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
     {
         var selectionBuilder = new CommandSelectionOpenBuilder();
         _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());
@@ -46,7 +46,7 @@ public class UpdateCommandOpenBuilder
         return this;
     }
 
-    public UpdateCommand Build()
+    internal UpdateCommand Build()
     {
         if (!_mutation)
             throw new MutationNotSetException();
@@ -57,7 +57,7 @@ public class UpdateCommandOpenBuilder
     }
 }
 
-public class MutationOpenBuilder
+internal class MutationOpenBuilder
 {
     private Option<Dictionary<string, object?>> _valueUpdates;
 
@@ -65,7 +65,7 @@ public class MutationOpenBuilder
     {
     }
 
-    public MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
+    internal MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
     {
         _valueUpdates = Option<Dictionary<string, object?>>.Some(valueUpdates);
         return this;
@@ -78,7 +78,7 @@ public class MutationOpenBuilder
 }
 
 
-public class CommandSelectionOpenBuilder
+internal class CommandSelectionOpenBuilder
 {
     private Option<SelectionExpression> _expression;
     internal bool IsConfigured => _expression.IsSome;
@@ -96,7 +96,7 @@ public class CommandSelectionOpenBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public CommandSelectionOpenBuilder WithExpression(SelectionExpression expression!!)
+    internal CommandSelectionOpenBuilder WithExpression(SelectionExpression expression!!)
     {
         _expression = Option<SelectionExpression>.Some(expression);
         return this;

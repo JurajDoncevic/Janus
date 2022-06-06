@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Janus.Commons.CommandModels;
 
 
-public class InsertCommandOpenBuilder
+internal class InsertCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<Instantiation> _instantiation;
@@ -22,17 +22,17 @@ public class InsertCommandOpenBuilder
         _instantiation = Option<Instantiation>.None;
     }
 
-    public InsertCommand Build()
+    internal InsertCommand Build()
         => _instantiation
            ? new InsertCommand(_onTableauId, _instantiation.Value)
            : throw new InstantiationNotSetException();
 
-    public static InsertCommandOpenBuilder InitOpenInsert(string onTableauId)
+    internal static InsertCommandOpenBuilder InitOpenInsert(string onTableauId)
     {
         return new InsertCommandOpenBuilder(onTableauId);
     }
 
-    public InsertCommandOpenBuilder WithInstantiation(Func<InstantiationOpenBuilder, InstantiationOpenBuilder> configuration)
+    internal InsertCommandOpenBuilder WithInstantiation(Func<InstantiationOpenBuilder, InstantiationOpenBuilder> configuration)
     {
         var instantiationBuilder = new InstantiationOpenBuilder(_onTableauId);
         _instantiation = Option<Instantiation>.Some(configuration(instantiationBuilder).Build());
@@ -41,7 +41,7 @@ public class InsertCommandOpenBuilder
     }
 }
 
-public class InstantiationOpenBuilder
+internal class InstantiationOpenBuilder
 {
     private readonly string _onTableauId;
     private TabularData? _tableauDataToInsert;
@@ -52,7 +52,7 @@ public class InstantiationOpenBuilder
         _tableauDataToInsert = null;
     }
 
-    public InstantiationOpenBuilder WithValues(TabularData tableauData)
+    internal InstantiationOpenBuilder WithValues(TabularData tableauData)
     {
         _tableauDataToInsert = tableauData;
         return this;

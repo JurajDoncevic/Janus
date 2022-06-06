@@ -13,7 +13,7 @@ namespace Janus.Commons.QueryModels;
 /// <summary>
 /// Determines what declarations can be made after an open query initialization
 /// </summary>
-public interface IPostInitOpenBuilder
+internal interface IPostInitOpenBuilder
 {
     /// <summary>
     /// Specifies a joining clause of the query
@@ -44,7 +44,7 @@ public interface IPostInitOpenBuilder
 }
 #endregion
 
-public class QueryModelOpenBuilder : IPostInitOpenBuilder
+internal class QueryModelOpenBuilder : IPostInitOpenBuilder
 {
     private Option<Projection> _projection;
     private Option<Selection> _selection;
@@ -71,7 +71,7 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
     /// <param name="onTableauId">Id of tableau on which the query is initialized</param>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <returns>QueryOpenModelBuilder</returns>
-    public static QueryModelOpenBuilder InitOpenQuery(string onTableauId!!)
+    internal static QueryModelOpenBuilder InitOpenQuery(string onTableauId!!)
     {
         return new QueryModelOpenBuilder(onTableauId);
     }
@@ -137,7 +137,7 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
 /// <summary>
 /// Builder class for query selection
 /// </summary>
-public class SelectionOpenBuilder
+internal class SelectionOpenBuilder
 {
     private SelectionExpression _expression;
     internal bool IsConfigured => _expression != null;
@@ -155,7 +155,7 @@ public class SelectionOpenBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public SelectionOpenBuilder WithExpression(SelectionExpression expression!!)
+    internal SelectionOpenBuilder WithExpression(SelectionExpression expression!!)
     {
         _expression = expression;
         return this;
@@ -174,7 +174,7 @@ public class SelectionOpenBuilder
 /// <summary>
 /// Builder class for query projection
 /// </summary>
-public class ProjectionOpenBuilder
+internal class ProjectionOpenBuilder
 {
     private HashSet<string> _projectionAttributes;
 
@@ -193,7 +193,7 @@ public class ProjectionOpenBuilder
     /// </summary>
     /// <param name="attributeId">Attribute id</param>
     /// <returns>ProjectionBuilder</returns>
-    public ProjectionOpenBuilder AddAttribute(string attributeId)
+    internal ProjectionOpenBuilder AddAttribute(string attributeId)
     {
         _projectionAttributes.Add(attributeId);
 
@@ -213,7 +213,7 @@ public class ProjectionOpenBuilder
 /// <summary>
 /// Builder class for query joins
 /// </summary>
-public class JoiningOpenBuilder
+internal class JoiningOpenBuilder
 {
     private Joining _joining;
 
@@ -231,7 +231,7 @@ public class JoiningOpenBuilder
     /// Adds a join to the joining clause
     /// </summary>
     /// <returns></returns>
-    public JoiningOpenBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
+    internal JoiningOpenBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
     {
         // check if given ids are ok
         if (!foreignKeyAttributeId.Contains('.'))
@@ -254,7 +254,7 @@ public class JoiningOpenBuilder
     /// Builds the joining clause
     /// </summary>
     /// <returns>Joining</returns>
-    public Joining Build()
+    internal Joining Build()
     {
         return _joining;
     }

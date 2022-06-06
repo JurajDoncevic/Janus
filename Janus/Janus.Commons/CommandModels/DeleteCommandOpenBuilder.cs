@@ -7,7 +7,7 @@ using static Janus.Commons.SelectionExpressions.SelectionExpressions;
 
 namespace Janus.Commons.CommandModels;
 
-public class DeleteCommandOpenBuilder
+internal class DeleteCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<CommandSelection> _selection;
@@ -17,15 +17,15 @@ public class DeleteCommandOpenBuilder
         _selection = Option<CommandSelection>.None;
     }
 
-    public DeleteCommand Build()
+    internal DeleteCommand Build()
         => new DeleteCommand(_onTableauId, _selection);
 
-    public static DeleteCommandOpenBuilder InitOpenDelete(string onTableauId)
+    internal static DeleteCommandOpenBuilder InitOpenDelete(string onTableauId)
     {
         return new DeleteCommandOpenBuilder(onTableauId);
     }
 
-    public DeleteCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
+    internal DeleteCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
     {
         var selectionBuilder = new CommandSelectionOpenBuilder();
         _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());

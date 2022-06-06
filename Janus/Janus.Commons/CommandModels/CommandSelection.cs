@@ -13,7 +13,7 @@ public class CommandSelection
 {
     private readonly SelectionExpression _expression;
     public SelectionExpression Expression => _expression;
-    public CommandSelection(SelectionExpression expression)
+    internal CommandSelection(SelectionExpression expression)
     {
         _expression = expression;
     }
@@ -30,7 +30,7 @@ public class CommandSelection
     }
 }
 
-public static class CommandSelectionUtils
+internal static class CommandSelectionUtils
 {
     /// <summary>
     /// Check if all attributes in references
