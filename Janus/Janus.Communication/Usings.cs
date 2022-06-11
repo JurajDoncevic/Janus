@@ -8,3 +8,4 @@ global using FunctionalExtensions.Base;
 global using FunctionalExtensions.Base.Results;
 global using static FunctionalExtensions.Base.UnitExtensions;
 global using static FunctionalExtensions.Base.Try;
+global using static FunctionalExtensions.Base.Disposing;

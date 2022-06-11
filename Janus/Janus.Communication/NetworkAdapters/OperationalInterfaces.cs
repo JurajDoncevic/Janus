@@ -17,7 +17,7 @@ public interface ISendsCommandReq
     /// <param name="message">COMMAND_REQ message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Result SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint);
+    public Task<Result> SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint);
 }
 
 public interface ISendsCommandRes
@@ -28,7 +28,7 @@ public interface ISendsCommandRes
     /// <param name="message">COMMAND_RES message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Result SendCommandResponse(CommandResMessage message, RemotePoint remotePoint);
+    public Task<Result> SendCommandResponse(CommandResMessage message, RemotePoint remotePoint);
 }
 
 public interface ISendsQueryReq
@@ -39,7 +39,7 @@ public interface ISendsQueryReq
     /// <param name="message">QUERY_REQ message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Result SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint);
+    public Task<Result> SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint);
 }
 
 public interface ISendsQueryRes
@@ -50,7 +50,7 @@ public interface ISendsQueryRes
     /// <param name="message">QUERY_RES message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Result SendQueryResponse(QueryResMessage message, RemotePoint remotePoint);
+    public Task<Result> SendQueryResponse(QueryResMessage message, RemotePoint remotePoint);
 }
 
 public interface ISendsSchemaReq
@@ -61,7 +61,7 @@ public interface ISendsSchemaReq
     /// <param name="message">SCHEMA_REQ message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Result SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint);
+    public Task<Result> SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint);
 }
 
 public interface ISendsSchemaRes
@@ -72,7 +72,7 @@ public interface ISendsSchemaRes
     /// <param name="message">SCHEMA_RES message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Result SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint);
+    public Task<Result> SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint);
 }
 
 public interface IReceivesCommandReq

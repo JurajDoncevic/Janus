@@ -86,16 +86,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
-        => await ResultExtensions.AsResult(
-            () =>
-                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
-                      async tcpClient =>
-                      {
-                          var messageBytes = message.ToBson();
-                          return tcpClient.Connected && await tcpClient.Client.SendAsync(messageBytes, SocketFlags.None) == messageBytes.Length;
-                      }
-                    )
-            );
+        => await SendMessageBytes(message.ToBson(), remotePoint);
 
     /// <summary>
     /// Sends a HELLO_RES message to the remote point
@@ -104,16 +95,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
-        => await ResultExtensions.AsResult(
-            () =>
-                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
-                      async tcpClient =>
-                      {
-                          var messageBytes = message.ToBson();
-                          return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
-                      }
-                    )
-            );
+        => await SendMessageBytes(message.ToBson(), remotePoint);
     #endregion
 
     #region SEND BYE MESSAGES
@@ -124,16 +106,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendByeRequest(ByeReqMessage message, RemotePoint remotePoint)
-        => await ResultExtensions.AsResult(
-            () =>
-                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
-                      async tcpClient =>
-                      {
-                          var messageBytes = message.ToBson();
-                          return tcpClient.Connected && await tcpClient.Client.SendAsync(messageBytes, SocketFlags.None) == messageBytes.Length;
-                      }
-                    )
-            );
+        => await SendMessageBytes(message.ToBson(), remotePoint);
     #endregion
 
     /// <summary>
@@ -186,7 +159,20 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <returns>Created message boxed as BaseMessage</returns>
     public abstract DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes);
 
-
+    /// <summary>
+    /// Sends bytes of a message (BSON) to a remote point over TCP
+    /// </summary>
+    /// <param name="messageBytes">BSON message</param>
+    /// <param name="remotePoint">Destination temote point</param>
+    /// <returns>Result</returns>
+    protected async Task<Result> SendMessageBytes(byte[] messageBytes, RemotePoint remotePoint)
+        => await ResultExtensions.AsResult(
+            () =>
+                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
+                      async tcpClient =>
+                        tcpClient.Connected && await tcpClient.Client.SendAsync(messageBytes, SocketFlags.None) == messageBytes.Length
+                    )
+            );
 
     public void Dispose()
     {
