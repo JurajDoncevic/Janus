@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Janus.Communication.Tests.Mocks
 {
-    public class AlwaysTimeoutCommunicationNode : BaseCommunicationNode
+    public class AlwaysTimeoutCommunicationNode : BaseCommunicationNode<IMediatorNetworkAdapter>
     {
-        public AlwaysTimeoutCommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter) : base(options, networkAdapter)
+        public AlwaysTimeoutCommunicationNode(CommunicationNodeOptions options!!, IMediatorNetworkAdapter networkAdapter) : base(options, networkAdapter)
         {
 
         } 

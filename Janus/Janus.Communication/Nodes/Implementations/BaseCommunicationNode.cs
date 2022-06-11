@@ -7,12 +7,12 @@ using System.Collections.Concurrent;
 
 namespace Janus.Communication.Nodes.Implementations;
 
-public abstract class BaseCommunicationNode : IDisposable
+public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where TNetworkAdapter : INetworkAdapter
 {
 
     private readonly CommunicationNodeOptions _options;
     private readonly Dictionary<string, RemotePoint> _remotePoints;
-    private readonly INetworkAdapter _networkAdapter;
+    private readonly TNetworkAdapter _networkAdapter;
 
     public CommunicationNodeOptions Options => _options;
     public ReadOnlyCollection<RemotePoint> RemotePoints => _remotePoints.Values.ToList().AsReadOnly();
@@ -22,11 +22,11 @@ public abstract class BaseCommunicationNode : IDisposable
     protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
 
     #region RECEIVED MESSAGE EVENTS
-    public event EventHandler<HelloReqEventArgs> HelloRequestReceived;
-    public event EventHandler<ByeReqEventArgs> ByeRequestReceived;
+    public event EventHandler<HelloReqEventArgs>? HelloRequestReceived;
+    public event EventHandler<ByeReqEventArgs>? ByeRequestReceived;
     #endregion
 
-    internal protected BaseCommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
+    internal protected BaseCommunicationNode(CommunicationNodeOptions options!!, TNetworkAdapter networkAdapter)
     {
         _options = options;
         _remotePoints = new();
@@ -35,9 +35,9 @@ public abstract class BaseCommunicationNode : IDisposable
         _receivedRequestMessages = new ConcurrentDictionary<string, BaseMessage>();
         _receivedResponseMessages = new ConcurrentDictionary<string, BaseMessage>();
 
-        _networkAdapter.HelloRequestReceived += ManageHelloRequest;
-        _networkAdapter.HelloResponseReceived += ManageHelloResponse;
-        _networkAdapter.ByeRequestReceived += ManageByeRequest;
+        _networkAdapter.HelloRequestReceived += NetworkAdapter_ManageHelloRequestReceived;
+        _networkAdapter.HelloResponseReceived += NetworkAdapter_ManageHelloResponseReceived;
+        _networkAdapter.ByeRequestReceived += NetworkAdapter_ManageByeRequestReceived;
     }
 
     #region MANAGE INCOMING MESSAGES
@@ -48,7 +48,7 @@ public abstract class BaseCommunicationNode : IDisposable
     /// <param name="sender"></param>
     /// <param name="e"></param>
     /// <exception cref="NotImplementedException"></exception>
-    private void ManageByeRequest(object? sender, ByeReqReceivedEventArgs e)
+    private void NetworkAdapter_ManageByeRequestReceived(object? sender, ByeReqReceivedEventArgs e)
     {
         // get the message
         var message = e.Message;
@@ -68,7 +68,7 @@ public abstract class BaseCommunicationNode : IDisposable
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void ManageHelloResponse(object? sender, HelloResReceivedEventArgs e)
+    private void NetworkAdapter_ManageHelloResponseReceived(object? sender, HelloResReceivedEventArgs e)
     {
         // extract the message
         var message = e.Message;
@@ -81,7 +81,7 @@ public abstract class BaseCommunicationNode : IDisposable
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void ManageHelloRequest(object? sender, HelloReqReceivedEventArgs e)
+    private void NetworkAdapter_ManageHelloRequestReceived(object? sender, HelloReqReceivedEventArgs e)
     {
         // get message
         var message = e.Message;
