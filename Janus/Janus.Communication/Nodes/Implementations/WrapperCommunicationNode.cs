@@ -1,8 +1,8 @@
 ﻿using Janus.Communication.NetworkAdapters;
 
-namespace Janus.Communication.Nodes;
+namespace Janus.Communication.Nodes.Implementations;
 
-public sealed class WrapperCommunicationNode : CommunicationNode
+public sealed class WrapperCommunicationNode : BaseCommunicationNode
 {
     public override NodeTypes NodeType => NodeTypes.WRAPPER_NODE;
 

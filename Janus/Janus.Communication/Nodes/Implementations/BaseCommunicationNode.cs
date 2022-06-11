@@ -5,9 +5,9 @@ using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
 using System.Collections.Concurrent;
 
-namespace Janus.Communication.Nodes;
+namespace Janus.Communication.Nodes.Implementations;
 
-public abstract class CommunicationNode : IDisposable
+public abstract class BaseCommunicationNode : IDisposable
 {
 
     private readonly CommunicationNodeOptions _options;
@@ -16,7 +16,7 @@ public abstract class CommunicationNode : IDisposable
 
     public CommunicationNodeOptions Options => _options;
     public ReadOnlyCollection<RemotePoint> RemotePoints => _remotePoints.Values.ToList().AsReadOnly();
-    public abstract NodeTypes NodeType { get;}
+    public abstract NodeTypes NodeType { get; }
 
     protected ConcurrentDictionary<string, BaseMessage> _receivedResponseMessages;
     protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
@@ -26,7 +26,7 @@ public abstract class CommunicationNode : IDisposable
     public event EventHandler<ByeReqEventArgs> ByeRequestReceived;
     #endregion
 
-    internal protected CommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
+    internal protected BaseCommunicationNode(CommunicationNodeOptions options!!, INetworkAdapter networkAdapter)
     {
         _options = options;
         _remotePoints = new();
@@ -116,7 +116,7 @@ public abstract class CommunicationNode : IDisposable
         var result = Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
-                    .Bind<RemotePoint>(result =>
+                    .Bind(result =>
                     {
                         // wait for the response to appear
                         while (!_receivedResponseMessages.ContainsKey(exchangdeId))
@@ -149,7 +149,7 @@ public abstract class CommunicationNode : IDisposable
         var result = Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
-                    .Bind<RemotePoint>(result =>
+                    .Bind(result =>
                     {
                         // wait for the response
                         while (!_receivedResponseMessages.ContainsKey(exchangdeId))
@@ -197,7 +197,7 @@ public abstract class CommunicationNode : IDisposable
                 }
                 return Unit();
             });
-            
+
         return result;
     }
 

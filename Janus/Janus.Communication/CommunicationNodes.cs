@@ -1,6 +1,7 @@
 ﻿using TcpAdapters = Janus.Communication.NetworkAdapters.Tcp;
 using Janus.Communication.Nodes;
 using Janus.Communication.NetworkAdapters;
+using Janus.Communication.Nodes.Implementations;
 
 namespace Janus.Communication;
 
