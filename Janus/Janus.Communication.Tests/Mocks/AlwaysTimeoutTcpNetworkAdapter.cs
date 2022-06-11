@@ -31,35 +31,23 @@ namespace Janus.Communication.Tests.Mocks
             throw new NotImplementedException();
         }
 
-        public Result SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint)
+        public Task<Result> SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint)
         {
             throw new NotImplementedException();
         }
 
-        public Result SendCommandResponse(CommandResMessage message, RemotePoint remotePoint)
+        public Task<Result> SendCommandResponse(CommandResMessage message, RemotePoint remotePoint)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
-        => await ResultExtensions.AsResult(
-            () =>
-                Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
-                      async tcpClient =>
-                      {
-                          tcpClient.SendTimeout = 1;
-                          var messageBytes = message.ToBson();
-                          return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
-                      }
-                    )
-            );
-
-        public async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
+        public new async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
             => await ResultExtensions.AsResult(
                 () =>
                     Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
                           async tcpClient =>
                           {
+                              System.Threading.Tasks.Task.Delay(10000).Wait();
                               tcpClient.SendTimeout = 1;
                               var messageBytes = message.ToBson();
                               return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
@@ -67,22 +55,36 @@ namespace Janus.Communication.Tests.Mocks
                         )
                 );
 
-        public Result SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint)
+        public new async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
+            => await ResultExtensions.AsResult(
+                () =>
+                    Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
+                          async tcpClient =>
+                          {
+                              System.Threading.Tasks.Task.Delay(10000).Wait();
+                              tcpClient.SendTimeout = 1;
+                              var messageBytes = message.ToBson();
+                              return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
+                          }
+                        )
+                );
+
+        public Task<Result> SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint)
         {
             throw new NotImplementedException();
         }
 
-        public Result SendQueryResponse(QueryResMessage message, RemotePoint remotePoint)
+        public Task<Result> SendQueryResponse(QueryResMessage message, RemotePoint remotePoint)
         {
             throw new NotImplementedException();
         }
 
-        public Result SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint)
+        public Task<Result> SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint)
         {
             throw new NotImplementedException();
         }
 
-        public Result SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint)
+        public Task<Result> SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint)
         {
             throw new NotImplementedException();
         }
