@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Janus.Communication.NetworkAdapters.Events
+namespace Janus.Communication.NetworkAdapters.Events;
+
+public class ByeReqReceivedEventArgs : BaseMessageReceivedEventArgs<ByeReqMessage>
 {
-    public class ByeReqReceivedEventArgs : BaseMessageReceivedEventArgs<ByeReqMessage>
+    public ByeReqReceivedEventArgs(ByeReqMessage message, string senderAddress) : base(message, senderAddress)
     {
-        public ByeReqReceivedEventArgs(ByeReqMessage message, string senderAddress) : base(message, senderAddress)
-        {
-        }
     }
 }

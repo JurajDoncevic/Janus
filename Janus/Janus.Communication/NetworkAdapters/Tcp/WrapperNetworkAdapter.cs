@@ -8,6 +8,10 @@ namespace Janus.Communication.NetworkAdapters.Tcp;
 
 public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapter
 {
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="listenPort">TCP listening port</param>
     internal WrapperNetworkAdapter(int listenPort) : base(listenPort)
     {
     }

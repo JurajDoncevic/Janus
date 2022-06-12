@@ -8,6 +8,10 @@ namespace Janus.Communication.NetworkAdapters.Tcp;
 
 public sealed class MediatorNetworkAdapter : NetworkAdapter, IMediatorNetworkAdapter
 {
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="listenPort">TCP listening port</param>
     internal MediatorNetworkAdapter(int listenPort) : base(listenPort)
     {
     }

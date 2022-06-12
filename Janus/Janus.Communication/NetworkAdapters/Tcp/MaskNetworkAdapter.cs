@@ -8,6 +8,10 @@ namespace Janus.Communication.NetworkAdapters.Tcp;
 
 public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
 {
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="listenPort">TCP listening port</param>
     internal MaskNetworkAdapter(int listenPort) : base(listenPort)
     {
     }
