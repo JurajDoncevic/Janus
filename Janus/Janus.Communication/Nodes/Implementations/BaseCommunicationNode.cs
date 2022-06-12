@@ -14,18 +14,29 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     protected readonly Dictionary<string, RemotePoint> _remotePoints;
     protected readonly TNetworkAdapter _networkAdapter;
 
+    /// <summary>
+    /// Communication node options
+    /// </summary>
     public CommunicationNodeOptions Options => _options;
+
+    /// <summary>
+    /// Registered remote points (currently active)
+    /// </summary>
     public ReadOnlyCollection<RemotePoint> RemotePoints => _remotePoints.Values.ToList().AsReadOnly();
+
+    /// <summary>
+    /// This node's type
+    /// </summary>
     public abstract NodeTypes NodeType { get; }
 
     protected ConcurrentDictionary<string, BaseMessage> _receivedResponseMessages;
     protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
 
-    #region RECEIVED MESSAGE EVENTS
-    public event EventHandler<HelloReqEventArgs>? HelloRequestReceived;
-    public event EventHandler<ByeReqEventArgs>? ByeRequestReceived;
-    #endregion
-
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="options">Communication node options</param>
+    /// <param name="networkAdapter">Node's network adapter</param>
     internal protected BaseCommunicationNode(CommunicationNodeOptions options!!, TNetworkAdapter networkAdapter)
     {
         _options = options;
@@ -39,6 +50,11 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         _networkAdapter.HelloResponseReceived += NetworkAdapter_ManageHelloResponseReceived;
         _networkAdapter.ByeRequestReceived += NetworkAdapter_ManageByeRequestReceived;
     }
+
+    #region RECEIVED MESSAGE EVENTS
+    public event EventHandler<HelloReqEventArgs>? HelloRequestReceived;
+    public event EventHandler<ByeReqEventArgs>? ByeRequestReceived;
+    #endregion
 
     #region MANAGE INCOMING MESSAGES
 

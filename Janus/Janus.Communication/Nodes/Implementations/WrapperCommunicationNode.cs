@@ -1,5 +1,6 @@
 ﻿using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
+using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
@@ -20,17 +21,53 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     #region MANAGE INCOMING MESSAGES
     private void NetworkAdapter_SchemaRequestReceived(object? sender, NetworkAdapters.Events.SchemaReqReceivedEventArgs e)
     {
-        throw new NotImplementedException();
+        // get the message
+        var message = e.Message;
+        // is this a saved remote point and do the addresses match
+        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
+        {
+            var remotePoint = _remotePoints[message.NodeId];
+
+            // add the message to the responses dictionary
+            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+
+            // raise event
+            SchemaRequestReceived?.Invoke(this, new SchemaReqEventArgs(e.Message, remotePoint));
+        }
     }
 
     private void NetworkAdapter_QueryRequestReceived(object? sender, NetworkAdapters.Events.QueryReqReceivedEventArgs e)
     {
-        throw new NotImplementedException();
+        // get the message
+        var message = e.Message;
+        // is this a saved remote point and do the addresses match
+        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
+        {
+            var remotePoint = _remotePoints[message.NodeId];
+
+            // add the message to the responses dictionary
+            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+
+            // raise event
+            QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
+        }
     }
 
     private void NetworkAdapter_CommandRequestReceived(object? sender, NetworkAdapters.Events.CommandReqReceivedEventArgs e)
     {
-        throw new NotImplementedException();
+        // get the message
+        var message = e.Message;
+        // is this a saved remote point and do the addresses match
+        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
+        {
+            var remotePoint = _remotePoints[message.NodeId];
+
+            // add the message to the responses dictionary
+            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+
+            // raise event
+            CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
+        }
     }
     #endregion
 
@@ -41,19 +78,43 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     #endregion
 
     #region SEND MESSAGES
-    public Task<Result> SendCommandResponse(bool isSuccess, RemotePoint remotePoint, string outcomeDescription = "")
+    public async Task<Result> SendCommandResponse(string exchangeId, bool isSuccess, RemotePoint remotePoint, string outcomeDescription = "")
     {
-        throw new NotImplementedException();
+        // create command response message
+        var commandResponse = new CommandResMessage(exchangeId, _options.NodeId, isSuccess, outcomeDescription);
+
+        // send command response with timeout
+        var result = Timing.RunWithTimeout(
+            async (token) =>
+                await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs);
+        return await result;
     }
 
-    public Task<Result> SendQueryResponse(TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
+    public async Task<Result> SendQueryResponse(string exchangeId, TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
     {
-        throw new NotImplementedException();
+        // create command response message
+        var queryResponse = new QueryResMessage(exchangeId, _options.NodeId, queryResult, errorMessage, blockNumber, totalBlocks);
+
+        // send command response with timeout
+        var result = Timing.RunWithTimeout(
+            async (token) =>
+                await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs);
+        return await result;
     }
 
-    public Task<Result> SendSchemaResponse(DataSource schema, RemotePoint remotePoint)
+    public async Task<Result> SendSchemaResponse(string exchangeId, DataSource schema, RemotePoint remotePoint)
     {
-        throw new NotImplementedException();
+        // create command response message
+        var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema);
+
+        // send command response with timeout
+        var result = Timing.RunWithTimeout(
+            async (token) =>
+                await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs);
+        return await result;
     }
     #endregion
 }

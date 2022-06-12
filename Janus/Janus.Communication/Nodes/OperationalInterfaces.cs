@@ -31,7 +31,7 @@ public interface ISendsCommandRes
     /// <param name="message">COMMAND_RES message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Task<Result> SendCommandResponse(bool isSuccess, RemotePoint remotePoint, string outcomeDescription = "");
+    public Task<Result> SendCommandResponse(string exchangeId, bool isSuccess, RemotePoint remotePoint, string outcomeDescription = "");
 }
 
 public interface ISendsQueryReq
@@ -53,7 +53,7 @@ public interface ISendsQueryRes
     /// <param name="message">QUERY_RES message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Task<Result> SendQueryResponse(TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1);
+    public Task<Result> SendQueryResponse(string exchangeId, TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1);
 }
 
 public interface ISendsSchemaReq
@@ -75,7 +75,7 @@ public interface ISendsSchemaRes
     /// <param name="message">SCHEMA_RES message</param>
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns></returns>
-    public Task<Result> SendSchemaResponse(DataSource schema, RemotePoint remotePoint);
+    public Task<Result> SendSchemaResponse(string exchangeId, DataSource schema, RemotePoint remotePoint);
 }
 
 public interface IReceivesCommandReq
