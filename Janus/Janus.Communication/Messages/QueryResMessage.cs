@@ -14,17 +14,32 @@ public class QueryResMessage : BaseMessage
     private readonly string _errorMessage;
     private readonly int _blockNumber;
     private readonly int _totalBlocks;
-    private readonly bool _isError;
+    private readonly bool _isFailure;
 
+    /// <summary>
+    /// Query result data
+    /// </summary>
     public TabularData? TabularData => _tabularData;
-
+    /// <summary>
+    /// Error message (if it exists)
+    /// </summary>
     public string ErrorMessage => _errorMessage;
-
+    /// <summary>
+    /// Response data block sequence number
+    /// </summary>
     public int BlockNumber => _blockNumber;
-
+    /// <summary>
+    /// Response data block sequence size 
+    /// </summary>
     public int TotalBlocks => _totalBlocks;
-
-    public bool IsError => _isError;
+    /// <summary>
+    /// Signals the query was a success
+    /// </summary>
+    public bool IsSuccess => !_isFailure;
+    /// <summary>
+    /// Signals the query failed
+    /// </summary>
+    public bool IsFailure => _isFailure;
 
     /// <summary>
     /// Constructor
@@ -38,7 +53,7 @@ public class QueryResMessage : BaseMessage
         _errorMessage = errorMessage ?? string.Empty;
         _blockNumber = blockNumber;
         _totalBlocks = totalBlocks;
-        _isError = !string.IsNullOrEmpty(_errorMessage) || tabularData == null;
+        _isFailure = !string.IsNullOrEmpty(_errorMessage) || tabularData == null;
     }
     /// <summary>
     /// Constructor
@@ -50,7 +65,7 @@ public class QueryResMessage : BaseMessage
         _errorMessage = errorMessage ?? string.Empty;
         _blockNumber = blockNumber;
         _totalBlocks = totalBlocks;
-        _isError = !string.IsNullOrEmpty(_errorMessage) || tabularData == null;
+        _isFailure = !string.IsNullOrEmpty(_errorMessage) || tabularData == null;
     }
 }
 

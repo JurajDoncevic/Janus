@@ -18,6 +18,11 @@ public class CommandResMessage : BaseMessage
     public bool IsSuccess => _isSuccess;
 
     /// <summary>
+    /// Signals that the requested command failed
+    /// </summary>
+    public bool IsFailure => !IsSuccess;
+
+    /// <summary>
     /// Outcome description of the requested command's outcome (e.g. error message)
     /// </summary>
     public string OutcomeDescription => _outcomeDescription;
