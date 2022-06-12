@@ -64,7 +64,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     #endregion
 
     #region SEND MESSAGES
-    public Task<Result> SendQueryRequest(Query query, RemotePoint remotePoint)
+    public Task<DataResult<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
     {
         throw new NotImplementedException();
     }
@@ -74,7 +74,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         throw new NotImplementedException();
     }
 
-    public Task<Result> SendSchemaRequest(RemotePoint remotePoint)
+    public Task<DataResult<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
     {
         throw new NotImplementedException();
     }

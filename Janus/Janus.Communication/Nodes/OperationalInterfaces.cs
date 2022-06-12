@@ -19,7 +19,7 @@ public interface ISendsCommandReq
     /// </summary>
     /// <param name="message">COMMAND_REQ message</param>
     /// <param name="remotePoint">Destination remote point</param>
-    /// <returns></returns>
+    /// <returns>DataResult of outcome message</returns>
     public Task<Result> SendCommandRequest(BaseCommand command, RemotePoint remotePoint);
 }
 
@@ -41,8 +41,8 @@ public interface ISendsQueryReq
     /// </summary>
     /// <param name="message">QUERY_REQ message</param>
     /// <param name="remotePoint">Destination remote point</param>
-    /// <returns></returns>
-    public Task<Result> SendQueryRequest(Query query, RemotePoint remotePoint);
+    /// <returns>DataResult of TabularData</returns>
+    public Task<DataResult<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint);
 }
 
 public interface ISendsQueryRes
@@ -63,8 +63,8 @@ public interface ISendsSchemaReq
     /// </summary>
     /// <param name="message">SCHEMA_REQ message</param>
     /// <param name="remotePoint">Destination remote point</param>
-    /// <returns></returns>
-    public Task<Result> SendSchemaRequest(RemotePoint remotePoint);
+    /// <returns>DataResult of DataSource</returns>
+    public Task<DataResult<DataSource>> SendSchemaRequest(RemotePoint remotePoint);
 }
 
 public interface ISendsSchemaRes

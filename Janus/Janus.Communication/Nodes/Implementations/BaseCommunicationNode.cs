@@ -10,9 +10,9 @@ namespace Janus.Communication.Nodes.Implementations;
 public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where TNetworkAdapter : INetworkAdapter
 {
 
-    private readonly CommunicationNodeOptions _options;
-    private readonly Dictionary<string, RemotePoint> _remotePoints;
-    private readonly TNetworkAdapter _networkAdapter;
+    protected readonly CommunicationNodeOptions _options;
+    protected readonly Dictionary<string, RemotePoint> _remotePoints;
+    protected readonly TNetworkAdapter _networkAdapter;
 
     public CommunicationNodeOptions Options => _options;
     public ReadOnlyCollection<RemotePoint> RemotePoints => _remotePoints.Values.ToList().AsReadOnly();
