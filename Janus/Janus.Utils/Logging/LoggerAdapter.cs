@@ -54,6 +54,15 @@ public class LoggerAdapter<T> : ILogger<T>
         return Unit();
     }
 
+    public Unit Critical<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+    {
+        if (_logger.IsEnabled(LogLevel.Critical))
+        {
+            _logger.LogCritical(messageTemplate, arg1, arg2, arg3, arg4);
+        }
+        return Unit();
+    }
+
     public Unit Debug(string message)
     {
         if (_logger.IsEnabled(LogLevel.Debug))
@@ -86,6 +95,15 @@ public class LoggerAdapter<T> : ILogger<T>
         if (_logger.IsEnabled(LogLevel.Debug))
         {
             _logger.LogDebug(messageTemplate, arg1, arg2, arg3);
+        }
+        return Unit();
+    }
+
+    public Unit Debug<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+    {
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug(messageTemplate, arg1, arg2, arg3, arg4);
         }
         return Unit();
     }
@@ -126,6 +144,15 @@ public class LoggerAdapter<T> : ILogger<T>
         return Unit();
     }
 
+    public Unit Error<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+    {
+        if (_logger.IsEnabled(LogLevel.Error))
+        {
+            _logger.LogError(messageTemplate, arg1, arg2, arg3, arg4);
+        }
+        return Unit();
+    }
+
     public Unit Info(string message)
     {
         if (_logger.IsEnabled(LogLevel.Information))
@@ -162,6 +189,15 @@ public class LoggerAdapter<T> : ILogger<T>
         return Unit();
     }
 
+    public Unit Info<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+    {
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation(messageTemplate, arg1, arg2, arg3, arg4);
+        }
+        return Unit();
+    }
+
     public Unit Warn(string message)
     {
         if (_logger.IsEnabled(LogLevel.Warning))
@@ -194,6 +230,15 @@ public class LoggerAdapter<T> : ILogger<T>
         if (_logger.IsEnabled(LogLevel.Warning))
         {
             _logger.LogWarning(messageTemplate, arg1, arg2, arg3);
+        }
+        return Unit();
+    }
+
+    public Unit Warn<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+    {
+        if (_logger.IsEnabled(LogLevel.Warning))
+        {
+            _logger.LogWarning(messageTemplate, arg1, arg2, arg3, arg4);
         }
         return Unit();
     }
