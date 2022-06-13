@@ -6,6 +6,7 @@ using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
+using Janus.Utils.Logging;
 
 namespace Janus.Communication.Nodes.Implementations;
 
@@ -13,8 +14,12 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
 {
     public override NodeTypes NodeType => NodeTypes.MASK_NODE;
 
-    internal MaskCommunicationNode(CommunicationNodeOptions options, IMaskNetworkAdapter networkAdapter) : base(options, networkAdapter)
+    private readonly ILogger<MaskCommunicationNode>? _logger;
+
+    internal MaskCommunicationNode(CommunicationNodeOptions options, IMaskNetworkAdapter networkAdapter, ILogger<MaskCommunicationNode>? logger = null) : base(options, networkAdapter, logger)
     {
+        _logger = logger;
+
         networkAdapter.SchemaResponseReceived += NetworkAdapter_SchemaResponseReceived;
         networkAdapter.QueryResponseReceived += NetworkAdapter_QueryResponseReceived;
         networkAdapter.CommandResponseReceived += NetworkAdapter_CommandResponseReceived;

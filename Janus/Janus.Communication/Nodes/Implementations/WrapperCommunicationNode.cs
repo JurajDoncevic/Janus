@@ -4,6 +4,7 @@ using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
+using Janus.Utils.Logging;
 
 namespace Janus.Communication.Nodes.Implementations;
 
@@ -11,8 +12,12 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
 {
     public override NodeTypes NodeType => NodeTypes.WRAPPER_NODE;
 
-    internal WrapperCommunicationNode(CommunicationNodeOptions options, IWrapperNetworkAdapter networkAdapter) : base(options, networkAdapter)
+    private readonly ILogger<WrapperCommunicationNode>? _logger;
+
+    internal WrapperCommunicationNode(CommunicationNodeOptions options, IWrapperNetworkAdapter networkAdapter, ILogger<WrapperCommunicationNode>? logger = null) : base(options, networkAdapter, logger)
     {
+        _logger = logger;
+
         networkAdapter.CommandRequestReceived += NetworkAdapter_CommandRequestReceived;
         networkAdapter.QueryRequestReceived += NetworkAdapter_QueryRequestReceived;
         networkAdapter.SchemaRequestReceived += NetworkAdapter_SchemaRequestReceived;

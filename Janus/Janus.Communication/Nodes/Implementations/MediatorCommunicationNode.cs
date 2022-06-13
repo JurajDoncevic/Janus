@@ -6,6 +6,7 @@ using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
+using Janus.Utils.Logging;
 
 namespace Janus.Communication.Nodes.Implementations;
 
@@ -13,8 +14,12 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
 {
     public override NodeTypes NodeType => NodeTypes.MEDIATOR_NODE;
 
-    internal MediatorCommunicationNode(CommunicationNodeOptions options, IMediatorNetworkAdapter networkAdapter) : base(options, networkAdapter)
+    private readonly ILogger<MediatorCommunicationNode>? _logger;
+
+    internal MediatorCommunicationNode(CommunicationNodeOptions options, IMediatorNetworkAdapter networkAdapter, ILogger<MediatorCommunicationNode>? logger = null) : base(options, networkAdapter, logger)
     {
+        _logger = logger;
+
         networkAdapter.SchemaRequestReceived += NetworkAdapter_SchemaRequestReceived;
         networkAdapter.SchemaResponseReceived += NetworkAdapter_SchemaResponseReceived;
         networkAdapter.QueryRequestReceived += NetworkAdapter_QueryRequestReceived;

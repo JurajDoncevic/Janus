@@ -3,6 +3,7 @@ using Janus.Communication.NetworkAdapters;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
+using Janus.Utils.Logging;
 using System.Collections.Concurrent;
 
 namespace Janus.Communication.Nodes.Implementations;
@@ -32,16 +33,20 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     protected ConcurrentDictionary<string, BaseMessage> _receivedResponseMessages;
     protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
 
+    private readonly ILogger? _logger;
+
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="options">Communication node options</param>
     /// <param name="networkAdapter">Node's network adapter</param>
-    internal protected BaseCommunicationNode(CommunicationNodeOptions options!!, TNetworkAdapter networkAdapter)
+    internal protected BaseCommunicationNode(CommunicationNodeOptions options!!, TNetworkAdapter networkAdapter, ILogger? logger = null)
     {
         _options = options;
         _remotePoints = new();
         _networkAdapter = networkAdapter;
+
+        _logger = logger;
 
         _receivedRequestMessages = new ConcurrentDictionary<string, BaseMessage>();
         _receivedResponseMessages = new ConcurrentDictionary<string, BaseMessage>();
@@ -132,15 +137,24 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         var result = Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
+                    .Pass(
+                        result => _logger?.Info($"Sending {0} to {1} successful", helloRequest.Preamble, helloRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, helloRequest.ExchangeId, result.ErrorMessage)
+                    )
                     .Bind(result =>
                     {
                         // wait for the response to appear
                         while (!_receivedResponseMessages.ContainsKey(exchangdeId))
                         {
-                            token.ThrowIfCancellationRequested();
+                            if (token.IsCancellationRequested)
+                            {
+                                _logger?.Info($"Timeout reached waiting for {0} response on exchange {1}", helloRequest.Preamble, helloRequest.ExchangeId);
+                                token.ThrowIfCancellationRequested();
+                            }
                         }
                         // get the hello response - exception if not correct message type
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        _logger?.Info($"Received returned {0} in exchange {1} from {2}", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
                         // remove the response from the concurrent dict
                         _receivedResponseMessages.Remove(exchangdeId, out _);
                         // create a remote point from the message and sender address
@@ -165,15 +179,24 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         var result = Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
+                    .Pass(
+                        result => _logger?.Info($"Sending {0} to {1} with exchange id {2} successful", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
+                    )
                     .Bind(result =>
                     {
                         // wait for the response
                         while (!_receivedResponseMessages.ContainsKey(exchangdeId))
                         {
-                            token.ThrowIfCancellationRequested();
+                            if (token.IsCancellationRequested)
+                            {
+                                _logger?.Info($"Timeout reached waiting for {0} response on exchange {1}", helloRequest.Preamble, helloRequest.ExchangeId);
+                                token.ThrowIfCancellationRequested();
+                            }
                         }
                         // get the response
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        _logger?.Info($"Received returned {0} in exchange {1} from {2}", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
                         // remove the response from the dictionary
                         _receivedResponseMessages.Remove(exchangdeId, out _);
                         // create a remote point from the message and sender address
@@ -209,6 +232,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
             {
                 if (r.IsSuccess)
                 {
+                    _logger?.Info($"Sending {0} to {1} failed with message {2}", message.Preamble, remotePoint, r.ErrorMessage);
                     _remotePoints.Remove(remotePoint.NodeId);
                 }
                 return Unit();
