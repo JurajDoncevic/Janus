@@ -21,7 +21,7 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static MediatorCommunicationNode CreateTcpMediatorCommunicationNode(CommunicationNodeOptions options!!)
-        => new MediatorCommunicationNode(options, new TcpAdapters.MediatorNetworkAdapter(options.ListenPort));
+        => new MediatorCommunicationNode(options, new TcpAdapters.MediatorNetworkAdapter(options.ListenPort, null));
 
     /// <summary>
     /// Creates a Wrapper communication node over TCP
@@ -29,7 +29,7 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static WrapperCommunicationNode CreateTcpWrapperCommunicationNode(CommunicationNodeOptions options!!)
-        => new WrapperCommunicationNode(options, new TcpAdapters.WrapperNetworkAdapter(options.ListenPort));
+        => new WrapperCommunicationNode(options, new TcpAdapters.WrapperNetworkAdapter(options.ListenPort, null));
 
 
     /// <summary>

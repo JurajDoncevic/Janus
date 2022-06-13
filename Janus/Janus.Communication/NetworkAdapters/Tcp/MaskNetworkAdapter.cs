@@ -2,18 +2,22 @@
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.NetworkAdapters.Exceptions;
 using Janus.Communication.Remotes;
+using Janus.Utils.Logging;
 using System.Net.Sockets;
 
 namespace Janus.Communication.NetworkAdapters.Tcp;
 
 public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
 {
+    private readonly ILogger<MaskNetworkAdapter>? _logger;
+
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="listenPort">TCP listening port</param>
-    internal MaskNetworkAdapter(int listenPort) : base(listenPort)
+    internal MaskNetworkAdapter(int listenPort, ILogger<MaskNetworkAdapter>? logger = null) : base(listenPort, logger)
     {
+        _logger = logger;
     }
 
     public event EventHandler<CommandResReceivedEventArgs>? CommandResponseReceived;
@@ -49,11 +53,14 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
     }
 
     public async Task<Result> SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint);
+        => await SendMessageBytes(message.ToBson(), remotePoint)
+            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint);
+        => await SendMessageBytes(message.ToBson(), remotePoint)
+            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint);
+        => await SendMessageBytes(message.ToBson(), remotePoint)
+            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
 }

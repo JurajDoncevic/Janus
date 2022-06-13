@@ -1,6 +1,7 @@
 ﻿using Janus.Communication.Messages;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Remotes;
+using Janus.Utils.Logging;
 using System.Net;
 using System.Net.Sockets;
 using static FunctionalExtensions.Base.Disposing;
@@ -17,12 +18,15 @@ public abstract class NetworkAdapter : INetworkAdapter
     protected readonly CancellationTokenSource _cancellationTokenSource;
     protected readonly Task _listenerTask;
 
+    private readonly ILogger? _logger;
+
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="listenPort"></param>
-    protected NetworkAdapter(int listenPort)
+    protected NetworkAdapter(int listenPort, ILogger? logger = null)
     {
+        _logger = logger;
         _listenPort = listenPort;
         _tcpListener = new TcpListener(System.Net.IPAddress.Any, listenPort);
         _cancellationTokenSource = new CancellationTokenSource();
@@ -35,24 +39,42 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="cancellationToken"></param>
     public void RunListener(CancellationToken cancellationToken)
     {
-        _tcpListener.Start();
+        var listenerStarting = TryCatch(
+            () => _tcpListener.Pass(l => l.Start()), 
+            ex => ex);
+
+        if (listenerStarting.IsException)
+        {
+            _logger?.Error($"Failed to start listener due to exception: {0}", listenerStarting.Exception);
+        }
+        else
+        {
+            _logger?.Info($"Started tcp listener on {0}", _tcpListener.LocalEndpoint);
+        }
+
+
         while (true)
         {
             // maybe the task is cancelled?
-            cancellationToken.ThrowIfCancellationRequested();
+            if (cancellationToken.IsCancellationRequested)
+            {
+                _logger?.Info($"Tcp listening cancelled");
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+
             // await a client
             var client = _tcpListener.AcceptTcpClientAsync(cancellationToken).Result;  
-
+            
             // if there wasn't a cancellation
             if (client != null)
             {
+                _logger?.Info($"Accepted client {0}", client.Client.RemoteEndPoint);
                 // see how many bytes the client is sending
                 int countBytes = client.ReceiveBufferSize;
                 // create a message bytes buffer
                 byte[] messageBytes = new byte[countBytes];
                 // receive the bytes
                 client.GetStream().Read(messageBytes, 0, countBytes);
-
                 var str = Encoding.UTF8.GetString(messageBytes, 0, countBytes);
                 // determine message type and raise event
                 messageBytes.DeterminePreambule()
@@ -86,7 +108,8 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint);
+        => await SendMessageBytes(message.ToBson(), remotePoint)
+            .Pass(result => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
 
     /// <summary>
     /// Sends a HELLO_RES message to the remote point
@@ -95,7 +118,9 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint);
+        => await SendMessageBytes(message.ToBson(), remotePoint)
+            .Pass(result => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            
     #endregion
 
     #region SEND BYE MESSAGES
@@ -106,7 +131,8 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendByeRequest(ByeReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint);
+        => await SendMessageBytes(message.ToBson(), remotePoint)
+            .Pass(result => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
     #endregion
 
     /// <summary>
@@ -116,13 +142,17 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="address">Address from which the message was received</param>
     private void RaiseMessageReceivedEvent(BaseMessage message, string address)
     {
+        _logger?.Info($"Received {0} from {1}", message.Preamble, address);
         switch (message.Preamble)
         {
             case Preambles.HELLO_REQUEST:   HelloRequestReceived?.Invoke(this, new HelloReqReceivedEventArgs((HelloReqMessage)message, address));
+                                            _logger?.Debug("Raised HelloRequestReceived");
                                             break;
             case Preambles.HELLO_RESPONSE:  HelloResponseReceived?.Invoke(this, new HelloResReceivedEventArgs((HelloResMessage)message, address));
+                                            _logger?.Debug("Raised HelloResponseReceived");
                                             break;
             case Preambles.BYE_REQUEST:     ByeRequestReceived?.Invoke(this, new ByeReqReceivedEventArgs((ByeReqMessage)message, address));
+                                            _logger?.Debug("Raised ByeRequestReceived");
                                             break;
             default:        RaiseSpecializedMessageReceivedEvent(message, address);
                             break;

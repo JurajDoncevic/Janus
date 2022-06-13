@@ -41,4 +41,9 @@ public abstract class RemotePoint
     {
         return HashCode.Combine(_nodeId, _address, _listenPort, NodeId, Address, Port);
     }
+
+    public override string ToString()
+    {
+        return $"Remote point with node id:{NodeId}, address:{Address}, port:{Port})";
+    }
 }
