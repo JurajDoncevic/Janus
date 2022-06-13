@@ -146,13 +146,13 @@ public abstract class NetworkAdapter : INetworkAdapter
         switch (message.Preamble)
         {
             case Preambles.HELLO_REQUEST:   HelloRequestReceived?.Invoke(this, new HelloReqReceivedEventArgs((HelloReqMessage)message, address));
-                                            _logger?.Debug("Raised HelloRequestReceived");
+                                            _logger?.Debug("Invoked HelloRequestReceived");
                                             break;
             case Preambles.HELLO_RESPONSE:  HelloResponseReceived?.Invoke(this, new HelloResReceivedEventArgs((HelloResMessage)message, address));
-                                            _logger?.Debug("Raised HelloResponseReceived");
+                                            _logger?.Debug("Invoked HelloResponseReceived");
                                             break;
             case Preambles.BYE_REQUEST:     ByeRequestReceived?.Invoke(this, new ByeReqReceivedEventArgs((ByeReqMessage)message, address));
-                                            _logger?.Debug("Raised ByeRequestReceived");
+                                            _logger?.Debug("Invoked ByeRequestReceived");
                                             break;
             default:        RaiseSpecializedMessageReceivedEvent(message, address);
                             break;

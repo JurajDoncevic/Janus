@@ -37,12 +37,15 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
         {
             case Preambles.SCHEMA_REQUEST:
                 SchemaRequestReceived?.Invoke(this, new SchemaReqReceivedEventArgs((SchemaReqMessage)message, address));
+                _logger?.Debug("Invoked SchemaRequestReceived");
                 break;
             case Preambles.QUERY_REQUEST:
                 QueryRequestReceived?.Invoke(this, new QueryReqReceivedEventArgs((QueryReqMessage)message, address));
+                _logger?.Debug("Invoked QueryRequestReceived");
                 break;
             case Preambles.COMMAND_REQUEST:
                 CommandRequestReceived?.Invoke(this, new CommandReqReceivedEventArgs((CommandReqMessage)message, address));
+                _logger?.Debug("Invoked CommandRequestReceived");
                 break;
             default:
                 // do nothing

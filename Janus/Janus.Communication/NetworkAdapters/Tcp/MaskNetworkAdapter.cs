@@ -39,12 +39,15 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
         {
             case Preambles.SCHEMA_RESPONSE:
                 SchemaResponseReceived?.Invoke(this, new SchemaResReceivedEventArgs((SchemaResMessage)message, address));
+                _logger?.Debug("Invoked SchemaResponseReceived");
                 break;
             case Preambles.QUERY_RESPONSE:
                 QueryResponseReceived?.Invoke(this, new QueryResReceivedEventArgs((QueryResMessage)message, address));
+                _logger?.Debug("Invoked QueryResponseReceived");
                 break;
             case Preambles.COMMAND_RESPONSE:
                 CommandResponseReceived?.Invoke(this, new CommandResReceivedEventArgs((CommandResMessage)message, address));
+                _logger?.Debug("Invoked CommandResponseReceived"); 
                 break;
             default:
                 // do nothing

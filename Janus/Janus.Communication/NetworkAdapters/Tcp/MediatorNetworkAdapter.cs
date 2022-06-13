@@ -45,21 +45,27 @@ public sealed class MediatorNetworkAdapter : NetworkAdapter, IMediatorNetworkAda
         {
             case Preambles.SCHEMA_REQUEST:
                 SchemaRequestReceived?.Invoke(this, new SchemaReqReceivedEventArgs((SchemaReqMessage)message, address));
+                _logger?.Debug("Invoked SchemaRequestReceived");
                 break;
             case Preambles.QUERY_REQUEST:
                 QueryRequestReceived?.Invoke(this, new QueryReqReceivedEventArgs((QueryReqMessage)message, address));
+                _logger?.Debug("Invoked QueryRequestReceived");
                 break;
             case Preambles.COMMAND_REQUEST:
                 CommandRequestReceived?.Invoke(this, new CommandReqReceivedEventArgs((CommandReqMessage)message, address));
+                _logger?.Debug("Invoked CommandRequestReceived");
                 break;
             case Preambles.SCHEMA_RESPONSE:
                 SchemaResponseReceived?.Invoke(this, new SchemaResReceivedEventArgs((SchemaResMessage)message, address));
+                _logger?.Debug("Invoked SchemaResponseReceived");
                 break;
             case Preambles.QUERY_RESPONSE:
                 QueryResponseReceived?.Invoke(this, new QueryResReceivedEventArgs((QueryResMessage)message, address));
+                _logger?.Debug("Invoked QueryResponseReceived");
                 break;
             case Preambles.COMMAND_RESPONSE:
                 CommandResponseReceived?.Invoke(this, new CommandResReceivedEventArgs((CommandResMessage)message, address));
+                _logger?.Debug("Invoked CommandResponseReceived");
                 break;
             default:
                 // do nothing
