@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Janus.Utils.Logging;
 
-public class LoggerAdapter<T> : ILogger<T>
+public sealed class LoggerAdapter<T> : ILogger<T>
 {
     private readonly Microsoft.Extensions.Logging.ILogger<T> _logger;
 
