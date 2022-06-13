@@ -187,7 +187,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Pass(
-                        result => _logger?.Info($"Sending {0} with registering intetion to {1} with exchange {2} successful.", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} with registering intention to {1} with exchange {2} successful.", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
                         result => _logger?.Info($"Sending {0} with registering intention to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
                     .Bind(result =>
