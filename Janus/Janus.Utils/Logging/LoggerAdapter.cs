@@ -18,9 +18,19 @@ public class LoggerAdapter<T> : ILogger<T>
         _logger = logger;
     }
 
+    public Func<bool> IsDebugEnabled => () => _logger.IsEnabled(LogLevel.Debug);
+
+    public Func<bool> IsInfoEnabled => () => _logger.IsEnabled(LogLevel.Information);
+
+    public Func<bool> IsWarnEnabled => () => _logger.IsEnabled(LogLevel.Warning);
+
+    public Func<bool> IsErrorEnabled => () => _logger.IsEnabled(LogLevel.Error);
+
+    public Func<bool> IsCriticalEnabled => () => _logger.IsEnabled(LogLevel.Critical);
+
     public Unit Critical(string message)
     {
-        if (_logger.IsEnabled(LogLevel.Critical))
+        if (IsCriticalEnabled())
         {
             _logger.LogCritical(message);
         }
@@ -29,7 +39,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Critical<T1>(string messageTemplate, T1 arg1)
     {
-        if (_logger.IsEnabled(LogLevel.Critical))
+        if (IsCriticalEnabled())
         {
             _logger.LogCritical(messageTemplate, arg1);
         }
@@ -38,7 +48,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Critical<T1, T2>(string messageTemplate, T1 arg1, T2 arg2)
     {
-        if (_logger.IsEnabled(LogLevel.Critical))
+        if (IsCriticalEnabled())
         {
             _logger.LogCritical(messageTemplate, arg1, arg2);
         }
@@ -47,7 +57,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Critical<T1, T2, T3>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3)
     {
-        if (_logger.IsEnabled(LogLevel.Critical))
+        if (IsCriticalEnabled())
         {
             _logger.LogCritical(messageTemplate, arg1, arg2, arg3);
         }
@@ -56,7 +66,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Critical<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
-        if (_logger.IsEnabled(LogLevel.Critical))
+        if (IsCriticalEnabled())
         {
             _logger.LogCritical(messageTemplate, arg1, arg2, arg3, arg4);
         }
@@ -65,7 +75,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Debug(string message)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
+        if (IsDebugEnabled())
         {
             _logger.LogDebug(message);
         }
@@ -74,7 +84,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Debug<T1>(string messageTemplate, T1 arg1)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
+        if (IsDebugEnabled())
         {
             _logger.LogDebug(messageTemplate, arg1);
         }
@@ -83,7 +93,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Debug<T1, T2>(string messageTemplate, T1 arg1, T2 arg2)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
+        if (IsDebugEnabled())
         {
             _logger.LogDebug(messageTemplate, arg1, arg2);
         }
@@ -92,7 +102,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Debug<T1, T2, T3>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
+        if (IsDebugEnabled())
         {
             _logger.LogDebug(messageTemplate, arg1, arg2, arg3);
         }
@@ -101,7 +111,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Debug<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
+        if (IsDebugEnabled())
         {
             _logger.LogDebug(messageTemplate, arg1, arg2, arg3, arg4);
         }
@@ -110,7 +120,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Error(string message)
     {
-        if (_logger.IsEnabled(LogLevel.Error))
+        if (IsErrorEnabled())
         {
             _logger.LogError(message);
         }
@@ -119,7 +129,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Error<T1>(string messageTemplate, T1 arg1)
     {
-        if (_logger.IsEnabled(LogLevel.Error))
+        if (IsErrorEnabled())
         {
             _logger.LogError(messageTemplate, arg1);
         }
@@ -128,7 +138,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Error<T1, T2>(string messageTemplate, T1 arg1, T2 arg2)
     {
-        if (_logger.IsEnabled(LogLevel.Error))
+        if (IsErrorEnabled())
         {
             _logger.LogError(messageTemplate, arg1, arg2);
         }
@@ -137,7 +147,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Error<T1, T2, T3>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3)
     {
-        if (_logger.IsEnabled(LogLevel.Error))
+        if (IsErrorEnabled())
         {
             _logger.LogError(messageTemplate, arg1, arg2, arg3);
         }
@@ -146,7 +156,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Error<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
-        if (_logger.IsEnabled(LogLevel.Error))
+        if (IsErrorEnabled())
         {
             _logger.LogError(messageTemplate, arg1, arg2, arg3, arg4);
         }
@@ -155,7 +165,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Info(string message)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
+        if (IsInfoEnabled())
         {
             _logger.LogInformation(message);
         }
@@ -164,7 +174,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Info<T1>(string messageTemplate, T1 arg1)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
+        if (IsInfoEnabled())
         {
             _logger.LogInformation(messageTemplate, arg1);
         }
@@ -173,7 +183,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Info<T1, T2>(string messageTemplate, T1 arg1, T2 arg2)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
+        if (IsInfoEnabled())
         {
             _logger.LogInformation(messageTemplate, arg1, arg2);
         }
@@ -182,7 +192,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Info<T1, T2, T3>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
+        if (IsInfoEnabled())
         {
             _logger.LogInformation(messageTemplate, arg1, arg2, arg3);
         }
@@ -191,7 +201,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Info<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
+        if (IsInfoEnabled())
         {
             _logger.LogInformation(messageTemplate, arg1, arg2, arg3, arg4);
         }
@@ -200,7 +210,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Warn(string message)
     {
-        if (_logger.IsEnabled(LogLevel.Warning))
+        if (IsWarnEnabled())
         {
             _logger.LogWarning(message);
         }
@@ -209,7 +219,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Warn<T1>(string messageTemplate, T1 arg1)
     {
-        if (_logger.IsEnabled(LogLevel.Warning))
+        if (IsWarnEnabled())
         {
             _logger.LogWarning(messageTemplate, arg1);
         }
@@ -218,7 +228,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Warn<T1, T2>(string messageTemplate, T1 arg1, T2 arg2)
     {
-        if (_logger.IsEnabled(LogLevel.Warning))
+        if (IsWarnEnabled())
         {
             _logger.LogWarning(messageTemplate, arg1, arg2);
         }
@@ -227,7 +237,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Warn<T1, T2, T3>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3)
     {
-        if (_logger.IsEnabled(LogLevel.Warning))
+        if (IsWarnEnabled())
         {
             _logger.LogWarning(messageTemplate, arg1, arg2, arg3);
         }
@@ -236,7 +246,7 @@ public class LoggerAdapter<T> : ILogger<T>
 
     public Unit Warn<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
     {
-        if (_logger.IsEnabled(LogLevel.Warning))
+        if (IsWarnEnabled())
         {
             _logger.LogWarning(messageTemplate, arg1, arg2, arg3, arg4);
         }
