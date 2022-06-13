@@ -28,6 +28,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -35,6 +36,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
 
             // add the message to the responses dictionary
             _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
             SchemaRequestReceived?.Invoke(this, new SchemaReqEventArgs(e.Message, remotePoint));
@@ -45,6 +47,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -52,6 +55,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
 
             // add the message to the responses dictionary
             _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
             QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
@@ -62,6 +66,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -69,6 +74,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
 
             // add the message to the responses dictionary
             _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
             CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
@@ -89,11 +95,15 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         var commandResponse = new CommandResMessage(exchangeId, _options.NodeId, isSuccess, outcomeDescription);
 
         // send command response with timeout
-        var result = Timing.RunWithTimeout(
-            async (token) =>
-                await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
-                _options.TimeoutMs);
-        return await result;
+        var result = 
+            (await Timing.RunWithTimeout(
+                async (token) => await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs))
+            .Pass(
+                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandResponse.Preamble, remotePoint, commandResponse.ExchangeId),
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.ErrorMessage)
+            );
+        return result;
     }
 
     public async Task<Result> SendQueryResponse(string exchangeId, TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
@@ -102,11 +112,15 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         var queryResponse = new QueryResMessage(exchangeId, _options.NodeId, queryResult, errorMessage, blockNumber, totalBlocks);
 
         // send command response with timeout
-        var result = Timing.RunWithTimeout(
-            async (token) =>
-                await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
-                _options.TimeoutMs);
-        return await result;
+        var result = 
+            (await Timing.RunWithTimeout(
+                async (token) => await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs))
+            .Pass(
+                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryResponse.Preamble, remotePoint, queryResponse.ExchangeId),
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.ErrorMessage)
+            );
+        return result;
     }
 
     public async Task<Result> SendSchemaResponse(string exchangeId, DataSource schema, RemotePoint remotePoint)
@@ -115,11 +129,15 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema);
 
         // send command response with timeout
-        var result = Timing.RunWithTimeout(
-            async (token) =>
-                await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
-                _options.TimeoutMs);
-        return await result;
+        var result = 
+            (await Timing.RunWithTimeout(
+                async (token) => await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs))
+            .Pass(
+                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaResponse.Preamble, remotePoint, schemaResponse.ExchangeId),
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.ErrorMessage)
+            );
+        return result;
     }
     #endregion
 }

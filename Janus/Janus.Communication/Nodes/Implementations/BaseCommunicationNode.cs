@@ -146,7 +146,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     {
         // create request hello message
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, false);
-        var exchangdeId = helloRequest.ExchangeId;
+        var exchangeId = helloRequest.ExchangeId;
         var result = Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
@@ -157,7 +157,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                     .Bind(result =>
                     {
                         // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangdeId))
+                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
@@ -166,10 +166,10 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                             }
                         }
                         // get the hello response - exception if not correct message type
-                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangeId];
                         _logger?.Info($"Received returned {0} from {1} in exchange {2}", helloResponse.Preamble, helloResponse.NodeId, helloResponse.ExchangeId);
                         // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangdeId, out _);
+                        _receivedResponseMessages.Remove(exchangeId, out _);
                         // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
                         // turn it into a data result
@@ -188,7 +188,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     {
         // create request hello message
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, true);
-        var exchangdeId = helloRequest.ExchangeId;
+        var exchangeId = helloRequest.ExchangeId;
         var result = Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
@@ -199,7 +199,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                     .Bind(result =>
                     {
                         // wait for the response
-                        while (!_receivedResponseMessages.ContainsKey(exchangdeId))
+                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
@@ -208,10 +208,10 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                             }
                         }
                         // get the response
-                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
+                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangeId];
                         _logger?.Info($"Received {0} on exchange {1} from {2}. Registering remote point.", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
                         // remove the response from the dictionary
-                        _receivedResponseMessages.Remove(exchangdeId, out _);
+                        _receivedResponseMessages.Remove(exchangeId, out _);
                         // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
                         // add update the remote point into the known remote point dictionary
@@ -237,8 +237,8 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
 
         var result = (await Timing.RunWithTimeout(
             async token => (await _networkAdapter.SendByeRequest(message, remotePoint).WaitAsync(token))
-                                .Pass(r => _logger?.Info($"Sent {0} to {1}", message.Preamble, remotePoint) ?? Unit(),
-                                      r => _logger?.Info($"Sending {0} to {1} failed with message {2}", message.Preamble, remotePoint, r.ErrorMessage) ?? Unit()),
+                                .Pass(r => _logger?.Info($"Sent {0} to {1}", message.Preamble, remotePoint),
+                                      r => _logger?.Info($"Sending {0} to {1} failed with message {2}", message.Preamble, remotePoint, r.ErrorMessage)),
             _options.TimeoutMs))
             .Pass(
                 r => _remotePoints.Remove(remotePoint.NodeId)

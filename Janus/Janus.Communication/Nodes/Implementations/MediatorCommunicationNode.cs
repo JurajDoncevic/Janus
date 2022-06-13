@@ -33,6 +33,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -40,26 +41,10 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
 
             // add the message to the responses dictionary
             _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
             CommandResponseReceived?.Invoke(this, new CommandResEventArgs(e.Message, remotePoint));
-        }
-    }
-
-    private void NetworkAdapter_CommandRequestReceived(object? sender, NetworkAdapters.Events.CommandReqReceivedEventArgs e)
-    {
-        // get the message
-        var message = e.Message;
-        // is this a saved remote point and do the addresses match
-        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
-        {
-            var remotePoint = _remotePoints[message.NodeId];
-
-            // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-
-            // raise event
-            CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
         }
     }
 
@@ -67,6 +52,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -74,26 +60,10 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
 
             // add the message to the responses dictionary
             _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
             QueryResponseReceived?.Invoke(this, new QueryResEventArgs(e.Message, remotePoint));
-        }
-    }
-
-    private void NetworkAdapter_QueryRequestReceived(object? sender, NetworkAdapters.Events.QueryReqReceivedEventArgs e)
-    {
-        // get the message
-        var message = e.Message;
-        // is this a saved remote point and do the addresses match
-        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
-        {
-            var remotePoint = _remotePoints[message.NodeId];
-
-            // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-
-            // raise event
-            QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
         }
     }
 
@@ -101,6 +71,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -108,16 +79,17 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
 
             // add the message to the responses dictionary
             _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
             SchemaResponseReceived?.Invoke(this, new SchemaResEventArgs(e.Message, remotePoint));
         }
     }
-
     private void NetworkAdapter_SchemaRequestReceived(object? sender, NetworkAdapters.Events.SchemaReqReceivedEventArgs e)
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -125,9 +97,48 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
 
             // add the message to the responses dictionary
             _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
             SchemaRequestReceived?.Invoke(this, new SchemaReqEventArgs(e.Message, remotePoint));
+        }
+    }
+
+    private void NetworkAdapter_QueryRequestReceived(object? sender, NetworkAdapters.Events.QueryReqReceivedEventArgs e)
+    {
+        // get the message
+        var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        // is this a saved remote point and do the addresses match
+        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
+        {
+            var remotePoint = _remotePoints[message.NodeId];
+
+            // add the message to the responses dictionary
+            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+
+            // raise event
+            QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
+        }
+    }
+
+    private void NetworkAdapter_CommandRequestReceived(object? sender, NetworkAdapters.Events.CommandReqReceivedEventArgs e)
+    {
+        // get the message
+        var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        // is this a saved remote point and do the addresses match
+        if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
+        {
+            var remotePoint = _remotePoints[message.NodeId];
+
+            // add the message to the responses dictionary
+            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+
+            // raise event
+            CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
         }
     }
     #endregion
@@ -142,106 +153,36 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     #endregion
 
     #region SEND MESSAGES
-    public async Task<DataResult<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
-    {
-        // create query request message
-        var queryRequest = new QueryReqMessage(_options.NodeId, query);
-        var exchangdeId = queryRequest.ExchangeId;
-        // send command request with timeout
-        var result = Timing.RunWithTimeout(
-            async (token) =>
-                (await _networkAdapter.SendQueryRequest(queryRequest, remotePoint)) // send the request
-                    .Bind(result =>
-                    {
-                        // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangdeId))
-                        {
-                            token.ThrowIfCancellationRequested();
-                        }
-                        // get the hello response - exception if not correct message type
-                        var queryResponse = (QueryResMessage)_receivedResponseMessages[exchangdeId];
-                        // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangdeId, out _);
-                        // have to throw exception to register as error and get outcome message
-                        return ResultExtensions.AsDataResult(() => queryResponse.IsSuccess ? queryResponse.TabularData : throw new Exception(queryResponse.ErrorMessage));
-                    }),
-                _options.TimeoutMs);
-        return await result;
-    }
-
-    public async Task<Result> SendQueryResponse(string exchangeId, TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
-    {
-        // create command response message
-        var queryResponse = new QueryResMessage(exchangeId, _options.NodeId, queryResult, errorMessage, blockNumber, totalBlocks);
-
-        // send command response with timeout
-        var result = Timing.RunWithTimeout(
-            async (token) =>
-                await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
-                _options.TimeoutMs);
-        return await result;
-    }
-
-    public async Task<DataResult<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
-    {
-        // create query request message
-        var schemaRequest = new SchemaReqMessage(_options.NodeId);
-        var exchangdeId = schemaRequest.ExchangeId;
-        // send command request with timeout
-        var result = Timing.RunWithTimeout(
-            async (token) =>
-                (await _networkAdapter.SendSchemaRequest(schemaRequest, remotePoint)) // send the request
-                    .Bind(result =>
-                    {
-                        // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangdeId))
-                        {
-                            token.ThrowIfCancellationRequested();
-                        }
-                        // get the hello response - exception if not correct message type
-                        var schemaResponse = (SchemaResMessage)_receivedResponseMessages[exchangdeId];
-                        // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangdeId, out _);
-                        // have to throw exception to register as error and get outcome message
-                        return ResultExtensions.AsDataResult(() => schemaResponse.DataSource);
-                    }),
-                _options.TimeoutMs);
-        return await result;
-    }
-
-    public async Task<Result> SendSchemaResponse(string exchangeId, DataSource schema, RemotePoint remotePoint)
-    {
-        // create command response message
-        var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema);
-
-        // send command response with timeout
-        var result = Timing.RunWithTimeout(
-            async (token) =>
-                await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
-                _options.TimeoutMs);
-        return await result;
-    }
-
     public async Task<Result> SendCommandRequest(BaseCommand command, RemotePoint remotePoint)
     {
         // create command request message
         var commandRequest = new CommandReqMessage(_options.NodeId, command);
-        var exchangdeId = commandRequest.ExchangeId;
+        var exchangeId = commandRequest.ExchangeId;
         // send command request with timeout
         var result = Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendCommandRequest(commandRequest, remotePoint)) // send the request
+                    .Pass(
+                        result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandRequest.Preamble, remotePoint, commandRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.ErrorMessage)
+                    )
                     .Bind(result =>
                     {
                         // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangdeId))
+                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
                         {
-                            token.ThrowIfCancellationRequested();
+                            if (token.IsCancellationRequested)
+                            {
+                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", commandRequest.Preamble, commandRequest.ExchangeId);
+                                token.ThrowIfCancellationRequested();
+                            }
+
                         }
                         // get the hello response - exception if not correct message type
-                        var commandResponse = (CommandResMessage)_receivedResponseMessages[exchangdeId];
+                        var commandResponse = (CommandResMessage)_receivedResponseMessages[exchangeId];
+                        _logger?.Info($"Received {0} on exchange {1} from {2}", commandResponse.Preamble, commandResponse.ExchangeId, commandResponse.NodeId);
                         // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangdeId, out _);
+                        _receivedResponseMessages.Remove(exchangeId, out _);
                         // have to throw exception to register as error and get outcome message
                         return ResultExtensions.AsResult(() => commandResponse.IsSuccess ? true : throw new Exception(commandResponse.OutcomeDescription));
                     }),
@@ -255,11 +196,122 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         var commandResponse = new CommandResMessage(exchangeId, _options.NodeId, isSuccess, outcomeDescription);
 
         // send command response with timeout
+        var result =
+            (await Timing.RunWithTimeout(
+                async (token) => await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs))
+            .Pass(
+                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandResponse.Preamble, remotePoint, commandResponse.ExchangeId),
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.ErrorMessage)
+            );
+        return result;
+    }
+
+    public async Task<DataResult<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
+    {
+        // create query request message
+        var queryRequest = new QueryReqMessage(_options.NodeId, query);
+        var exchangeId = queryRequest.ExchangeId;
+        // send command request with timeout
         var result = Timing.RunWithTimeout(
             async (token) =>
-                await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
+                (await _networkAdapter.SendQueryRequest(queryRequest, remotePoint)) // send the request
+                    .Pass(
+                        result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryRequest.Preamble, remotePoint, queryRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.ErrorMessage)
+                    )
+                    .Bind(result =>
+                    {
+                        // wait for the response to appear
+                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
+                        {
+                            if (token.IsCancellationRequested)
+                            {
+                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", queryRequest.Preamble, queryRequest.ExchangeId);
+                                token.ThrowIfCancellationRequested();
+                            }
+
+                        }
+                        // get the hello response - exception if not correct message type
+                        var queryResponse = (QueryResMessage)_receivedResponseMessages[exchangeId];
+                        _logger?.Info($"Received returned {0} from {1} in exchange {2}", queryResponse.Preamble, queryResponse.NodeId, queryResponse.ExchangeId);
+                        // remove the response from the concurrent dict
+                        _receivedResponseMessages.Remove(exchangeId, out _);
+                        // have to throw exception to register as error and get outcome message
+                        return ResultExtensions.AsDataResult(() => queryResponse.IsSuccess ? queryResponse.TabularData : throw new Exception(queryResponse.ErrorMessage));
+                    }),
                 _options.TimeoutMs);
         return await result;
+    }
+
+    public async Task<Result> SendQueryResponse(string exchangeId, TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
+    {
+        // create command response message
+        var queryResponse = new QueryResMessage(exchangeId, _options.NodeId, queryResult, errorMessage, blockNumber, totalBlocks);
+
+        // send command response with timeout
+        var result =
+            (await Timing.RunWithTimeout(
+                async (token) => await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs))
+            .Pass(
+                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryResponse.Preamble, remotePoint, queryResponse.ExchangeId),
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.ErrorMessage)
+            );
+        return result;
+    }
+
+    public async Task<DataResult<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
+    {
+        // create query request message
+        var schemaRequest = new SchemaReqMessage(_options.NodeId);
+        var exchangeId = schemaRequest.ExchangeId;
+        // send command request with timeout
+        var result = Timing.RunWithTimeout(
+            async (token) =>
+                (await _networkAdapter.SendSchemaRequest(schemaRequest, remotePoint)) // send the request
+                    .Pass(
+                        result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaRequest.Preamble, remotePoint, schemaRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.ErrorMessage)
+                    )
+                    .Bind(result =>
+                    {
+                        // wait for the response to appear
+                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
+                        {
+                            if (token.IsCancellationRequested)
+                            {
+                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", schemaRequest.Preamble, schemaRequest.ExchangeId);
+                                token.ThrowIfCancellationRequested();
+                            }
+                        }
+                        // get the hello response - exception if not correct message type
+                        var schemaResponse = (SchemaResMessage)_receivedResponseMessages[exchangeId];
+                        _logger?.Info($"Received returned {0} from {1} in exchange {2}", schemaResponse.Preamble, schemaResponse.NodeId, schemaResponse.ExchangeId);
+                        // remove the response from the concurrent dict
+                        _receivedResponseMessages.Remove(exchangeId, out _);
+                        // have to throw exception to register as error and get outcome message
+                        return ResultExtensions.AsDataResult(() => schemaResponse.DataSource);
+                    }),
+                _options.TimeoutMs);
+        return await result;
+    }
+
+    public async Task<Result> SendSchemaResponse(string exchangeId, DataSource schema, RemotePoint remotePoint)
+    {
+        // create command response message
+        var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema);
+
+        // send command response with timeout
+        var result =
+            (await Timing.RunWithTimeout(
+                async (token) => await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
+                _options.TimeoutMs))
+            .Pass(
+                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaResponse.Preamble, remotePoint, schemaResponse.ExchangeId),
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.ErrorMessage)
+            );
+        return result;
     }
     #endregion
 }
