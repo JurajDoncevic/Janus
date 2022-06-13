@@ -58,6 +58,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
 
     #region RECEIVED MESSAGE EVENTS
     public event EventHandler<HelloReqEventArgs>? HelloRequestReceived;
+    public event EventHandler<HelloResEventArgs>? HelloResponseReceived;
     public event EventHandler<ByeReqEventArgs>? ByeRequestReceived;
     #endregion
 
@@ -78,11 +79,12 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
             var remotePoint = _remotePoints[message.NodeId];
-            // raise event
-            ByeRequestReceived?.Invoke(this, new ByeReqEventArgs(e.Message, remotePoint));
             // remove the remote point
             _remotePoints.Remove(message.NodeId);
             _logger?.Info($"Removed node {0} from registered remote points on {1}.", message.NodeId, message.Preamble);
+            
+            // invoke event
+            ByeRequestReceived?.Invoke(this, new ByeReqEventArgs(e.Message, remotePoint));
         }
     }
 
@@ -95,10 +97,13 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     {
         // extract the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1}", message.Preamble, message.NodeId);
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // add the message to the responses dictionary
         _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-        _logger?.Info($"Added {0} from {1} to received responses", message.Preamble, message.NodeId);
+        _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+
+        //invoke event
+        HelloResponseReceived?.Invoke(this, new HelloResEventArgs(message, _remotePoints[message.NodeId]));
     }
 
     /// <summary>
@@ -113,8 +118,6 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // create remote point
         var remotePoint = message.CreateRemotePoint(e.SenderAddress);
-        // raise event
-        HelloRequestReceived?.Invoke(this, new HelloReqEventArgs(message, remotePoint));
         // if remember me, save to remote points
         if (message.RememberMe)
         {
@@ -126,6 +129,9 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         _logger?.Info($"Sending {0} as a response to remote point {1} in exchange {2}", response.Preamble, remotePoint, response.ExchangeId);
         // send response, but don't wait
         _networkAdapter.SendHelloResponse(response, remotePoint);
+
+        // invoke event
+        HelloRequestReceived?.Invoke(this, new HelloReqEventArgs(message, remotePoint));
     }
 
     #endregion
