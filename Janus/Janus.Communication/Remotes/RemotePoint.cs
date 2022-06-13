@@ -44,6 +44,6 @@ public abstract class RemotePoint
 
     public override string ToString()
     {
-        return $"Remote point with node id:{NodeId}, address:{Address}, port:{Port})";
+        return $"(NodeId:{NodeId};Address:{Address};Port:{Port})";
     }
 }
