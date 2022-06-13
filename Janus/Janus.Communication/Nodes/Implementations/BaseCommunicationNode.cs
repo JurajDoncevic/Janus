@@ -73,6 +73,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     {
         // get the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1}", message.Preamble, message.NodeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -81,6 +82,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
             ByeRequestReceived?.Invoke(this, new ByeReqEventArgs(e.Message, remotePoint));
             // remove the remote point
             _remotePoints.Remove(message.NodeId);
+            _logger?.Info($"Removed node {0} from registered remote points on {1}.", message.NodeId, message.Preamble);
         }
     }
 
@@ -93,8 +95,10 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     {
         // extract the message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1}", message.Preamble, message.NodeId);
         // add the message to the responses dictionary
         _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+        _logger?.Info($"Added {0} from {1} to received responses", message.Preamble, message.NodeId);
     }
 
     /// <summary>
@@ -106,6 +110,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     {
         // get message
         var message = e.Message;
+        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // create remote point
         var remotePoint = message.CreateRemotePoint(e.SenderAddress);
         // raise event
@@ -114,9 +119,11 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         if (message.RememberMe)
         {
             _remotePoints[message.NodeId] = remotePoint;
+            _logger?.Info($"Registered remote point {0}", remotePoint);
         }
         // create response
         var response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, message.RememberMe);
+        _logger?.Info($"Sending {0} as a response to remote point {1} in exchange {2}", response.Preamble, remotePoint, response.ExchangeId);
         // send response, but don't wait
         _networkAdapter.SendHelloResponse(response, remotePoint);
     }
@@ -138,8 +145,8 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Pass(
-                        result => _logger?.Info($"Sending {0} to {1} successful", helloRequest.Preamble, helloRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, helloRequest.ExchangeId, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
                     .Bind(result =>
                     {
@@ -148,13 +155,13 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                         {
                             if (token.IsCancellationRequested)
                             {
-                                _logger?.Info($"Timeout reached waiting for {0} response on exchange {1}", helloRequest.Preamble, helloRequest.ExchangeId);
+                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", helloRequest.Preamble, helloRequest.ExchangeId);
                                 token.ThrowIfCancellationRequested();
                             }
                         }
                         // get the hello response - exception if not correct message type
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
-                        _logger?.Info($"Received returned {0} in exchange {1} from {2}", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
+                        _logger?.Info($"Received returned {0} from {1} in exchange {2}", helloResponse.Preamble, helloResponse.NodeId, helloResponse.ExchangeId);
                         // remove the response from the concurrent dict
                         _receivedResponseMessages.Remove(exchangdeId, out _);
                         // create a remote point from the message and sender address
@@ -180,8 +187,8 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Pass(
-                        result => _logger?.Info($"Sending {0} to {1} with exchange id {2} successful", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} with registering intetion to {1} with exchange {2} successful.", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
+                        result => _logger?.Info($"Sending {0} with registering intention to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
                     .Bind(result =>
                     {
@@ -190,13 +197,13 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                         {
                             if (token.IsCancellationRequested)
                             {
-                                _logger?.Info($"Timeout reached waiting for {0} response on exchange {1}", helloRequest.Preamble, helloRequest.ExchangeId);
+                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", helloRequest.Preamble, helloRequest.ExchangeId);
                                 token.ThrowIfCancellationRequested();
                             }
                         }
                         // get the response
                         var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangdeId];
-                        _logger?.Info($"Received returned {0} in exchange {1} from {2}", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
+                        _logger?.Info($"Received {0} on exchange {1} from {2}. Registering remote point.", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
                         // remove the response from the dictionary
                         _receivedResponseMessages.Remove(exchangdeId, out _);
                         // create a remote point from the message and sender address
@@ -223,20 +230,15 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         var message = new ByeReqMessage(_options.NodeId);
 
         var result = (await Timing.RunWithTimeout(
-            async token =>
-            {
-                return await _networkAdapter.SendByeRequest(message, remotePoint);
-            },
+            async token => (await _networkAdapter.SendByeRequest(message, remotePoint).WaitAsync(token))
+                                .Pass(r => _logger?.Info($"Sent {0} to {1}", message.Preamble, remotePoint) ?? Unit(),
+                                      r => _logger?.Info($"Sending {0} to {1} failed with message {2}", message.Preamble, remotePoint, r.ErrorMessage) ?? Unit()),
             _options.TimeoutMs))
-            .Pass(r =>
-            {
-                if (r.IsSuccess)
-                {
-                    _logger?.Info($"Sending {0} to {1} failed with message {2}", message.Preamble, remotePoint, r.ErrorMessage);
-                    _remotePoints.Remove(remotePoint.NodeId);
-                }
-                return Unit();
-            });
+            .Pass(
+                r => _remotePoints.Remove(remotePoint.NodeId)
+                        ? _logger?.Info($"Removed remote point {0}", remotePoint) ?? Unit()
+                        : Unit(),             
+                r => Unit());
 
         return result;
     }
