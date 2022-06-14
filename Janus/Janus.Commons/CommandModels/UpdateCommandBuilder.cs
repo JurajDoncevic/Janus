@@ -173,7 +173,7 @@ public class MutationBuilder
                 throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);
         }
 
-        foreach(var referencedAttrName in referencableAttrNames)
+        foreach(var referencedAttrName in referencedAttrNames)
         {
             if (_dataSource[schemaName][tableauName][referencedAttrName].IsPrimaryKey)
             {

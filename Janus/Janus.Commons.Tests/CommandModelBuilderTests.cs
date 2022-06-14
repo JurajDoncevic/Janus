@@ -45,9 +45,9 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 }, { "attr4", 1 } }))
                                   .Build();
 
             var insertCommand =
@@ -67,9 +67,9 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 }, { "attr4", 1 } }))
                                   .Build();
 
             var insertCommand =
@@ -130,9 +130,9 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.DECIMAL }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1.2 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2.3 }, { "attr2", "TEST_STRING2" }, { "attr3", 2.3 } }))
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.DECIMAL }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1.2 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2.3 }, { "attr2", "TEST_STRING2" }, { "attr3", 2.3 }, { "attr4", 1 } }))
                                   .Build();
 
             Assert.Throws<IncompatibleInstantiationDataTypesException>(() =>
@@ -376,9 +376,9 @@ namespace Janus.Commons.Tests
             var dataSource = GetSchemaModel();
             var tableauId = dataSource["schema1"]["tableau1"].Id;
             var dataToInsert =
-                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 } }))
-                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 } }))
+                TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
+                                  .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 }, { "attr4", 1 } }))
                                   .Build();
 
             var insertCommand =

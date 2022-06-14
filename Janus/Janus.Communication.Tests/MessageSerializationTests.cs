@@ -208,7 +208,7 @@ public class MessageSerializationTests
         var dataSource = GetTestDataSource();
 
         var updateCommand = UpdateCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
-                                .WithMutation(conf => conf.WithValues(new() { { "attr1_FK", 2 }, { "attr2", null }, { "attr3", 2.0 } }))
+                                .WithMutation(conf => conf.WithValues(new() { { "attr2", null }, { "attr3", 2.0 } }))
                                 .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
                                 .Build();
 
