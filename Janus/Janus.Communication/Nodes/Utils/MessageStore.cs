@@ -14,7 +14,7 @@ internal class MessageStore
 {
     private readonly ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>> _receivedResponseMessages;
     private readonly ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>> _receivedRequestMessages;
-    private readonly ConcurrentDictionary<string, Unit> _activeExchangeIds; // don't ask, just don't
+    private readonly ConcurrentDictionary<string, Unit> _registeredExchangeIds; // don't ask, just don't
 
     /// <summary>
     /// Number of responses that are enqueued thorugh all exchanges
@@ -32,7 +32,27 @@ internal class MessageStore
     {
         _receivedResponseMessages = new ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>>();
         _receivedRequestMessages = new ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>>();
-        _activeExchangeIds = new ConcurrentDictionary<string, Unit>();
+        _registeredExchangeIds = new ConcurrentDictionary<string, Unit>();
+    }
+
+    /// <summary>
+    /// Registers an exchange so its responses are saved
+    /// </summary>
+    /// <param name="exchangeId"></param>
+    /// <returns>Returns <code>true</code> if the exchange is not already registered, else <code>false</code></returns>
+    public bool RegisterExchange(string exchangeId!!)
+    {
+        return _registeredExchangeIds.TryAdd(exchangeId, Unit());
+    }
+
+    /// <summary>
+    /// Unregisters and exchange so its responses are not saved
+    /// </summary>
+    /// <param name="exchangeId"></param>
+    /// <returns>Returns <code>true</code> if the exchange is unregistered, else <code>false</code></returns>
+    public bool UnregisterExchange(string exchangeId!!)
+    {
+        return _registeredExchangeIds.TryRemove(exchangeId, out _) && _receivedResponseMessages.TryRemove(exchangeId, out _);
     }
 
     /// <summary>
@@ -44,6 +64,9 @@ internal class MessageStore
     /// <returns></returns>
     public bool EnqueueResponseInExchange(string exchangeId!!, BaseMessage message!!)
     {
+        if(!_registeredExchangeIds.ContainsKey(exchangeId))
+            return false;
+
         // if the exchange already exists
         if (_receivedResponseMessages.ContainsKey(exchangeId))
         {
