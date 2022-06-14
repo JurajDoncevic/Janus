@@ -74,7 +74,6 @@ internal class MessageStore
     /// </summary>
     /// <param name="exchangeId">Exchange id</param>
     /// <param name="message">Message to enqueue</param>
-    /// <remarks>Get the exchange id from the message. This is not done automatically by this method</remarks>
     /// <returns></returns>
     public bool EnqueueResponseInExchange(string exchangeId!!, BaseMessage message!!)
     {
@@ -104,7 +103,6 @@ internal class MessageStore
     /// </summary>
     /// <param name="exchangeId">Exchange id</param>
     /// <param name="message">Message to enqueue</param>
-    /// <remarks>Get the exchange id from the message. This is not done automatically by this method</remarks>
     /// <returns></returns>
     public bool EnqueueRequestInExchange(string exchangeId!!, BaseMessage message!!)
     {
