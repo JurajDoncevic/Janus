@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace Janus.Communication.Nodes.Utils;
 
+/// <summary>
+/// Message store used to store relevant received messages. It contains logic for ignoring responses of unknown exchanges.
+/// A response might arrive too late to be taken into account, or the node might be spammed with responses if this class were not used.
+/// </summary>
 internal class MessageStore
 {
     private readonly ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>> _receivedResponseMessages;
@@ -53,6 +57,16 @@ internal class MessageStore
     public bool UnregisterExchange(string exchangeId!!)
     {
         return _registeredExchangeIds.TryRemove(exchangeId, out _) && _receivedResponseMessages.TryRemove(exchangeId, out _);
+    }
+
+    /// <summary>
+    /// Determines if the given exchange id is currently registered
+    /// </summary>
+    /// <param name="exchangeId">Exchange id</param>
+    /// <returns></returns>
+    public bool IsRegisteredExchange(string exchangeId!!)
+    {
+        return _registeredExchangeIds.ContainsKey(exchangeId);
     }
 
     /// <summary>
