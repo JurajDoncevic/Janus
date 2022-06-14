@@ -14,7 +14,7 @@ namespace Janus.Communication.Nodes.Utils;
 /// Message store used to store relevant received messages. It contains logic for ignoring responses of unknown exchanges.
 /// A response might arrive too late to be taken into account, or the node might be spammed with responses if this class were not used.
 /// </summary>
-internal class MessageStore
+public class MessageStore
 {
     private readonly ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>> _receivedResponseMessages;
     private readonly ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>> _receivedRequestMessages;
@@ -32,7 +32,7 @@ internal class MessageStore
     /// <summary>
     /// Constructor
     /// </summary>
-    internal MessageStore()
+    public MessageStore()
     {
         _receivedResponseMessages = new ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>>();
         _receivedRequestMessages = new ConcurrentDictionary<string, ConcurrentQueue<BaseMessage>>();
@@ -182,5 +182,4 @@ internal class MessageStore
             }
             throw new Exception($"Failed to get response from {exchangeId}");
         });
-
 }

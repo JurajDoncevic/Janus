@@ -2,6 +2,7 @@
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Nodes.Events;
+using Janus.Communication.Nodes.Utils;
 using Janus.Communication.Remotes;
 using Janus.Utils.Logging;
 using System.Collections.Concurrent;
@@ -30,8 +31,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     /// </summary>
     public abstract NodeTypes NodeType { get; }
 
-    protected ConcurrentDictionary<string, BaseMessage> _receivedResponseMessages;
-    protected ConcurrentDictionary<string, BaseMessage> _receivedRequestMessages;
+    protected readonly MessageStore _messageStore;
 
     private readonly ILogger? _logger;
 
@@ -48,8 +48,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
 
         _logger = logger;
 
-        _receivedRequestMessages = new ConcurrentDictionary<string, BaseMessage>();
-        _receivedResponseMessages = new ConcurrentDictionary<string, BaseMessage>();
+        _messageStore = new MessageStore();
 
         _networkAdapter.HelloRequestReceived += NetworkAdapter_ManageHelloRequestReceived;
         _networkAdapter.HelloResponseReceived += NetworkAdapter_ManageHelloResponseReceived;
@@ -82,7 +81,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
             // remove the remote point
             _remotePoints.Remove(message.NodeId);
             _logger?.Info($"Removed node {0} from registered remote points on {1}.", message.NodeId, message.Preamble);
-            
+
             // invoke event
             ByeRequestReceived?.Invoke(this, new ByeReqEventArgs(e.Message, remotePoint));
         }
@@ -98,12 +97,22 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         // extract the message
         var message = e.Message;
         _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
-        // add the message to the responses dictionary
-        _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-        _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
-        //invoke event
-        HelloResponseReceived?.Invoke(this, new HelloResEventArgs(message, _remotePoints[message.NodeId]));
+        // add the message to the responses dictionary
+        var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
+
+        if (enqueued)
+        {
+            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+            
+            //invoke event
+            HelloResponseReceived?.Invoke(this, new HelloResEventArgs(message, _remotePoints[message.NodeId]));
+        }
+        else
+        {
+            _logger?.Info($"Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
+        }
+
     }
 
     /// <summary>
@@ -147,17 +156,21 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         // create request hello message
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, false);
         var exchangeId = helloRequest.ExchangeId;
-        var result = Timing.RunWithTimeout(
+
+        // register the exchange so a response can be received
+        _messageStore.RegisterExchange(exchangeId);
+
+        var result = await Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
                         result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
-                    .Bind(result =>
+                    .Bind(result => ResultExtensions.AsDataResult(() =>
                     {
                         // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
+                        while (!_messageStore.AnyResponsesExist(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
@@ -165,18 +178,21 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                                 token.ThrowIfCancellationRequested();
                             }
                         }
-                        // get the hello response - exception if not correct message type
-                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangeId];
+                        // get the hello response - exception if not correct message type or incorrectly dequeued
+                        var helloResponse = (HelloResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info($"Received returned {0} from {1} in exchange {2}", helloResponse.Preamble, helloResponse.NodeId, helloResponse.ExchangeId);
-                        // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangeId, out _);
+
                         // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
                         // turn it into a data result
-                        return ResultExtensions.AsDataResult(() => confirmedRemotePoint);
-                    }),
+                        return confirmedRemotePoint;
+                    })),
                 _options.TimeoutMs);
-        return await result;
+
+        // unregister the exchange
+        _messageStore.RegisterExchange(exchangeId);
+
+        return result;
     }
 
     /// <summary>
@@ -189,17 +205,21 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         // create request hello message
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, true);
         var exchangeId = helloRequest.ExchangeId;
-        var result = Timing.RunWithTimeout(
+
+        // register the exchange so a response can be received
+        _messageStore.RegisterExchange(exchangeId);
+
+        var result = await Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Pass(
                         result => _logger?.Info($"Sending {0} with registering intention to {1} with exchange {2} successful.", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
                         result => _logger?.Info($"Sending {0} with registering intention to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
-                    .Bind(result =>
+                    .Bind(result => ResultExtensions.AsDataResult(() =>
                     {
                         // wait for the response
-                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
+                        while (!_messageStore.AnyResponsesExist(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
@@ -208,19 +228,22 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                             }
                         }
                         // get the response
-                        var helloResponse = (HelloResMessage)_receivedResponseMessages[exchangeId];
+                        var helloResponse = (HelloResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info($"Received {0} on exchange {1} from {2}. Registering remote point.", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
-                        // remove the response from the dictionary
-                        _receivedResponseMessages.Remove(exchangeId, out _);
+
                         // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
                         // add update the remote point into the known remote point dictionary
                         _remotePoints[confirmedRemotePoint.NodeId] = confirmedRemotePoint;
                         // turn the remote point into a data result
-                        return ResultExtensions.AsDataResult(() => confirmedRemotePoint);
-                    }),
+                        return confirmedRemotePoint;
+                    })),
                 _options.TimeoutMs);
-        return await result;
+
+        // unregister the exchange
+        _messageStore.RegisterExchange(exchangeId);
+
+        return result;
     }
 
     /// <summary>
@@ -243,7 +266,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
             .Pass(
                 r => _remotePoints.Remove(remotePoint.NodeId)
                         ? _logger?.Info($"Removed remote point {0}", remotePoint) ?? Unit()
-                        : Unit(),             
+                        : Unit(),
                 r => Unit());
 
         return result;

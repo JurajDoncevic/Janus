@@ -34,12 +34,15 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         {
             var remotePoint = _remotePoints[message.NodeId];
 
-            // add the message to the responses dictionary
-            _receivedRequestMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+            // add the message to the requests
+            var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
+            if (enqueued)
+            {
+                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
-            // raise event
-            SchemaRequestReceived?.Invoke(this, new SchemaReqEventArgs(e.Message, remotePoint));
+                // raise event
+                SchemaRequestReceived?.Invoke(this, new SchemaReqEventArgs(e.Message, remotePoint));
+            }
         }
     }
 
@@ -53,12 +56,15 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         {
             var remotePoint = _remotePoints[message.NodeId];
 
-            // add the message to the responses dictionary
-            _receivedRequestMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+            // add the message to the requests
+            var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
+            if (enqueued)
+            {
+                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
-            // raise event
-            QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
+                // raise event
+                QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
+            }
         }
     }
 
@@ -72,12 +78,15 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         {
             var remotePoint = _remotePoints[message.NodeId];
 
-            // add the message to the responses dictionary
-            _receivedRequestMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+            // add the message to the responses
+            var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
+            if (enqueued)
+            {
+                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
-            // raise event
-            CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
+                // raise event
+                CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
+            }
         }
     }
     #endregion
@@ -95,7 +104,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         var commandResponse = new CommandResMessage(exchangeId, _options.NodeId, isSuccess, outcomeDescription);
 
         // send command response with timeout
-        var result = 
+        var result =
             (await Timing.RunWithTimeout(
                 async (token) => await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
@@ -112,7 +121,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         var queryResponse = new QueryResMessage(exchangeId, _options.NodeId, queryResult, errorMessage, blockNumber, totalBlocks);
 
         // send command response with timeout
-        var result = 
+        var result =
             (await Timing.RunWithTimeout(
                 async (token) => await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
@@ -129,7 +138,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema);
 
         // send command response with timeout
-        var result = 
+        var result =
             (await Timing.RunWithTimeout(
                 async (token) => await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))

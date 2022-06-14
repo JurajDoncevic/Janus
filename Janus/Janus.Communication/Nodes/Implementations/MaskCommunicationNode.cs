@@ -36,12 +36,19 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         {
             var remotePoint = _remotePoints[message.NodeId];
 
-            // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
-            
-            // raise event
-            CommandResponseReceived?.Invoke(this, new CommandResEventArgs(e.Message, remotePoint));
+            // add the message to the responses
+            var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
+            if (enqueued)
+            {
+                _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+
+                // raise event
+                CommandResponseReceived?.Invoke(this, new CommandResEventArgs(e.Message, remotePoint));
+            }
+            else
+            {
+                _logger?.Info($"Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
+            }
         }
     }
 
@@ -56,11 +63,18 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
             var remotePoint = _remotePoints[message.NodeId];
 
             // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
-            
-            // raise event
-            QueryResponseReceived?.Invoke(this, new QueryResEventArgs(e.Message, remotePoint));
+            var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
+            if (enqueued)
+            {
+                _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+                
+                // raise event
+                QueryResponseReceived?.Invoke(this, new QueryResEventArgs(e.Message, remotePoint));
+            }
+            else
+            {
+                _logger?.Info($"Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
+            }
         }
     }
 
@@ -74,12 +88,19 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         {
             var remotePoint = _remotePoints[message.NodeId];
 
-            // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
-            _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+            // add the message to the responses
+            var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
+            if (enqueued)
+            {
+                _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
-            // raise event
-            SchemaResponseReceived?.Invoke(this, new SchemaResEventArgs(e.Message, remotePoint));
+                // raise event
+                SchemaResponseReceived?.Invoke(this, new SchemaResEventArgs(e.Message, remotePoint));
+            }
+            else
+            {
+                _logger?.Info($"Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
+            }
         }
     }
     #endregion
@@ -96,8 +117,12 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         // create command request message
         var commandRequest = new CommandReqMessage(_options.NodeId, command);
         var exchangeId = commandRequest.ExchangeId;
+
+        // register the exchange so a response can be received
+        _messageStore.RegisterExchange(exchangeId);
+
         // send command request with timeout
-        var result = Timing.RunWithTimeout(
+        var result = await Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendCommandRequest(commandRequest, remotePoint)) // send the request
                     .Pass(
@@ -107,7 +132,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                     .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
+                        while (!_messageStore.AnyResponsesExist(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
@@ -117,15 +142,17 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
 
                         }
                         // get the hello response - exception if not correct message type
-                        var commandResponse = (CommandResMessage)_receivedResponseMessages[exchangeId];
+                        var commandResponse = (CommandResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info($"Received {0} on exchange {1} from {2}", commandResponse.Preamble, commandResponse.ExchangeId, commandResponse.NodeId);
-                        // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangeId, out _);
                         // have to throw exception to register as error and get outcome message
                         return commandResponse.IsSuccess ? true : throw new Exception(commandResponse.OutcomeDescription);
                     })),
                 _options.TimeoutMs);
-        return await result;
+
+        // unregister the exchange
+        _messageStore.RegisterExchange(exchangeId);
+        
+        return result;
     }
 
     public async Task<DataResult<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
@@ -133,8 +160,12 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         // create query request message
         var queryRequest = new QueryReqMessage(_options.NodeId, query);
         var exchangeId = queryRequest.ExchangeId;
+
+        // register the exchange so a response can be received
+        _messageStore.RegisterExchange(exchangeId);
+
         // send command request with timeout
-        var result = Timing.RunWithTimeout(
+        var result = await Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendQueryRequest(queryRequest, remotePoint)) // send the request
                     .Pass(
@@ -144,7 +175,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                     .Bind(result => ResultExtensions.AsDataResult(() =>
                     {
                         // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
+                        while (!_messageStore.AnyResponsesExist(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
@@ -154,15 +185,18 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
 
                         }
                         // get the hello response - exception if not correct message type
-                        var queryResponse = (QueryResMessage)_receivedResponseMessages[exchangeId];
+                        var queryResponse = (QueryResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info($"Received returned {0} from {1} in exchange {2}", queryResponse.Preamble, queryResponse.NodeId, queryResponse.ExchangeId);
-                        // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangeId, out _);
+
                         // have to throw exception to register as error and get outcome message
                         return queryResponse.IsSuccess ? queryResponse.TabularData : throw new Exception(queryResponse.ErrorMessage);
                     })),
                 _options.TimeoutMs);
-        return await result;
+
+        // unregister the exchange
+        _messageStore.RegisterExchange(exchangeId);
+        
+        return result;
     }
 
     public async Task<DataResult<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
@@ -170,8 +204,12 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         // create query request message
         var schemaRequest = new SchemaReqMessage(_options.NodeId);
         var exchangeId = schemaRequest.ExchangeId;
+
+        // register the exchange so a response can be received
+        _messageStore.RegisterExchange(exchangeId);
+
         // send command request with timeout
-        var result = Timing.RunWithTimeout(
+        var result = await Timing.RunWithTimeout(
             async (token) =>
                 (await _networkAdapter.SendSchemaRequest(schemaRequest, remotePoint)) // send the request
                     .Pass(
@@ -181,7 +219,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                     .Bind(result => ResultExtensions.AsDataResult(() =>
                     {
                         // wait for the response to appear
-                        while (!_receivedResponseMessages.ContainsKey(exchangeId))
+                        while (!_messageStore.DequeueResponseFromExchange(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
@@ -190,15 +228,18 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                             }
                         }
                         // get the hello response - exception if not correct message type
-                        var schemaResponse = (SchemaResMessage)_receivedResponseMessages[exchangeId];
+                        var schemaResponse = (SchemaResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info($"Received returned {0} from {1} in exchange {2}", schemaResponse.Preamble, schemaResponse.NodeId, schemaResponse.ExchangeId);
-                        // remove the response from the concurrent dict
-                        _receivedResponseMessages.Remove(exchangeId, out _);
+
                         // have to throw exception to register as error and get outcome message
                         return schemaResponse.DataSource;
                     })),
                 _options.TimeoutMs);
-        return await result;
+
+        // unregister the exchange
+        _messageStore.RegisterExchange(exchangeId);
+
+        return result;
     }
     #endregion
 }
