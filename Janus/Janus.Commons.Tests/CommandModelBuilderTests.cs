@@ -25,7 +25,10 @@ namespace Janus.Commons.Tests
                                                   .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
                                                                                              .WithIsNullable(true))
                                                   .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.DECIMAL)
-                                                                                             .WithIsNullable(false)))
+                                                                                             .WithIsNullable(false))
+                                                  .AddAttribute("attr4", attrConf => attrConf.WithDataType(DataTypes.INT)
+                                                                                             .WithIsNullable(false)
+                                                                                             .WithIsPrimaryKey(true)))
                     .AddTableau("tableau2",
                         tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
                                                                                              .WithIsNullable(false))
@@ -229,6 +232,23 @@ namespace Janus.Commons.Tests
             var valueUpdates = new Dictionary<string, object>() { { "attr2", "TEST_STRING_MOD" }, { "attrX", 1.9 } };
 
             Assert.Throws<AttributeNotInTargetTableauException>(() =>
+            {
+                var updateCommand =
+                    UpdateCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                        .WithMutation(conf => conf.WithValues(valueUpdates))
+                                        .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                        .Build();
+            });
+        }
+
+        [Fact(DisplayName = "Fail to construct an update command with mutation on a primary key")]
+        public void ConstructInvalidUpdateWithPrimaryKeyAttribute()
+        {
+            var dataSource = GetSchemaModel();
+            var tableauId = dataSource["schema1"]["tableau1"].Id;
+            var valueUpdates = new Dictionary<string, object?>() { { "attr2", "TEST_STRING_MOD" }, { "attr4", 2 } };
+
+            Assert.Throws<MutationOnPrimaryKeyNotAllowedException>(() =>
             {
                 var updateCommand =
                     UpdateCommandBuilder.InitOnDataSource(tableauId, dataSource)

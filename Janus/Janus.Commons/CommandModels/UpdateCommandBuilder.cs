@@ -143,16 +143,16 @@ public class MutationBuilder
     {
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 
-        var referencedAttrs = valueUpdates.Keys.ToHashSet();
-        var referencableAttrs = _dataSource[schemaName][tableauName].AttributeNames.ToHashSet();
+        var referencedAttrNames = valueUpdates.Keys.ToHashSet();
+        var referencableAttrNames = _dataSource[schemaName][tableauName].AttributeNames.ToHashSet();
 
-        if (!referencedAttrs.All(referencableAttrs.Contains))
+        if (!referencedAttrNames.All(referencableAttrNames.Contains))
         {
-            var invalidAttrRef = referencedAttrs.Where(referencedAttr => !referencableAttrs.Contains(referencedAttr)).First();
+            var invalidAttrRef = referencedAttrNames.Where(referencedAttr => !referencableAttrNames.Contains(referencedAttr)).First();
             throw new AttributeNotInTargetTableauException(invalidAttrRef, _onTableauId);
         }
 
-        foreach (var referencedAttr in referencedAttrs)
+        foreach (var referencedAttr in referencedAttrNames)
         {
             if (valueUpdates[referencedAttr] != null) // can't get null type
             {
@@ -167,10 +167,18 @@ public class MutationBuilder
             }
         }
 
-        foreach (var referencedAttr in referencableAttrs.Intersect(valueUpdates.Keys))
+        foreach (var referencedAttr in referencableAttrNames.Intersect(valueUpdates.Keys))
         {
-                if (!_dataSource[schemaName][tableauName][referencedAttr].IsNullable && valueUpdates[referencedAttr] == null)
-                    throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);
+            if (!_dataSource[schemaName][tableauName][referencedAttr].IsNullable && valueUpdates[referencedAttr] == null)
+                throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);
+        }
+
+        foreach(var referencedAttrName in referencableAttrNames)
+        {
+            if (_dataSource[schemaName][tableauName][referencedAttrName].IsPrimaryKey)
+            {
+                throw new MutationOnPrimaryKeyNotAllowedException(referencedAttrName);
+            }
         }
 
         _valueUpdates = valueUpdates;
