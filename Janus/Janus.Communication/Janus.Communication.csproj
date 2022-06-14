@@ -15,5 +15,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
 	</ItemGroup>
-
+	
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Janus.Communication.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 </Project>
