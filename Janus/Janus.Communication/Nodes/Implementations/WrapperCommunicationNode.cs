@@ -35,7 +35,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
             var remotePoint = _remotePoints[message.NodeId];
 
             // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _receivedRequestMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
             _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
@@ -54,7 +54,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
             var remotePoint = _remotePoints[message.NodeId];
 
             // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _receivedRequestMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
             _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event
@@ -73,7 +73,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
             var remotePoint = _remotePoints[message.NodeId];
 
             // add the message to the responses dictionary
-            _receivedResponseMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
+            _receivedRequestMessages.AddOrUpdate(message.ExchangeId, message, (k, v) => message);
             _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
             // raise event

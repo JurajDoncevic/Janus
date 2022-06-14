@@ -104,7 +104,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandRequest.Preamble, remotePoint, commandRequest.ExchangeId),
                         result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
-                    .Bind(result =>
+                    .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_receivedResponseMessages.ContainsKey(exchangeId))
@@ -122,8 +122,8 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                         // remove the response from the concurrent dict
                         _receivedResponseMessages.Remove(exchangeId, out _);
                         // have to throw exception to register as error and get outcome message
-                        return ResultExtensions.AsResult(() => commandResponse.IsSuccess ? true : throw new Exception(commandResponse.OutcomeDescription));
-                    }),
+                        return commandResponse.IsSuccess ? true : throw new Exception(commandResponse.OutcomeDescription);
+                    })),
                 _options.TimeoutMs);
         return await result;
     }
@@ -141,7 +141,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryRequest.Preamble, remotePoint, queryRequest.ExchangeId),
                         result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
-                    .Bind(result =>
+                    .Bind(result => ResultExtensions.AsDataResult(() =>
                     {
                         // wait for the response to appear
                         while (!_receivedResponseMessages.ContainsKey(exchangeId))
@@ -151,7 +151,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                                 _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", queryRequest.Preamble, queryRequest.ExchangeId);
                                 token.ThrowIfCancellationRequested();
                             }
-                            
+
                         }
                         // get the hello response - exception if not correct message type
                         var queryResponse = (QueryResMessage)_receivedResponseMessages[exchangeId];
@@ -159,8 +159,8 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                         // remove the response from the concurrent dict
                         _receivedResponseMessages.Remove(exchangeId, out _);
                         // have to throw exception to register as error and get outcome message
-                        return ResultExtensions.AsDataResult(() => queryResponse.IsSuccess ? queryResponse.TabularData : throw new Exception(queryResponse.ErrorMessage));
-                    }),
+                        return queryResponse.IsSuccess ? queryResponse.TabularData : throw new Exception(queryResponse.ErrorMessage);
+                    })),
                 _options.TimeoutMs);
         return await result;
     }
@@ -178,7 +178,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaRequest.Preamble, remotePoint, schemaRequest.ExchangeId),
                         result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.ErrorMessage)
                     )
-                    .Bind(result =>
+                    .Bind(result => ResultExtensions.AsDataResult(() =>
                     {
                         // wait for the response to appear
                         while (!_receivedResponseMessages.ContainsKey(exchangeId))
@@ -195,8 +195,8 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                         // remove the response from the concurrent dict
                         _receivedResponseMessages.Remove(exchangeId, out _);
                         // have to throw exception to register as error and get outcome message
-                        return ResultExtensions.AsDataResult(() => schemaResponse.DataSource);
-                    }),
+                        return schemaResponse.DataSource;
+                    })),
                 _options.TimeoutMs);
         return await result;
     }
