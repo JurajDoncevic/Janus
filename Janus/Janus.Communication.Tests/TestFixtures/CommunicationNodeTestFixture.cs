@@ -39,25 +39,13 @@ public class CommunicationNodeTestFixture
     }
 
     public MaskCommunicationNode GetMaskCommunicationNode(string nodeId) 
-        => CommunicationNodes.CreateTcpMaskCommunicationNode(
-            _maskCommunicationNodeOptions[nodeId],
-            new Janus.Utils.Logging.LoggerAdapter<MaskCommunicationNode>(_configuration),
-            new Janus.Utils.Logging.LoggerAdapter<MaskNetworkAdapter>(_configuration)
-            );
+        => CommunicationNodes.CreateTcpMaskCommunicationNode(_maskCommunicationNodeOptions[nodeId]);
 
     public MediatorCommunicationNode GetMediatorCommunicationNode(string nodeId) 
-        => CommunicationNodes.CreateTcpMediatorCommunicationNode(
-            _mediatorCommunicationNodeOptions[nodeId],
-            new Janus.Utils.Logging.LoggerAdapter<MediatorCommunicationNode>(_configuration),
-            new Janus.Utils.Logging.LoggerAdapter<MediatorNetworkAdapter>(_configuration)
-            );
+        => CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions[nodeId]);
 
     public WrapperCommunicationNode GetWrapperCommunicationNode(string nodeId) 
-        => CommunicationNodes.CreateTcpWrapperCommunicationNode(
-            _wrapperCommunicationNodeOptions[nodeId],
-            new Janus.Utils.Logging.LoggerAdapter<WrapperCommunicationNode>(_configuration),
-            new Janus.Utils.Logging.LoggerAdapter<WrapperNetworkAdapter>(_configuration)
-            );
+        => CommunicationNodes.CreateTcpWrapperCommunicationNode(_wrapperCommunicationNodeOptions[nodeId]);
 
     private (
         IEnumerable<CommunicationNodeOptions> maskNodeOptions, 
