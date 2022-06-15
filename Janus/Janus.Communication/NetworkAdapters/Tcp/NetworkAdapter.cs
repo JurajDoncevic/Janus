@@ -16,7 +16,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     protected readonly TcpListener _tcpListener;
     protected readonly int _listenPort;
     protected readonly CancellationTokenSource _cancellationTokenSource;
-    protected readonly Task _listenerTask;
+    protected Task? _listenerTask;
 
     private readonly ILogger? _logger;
 
@@ -30,14 +30,38 @@ public abstract class NetworkAdapter : INetworkAdapter
         _listenPort = listenPort;
         _tcpListener = new TcpListener(System.Net.IPAddress.Any, listenPort);
         _cancellationTokenSource = new CancellationTokenSource();
-        _listenerTask = Task.Run(() => RunListener(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+    }
+
+    public bool StartAdapter()
+    {
+        if(_listenerTask == null)
+        {
+            _listenerTask = Task.Run(() => RunListener(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+            _logger?.Info($"Started tcp listener on {0}", _tcpListener.LocalEndpoint);
+            return true;
+        } 
+        return false;
+    }
+
+    public bool StopAdapter()
+    {
+        if(_listenerTask != null)
+        {
+            _cancellationTokenSource.Cancel();
+            while (!_listenerTask.IsCanceled && !_listenerTask.IsFaulted && !_listenerTask.IsCompleted) ;
+            _listenerTask?.Dispose();
+            _listenerTask = null;
+            _logger?.Info($"Stopped tcp listener on {0}", _tcpListener.LocalEndpoint);
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
     /// Runs a TCP listener that waits for incoming messages. This method is only top be run in a Task, due to while(true)
     /// </summary>
     /// <param name="cancellationToken"></param>
-    public void RunListener(CancellationToken cancellationToken)
+    private void RunListener(CancellationToken cancellationToken)
     {
         var listenerStarting = TryCatch(
             () => _tcpListener.Pass(l => l.Start()), 
@@ -206,7 +230,7 @@ public abstract class NetworkAdapter : INetworkAdapter
 
     public void Dispose()
     {
-        _cancellationTokenSource.Cancel();
+        StopAdapter();
         _cancellationTokenSource.Dispose();
         _tcpListener.Stop();
     }

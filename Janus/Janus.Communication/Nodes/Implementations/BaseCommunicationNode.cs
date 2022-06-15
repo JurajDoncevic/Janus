@@ -53,6 +53,9 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         _networkAdapter.HelloRequestReceived += NetworkAdapter_ManageHelloRequestReceived;
         _networkAdapter.HelloResponseReceived += NetworkAdapter_ManageHelloResponseReceived;
         _networkAdapter.ByeRequestReceived += NetworkAdapter_ManageByeRequestReceived;
+
+        _networkAdapter.StartAdapter();
+        _logger?.Info($"Initialized communication {0} node {1} on port {2}", NodeType, _options.NodeId, _options.ListenPort);
     }
 
     #region RECEIVED MESSAGE EVENTS
@@ -277,6 +280,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     public void Dispose()
     {
         _networkAdapter.Dispose();
+        _logger?.Info($"Disposed communication {0} node {1} on port {2}", NodeType, _options.NodeId, _options.ListenPort);
     }
 }
 

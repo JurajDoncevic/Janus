@@ -39,4 +39,16 @@ public interface INetworkAdapter : IDisposable
     /// <param name="remotePoint">Destination remote point</param>
     /// <returns>Result of outcome</returns>
     Task<Result> SendByeRequest(ByeReqMessage message, RemotePoint remotePoint);
+
+    /// <summary>
+    /// Starts the network adapter by hand
+    /// </summary>
+    /// <returns><c>true</c> on success, else <c>false</c></returns>
+    public bool StartAdapter();
+
+    /// <summary>
+    /// Stops the network adapter
+    /// </summary>
+    /// <returns><c>true</c> on success, else <c>false</c></returns>
+    public bool StopAdapter();
 }
