@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FunctionalExtensions.Base;
 using static FunctionalExtensions.Base.UnitExtensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace Janus.Utils.Logging;
 
@@ -13,9 +14,10 @@ public sealed class LoggerAdapter<T> : ILogger<T>
 {
     private readonly Microsoft.Extensions.Logging.ILogger<T> _logger;
 
-    public LoggerAdapter(Microsoft.Extensions.Logging.ILogger<T> logger)
+    public LoggerAdapter(IConfiguration configuration)
     {
-        _logger = logger;
+        _logger = LoggerFactory.Create(builder => builder.AddConfiguration(configuration))
+                               .CreateLogger<T>();
     }
 
     public Func<bool> IsDebugEnabled => () => _logger.IsEnabled(LogLevel.Debug);

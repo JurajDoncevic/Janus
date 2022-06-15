@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="FunctionalExtensions.Base" Version="1.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

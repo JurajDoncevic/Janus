@@ -43,7 +43,7 @@ public class CommunicationNodeOptions
 
 public static class CommunicationNodeOptionsExtensions
 {
-    public static CommunicationNodeOptions ToCommunicationNodeOptions(this IConfigurationSection configurationSection)
+    public static CommunicationNodeOptions GetCommunicationNodeOptions(this IConfigurationSection configurationSection)
     {
         var nodeId = configurationSection["NodeId"];
         int port = int.TryParse(configurationSection["ListenPort"], out port) ? port : CommunicationNodeOptions.DEFAULT_LISTEN_PORT;
