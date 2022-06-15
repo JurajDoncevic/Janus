@@ -291,7 +291,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                     .Bind(result => ResultExtensions.AsDataResult(() =>
                     {
                         // wait for the response to appear
-                        while (!_messageStore.DequeueResponseFromExchange(exchangeId))
+                        while (!_messageStore.AnyResponsesExist(exchangeId))
                         {
                             if (token.IsCancellationRequested)
                             {
