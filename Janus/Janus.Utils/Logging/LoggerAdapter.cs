@@ -7,6 +7,7 @@ using FunctionalExtensions.Base;
 using static FunctionalExtensions.Base.UnitExtensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using NLog.Extensions.Logging;
 
 namespace Janus.Utils.Logging;
 
@@ -16,7 +17,7 @@ public sealed class LoggerAdapter<T> : ILogger<T>
 
     public LoggerAdapter(IConfiguration configuration)
     {
-        _logger = LoggerFactory.Create(builder => builder.AddConfiguration(configuration))
+        _logger = LoggerFactory.Create(builder => builder.AddNLog(configuration))//.AddConfiguration(configuration))
                                .CreateLogger<T>();
     }
 
