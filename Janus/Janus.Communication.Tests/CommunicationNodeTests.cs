@@ -50,7 +50,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         _testFixture = testFixture;
     }
 
-    [Fact(DisplayName = "Exchange HELLO between 2 nodes")]
+    [Fact(DisplayName = "BASE: Exchange HELLO between 2 nodes")]
     public void SendHello()
     {
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
@@ -75,7 +75,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
     }
 
-    [Fact(DisplayName = "Register nodes using HELLO")]
+    [Fact(DisplayName = "BASE: Register nodes using HELLO")]
     public void SendRegister()
     {
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
@@ -95,7 +95,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
     }
 
-    [Fact(DisplayName = "Test HELLO timeout")]
+    [Fact(DisplayName = "BASE: Test HELLO timeout")]
     public void SendHelloTimeout()
     {
         using var mediator1 = GetUnresponsiveMediator();
@@ -111,7 +111,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         Assert.Contains("timeout", helloResult.ErrorMessage.ToLower());
     }
 
-    [Fact(DisplayName = "Test Register timeout")]
+    [Fact(DisplayName = "BASE: Test timeout on register operation")]
     public void RegisterTimeout()
     {
         using var mediator1 = GetUnresponsiveMediator();
@@ -127,7 +127,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         Assert.Contains("timeout", helloResult.ErrorMessage.ToLower());
     }
 
-    [Fact(DisplayName = "Send a BYE after a Register")]
+    [Fact(DisplayName = "BASE: Send a BYE after a Register")]
     public async void TestBye()
     {
         var dataSource = GetDataSource();
@@ -153,8 +153,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
     }
 
-    [Fact(DisplayName = "Send a COMMAND_REQ and get results")]
-    public async void SendCommandRequest()
+    [Fact(DisplayName = "MEDIATOR: Send a COMMAND_REQ, respond and get results")]
+    public async void MediatorSendCommandRequest()
     {
         var dataSource = GetDataSource();
         var tableauId = dataSource["schema1"]["tableau1"].Id;
@@ -190,11 +190,11 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         Assert.True(registerResult);
         Assert.True(commandResult);
-        
+
     }
 
-    [Fact(DisplayName = "Send a QUERY_REQ and get results")]
-    public async void SendQueryRequest()
+    [Fact(DisplayName = "MEDIATOR: Send a QUERY_REQ, respond and get results")]
+    public async void MediatorSendQueryRequest()
     {
         var dataSource = GetDataSource();
         var tableauId = dataSource["schema1"]["tableau1"].Id;
@@ -210,15 +210,15 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
             .Build();
 
         var queryResponseData = TabularDataBuilder
-            .InitTabularData(new () 
-            { 
-                { "dataSource.schema1.tableau1.attr1", DataTypes.INT }, 
-                { "dataSource.schema1.tableau1.attr2", DataTypes.STRING}, 
-                { "dataSource.schema1.tableau1.attr3", DataTypes.DECIMAL}, 
-                { "dataSource.schema1.tableau2.attr1", DataTypes.INT }, 
-                { "dataSource.schema1.tableau2.attr3", DataTypes.DECIMAL } 
+            .InitTabularData(new()
+            {
+                { "dataSource.schema1.tableau1.attr1", DataTypes.INT },
+                { "dataSource.schema1.tableau1.attr2", DataTypes.STRING},
+                { "dataSource.schema1.tableau1.attr3", DataTypes.DECIMAL},
+                { "dataSource.schema1.tableau2.attr1", DataTypes.INT },
+                { "dataSource.schema1.tableau2.attr3", DataTypes.DECIMAL }
             })
-            .AddRow(conf => conf.WithRowData(new() 
+            .AddRow(conf => conf.WithRowData(new()
             {
                 { "dataSource.schema1.tableau1.attr1", 1 },
                 { "dataSource.schema1.tableau1.attr2", "HELLO1"},
@@ -226,7 +226,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
                 { "dataSource.schema1.tableau2.attr1", 4 },
                 { "dataSource.schema1.tableau2.attr3", 2.7 }
             }))
-            .AddRow(conf => conf.WithRowData(new() 
+            .AddRow(conf => conf.WithRowData(new()
             {
                 { "dataSource.schema1.tableau1.attr1", 2 },
                 { "dataSource.schema1.tableau1.attr2", "HELLO2"},
@@ -234,7 +234,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
                 { "dataSource.schema1.tableau2.attr1", 5 },
                 { "dataSource.schema1.tableau2.attr3", 2.3 }
             }))
-            .AddRow(conf => conf.WithRowData(new() 
+            .AddRow(conf => conf.WithRowData(new()
             {
                 { "dataSource.schema1.tableau1.attr1", 3 },
                 { "dataSource.schema1.tableau1.attr2", "HELL3"},
@@ -250,7 +250,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
-        mediator2.QueryRequestReceived += async (sender, args) => 
+        mediator2.QueryRequestReceived += async (sender, args) =>
             await mediator2.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResponseData, args.FromRemotePoint);
 
 
@@ -264,8 +264,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
     }
 
-    [Fact(DisplayName = "Send a SCHEMA_REQ and get results")]
-    public async void SendSchemaRequest()
+    [Fact(DisplayName = "MEDIATOR: Send a SCHEMA_REQ, respond and get results")]
+    public async void MediatorSendSchemaRequest()
     {
         var dataSource = GetDataSource();
 
@@ -278,7 +278,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
 
-        mediator2.SchemaRequestReceived += async (sender, args) 
+        mediator2.SchemaRequestReceived += async (sender, args)
             => await mediator2.SendSchemaResponse(args.ReceivedMessage.ExchangeId, dataSource, args.FromRemotePoint);
 
         var schemaRequestResult = await mediator1.SendSchemaRequest(mediator2RemotePoint);
@@ -286,5 +286,35 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         Assert.True(registerResult);
         Assert.True(schemaRequestResult);
         Assert.Equal(dataSource, schemaRequestResult.Data);
+    }
+
+    [Fact(DisplayName = "MASK: Send a SCHEMA_REQ and get results")]
+    public async void MaskSendSchemaRequest()
+    {
+    }
+
+    [Fact(DisplayName = "MASK: Send a QUERY_REQ and get results")]
+    public async void MaskSendQueryRequest()
+    {
+    }
+
+    [Fact(DisplayName = "MASK: Send a COMMAND_REQ and get results")]
+    public async void MaskSendCommandRequest()
+    {
+    }
+
+    [Fact(DisplayName = "WRAPPER: Receive a SCHEMA_REQ and respond")]
+    public async void WrapperReceiveSchemaRequest()
+    {
+    }
+
+    [Fact(DisplayName = "WRAPPER: Receive a QUERY_REQ and respond")]
+    public async void WrapperReceiveQueryRequest()
+    {
+    }
+
+    [Fact(DisplayName = "WRAPPER: Receive a COMMAND_REQ and respond")]
+    public async void WrapperReceiveCommandRequest()
+    {
     }
 }
