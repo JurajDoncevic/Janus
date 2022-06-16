@@ -2,7 +2,7 @@
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
-using static Janus.Commons.SelectionExpressions.Expressions;
+
 using Janus.Communication.Messages;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Nodes.Implementations;
@@ -16,34 +16,6 @@ namespace Janus.Communication.Tests;
 public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture>
 {
     private readonly CommunicationNodeTestFixture _testFixture;
-
-    private MediatorCommunicationNode GetUnresponsiveMediator()
-        => CommunicationNodes.CreateMediatorCommunicationNode(
-            _testFixture.MediatorCommunicationNodeOptions["MediatorUnresponsive"],
-            new AlwaysTimeoutTcpNetworkAdapter(_testFixture.MediatorCommunicationNodeOptions["MediatorUnresponsive"].ListenPort)
-            );
-
-    private DataSource GetDataSource()
-       => SchemaModelBuilder.InitDataSource("dataSource")
-                .AddSchema("schema1",
-                    schemaConf => schemaConf.AddTableau("tableau1",
-                        tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
-                                                                                             .WithIsNullable(false))
-                                                  .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
-                                                                                             .WithIsNullable(true))
-                                                  .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.DECIMAL)
-                                                                                             .WithIsNullable(false))
-                                                  .AddAttribute("attr4", attrConf => attrConf.WithDataType(DataTypes.INT)
-                                                                                             .WithIsNullable(false)
-                                                                                             .WithIsPrimaryKey(true)))
-                    .AddTableau("tableau2",
-                        tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
-                                                                                             .WithIsNullable(false))
-                                                  .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
-                                                                                             .WithIsNullable(false))
-                                                  .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.DECIMAL)
-                                                                                             .WithIsNullable(false))))
-                .Build();
 
     public CommunicationNodeTests(CommunicationNodeTestFixture testFixture)
     {
@@ -98,7 +70,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "BASE: Test HELLO timeout")]
     public void SendHelloTimeout()
     {
-        using var mediator1 = GetUnresponsiveMediator();
+        using var mediator1 = _testFixture.GetUnresponsiveMediator();
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator1");
 
         var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
@@ -114,7 +86,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "BASE: Test timeout on register operation")]
     public void RegisterTimeout()
     {
-        using var mediator1 = GetUnresponsiveMediator();
+        using var mediator1 = _testFixture.GetUnresponsiveMediator();
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator1");
 
         var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
@@ -130,7 +102,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "BASE: Send a BYE after a Register")]
     public async void TestBye()
     {
-        var dataSource = GetDataSource();
+        var dataSource = _testFixture.GetDataSource();
         var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
@@ -156,19 +128,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "MEDIATOR: Send a COMMAND_REQ, respond and get results")]
     public async void MediatorSendCommandRequest()
     {
-        var dataSource = GetDataSource();
+        var dataSource = _testFixture.GetDataSource();
         var tableauId = dataSource["schema1"]["tableau1"].Id;
-
-        var dataToInsert =
-            TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
-                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
-                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 }, { "attr4", 1 } }))
-                              .Build();
-
-        var insertCommand =
-            InsertCommandBuilder.InitOnDataSource(tableauId, dataSource)
-                                .WithInstantiation(conf => conf.WithValues(dataToInsert))
-                                .Build();
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
@@ -186,7 +147,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
 
-        var commandResult = await mediator1.SendCommandRequest(insertCommand, mediator2RemotePoint);
+        var commandResult = await mediator1.SendCommandRequest(_testFixture.GetInsertCommand(), mediator2RemotePoint);
 
         Assert.True(registerResult);
         Assert.True(commandResult);
@@ -196,53 +157,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "MEDIATOR: Send a QUERY_REQ, respond and get results")]
     public async void MediatorSendQueryRequest()
     {
-        var dataSource = GetDataSource();
+        var dataSource = _testFixture.GetDataSource();
         var tableauId = dataSource["schema1"]["tableau1"].Id;
-
-        var query = QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
-            .WithJoining(conf => conf.AddJoin("dataSource.schema1.tableau1.attr1", "dataSource.schema1.tableau2.attr1"))
-            .WithSelection(conf => conf.WithExpression(LT("dataSource.schema1.tableau1.attr3", 7.0)))
-            .WithProjection(conf => conf.AddAttribute("dataSource.schema1.tableau1.attr1")
-                                        .AddAttribute("dataSource.schema1.tableau1.attr2")
-                                        .AddAttribute("dataSource.schema1.tableau1.attr3")
-                                        .AddAttribute("dataSource.schema1.tableau2.attr1")
-                                        .AddAttribute("dataSource.schema1.tableau2.attr3"))
-            .Build();
-
-        var queryResponseData = TabularDataBuilder
-            .InitTabularData(new()
-            {
-                { "dataSource.schema1.tableau1.attr1", DataTypes.INT },
-                { "dataSource.schema1.tableau1.attr2", DataTypes.STRING},
-                { "dataSource.schema1.tableau1.attr3", DataTypes.DECIMAL},
-                { "dataSource.schema1.tableau2.attr1", DataTypes.INT },
-                { "dataSource.schema1.tableau2.attr3", DataTypes.DECIMAL }
-            })
-            .AddRow(conf => conf.WithRowData(new()
-            {
-                { "dataSource.schema1.tableau1.attr1", 1 },
-                { "dataSource.schema1.tableau1.attr2", "HELLO1"},
-                { "dataSource.schema1.tableau1.attr3", 2.0},
-                { "dataSource.schema1.tableau2.attr1", 4 },
-                { "dataSource.schema1.tableau2.attr3", 2.7 }
-            }))
-            .AddRow(conf => conf.WithRowData(new()
-            {
-                { "dataSource.schema1.tableau1.attr1", 2 },
-                { "dataSource.schema1.tableau1.attr2", "HELLO2"},
-                { "dataSource.schema1.tableau1.attr3", 4.5},
-                { "dataSource.schema1.tableau2.attr1", 5 },
-                { "dataSource.schema1.tableau2.attr3", 2.3 }
-            }))
-            .AddRow(conf => conf.WithRowData(new()
-            {
-                { "dataSource.schema1.tableau1.attr1", 3 },
-                { "dataSource.schema1.tableau1.attr2", "HELL3"},
-                { "dataSource.schema1.tableau1.attr3", 3.3},
-                { "dataSource.schema1.tableau2.attr1", 5 },
-                { "dataSource.schema1.tableau2.attr3", 1.0 }
-            }))
-            .Build();
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
@@ -250,8 +166,11 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
+        var query = _testFixture.GetQuery();
+        var queryResultData = _testFixture.GetQueryResultData();
+
         mediator2.QueryRequestReceived += async (sender, args) =>
-            await mediator2.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResponseData, args.FromRemotePoint);
+            await mediator2.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResultData, args.FromRemotePoint);
 
 
         var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
@@ -260,14 +179,14 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         Assert.True(registerResult);
         Assert.True(queryResult);
-        Assert.Equal(queryResponseData, queryResult.Data);
+        Assert.Equal(queryResultData, queryResult.Data);
 
     }
 
     [Fact(DisplayName = "MEDIATOR: Send a SCHEMA_REQ, respond and get results")]
     public async void MediatorSendSchemaRequest()
     {
-        var dataSource = GetDataSource();
+        var dataSource = _testFixture.GetDataSource();
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
