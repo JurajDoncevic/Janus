@@ -76,7 +76,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
-        var helloResult = mediator1.SendHello(mediator2RemotePoint).Result;
+        var helloResult = mediator2.SendHello(mediator1RemotePoint).Result;
 
 
         Assert.True(helloResult.IsFailure);
@@ -92,7 +92,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
-        var helloResult = mediator1.RegisterRemotePoint(mediator2RemotePoint).Result;
+        var helloResult = mediator2.RegisterRemotePoint(mediator1RemotePoint).Result;
 
 
         Assert.True(helloResult.IsFailure);
