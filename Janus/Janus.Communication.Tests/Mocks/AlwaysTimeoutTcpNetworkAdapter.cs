@@ -47,7 +47,7 @@ namespace Janus.Communication.Tests.Mocks
                     Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
                           async tcpClient =>
                           {
-                              System.Threading.Tasks.Task.Delay(10000).Wait();
+                              System.Threading.Tasks.Task.Delay(1000).Wait();
                               tcpClient.SendTimeout = 1;
                               var messageBytes = message.ToBson();
                               return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
@@ -61,7 +61,7 @@ namespace Janus.Communication.Tests.Mocks
                     Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
                           async tcpClient =>
                           {
-                              System.Threading.Tasks.Task.Delay(10000).Wait();
+                              System.Threading.Tasks.Task.Delay(1000).Wait();
                               tcpClient.SendTimeout = 1;
                               var messageBytes = message.ToBson();
                               return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
