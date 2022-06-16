@@ -1,4 +1,8 @@
-﻿using Janus.Commons.SchemaModels;
+﻿using Janus.Commons.CommandModels;
+using Janus.Commons.DataModels;
+using Janus.Commons.QueryModels;
+using Janus.Commons.SchemaModels;
+using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Communication.Messages;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Nodes.Implementations;
@@ -20,75 +24,26 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
             );
 
     private DataSource GetDataSource()
-       => SchemaModelBuilder.InitDataSource("testDataSource")
-                            .AddSchema("schema1", schemaBuilder =>
-                                schemaBuilder
-                                    .AddTableau("tableau1", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT)))
-                                    .AddTableau("tableau2", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT)))
-                                    .AddTableau("tableau3", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))))
-                            .AddSchema("schema2", schemaBuilder =>
-                                schemaBuilder
-                                    .AddTableau("tableau1", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder))
-                                    .AddTableau("tableau2", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT)))
-                                    .AddTableau("tableau3", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT)))
-                                    .AddTableau("tableau4", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.STRING))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT)))
-                                    .AddTableau("tableau5", tableauBuilder =>
-                                        tableauBuilder
-                                            .AddAttribute("attr1", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))
-                                            .AddAttribute("attr2", attributeBuilder => attributeBuilder.WithIsNullable(true)
-                                                                                                       .WithDataType(DataTypes.STRING))
-                                            .AddAttribute("attr3", attributeBuilder => attributeBuilder.WithIsNullable(false)
-                                                                                                       .WithDataType(DataTypes.INT))))
-                            .Build();
+       => SchemaModelBuilder.InitDataSource("dataSource")
+                .AddSchema("schema1",
+                    schemaConf => schemaConf.AddTableau("tableau1",
+                        tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
+                                                                                             .WithIsNullable(false))
+                                                  .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
+                                                                                             .WithIsNullable(true))
+                                                  .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.DECIMAL)
+                                                                                             .WithIsNullable(false))
+                                                  .AddAttribute("attr4", attrConf => attrConf.WithDataType(DataTypes.INT)
+                                                                                             .WithIsNullable(false)
+                                                                                             .WithIsPrimaryKey(true)))
+                    .AddTableau("tableau2",
+                        tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
+                                                                                             .WithIsNullable(false))
+                                                  .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
+                                                                                             .WithIsNullable(false))
+                                                  .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.DECIMAL)
+                                                                                             .WithIsNullable(false))))
+                .Build();
 
     public CommunicationNodeTests(CommunicationNodeTestFixture testFixture)
     {
@@ -175,6 +130,9 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "Send a BYE after a Register")]
     public async void TestBye()
     {
+        var dataSource = GetDataSource();
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
+
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
@@ -196,22 +154,121 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     }
 
     [Fact(DisplayName = "Send a COMMAND_REQ and get results")]
-    public void SendCommandRequest()
+    public async void SendCommandRequest()
     {
+        var dataSource = GetDataSource();
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
+
+        var dataToInsert =
+            TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
+                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
+                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 }, { "attr4", 1 } }))
+                              .Build();
+
+        var insertCommand =
+            InsertCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                .WithInstantiation(conf => conf.WithValues(dataToInsert))
+                                .Build();
+
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
+
+        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+
+        mediator2.CommandRequestReceived += async (sender, args) =>
+        {
+            if (args.ReceivedMessage.CommandReqType == CommandReqTypes.INSERT)
+            {
+                await mediator2.SendCommandResponse(args.ReceivedMessage.ExchangeId, true, args.FromRemotePoint, "Operation success");
+            }
+        };
+
+        var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
+
+        var commandResult = await mediator1.SendCommandRequest(insertCommand, mediator2RemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(commandResult);
+        
     }
 
     [Fact(DisplayName = "Send a QUERY_REQ and get results")]
-    public void SendQueryRequest()
+    public async void SendQueryRequest()
     {
+        var dataSource = GetDataSource();
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
+
+        var query = QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
+            .WithJoining(conf => conf.AddJoin("dataSource.schema1.tableau1.attr1", "dataSource.schema1.tableau2.attr1"))
+            .WithSelection(conf => conf.WithExpression(LT("dataSource.schema1.tableau1.attr3", 7.0)))
+            .WithProjection(conf => conf.AddAttribute("dataSource.schema1.tableau1.attr1")
+                                        .AddAttribute("dataSource.schema1.tableau1.attr2")
+                                        .AddAttribute("dataSource.schema1.tableau1.attr3")
+                                        .AddAttribute("dataSource.schema1.tableau2.attr1")
+                                        .AddAttribute("dataSource.schema1.tableau2.attr3"))
+            .Build();
+
+        var queryResponseData = TabularDataBuilder
+            .InitTabularData(new () 
+            { 
+                { "dataSource.schema1.tableau1.attr1", DataTypes.INT }, 
+                { "dataSource.schema1.tableau1.attr2", DataTypes.STRING}, 
+                { "dataSource.schema1.tableau1.attr3", DataTypes.DECIMAL}, 
+                { "dataSource.schema1.tableau2.attr1", DataTypes.INT }, 
+                { "dataSource.schema1.tableau2.attr3", DataTypes.DECIMAL } 
+            })
+            .AddRow(conf => conf.WithRowData(new() 
+            {
+                { "dataSource.schema1.tableau1.attr1", 1 },
+                { "dataSource.schema1.tableau1.attr2", "HELLO1"},
+                { "dataSource.schema1.tableau1.attr3", 2.0},
+                { "dataSource.schema1.tableau2.attr1", 4 },
+                { "dataSource.schema1.tableau2.attr3", 2.7 }
+            }))
+            .AddRow(conf => conf.WithRowData(new() 
+            {
+                { "dataSource.schema1.tableau1.attr1", 2 },
+                { "dataSource.schema1.tableau1.attr2", "HELLO2"},
+                { "dataSource.schema1.tableau1.attr3", 4.5},
+                { "dataSource.schema1.tableau2.attr1", 5 },
+                { "dataSource.schema1.tableau2.attr3", 2.3 }
+            }))
+            .AddRow(conf => conf.WithRowData(new() 
+            {
+                { "dataSource.schema1.tableau1.attr1", 3 },
+                { "dataSource.schema1.tableau1.attr2", "HELL3"},
+                { "dataSource.schema1.tableau1.attr3", 3.3},
+                { "dataSource.schema1.tableau2.attr1", 5 },
+                { "dataSource.schema1.tableau2.attr3", 1.0 }
+            }))
+            .Build();
+
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
+
+        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+
+        mediator2.QueryRequestReceived += async (sender, args) => 
+            await mediator2.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResponseData, args.FromRemotePoint);
+
+
+        var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
+
+        var queryResult = await mediator1.SendQueryRequest(query, mediator2RemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(queryResult);
+        Assert.Equal(queryResponseData, queryResult.Data);
+
     }
 
     [Fact(DisplayName = "Send a SCHEMA_REQ and get results")]
     public async void SendSchemaRequest()
     {
+        var dataSource = GetDataSource();
+
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
@@ -222,12 +279,12 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
 
         mediator2.SchemaRequestReceived += async (sender, args) 
-            => await mediator2.SendSchemaResponse(args.ReceivedMessage.ExchangeId, GetDataSource(), args.FromRemotePoint);
+            => await mediator2.SendSchemaResponse(args.ReceivedMessage.ExchangeId, dataSource, args.FromRemotePoint);
 
         var schemaRequestResult = await mediator1.SendSchemaRequest(mediator2RemotePoint);
 
         Assert.True(registerResult);
         Assert.True(schemaRequestResult);
-        Assert.Equal(GetDataSource(), schemaRequestResult.Data);
+        Assert.Equal(dataSource, schemaRequestResult.Data);
     }
 }

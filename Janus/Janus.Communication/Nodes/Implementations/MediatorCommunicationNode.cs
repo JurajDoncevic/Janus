@@ -83,8 +83,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         {
             var remotePoint = _remotePoints[message.NodeId];
 
-            // add the message to the responses
-            var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
+            // add the message to the requests
+            var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
             if (enqueued)
             {
                 _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
