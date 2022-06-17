@@ -24,13 +24,13 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
     public event EventHandler<QueryResReceivedEventArgs>? QueryResponseReceived;
     public event EventHandler<SchemaResReceivedEventArgs>? SchemaResponseReceived;
 
-    public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
+    public override Result<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
             Preambles.SCHEMA_RESPONSE => MessageExtensions.ToSchemaResMessage(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.QUERY_RESPONSE => MessageExtensions.ToQueryResMessage(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.COMMAND_RESPONSE => MessageExtensions.ToCommandResMessage(messageBytes).Map(_ => (BaseMessage)_),
-            _ => ResultExtensions.AsDataResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type")) 
+            _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type")) 
         };
 
     public override void RaiseSpecializedMessageReceivedEvent(BaseMessage message, string address)

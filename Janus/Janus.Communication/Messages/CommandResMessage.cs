@@ -56,8 +56,8 @@ public class CommandResMessage : BaseMessage
 public static partial class MessageExtensions
 {
 #pragma warning disable
-    public static DataResult<CommandResMessage> ToCommandResMessage(this byte[] bytes)
-        => ResultExtensions.AsDataResult(
+    public static Result<CommandResMessage> ToCommandResMessage(this byte[] bytes)
+        => ResultExtensions.AsResult(
             () =>
             {
                 var indexOfNullTerm = bytes.ToList().IndexOf(0x00);

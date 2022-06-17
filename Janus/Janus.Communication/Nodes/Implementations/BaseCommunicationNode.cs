@@ -154,7 +154,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     /// </summary>
     /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public async Task<DataResult<RemotePoint>> SendHello(RemotePoint remotePoint)
+    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
     {
         // create request hello message
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, false);
@@ -168,9 +168,9 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsDataResult(() =>
+                    .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -203,7 +203,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     /// </summary>
     /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public async Task<DataResult<RemotePoint>> RegisterRemotePoint(RemotePoint remotePoint)
+    public async Task<Result<RemotePoint>> RegisterRemotePoint(RemotePoint remotePoint)
     {
         // create request hello message
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, true);
@@ -217,9 +217,9 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
                 (await _networkAdapter.SendHelloRequest(helloRequest, remotePoint))
                     .Pass(
                         result => _logger?.Info($"Sending {0} with registering intention to {1} with exchange {2} successful.", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} with registering intention to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} with registering intention to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsDataResult(() =>
+                    .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -264,7 +264,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         var result = (await Timing.RunWithTimeout(
             async token => (await _networkAdapter.SendByeRequest(message, remotePoint).WaitAsync(token))
                                 .Pass(r => _logger?.Info($"Sent {0} to {1}", message.Preamble, remotePoint),
-                                      r => _logger?.Info($"Sending {0} to {1} failed with message {2}", message.Preamble, remotePoint, r.ErrorMessage)),
+                                      r => _logger?.Info($"Sending {0} to {1} failed with message {2}", message.Preamble, remotePoint, r.Message)),
             _options.TimeoutMs))
             .Pass(
                 r => _remotePoints.Remove(remotePoint.NodeId)

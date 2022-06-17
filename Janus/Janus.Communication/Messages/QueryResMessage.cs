@@ -72,8 +72,8 @@ public class QueryResMessage : BaseMessage
 public static partial class MessageExtensions
 {
 #pragma warning disable
-    public static DataResult<QueryResMessage> ToQueryResMessage(this byte[] bytes)
-        => ResultExtensions.AsDataResult(
+    public static Result<QueryResMessage> ToQueryResMessage(this byte[] bytes)
+        => ResultExtensions.AsResult(
             () =>
             {
                 var indexOfNullTerm = bytes.ToList().IndexOf(0x00);

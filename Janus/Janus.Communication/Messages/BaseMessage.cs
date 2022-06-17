@@ -62,8 +62,8 @@ public abstract class BaseMessage
 
 public static partial class MessageExtensions
 {
-    public static DataResult<string> DeterminePreambule(this byte[] bytes)
-        => ResultExtensions.AsDataResult(
+    public static Result<string> DeterminePreambule(this byte[] bytes)
+        => ResultExtensions.AsResult(
             () =>
             {
                 var messageString = Encoding.UTF8.GetString(bytes, 0, bytes.Length);

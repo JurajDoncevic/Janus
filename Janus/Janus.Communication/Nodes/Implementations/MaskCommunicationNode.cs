@@ -127,7 +127,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                 (await _networkAdapter.SendCommandRequest(commandRequest, remotePoint)) // send the request
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandRequest.Preamble, remotePoint, commandRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.Message)
                     )
                     .Bind(result => ResultExtensions.AsResult(() =>
                     {
@@ -155,7 +155,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         return result;
     }
 
-    public async Task<DataResult<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
+    public async Task<Result<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
     {
         // create query request message
         var queryRequest = new QueryReqMessage(_options.NodeId, query);
@@ -170,9 +170,9 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                 (await _networkAdapter.SendQueryRequest(queryRequest, remotePoint)) // send the request
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryRequest.Preamble, remotePoint, queryRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsDataResult(() =>
+                    .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -199,7 +199,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         return result;
     }
 
-    public async Task<DataResult<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
+    public async Task<Result<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
     {
         // create query request message
         var schemaRequest = new SchemaReqMessage(_options.NodeId);
@@ -214,9 +214,9 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                 (await _networkAdapter.SendSchemaRequest(schemaRequest, remotePoint)) // send the request
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaRequest.Preamble, remotePoint, schemaRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsDataResult(() =>
+                    .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))

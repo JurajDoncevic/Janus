@@ -22,13 +22,13 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
     public event EventHandler<QueryReqReceivedEventArgs>? QueryRequestReceived;
     public event EventHandler<SchemaReqReceivedEventArgs>? SchemaRequestReceived;
 
-    public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
+    public override Result<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
             Preambles.SCHEMA_REQUEST => MessageExtensions.ToSchemaReqMessage(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.QUERY_REQUEST => MessageExtensions.ToQueryReqMessage(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.COMMAND_REQUEST => MessageExtensions.ToCommandReqMessage(messageBytes).Map(_ => (BaseMessage)_),
-            _ => ResultExtensions.AsDataResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
+            _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
         };
 
     public override void RaiseSpecializedMessageReceivedEvent(BaseMessage message, string address)

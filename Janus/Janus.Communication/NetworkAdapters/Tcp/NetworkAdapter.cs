@@ -196,7 +196,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="preambule">Message preambule</param>
     /// <param name="messageBytes">Message bytes</param>
     /// <returns>Created message boxed as BaseMessage</returns>
-    private DataResult<BaseMessage> BuildMessage(string preambule, byte[] messageBytes)
+    private Result<BaseMessage> BuildMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
             Preambles.HELLO_REQUEST => MessageExtensions.ToHelloReqMessage(messageBytes).Map(_ => (BaseMessage)_),
@@ -211,7 +211,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="preambule">Message preambule</param>
     /// <param name="messageBytes">Message bytes</param>
     /// <returns>Created message boxed as BaseMessage</returns>
-    public abstract DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes);
+    public abstract Result<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes);
 
     /// <summary>
     /// Sends bytes of a message (BSON) to a remote point over TCP

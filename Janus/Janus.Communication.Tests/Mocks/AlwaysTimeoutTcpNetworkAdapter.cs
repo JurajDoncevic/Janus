@@ -21,7 +21,7 @@ namespace Janus.Communication.Tests.Mocks
         public event EventHandler<CommandReqReceivedEventArgs>? CommandRequestReceived;
         public event EventHandler<CommandResReceivedEventArgs>? CommandResponseReceived;
 
-        public override DataResult<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
+        public override Result<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
         {
             throw new NotImplementedException();
         }

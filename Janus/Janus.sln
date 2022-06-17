@@ -23,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Utils.Tests", "Janus.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Commons.Tests", "Janus.Commons.Tests\Janus.Commons.Tests.csproj", "{68714454-3836-4447-9B01-461E72821282}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Communication", "Janus.Communication\Janus.Communication.csproj", "{DFE95EAF-1736-438E-9E36-80BCBD932B4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Communication", "Janus.Communication\Janus.Communication.csproj", "{DFE95EAF-1736-438E-9E36-80BCBD932B4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Communication.Tests", "Janus.Communication.Tests\Janus.Communication.Tests.csproj", "{FFC45DEC-597D-4B34-8D05-1FC202E0C056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Communication.Tests", "Janus.Communication.Tests\Janus.Communication.Tests.csproj", "{FFC45DEC-597D-4B34-8D05-1FC202E0C056}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

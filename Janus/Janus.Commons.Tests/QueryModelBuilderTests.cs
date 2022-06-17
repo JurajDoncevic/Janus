@@ -401,7 +401,7 @@ public class QueryModelBuilderTests
 
         var result = query.IsValidForDataSource(dataSource);
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
 
     }
 
@@ -420,7 +420,7 @@ public class QueryModelBuilderTests
                 .Build();
         var result = query.IsValidForDataSource(dataSource);
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Fail to create a disconnected join open query")]
@@ -440,7 +440,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
 
     }
 
@@ -460,7 +460,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Fail to create a duplicate join open query")]
@@ -478,7 +478,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Fail to create an open query with a non-existing attribute in the projection")]
@@ -496,7 +496,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Create an open query with a duplicate attribute in the projection")]
@@ -533,7 +533,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Fail to create an open query with incompatible types in join")]
@@ -550,7 +550,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Fail to create an open query with primary key nullable in join")]
@@ -567,7 +567,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Fail to create a query with an attribute that does not exist in referenced tableaus")]
@@ -585,7 +585,7 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 
     [Fact(DisplayName = "Fail to create a query with an incompatible data type comparison")]
@@ -601,6 +601,6 @@ public class QueryModelBuilderTests
         var result = query.IsValidForDataSource(dataSource);
 
         Assert.False(result);
-        Assert.Equal(ErrorTypes.ExceptionThrown, result.ErrorType);
+        Assert.Equal(ResultTypes.EXCEPTION, result.ResultType);
     }
 }

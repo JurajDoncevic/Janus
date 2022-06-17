@@ -58,8 +58,8 @@ public class HelloResMessage : BaseMessage
 public static partial class MessageExtensions
 {
     #pragma warning disable
-    public static DataResult<HelloResMessage> ToHelloResMessage(this byte[] bytes)
-        => ResultExtensions.AsDataResult(
+    public static Result<HelloResMessage> ToHelloResMessage(this byte[] bytes)
+        => ResultExtensions.AsResult(
             () =>
             {
                 var indexOfNullTerm = bytes.ToList().IndexOf(0x00);

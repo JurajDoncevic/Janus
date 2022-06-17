@@ -140,8 +140,8 @@ public class MessageStore
     /// <param name="exchangeId">Exchange id</param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public DataResult<BaseMessage> DequeueResponseFromExchange(string exchangeId)
-        => AsDataResult(() =>
+    public Result<BaseMessage> DequeueResponseFromExchange(string exchangeId)
+        => AsResult(() =>
         {
             if (AnyResponsesExist(exchangeId) && _receivedResponseMessages[exchangeId].TryDequeue(out var message))
             {
@@ -169,8 +169,8 @@ public class MessageStore
     /// <param name="exchangeId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public DataResult<BaseMessage> DequeueRequestFromExchange(string exchangeId!!)
-        => AsDataResult(() =>
+    public Result<BaseMessage> DequeueRequestFromExchange(string exchangeId!!)
+        => AsResult(() =>
         {
             if (AnyResponsesExist(exchangeId) && _receivedRequestMessages[exchangeId].TryDequeue(out var message))
             {

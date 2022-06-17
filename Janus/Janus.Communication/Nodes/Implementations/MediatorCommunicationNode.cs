@@ -199,7 +199,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 (await _networkAdapter.SendCommandRequest(commandRequest, remotePoint)) // send the request
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandRequest.Preamble, remotePoint, commandRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.Message)
                     )
                     .Bind(result => ResultExtensions.AsResult(() =>
                     {
@@ -227,7 +227,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         return result;
     }
 
-    public async Task<DataResult<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
+    public async Task<Result<TabularData>> SendQueryRequest(Query query, RemotePoint remotePoint)
     {
         // create query request message
         var queryRequest = new QueryReqMessage(_options.NodeId, query);
@@ -242,9 +242,9 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 (await _networkAdapter.SendQueryRequest(queryRequest, remotePoint)) // send the request
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryRequest.Preamble, remotePoint, queryRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsDataResult(() =>
+                    .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -271,7 +271,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         return result;
     }
 
-    public async Task<DataResult<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
+    public async Task<Result<DataSource>> SendSchemaRequest(RemotePoint remotePoint)
     {
         // create query request message
         var schemaRequest = new SchemaReqMessage(_options.NodeId);
@@ -286,9 +286,9 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 (await _networkAdapter.SendSchemaRequest(schemaRequest, remotePoint)) // send the request
                     .Pass(
                         result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaRequest.Preamble, remotePoint, schemaRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.ErrorMessage)
+                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsDataResult(() =>
+                    .Bind(result => ResultExtensions.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -326,7 +326,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 _options.TimeoutMs))
             .Pass(
                 result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandResponse.Preamble, remotePoint, commandResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.ErrorMessage)
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }
@@ -343,7 +343,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 _options.TimeoutMs))
             .Pass(
                 result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryResponse.Preamble, remotePoint, queryResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.ErrorMessage)
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }
@@ -360,7 +360,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 _options.TimeoutMs))
             .Pass(
                 result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaResponse.Preamble, remotePoint, schemaResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.ErrorMessage)
+                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }

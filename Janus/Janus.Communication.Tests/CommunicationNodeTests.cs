@@ -79,8 +79,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var helloResult = mediator2.SendHello(mediator1RemotePoint).Result;
 
 
-        Assert.True(helloResult.IsFailure);
-        Assert.Contains("timeout", helloResult.ErrorMessage.ToLower());
+        Assert.False(helloResult);
+        Assert.Contains("timeout", helloResult.Message.ToLower());
     }
 
     [Fact(DisplayName = "BASE: Test timeout on register operation")]
@@ -95,8 +95,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var helloResult = mediator2.RegisterRemotePoint(mediator1RemotePoint).Result;
 
 
-        Assert.True(helloResult.IsFailure);
-        Assert.Contains("timeout", helloResult.ErrorMessage.ToLower());
+        Assert.False(helloResult);
+        Assert.Contains("timeout", helloResult.Message.ToLower());
     }
 
     [Fact(DisplayName = "BASE: Send a BYE after a Register")]
@@ -202,7 +202,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         var schemaRequestResult = await mediator1.SendSchemaRequest(mediator2RemotePoint);
 
-        System.Diagnostics.Trace.WriteLine(registerResult.ErrorMessage);
+        System.Diagnostics.Trace.WriteLine(registerResult.Message);
         Assert.True(registerResult);
         Assert.True(schemaRequestResult);
         Assert.Equal(schema, schemaRequestResult.Data);
