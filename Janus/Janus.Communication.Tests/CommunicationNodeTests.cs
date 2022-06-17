@@ -28,7 +28,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
-        HelloReqEventArgs helloRequestEventArgs = null;
+        HelloReqEventArgs? helloRequestEventArgs = null;
 
         mediator2.HelloRequestReceived += (_, args) => helloRequestEventArgs = args;
 
@@ -38,12 +38,12 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var resultRemotePoint = helloResult.Data;
 
         Assert.True(helloResult.IsSuccess);
-        Assert.Equal(mediator2.Options.NodeId, resultRemotePoint.NodeId);
-        Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint.Port);
+        Assert.Equal(mediator2.Options.NodeId, resultRemotePoint?.NodeId);
+        Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint?.Port);
         Assert.Empty(mediator1.RemotePoints);
         Assert.Empty(mediator2.RemotePoints);
         Assert.NotNull(helloRequestEventArgs);
-        Assert.Equal(mediator1.Options.NodeId, helloRequestEventArgs.ReceivedMessage.NodeId);
+        Assert.Equal(mediator1.Options.NodeId, helloRequestEventArgs?.ReceivedMessage.NodeId);
 
     }
 
@@ -60,8 +60,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var resultRemotePoint = registerResult.Data;
 
         Assert.True(registerResult.IsSuccess);
-        Assert.Equal(mediator2.Options.NodeId, resultRemotePoint.NodeId);
-        Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint.Port);
+        Assert.Equal(mediator2.Options.NodeId, resultRemotePoint?.NodeId);
+        Assert.Equal(mediator2.Options.ListenPort, resultRemotePoint?.Port);
         Assert.Contains(resultRemotePoint, mediator1.RemotePoints);
         Assert.Equal(mediator2.RemotePoints.First(), mediator1RemotePoint);
 
