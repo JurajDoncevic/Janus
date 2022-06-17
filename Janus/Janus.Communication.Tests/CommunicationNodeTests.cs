@@ -202,7 +202,6 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         var schemaRequestResult = await mediator1.SendSchemaRequest(mediator2RemotePoint);
 
-        System.Diagnostics.Trace.WriteLine(registerResult.Message);
         Assert.True(registerResult);
         Assert.True(schemaRequestResult);
         Assert.Equal(schema, schemaRequestResult.Data);
