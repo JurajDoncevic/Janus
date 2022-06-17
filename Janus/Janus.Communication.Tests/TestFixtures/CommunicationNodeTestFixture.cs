@@ -94,7 +94,7 @@ public class CommunicationNodeTestFixture
         new AlwaysTimeoutTcpNetworkAdapter(MediatorCommunicationNodeOptions["MediatorUnresponsive"].ListenPort)
         );
 
-    public DataSource GetDataSource()
+    public DataSource GetSchema()
        => SchemaModelBuilder.InitDataSource("dataSource")
                 .AddSchema("schema1",
                     schemaConf => schemaConf.AddTableau("tableau1",
@@ -117,7 +117,7 @@ public class CommunicationNodeTestFixture
                 .Build();
 
     public Query GetQuery()
-        => QueryModelBuilder.InitQueryOnDataSource("dataSource.schema1.tableau1", GetDataSource())
+        => QueryModelBuilder.InitQueryOnDataSource("dataSource.schema1.tableau1", GetSchema())
             .WithJoining(conf => conf.AddJoin("dataSource.schema1.tableau1.attr1", "dataSource.schema1.tableau2.attr1"))
             .WithSelection(conf => conf.WithExpression(LT("dataSource.schema1.tableau1.attr3", 7.0)))
             .WithProjection(conf => conf.AddAttribute("dataSource.schema1.tableau1.attr1")
@@ -174,7 +174,7 @@ public class CommunicationNodeTestFixture
                               .Build();
 
         var insertCommand =
-            InsertCommandBuilder.InitOnDataSource("dataSource.schema1.tableau1", GetDataSource())
+            InsertCommandBuilder.InitOnDataSource("dataSource.schema1.tableau1", GetSchema())
                                 .WithInstantiation(conf => conf.WithValues(dataToInsert))
                                 .Build();
         return insertCommand;

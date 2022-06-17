@@ -102,8 +102,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "BASE: Send a BYE after a Register")]
     public async void TestBye()
     {
-        var dataSource = _testFixture.GetDataSource();
-        var tableauId = dataSource["schema1"]["tableau1"].Id;
+        var schema = _testFixture.GetSchema();
+        var tableauId = schema["schema1"]["tableau1"].Id;
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
@@ -128,8 +128,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "MEDIATOR: Send a COMMAND_REQ, respond and get results")]
     public async void MediatorSendCommandRequest()
     {
-        var dataSource = _testFixture.GetDataSource();
-        var tableauId = dataSource["schema1"]["tableau1"].Id;
+        var schema = _testFixture.GetSchema();
+        var tableauId = schema["schema1"]["tableau1"].Id;
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
@@ -157,8 +157,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "MEDIATOR: Send a QUERY_REQ, respond and get results")]
     public async void MediatorSendQueryRequest()
     {
-        var dataSource = _testFixture.GetDataSource();
-        var tableauId = dataSource["schema1"]["tableau1"].Id;
+        var schema = _testFixture.GetSchema();
+        var tableauId = schema["schema1"]["tableau1"].Id;
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
@@ -186,7 +186,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
     [Fact(DisplayName = "MEDIATOR: Send a SCHEMA_REQ, respond and get results")]
     public async void MediatorSendSchemaRequest()
     {
-        var dataSource = _testFixture.GetDataSource();
+        var schema = _testFixture.GetSchema();
 
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
@@ -198,42 +198,136 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
 
         mediator2.SchemaRequestReceived += async (sender, args)
-            => await mediator2.SendSchemaResponse(args.ReceivedMessage.ExchangeId, dataSource, args.FromRemotePoint);
+            => await mediator2.SendSchemaResponse(args.ReceivedMessage.ExchangeId, schema, args.FromRemotePoint);
 
         var schemaRequestResult = await mediator1.SendSchemaRequest(mediator2RemotePoint);
 
+        System.Diagnostics.Trace.WriteLine(registerResult.ErrorMessage);
         Assert.True(registerResult);
         Assert.True(schemaRequestResult);
-        Assert.Equal(dataSource, schemaRequestResult.Data);
+        Assert.Equal(schema, schemaRequestResult.Data);
     }
 
     [Fact(DisplayName = "MASK: Send a SCHEMA_REQ and get results")]
     public async void MaskSendSchemaRequest()
     {
+        var schema = _testFixture.GetSchema();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        var mediatorRemotePoint = new MediatorRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        mediator.SchemaRequestReceived += async (sender, args) 
+            => await mediator.SendSchemaResponse(args.ReceivedMessage.ExchangeId, schema, args.FromRemotePoint);
+
+        using var mask = _testFixture.GetMaskCommunicationNode("Mask1");
+
+        var registerResult = await mask.RegisterRemotePoint(mediatorRemotePoint);
+
+        var schemaResult = await mask.SendSchemaRequest(mediatorRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(schemaResult);
+        Assert.Equal(_testFixture.GetSchema(), schemaResult.Data);
     }
 
     [Fact(DisplayName = "MASK: Send a QUERY_REQ and get results")]
     public async void MaskSendQueryRequest()
     {
+        var query = _testFixture.GetQuery();
+        var queryResultData = _testFixture.GetQueryResultData();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        var mediatorRemotePoint = new MediatorRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        mediator.QueryRequestReceived += async (sender, args)
+            => await mediator.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResultData, args.FromRemotePoint);
+
+        using var mask = _testFixture.GetMaskCommunicationNode("Mask1");
+
+        var registerResult = await mask.RegisterRemotePoint(mediatorRemotePoint);
+
+        var queryDataResult = await mask.SendQueryRequest(query, mediatorRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(queryDataResult);
+        Assert.Equal(_testFixture.GetQueryResultData(), queryDataResult.Data);
     }
 
     [Fact(DisplayName = "MASK: Send a COMMAND_REQ and get results")]
     public async void MaskSendCommandRequest()
     {
+        var insertCommand = _testFixture.GetInsertCommand();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        var mediatorRemotePoint = new MediatorRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        mediator.CommandRequestReceived += async (sender, args)
+            => await mediator.SendCommandResponse(args.ReceivedMessage.ExchangeId, true, args.FromRemotePoint);
+
+        using var mask = _testFixture.GetMaskCommunicationNode("Mask1");
+
+        var registerResult = await mask.RegisterRemotePoint(mediatorRemotePoint);
+
+        var queryDataResult = await mask.SendCommandRequest(insertCommand, mediatorRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(queryDataResult);
     }
 
     [Fact(DisplayName = "WRAPPER: Receive a SCHEMA_REQ and respond")]
     public async void WrapperReceiveSchemaRequest()
     {
+        var schema = _testFixture.GetSchema();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        using var wrapper = _testFixture.GetWrapperCommunicationNode("Wrapper1");
+        var wrapperRemotePoint = new WrapperRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
+        wrapper.SchemaRequestReceived +=
+            async (sender, args) => await wrapper.SendSchemaResponse(args.ReceivedMessage.ExchangeId, schema, args.FromRemotePoint);
+
+        var registerResult = await mediator.RegisterRemotePoint(wrapperRemotePoint);
+
+        var schemaResult = await mediator.SendSchemaRequest(wrapperRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(schemaResult);
+        Assert.Equal(schema, schemaResult.Data);
     }
 
     [Fact(DisplayName = "WRAPPER: Receive a QUERY_REQ and respond")]
     public async void WrapperReceiveQueryRequest()
     {
+        var query = _testFixture.GetQuery();
+        var queryResultData = _testFixture.GetQueryResultData();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        using var wrapper = _testFixture.GetWrapperCommunicationNode("Wrapper1");
+        var wrapperRemotePoint = new WrapperRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
+        wrapper.QueryRequestReceived +=
+            async (sender, args) => await wrapper.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResultData, args.FromRemotePoint);
+
+        var registerResult = await mediator.RegisterRemotePoint(wrapperRemotePoint);
+
+        var queryResult = await mediator.SendQueryRequest(query, wrapperRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(queryResult);
+        Assert.Equal(queryResultData, queryResult.Data);
     }
 
     [Fact(DisplayName = "WRAPPER: Receive a COMMAND_REQ and respond")]
     public async void WrapperReceiveCommandRequest()
     {
+        var insertCommand = _testFixture.GetInsertCommand();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        using var wrapper = _testFixture.GetWrapperCommunicationNode("Wrapper1");
+        var wrapperRemotePoint = new WrapperRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
+        wrapper.CommandRequestReceived +=
+            async (sender, args) => await wrapper.SendCommandResponse(args.ReceivedMessage.ExchangeId, true, args.FromRemotePoint);
+
+        var registerResult = await mediator.RegisterRemotePoint(wrapperRemotePoint);
+
+        var commandResult = await mediator.SendCommandRequest(insertCommand, wrapperRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.True(commandResult);
     }
 }
