@@ -6,7 +6,7 @@ namespace Janus.Commons.SchemaModels.Exceptions;
 /// </summary>
 public class SchemaNameAssignedException : Exception
 {
-    internal SchemaNameAssignedException(string schemaName!!, string dataSourceName!!) 
+    internal SchemaNameAssignedException(string schemaName!!, string dataSourceName!!)
         : base($"Schema named {schemaName} already exists in data source {dataSourceName}.")
     {
     }

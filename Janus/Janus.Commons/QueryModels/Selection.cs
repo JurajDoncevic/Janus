@@ -1,7 +1,4 @@
-﻿
-using Janus.Commons.QueryModels.Exceptions;
-using Janus.Commons.SchemaModels;
-using Janus.Commons.SelectionExpressions;
+﻿using Janus.Commons.SelectionExpressions;
 
 namespace Janus.Commons.QueryModels;
 
@@ -11,7 +8,7 @@ namespace Janus.Commons.QueryModels;
 public class Selection
 {
     private readonly SelectionExpression _expression;
-    
+
     /// <summary>
     /// The selection clause's expression
     /// </summary>

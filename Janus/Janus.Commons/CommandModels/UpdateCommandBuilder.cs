@@ -1,15 +1,9 @@
 ﻿using Janus.Commons.CommandModels.Exceptions;
 using Janus.Commons.DataModels;
-using Janus.Commons.QueryModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
 using static Janus.Commons.SelectionExpressions.Expressions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
@@ -173,7 +167,7 @@ public class MutationBuilder
                 throw new NullGivenForNonNullableAttributeException(_onTableauId, referencedAttr);
         }
 
-        foreach(var referencedAttrName in referencedAttrNames)
+        foreach (var referencedAttrName in referencedAttrNames)
         {
             if (_dataSource[schemaName][tableauName][referencedAttrName].IsPrimaryKey)
             {
@@ -242,5 +236,5 @@ public class CommandSelectionBuilder
         => _expression
             ? new CommandSelection(_expression.Value)
             : new CommandSelection(FALSE());
-    
+
 }

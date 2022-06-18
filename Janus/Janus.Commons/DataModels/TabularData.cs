@@ -1,11 +1,6 @@
 ﻿using Janus.Commons.DataModels.JsonConversion;
 using Janus.Commons.SchemaModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.DataModels;
 
@@ -73,7 +68,7 @@ public class TabularData
         return obj is TabularData data &&
             _attributeDataTypes.SequenceEqual(data._attributeDataTypes) &&
             _rowData.SequenceEqual(data._rowData);
-               
+
     }
 
     public override int GetHashCode()

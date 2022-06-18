@@ -1,13 +1,7 @@
-﻿using Janus.Commons.CommandModels;
-using Janus.Commons.DataModels;
-using Janus.Commons.QueryModels;
-using Janus.Commons.SchemaModels;
-
+﻿
 using Janus.Communication.Messages;
 using Janus.Communication.Nodes.Events;
-using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
-using Janus.Communication.Tests.Mocks;
 using Janus.Communication.Tests.TestFixtures;
 using Xunit;
 
@@ -214,7 +208,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
         var mediatorRemotePoint = new MediatorRemotePoint("127.0.0.1", mediator.Options.ListenPort);
-        mediator.SchemaRequestReceived += async (sender, args) 
+        mediator.SchemaRequestReceived += async (sender, args)
             => await mediator.SendSchemaResponse(args.ReceivedMessage.ExchangeId, schema, args.FromRemotePoint);
 
         using var mask = _testFixture.GetMaskCommunicationNode("Mask1");

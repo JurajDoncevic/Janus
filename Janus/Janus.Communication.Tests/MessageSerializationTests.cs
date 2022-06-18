@@ -1,12 +1,11 @@
-﻿using static Janus.Communication.Messages.MessageExtensions;
-using static Janus.Commons.SelectionExpressions.Expressions;
+﻿using Janus.Commons.CommandModels;
+using Janus.Commons.DataModels;
+using Janus.Commons.QueryModels;
+using Janus.Commons.SchemaModels;
 using Janus.Communication.Messages;
 using Xunit;
-using FunctionalExtensions.Base.Results;
-using Janus.Commons.SchemaModels;
-using Janus.Commons.QueryModels;
-using Janus.Commons.DataModels;
-using Janus.Commons.CommandModels;
+using static Janus.Commons.SelectionExpressions.Expressions;
+using static Janus.Communication.Messages.MessageExtensions;
 
 namespace Janus.Communication.Tests;
 
@@ -127,7 +126,7 @@ public class MessageSerializationTests
 
         var dataSource = GetTestDataSource();
 
-        var query = 
+        var query =
             QueryModelBuilder.InitQueryOnDataSource("datasource1.schema1.tableau1", dataSource)
                 .WithJoining(conf => conf.AddJoin("datasource1.schema1.tableau1.attr1_FK", "datasource1.schema1.tableau2.attr1"))
                 .WithProjection(conf => conf.AddAttribute("datasource1.schema1.tableau1.attr1_FK")
@@ -293,8 +292,8 @@ public class MessageSerializationTests
                                                                          .WithDataType(DataTypes.DECIMAL)
                                                                          .WithOrdinal(2)
                                                                          .WithIsPrimaryKey(false)))
-                                            .AddTableau("tableau2", tableauBuilder => 
-                                                tableauBuilder.AddAttribute("attr1", attributeBuilder => 
+                                            .AddTableau("tableau2", tableauBuilder =>
+                                                tableauBuilder.AddAttribute("attr1", attributeBuilder =>
                                                         attributeBuilder.WithDataType(DataTypes.INT)
                                                                         .WithIsNullable(false)))
                                             .AddTableau("tableau3", tableauBuilder => tableauBuilder))
@@ -303,8 +302,8 @@ public class MessageSerializationTests
                              .Build();
     private TabularData GetTestTabularData()
         => TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { {"attr1", 1 }, {"attr2", "TEST1" }, {"attr3", 1.0 } }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { {"attr1", 2 }, {"attr2", null }, {"attr3", 2.1 } }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { {"attr1", 3 }, {"attr2", "TEST3" }, {"attr3", 3.1 } }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 1 }, { "attr2", "TEST1" }, { "attr3", 1.0 } }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.1 } }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 3 }, { "attr2", "TEST3" }, { "attr3", 3.1 } }))
             .Build();
 }

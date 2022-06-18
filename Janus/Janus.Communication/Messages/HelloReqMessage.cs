@@ -32,7 +32,7 @@ public class HelloReqMessage : BaseMessage
     /// <param name="listenPort">Sender node's listenning port</param>
     /// <param name="nodeType">Sender node's type</param>
     [JsonConstructor]
-    public HelloReqMessage(string exchangeId,  string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(exchangeId, nodeId, Preambles.HELLO_REQUEST)
+    public HelloReqMessage(string exchangeId, string nodeId, int listenPort, NodeTypes nodeType, bool rememberMe) : base(exchangeId, nodeId, Preambles.HELLO_REQUEST)
     {
         _listenPort = listenPort;
         _nodeType = nodeType;
@@ -56,19 +56,19 @@ public class HelloReqMessage : BaseMessage
 
 public static partial class MessageExtensions
 {
-    #pragma warning disable
+#pragma warning disable
     public static Result<HelloReqMessage> ToHelloReqMessage(this byte[] bytes)
         => ResultExtensions.AsResult(
             () =>
             {
                 var indexOfNullTerm = bytes.ToList().IndexOf(0x00);
                 // sometimes the message is exactly as long as the byte array and there is no null term
-                var bytesMessageLength = indexOfNullTerm > 0 ? indexOfNullTerm : bytes.Length; 
+                var bytesMessageLength = indexOfNullTerm > 0 ? indexOfNullTerm : bytes.Length;
                 var messageString = Encoding.UTF8.GetString(bytes, 0, bytesMessageLength);
                 var message = JsonSerializer.Deserialize<HelloReqMessage>(messageString);
                 return message;
             });
-    #pragma warning enable
+#pragma warning enable
 
 
 }

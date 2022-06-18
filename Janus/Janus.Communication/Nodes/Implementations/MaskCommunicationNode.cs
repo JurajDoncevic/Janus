@@ -67,7 +67,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
             if (enqueued)
             {
                 _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
-                
+
                 // raise event
                 QueryResponseReceived?.Invoke(this, new QueryResEventArgs(e.Message, remotePoint));
             }
@@ -151,7 +151,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
 
         // unregister the exchange
         _messageStore.RegisterExchange(exchangeId);
-        
+
         return result;
     }
 
@@ -195,7 +195,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
 
         // unregister the exchange
         _messageStore.RegisterExchange(exchangeId);
-        
+
         return result;
     }
 

@@ -1,12 +1,4 @@
-﻿using Janus.Commons.SchemaModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-
-namespace Janus.Commons.DataModels;
+﻿namespace Janus.Commons.DataModels;
 
 /// <summary>
 /// Describes a row of tableau data

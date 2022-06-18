@@ -1,12 +1,6 @@
-﻿using FunctionalExtensions.Base.Results;
-using static FunctionalExtensions.Base.Results.ResultExtensions;
-using Janus.Communication.Messages;
-using System;
+﻿using Janus.Communication.Messages;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static FunctionalExtensions.Base.Results.ResultExtensions;
 
 namespace Janus.Communication.Nodes.Utils;
 
@@ -27,7 +21,7 @@ public class MessageStore
     /// <summary>
     /// Number of responses that are enqueued thorugh all exchanges
     /// </summary>
-    public int CountRequestsEnqueued => _receivedRequestMessages.Values.Sum(q => q.Count); 
+    public int CountRequestsEnqueued => _receivedRequestMessages.Values.Sum(q => q.Count);
 
     /// <summary>
     /// Constructor
@@ -77,7 +71,7 @@ public class MessageStore
     /// <returns></returns>
     public bool EnqueueResponseInExchange(string exchangeId!!, BaseMessage message!!)
     {
-        if(!_registeredExchangeIds.ContainsKey(exchangeId))
+        if (!_registeredExchangeIds.ContainsKey(exchangeId))
             return false;
 
         // if the exchange already exists
@@ -89,7 +83,8 @@ public class MessageStore
         }
         else // if the exchange doesn't exist
         {
-            if(_receivedResponseMessages.TryAdd(exchangeId, new ConcurrentQueue<BaseMessage>())){
+            if (_receivedResponseMessages.TryAdd(exchangeId, new ConcurrentQueue<BaseMessage>()))
+            {
                 _receivedResponseMessages[exchangeId].Enqueue(message);
                 return true;
             }

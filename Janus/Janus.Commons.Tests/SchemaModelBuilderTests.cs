@@ -1,10 +1,5 @@
 ﻿using Janus.Commons.SchemaModels;
 using Janus.Commons.SchemaModels.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Janus.Commons.Tests;
@@ -81,7 +76,7 @@ public class SchemaModelBuilderTests
         {
             var dataSource =
                 SchemaModelBuilder.InitDataSource("testDataSource")
-                    .AddSchema("testSchema", schemaBuilder => 
+                    .AddSchema("testSchema", schemaBuilder =>
                         schemaBuilder
                             .AddTableau("testTableau", tableauBuilder => tableauBuilder)
                             .AddTableau("testTableau", tableauBuilder => tableauBuilder))
@@ -98,7 +93,7 @@ public class SchemaModelBuilderTests
                 SchemaModelBuilder.InitDataSource("testDataSource")
                     .AddSchema("testSchema", schemaBuilder =>
                         schemaBuilder
-                            .AddTableau("testTableau", tableauBuilder => 
+                            .AddTableau("testTableau", tableauBuilder =>
                                 tableauBuilder.AddAttribute("testAttribute", attributeBuilder => attributeBuilder)
                                               .AddAttribute("testAttribute", attributeBuilder => attributeBuilder)))
                 .Build();
@@ -142,7 +137,7 @@ public class SchemaModelBuilderTests
         var dataSource =
             SchemaModelBuilder.InitDataSource("testDataSource")
                 .AddSchema("testSchema", schemaBuilder =>
-                    schemaBuilder.AddTableau("testTableau", tableauBuilder => 
+                    schemaBuilder.AddTableau("testTableau", tableauBuilder =>
                         tableauBuilder.AddAttribute("attr1", attributeBuilder => attributeBuilder)
                                       .AddAttribute("attr2", attributeBuilder => attributeBuilder)
                                       .AddAttribute("attr3", attributeBuilder => attributeBuilder)
@@ -161,12 +156,12 @@ public class SchemaModelBuilderTests
         var dataSource = SchemaModelBuilder.InitDataSource("testDataSource")
                             .AddSchema("schema1", schemaBuilder =>
                                 schemaBuilder
-                                    .AddTableau("tableau1", tableauBuilder => 
+                                    .AddTableau("tableau1", tableauBuilder =>
                                         tableauBuilder
                                             .AddAttribute("attr1", attributeBuilder => attributeBuilder)
                                             .AddAttribute("attr2", attributeBuilder => attributeBuilder)
                                             .AddAttribute("attr3", attributeBuilder => attributeBuilder))
-                                    .AddTableau("tableau2", tableauBuilder => 
+                                    .AddTableau("tableau2", tableauBuilder =>
                                         tableauBuilder
                                             .AddAttribute("attr1", attributeBuilder => attributeBuilder)
                                             .AddAttribute("attr2", attributeBuilder => attributeBuilder)

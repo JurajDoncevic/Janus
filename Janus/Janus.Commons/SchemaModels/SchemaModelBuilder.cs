@@ -156,7 +156,7 @@ public class TableauBuilder
     {
         var attribute = configuration(new AttributeBuilder(attributeName, _tableau)).Build();
 
-        if(_tableau.Attributes.ToList().Exists(a => a.Ordinal == attribute.Ordinal))
+        if (_tableau.Attributes.ToList().Exists(a => a.Ordinal == attribute.Ordinal))
             throw new AttributeOrdinalAssignedException(attribute.Ordinal, attributeName, _tableau.Name);
         if (_tableau.AttributeNames.Contains(attributeName))
             throw new AttributeNameAssignedException(attributeName, _tableau.Name);
@@ -186,7 +186,7 @@ public class AttributeBuilder
     private bool _isAttributePrimaryKey = false;
     private bool _isAttributeNullable = true;
     private Tableau _parentTableau;
-    
+
     /// <summary>
     /// Constructor
     /// </summary>

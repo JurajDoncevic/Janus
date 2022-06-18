@@ -1,10 +1,7 @@
 ﻿
 using Janus.Commons.CommandModels;
-using Janus.Commons.CommandModels.JsonConversion;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 
 namespace Janus.Communication.Messages;
 
@@ -106,7 +103,7 @@ internal class CommandReqMessageJsonConverter : JsonConverter<CommandReqMessage>
         };
         var jsonNode = JsonSerializer.SerializeToNode(dto);
         var str = jsonNode.ToJsonString();
-        
+
         jsonNode["Command"] = JsonSerializer.SerializeToNode(value.Command, value.Command.GetType(), options);
 
         writer.WriteRawValue(jsonNode.ToJsonString());

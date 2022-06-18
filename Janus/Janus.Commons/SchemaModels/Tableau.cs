@@ -68,9 +68,9 @@ public class Tableau
     /// <returns>true if new attribute is added, false if an attribute with the given name or ordinal exists</returns>
     internal bool AddAttribute(Attribute attribute!!)
     {
-            int automaticOrdinal = attribute.Ordinal < 0 
-                ? (_attributes.Values.Max(a => a.Ordinal as int?) ?? -1) + 1
-                : attribute.Ordinal;
+        int automaticOrdinal = attribute.Ordinal < 0
+            ? (_attributes.Values.Max(a => a.Ordinal as int?) ?? -1) + 1
+            : attribute.Ordinal;
 
 
         if (!_attributes.ContainsKey(attribute.Name) && !_attributes.Values.ToList().Exists(a => a.Ordinal == attribute.Ordinal))

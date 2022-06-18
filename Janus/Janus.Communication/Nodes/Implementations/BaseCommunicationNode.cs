@@ -5,7 +5,6 @@ using Janus.Communication.Nodes.Events;
 using Janus.Communication.Nodes.Utils;
 using Janus.Communication.Remotes;
 using Janus.Utils.Logging;
-using System.Collections.Concurrent;
 
 namespace Janus.Communication.Nodes.Implementations;
 
@@ -107,7 +106,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
         if (enqueued)
         {
             _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
-            
+
             //invoke event
             HelloResponseReceived?.Invoke(this, new HelloResEventArgs(message, _remotePoints[message.NodeId]));
         }

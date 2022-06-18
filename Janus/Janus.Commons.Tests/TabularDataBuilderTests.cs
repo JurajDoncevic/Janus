@@ -3,9 +3,6 @@ using Janus.Commons.DataModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Janus.Commons.Tests;
@@ -222,7 +219,7 @@ public class TabularDataBuilderTests
                         { "attrSTRING", "test_string3" }
             }))
             .Build();
-        
+
         var jsonString = System.Text.Json.JsonSerializer.Serialize(tabularData);
         var deserializedTabular = System.Text.Json.JsonSerializer.Deserialize<TabularData>(jsonString);
 

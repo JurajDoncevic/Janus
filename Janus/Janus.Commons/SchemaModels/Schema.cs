@@ -45,7 +45,7 @@ public class Schema
     internal Schema(string name!!, DataSource dataSource!!)
     {
         _name = name;
-        _tableaus = new ();
+        _tableaus = new();
         _dataSource = dataSource;
     }
 
@@ -69,7 +69,7 @@ public class Schema
     /// <returns>true if new tableau is added, false if a tableau with the given name exists</returns>
     internal bool AddTableau(Tableau tableau!!)
     {
-        
+
         if (!_tableaus.ContainsKey(tableau.Name))
         {
             tableau = new Tableau(tableau.Name, tableau.Attributes.ToList(), this); // copy just in case to assign correct parent

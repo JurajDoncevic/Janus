@@ -1,13 +1,7 @@
 ﻿using Janus.Commons.CommandModels.Exceptions;
 using Janus.Commons.DataModels;
-using Janus.Commons.QueryModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels;
 
@@ -120,7 +114,7 @@ public class InstantiationBuilder
         var referencableAttributes = _dataSource[schemaName][tableauName].Attributes.Select(attr => attr.Name).ToHashSet();
         var referencedAttributes = tabularData.AttributeNames;
 
-        if(!referencedAttributes.All(referencableAttributes.Contains))
+        if (!referencedAttributes.All(referencableAttributes.Contains))
         {
             var invalidAttrRef = referencedAttributes.Where(referencedAttr => !referencableAttributes.Contains(referencedAttr)).First();
             throw new AttributeNotInTargetTableauException(invalidAttrRef, _onTableauId);
@@ -135,7 +129,7 @@ public class InstantiationBuilder
         {
             var referencedDataType = _dataSource[schemaName][tableauName][referencedAttr].DataType;
             var referencingDataType = tabularData.AttributeDataTypes[referencedAttr];
-            if(referencedDataType != referencingDataType)
+            if (referencedDataType != referencingDataType)
             {
                 throw new IncompatibleInstantiationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
             }

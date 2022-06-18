@@ -1,12 +1,6 @@
 ﻿using Janus.Commons.CommandModels.JsonConversion.DTOs;
-using Janus.Commons.SelectionExpressions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.CommandModels.JsonConversion;
 
@@ -16,7 +10,7 @@ public class UpdateCommandJsonConverter : JsonConverter<UpdateCommand>
     {
         var updateDto = JsonDocument.ParseValue(ref reader).Deserialize<UpdateCommandDto>();
 
-        if(updateDto == null)
+        if (updateDto == null)
             throw new Exception("Deserialization of UpdateCommandDto failed");
 
         var retypedMutationDict = updateDto.Mutation.ToDictionary(

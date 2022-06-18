@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace Janus.Communication.Remotes;
+﻿namespace Janus.Communication.Remotes;
 
 public abstract class RemotePoint
 {

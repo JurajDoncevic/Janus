@@ -1,14 +1,9 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.QueryModels;
-using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Commons.Tests;
 

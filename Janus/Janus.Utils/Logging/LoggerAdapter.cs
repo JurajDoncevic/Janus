@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FunctionalExtensions.Base;
-using static FunctionalExtensions.Base.UnitExtensions;
-using Microsoft.Extensions.Logging;
+﻿using FunctionalExtensions.Base;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using static FunctionalExtensions.Base.UnitExtensions;
 
 namespace Janus.Utils.Logging;
 

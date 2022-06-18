@@ -1,10 +1,5 @@
 ﻿using Janus.Communication.Nodes.Utils;
 using Janus.Communication.Tests.Mocks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Janus.Communication.Tests;
@@ -143,14 +138,14 @@ public class MessageStoreTests
     public void EnqueueResponsesToMessageStoreWithoutRegister()
     {
         MessageStore messageStore = new MessageStore();
-        
+
         const string exchangeId = "someExchangeId";
 
         var mockMessages = GetMockResponseMessages();
         var unregisteredMessageChain = GetMockResponseChain(exchangeId);
 
 
-        
+
 
         mockMessages.ForEach(message => messageStore.RegisterExchange(message.ExchangeId));
 

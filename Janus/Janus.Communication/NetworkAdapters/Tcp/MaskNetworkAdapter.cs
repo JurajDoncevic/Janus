@@ -3,7 +3,6 @@ using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.NetworkAdapters.Exceptions;
 using Janus.Communication.Remotes;
 using Janus.Utils.Logging;
-using System.Net.Sockets;
 
 namespace Janus.Communication.NetworkAdapters.Tcp;
 
@@ -30,7 +29,7 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
             Preambles.SCHEMA_RESPONSE => MessageExtensions.ToSchemaResMessage(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.QUERY_RESPONSE => MessageExtensions.ToQueryResMessage(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.COMMAND_RESPONSE => MessageExtensions.ToCommandResMessage(messageBytes).Map(_ => (BaseMessage)_),
-            _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type")) 
+            _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
         };
 
     public override void RaiseSpecializedMessageReceivedEvent(BaseMessage message, string address)
@@ -47,7 +46,7 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
                 break;
             case Preambles.COMMAND_RESPONSE:
                 CommandResponseReceived?.Invoke(this, new CommandResReceivedEventArgs((CommandResMessage)message, address));
-                _logger?.Debug("Invoked CommandResponseReceived"); 
+                _logger?.Debug("Invoked CommandResponseReceived");
                 break;
             default:
                 // do nothing

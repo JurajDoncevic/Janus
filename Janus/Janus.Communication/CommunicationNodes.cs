@@ -1,8 +1,8 @@
-﻿using TcpAdapters = Janus.Communication.NetworkAdapters.Tcp;
+﻿using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes;
-using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Utils.Logging;
+using TcpAdapters = Janus.Communication.NetworkAdapters.Tcp;
 
 namespace Janus.Communication;
 
@@ -14,8 +14,8 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static MaskCommunicationNode CreateTcpMaskCommunicationNode(
-        CommunicationNodeOptions options!!, 
-        ILogger<MaskCommunicationNode>? nodeLogger = null, 
+        CommunicationNodeOptions options!!,
+        ILogger<MaskCommunicationNode>? nodeLogger = null,
         ILogger<TcpAdapters.MaskNetworkAdapter>? networkAdapterLogger = null)
         => new MaskCommunicationNode(
             options,
@@ -40,7 +40,7 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static WrapperCommunicationNode CreateTcpWrapperCommunicationNode(
-        CommunicationNodeOptions options!!, 
+        CommunicationNodeOptions options!!,
         ILogger<WrapperCommunicationNode>? nodeLogger = null,
         ILogger<TcpAdapters.WrapperNetworkAdapter>? networkAdapterLogger = null)
         => new WrapperCommunicationNode(

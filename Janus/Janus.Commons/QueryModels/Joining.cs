@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janus.Commons.QueryModels;
+﻿namespace Janus.Commons.QueryModels;
 
 /// <summary>
 /// Describes a query joining clause
@@ -95,7 +89,7 @@ public class Join
     /// <param name="primaryKeyAttributeId">Referencing attribute id</param>
     /// <param name="foreignKeyTableauId">Referenced tableau id</param>
     /// <param name="foreignKeyAttributeId">Referenced attribute id</param>
-    internal Join(string primaryKeyTableauId!!, string primaryKeyAttributeId!!, 
+    internal Join(string primaryKeyTableauId!!, string primaryKeyAttributeId!!,
                   string foreignKeyTableauId!!, string foreignKeyAttributeId!!)
     {
         _primaryKeyTableauId = primaryKeyTableauId;

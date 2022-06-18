@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Janus.Commons.CommandModels.Exceptions;
+﻿namespace Janus.Commons.CommandModels.Exceptions;
 
 public class NullGivenForNonNullableAttributeException : Exception
 {

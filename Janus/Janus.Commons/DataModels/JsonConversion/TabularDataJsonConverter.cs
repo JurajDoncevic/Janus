@@ -1,11 +1,6 @@
 ﻿using Janus.Commons.DataModels.JsonConversion.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.DataModels.JsonConversion;
 
@@ -24,7 +19,7 @@ public class TabularDataJsonConverter : JsonConverter<TabularData>
                 (attrVals, builder) => builder.AddRow(
                     conf => conf.WithRowData(attrVals.ToDictionary(
                         av => av.Key,
-                        av => av.Value != null 
+                        av => av.Value != null
                               ? JsonSerializer.Deserialize(((JsonElement)av.Value), TypeMappings.MapToType(tabularDataDto.AttributeDataTypes[av.Key]))
                               : null
                         )))

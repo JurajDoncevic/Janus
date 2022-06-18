@@ -2,13 +2,10 @@
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
-using static Janus.Commons.SelectionExpressions.Expressions;
-using Janus.Communication.NetworkAdapters.Tcp;
 using Janus.Communication.Nodes.Implementations;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Janus.Communication.Tests.Mocks;
+using Microsoft.Extensions.Configuration;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Communication.Tests.TestFixtures;
 
@@ -44,27 +41,27 @@ public class CommunicationNodeTestFixture
         _wrapperCommunicationNodeOptions = options.wrapperNodeOptions.ToDictionary(o => o.NodeId, o => o);
     }
 
-    public MaskCommunicationNode GetMaskCommunicationNode(string nodeId) 
+    public MaskCommunicationNode GetMaskCommunicationNode(string nodeId)
         => CommunicationNodes.CreateTcpMaskCommunicationNode(_maskCommunicationNodeOptions[nodeId]);
 
-    public MediatorCommunicationNode GetMediatorCommunicationNode(string nodeId) 
+    public MediatorCommunicationNode GetMediatorCommunicationNode(string nodeId)
         => CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions[nodeId]);
 
-    public WrapperCommunicationNode GetWrapperCommunicationNode(string nodeId) 
+    public WrapperCommunicationNode GetWrapperCommunicationNode(string nodeId)
         => CommunicationNodes.CreateTcpWrapperCommunicationNode(_wrapperCommunicationNodeOptions[nodeId]);
 
     private (
-        IEnumerable<CommunicationNodeOptions> maskNodeOptions, 
-        IEnumerable<CommunicationNodeOptions> mediatorNodeOptions, 
+        IEnumerable<CommunicationNodeOptions> maskNodeOptions,
+        IEnumerable<CommunicationNodeOptions> mediatorNodeOptions,
         IEnumerable<CommunicationNodeOptions> wrapperNodeOptions)
         LoadCommunicationNodeOptions(IConfiguration configuration)
     {
         return (
             configuration.GetChildren()
                          .ToList()
-                         .SingleOrDefault(section => section.Key.Equals("Nodes")) ?
+                         .SingleOrDefault(section => section.Key.Equals("Nodes"))?
                          .GetChildren()
-                         .SingleOrDefault(section => section.Key.Equals("Masks")) ?
+                         .SingleOrDefault(section => section.Key.Equals("Masks"))?
                          .GetChildren()
                          .Select(maskSection => maskSection.GetCommunicationNodeOptions())
                          .ToList() ?? new List<CommunicationNodeOptions>(),
@@ -72,7 +69,7 @@ public class CommunicationNodeTestFixture
                          .ToList()
                          .SingleOrDefault(section => section.Key.Equals("Nodes"))?
                          .GetChildren()
-                         .SingleOrDefault(section => section.Key.Equals("Mediators")) ?
+                         .SingleOrDefault(section => section.Key.Equals("Mediators"))?
                          .GetChildren()
                          .Select(maskSection => maskSection.GetCommunicationNodeOptions())
                          .ToList() ?? new List<CommunicationNodeOptions>(),
@@ -80,12 +77,12 @@ public class CommunicationNodeTestFixture
                          .ToList()
                          .SingleOrDefault(section => section.Key.Equals("Nodes"))?
                          .GetChildren()
-                         .SingleOrDefault(section => section.Key.Equals("Wrappers")) ?
+                         .SingleOrDefault(section => section.Key.Equals("Wrappers"))?
                          .GetChildren()
                          .Select(maskSection => maskSection.GetCommunicationNodeOptions())
                          .ToList() ?? new List<CommunicationNodeOptions>()
                      );
-                     
+
     }
 
     public MediatorCommunicationNode GetUnresponsiveMediator()

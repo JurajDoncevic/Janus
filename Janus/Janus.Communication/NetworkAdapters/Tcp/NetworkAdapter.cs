@@ -4,7 +4,6 @@ using Janus.Communication.Remotes;
 using Janus.Utils.Logging;
 using System.Net;
 using System.Net.Sockets;
-using static FunctionalExtensions.Base.Disposing;
 
 namespace Janus.Communication.NetworkAdapters.Tcp;
 
@@ -34,18 +33,18 @@ public abstract class NetworkAdapter : INetworkAdapter
 
     public bool StartAdapter()
     {
-        if(_listenerTask == null)
+        if (_listenerTask == null)
         {
             _listenerTask = Task.Run(() => RunListener(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
             _logger?.Info($"Started tcp listener on {0}", _tcpListener.LocalEndpoint);
             return true;
-        } 
+        }
         return false;
     }
 
     public bool StopAdapter()
     {
-        if(_listenerTask != null)
+        if (_listenerTask != null)
         {
             _cancellationTokenSource.Cancel();
             while (!_listenerTask.IsCanceled && !_listenerTask.IsFaulted && !_listenerTask.IsCompleted) ;
@@ -64,7 +63,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     private void RunListener(CancellationToken cancellationToken)
     {
         var listenerStarting = TryCatch(
-            () => _tcpListener.Pass(l => l.Start()), 
+            () => _tcpListener.Pass(l => l.Start()),
             ex => ex);
 
         if (listenerStarting.IsException)
@@ -87,8 +86,8 @@ public abstract class NetworkAdapter : INetworkAdapter
             }
 
             // await a client
-            var client = _tcpListener.AcceptTcpClientAsync(cancellationToken).Result;  
-            
+            var client = _tcpListener.AcceptTcpClientAsync(cancellationToken).Result;
+
             // if there wasn't a cancellation
             if (client != null)
             {
@@ -144,7 +143,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     public async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
             .Pass(result => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
-            
+
     #endregion
 
     #region SEND BYE MESSAGES
@@ -169,17 +168,21 @@ public abstract class NetworkAdapter : INetworkAdapter
         _logger?.Info($"Received {0} from {1}", message.Preamble, address);
         switch (message.Preamble)
         {
-            case Preambles.HELLO_REQUEST:   HelloRequestReceived?.Invoke(this, new HelloReqReceivedEventArgs((HelloReqMessage)message, address));
-                                            _logger?.Debug("Invoked HelloRequestReceived");
-                                            break;
-            case Preambles.HELLO_RESPONSE:  HelloResponseReceived?.Invoke(this, new HelloResReceivedEventArgs((HelloResMessage)message, address));
-                                            _logger?.Debug("Invoked HelloResponseReceived");
-                                            break;
-            case Preambles.BYE_REQUEST:     ByeRequestReceived?.Invoke(this, new ByeReqReceivedEventArgs((ByeReqMessage)message, address));
-                                            _logger?.Debug("Invoked ByeRequestReceived");
-                                            break;
-            default:        RaiseSpecializedMessageReceivedEvent(message, address);
-                            break;
+            case Preambles.HELLO_REQUEST:
+                HelloRequestReceived?.Invoke(this, new HelloReqReceivedEventArgs((HelloReqMessage)message, address));
+                _logger?.Debug("Invoked HelloRequestReceived");
+                break;
+            case Preambles.HELLO_RESPONSE:
+                HelloResponseReceived?.Invoke(this, new HelloResReceivedEventArgs((HelloResMessage)message, address));
+                _logger?.Debug("Invoked HelloResponseReceived");
+                break;
+            case Preambles.BYE_REQUEST:
+                ByeRequestReceived?.Invoke(this, new ByeReqReceivedEventArgs((ByeReqMessage)message, address));
+                _logger?.Debug("Invoked ByeRequestReceived");
+                break;
+            default:
+                RaiseSpecializedMessageReceivedEvent(message, address);
+                break;
         }
     }
 

@@ -6,9 +6,9 @@ namespace Janus.Commons.SchemaModels.Exceptions;
 /// </summary>
 public class AttributeOrdinalAssignedException : Exception
 {
-    internal AttributeOrdinalAssignedException(int ordinalNumber, string attributeName!!, string tableauName!!) 
+    internal AttributeOrdinalAssignedException(int ordinalNumber, string attributeName!!, string tableauName!!)
         : base($"Ordinal {ordinalNumber} can't be assigned to attribute {attributeName}. It is already assigned to an attribute on tableau {tableauName}")
     {
-        
+
     }
 }

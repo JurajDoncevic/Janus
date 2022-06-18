@@ -6,7 +6,7 @@ namespace Janus.Commons.SchemaModels.Exceptions;
 /// </summary>
 public class TableauNameAssignedException : Exception
 {
-    internal TableauNameAssignedException(string tableauName!!, string schemaName!!) 
+    internal TableauNameAssignedException(string tableauName!!, string schemaName!!)
         : base($"Tableau named {tableauName} already exists in schema {schemaName}.")
     {
     }

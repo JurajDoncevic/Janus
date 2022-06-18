@@ -1,14 +1,6 @@
-﻿using FunctionalExtensions.Base.Results;
-using Janus.Commons.QueryModels.Exceptions;
-using Janus.Commons.QueryModels.JsonConversion;
-using Janus.Commons.QueryModels.Validation;
+﻿using Janus.Commons.QueryModels.JsonConversion;
 using Janus.Commons.SchemaModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.QueryModels;
 
@@ -81,23 +73,23 @@ public class Query
     public Result IsValidForDataSource(DataSource dataSource!!)
      => ResultExtensions.AsResult(() =>
      {
-        QueryModelBuilder.InitQueryOnDataSource(_onTableauId, dataSource)
-            .WithJoining(configuration =>
-                _joining.Match(
-                    joining => joining.Joins.Fold(configuration, (join, conf) => conf.AddJoin(join.ForeignKeyAttributeId, join.PrimaryKeyAttributeId)),
-                    () => configuration
-                    ))
-            .WithProjection(configuration =>
-                _projection.Match(
-                    projection => projection.IncludedAttributeIds.Fold(configuration, (attrId, conf) => conf.AddAttribute(attrId)),
-                    () => configuration
-                    ))
-            .WithSelection(configuration =>
-                _selection.Match(
-                    selection => configuration.WithExpression(selection.Expression),
-                    () => configuration
-                    ))
-            .Build();
+         QueryModelBuilder.InitQueryOnDataSource(_onTableauId, dataSource)
+             .WithJoining(configuration =>
+                 _joining.Match(
+                     joining => joining.Joins.Fold(configuration, (join, conf) => conf.AddJoin(join.ForeignKeyAttributeId, join.PrimaryKeyAttributeId)),
+                     () => configuration
+                     ))
+             .WithProjection(configuration =>
+                 _projection.Match(
+                     projection => projection.IncludedAttributeIds.Fold(configuration, (attrId, conf) => conf.AddAttribute(attrId)),
+                     () => configuration
+                     ))
+             .WithSelection(configuration =>
+                 _selection.Match(
+                     selection => configuration.WithExpression(selection.Expression),
+                     () => configuration
+                     ))
+             .Build();
 
          return true;
      });

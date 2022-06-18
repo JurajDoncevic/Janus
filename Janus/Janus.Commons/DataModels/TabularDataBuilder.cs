@@ -1,10 +1,5 @@
 ﻿using Janus.Commons.DataModels.Exceptions;
 using Janus.Commons.SchemaModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Commons.DataModels;
 
@@ -72,8 +67,8 @@ public class RowDataBuilder
             || !attributeValues.Keys.All(_attributeDataTypes.ContainsKey))
             throw new IncompatibleRowDataTypeException(attributeValues.Keys.ToList(), _attributeDataTypes.Keys.ToList());
 
-        var attrValue = attributeValues.Where(kvp => 
-                                            kvp.Value !=null &&
+        var attrValue = attributeValues.Where(kvp =>
+                                            kvp.Value != null &&
                                             !kvp.Value.GetType().IsEquivalentTo(TypeMappings.MapToType(_attributeDataTypes[kvp.Key])))
                                        .Select(kvp => (attrId: kvp.Key, attrValue: kvp.Value))
                                        .FirstOrDefault();

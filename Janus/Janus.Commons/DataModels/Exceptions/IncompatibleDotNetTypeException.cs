@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Janus.Commons.DataModels.Exceptions;
+﻿namespace Janus.Commons.DataModels.Exceptions;
 
 public class IncompatibleDotNetTypeException : Exception
 {
