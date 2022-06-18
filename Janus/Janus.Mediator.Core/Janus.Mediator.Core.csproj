@@ -1,19 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FunctionalExtensions.Base" Version="1.1.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="FunctionalExtensions.Base" Version="1.1.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
-    <ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
-    <ProjectReference Include="..\Janus.Components.Core\Janus.Components.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+		<ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
+		<ProjectReference Include="..\Janus.Components.Core\Janus.Components.Core.csproj" />
+	</ItemGroup>
 
 </Project>
