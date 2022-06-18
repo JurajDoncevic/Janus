@@ -27,6 +27,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Communication", "Janu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Communication.Tests", "Janus.Communication.Tests\Janus.Communication.Tests.csproj", "{FFC45DEC-597D-4B34-8D05-1FC202E0C056}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Components.Core", "Janus.Components.Core\Janus.Components.Core.csproj", "{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mediator.Console", "Janus.Mediator.Console\Janus.Mediator.Console.csproj", "{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,14 @@ Global
 		{FFC45DEC-597D-4B34-8D05-1FC202E0C056}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFC45DEC-597D-4B34-8D05-1FC202E0C056}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFC45DEC-597D-4B34-8D05-1FC202E0C056}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
