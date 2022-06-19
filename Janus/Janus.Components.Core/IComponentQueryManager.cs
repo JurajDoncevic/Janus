@@ -5,6 +5,6 @@ namespace Janus.Components.Core;
 
 public interface IComponentQueryManager
 {
-    public TabularData ExecuteQueryOnNode(Query query, string nodeId);
-    public TabularData ExecuteQueryGlobally(Query query);
+    public Task<Result<TabularData>> ExecuteQueryOnNode(Query query, string nodeId);
+    public Task<Result<TabularData>> ExecuteQueryGlobally(Query query);
 }

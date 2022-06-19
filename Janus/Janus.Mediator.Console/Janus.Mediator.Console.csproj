@@ -28,6 +28,7 @@
 		<PackageReference Include="NLog" Version="5.0.1" />
 		<PackageReference Include="NLog.Extensions.Hosting" Version="5.0.0" />
 		<PackageReference Include="NLog.Extensions.Logging" Version="5.0.0" />
+		<PackageReference Include="Sharprompt" Version="2.4.1" />
 	</ItemGroup>
 
 	<ItemGroup>

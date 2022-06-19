@@ -12,12 +12,12 @@ public class MediatorCommandManager : IComponentCommandManager
         _communicationNode = communicationNode;
     }
 
-    public Result ExecuteCommandGlobally(BaseCommand command)
+    public Task<Result> ExecuteCommandGlobally(BaseCommand command)
     {
         throw new NotImplementedException();
     }
 
-    public Result ExecuteCommandOnNode(BaseCommand command, string nodeId)
+    public Task<Result> ExecuteCommandOnNode(BaseCommand command, string nodeId)
     {
         throw new NotImplementedException();
     }

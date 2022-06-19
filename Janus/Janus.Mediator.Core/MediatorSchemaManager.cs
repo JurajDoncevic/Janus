@@ -11,17 +11,17 @@ public class MediatorSchemaManager : IComponentSchemaManager
     {
         _communicationNode = communicationNode;
     }
-    public Result<DataSource> GetCurrentSchema()
+    public Task<Result<DataSource>> GetCurrentSchema()
     {
         throw new NotImplementedException();
     }
 
-    public Result<DataSource> GetSchemaFromNode(string nodeId)
+    public Task<Result<DataSource>> GetSchemaFromNode(string nodeId)
     {
         throw new NotImplementedException();
     }
 
-    public Result<DataSource> ReloadSchema(object transformations = null)
+    public Task<Result<DataSource>> ReloadSchema(object transformations = null)
     {
         throw new NotImplementedException();
     }

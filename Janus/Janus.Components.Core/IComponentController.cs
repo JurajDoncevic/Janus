@@ -1,4 +1,5 @@
-﻿using Janus.Commons.CommandModels;
+﻿using FunctionalExtensions.Base.Results;
+using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
@@ -14,14 +15,14 @@ public interface IComponentController
     /// <param name="address">Target node address</param>
     /// <param name="port">Target node port</param>
     /// <returns></returns>
-    public Result RegisterComponent(string address, int port);
+    public Task<Result> RegisterComponent(string address, int port);
 
     /// <summary>
     /// Initiates an operation to unregister a node
     /// </summary>
     /// <param name="remotePoint">Target node's remote point</param>
     /// <returns></returns>
-    public Result UnregisterComponent(RemotePoint remotePoint);
+    public Task<Result> UnregisterComponent(RemotePoint remotePoint);
 
     /// <summary>
     /// Gets all the currently registered remote points
@@ -34,7 +35,7 @@ public interface IComponentController
     /// </summary>
     /// <param name="remotePoint">Target node's remote point</param>
     /// <returns></returns>
-    public Result<RemotePoint> SendHello(RemotePoint remotePoint);
+    public Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint);
 
     /// <summary>
     /// Sends a HELLO ping to a remote point. Doesn't initiate a register operation
@@ -42,7 +43,7 @@ public interface IComponentController
     /// <param name="address">Target node address</param>
     /// <param name="port">Target node port</param>
     /// <returns></returns>
-    public Result<RemotePoint> SendHello(string address, int port);
+    public Task<Result<RemotePoint>> SendHello(string address, int port);
 
     /// <summary>
     /// Runs a command on this component

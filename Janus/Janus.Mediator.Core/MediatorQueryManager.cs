@@ -13,12 +13,12 @@ public class MediatorQueryManager : IComponentQueryManager
         _communicationNode = communicationNode;
     }
 
-    public TabularData ExecuteQueryGlobally(Query query)
+    public Task<Result<TabularData>> ExecuteQueryGlobally(Query query)
     {
         throw new NotImplementedException();
     }
 
-    public TabularData ExecuteQueryOnNode(Query query, string nodeId)
+    public Task<Result<TabularData>> ExecuteQueryOnNode(Query query, string nodeId)
     {
         throw new NotImplementedException();
     }

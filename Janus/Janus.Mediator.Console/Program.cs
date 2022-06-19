@@ -2,6 +2,7 @@
 using Janus.Communication;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.NetworkAdapters.Tcp;
+using Janus.Communication.Nodes;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Mediator.Console;

@@ -1,8 +1,9 @@
-﻿using FunctionalExtensions.Base.Results;
-using Janus.Commons.CommandModels;
+﻿using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
+using Janus.Communication.Nodes;
+using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components.Core;
 
@@ -12,9 +13,11 @@ public class MediatorController : IComponentController
     private readonly MediatorQueryManager _queryManager;
     private readonly MediatorCommandManager _commandManager;
     private readonly MediatorSchemaManager _schemaManager;
+    private readonly MediatorCommunicationNode _communicationNode;
 
-    public MediatorController(MediatorQueryManager queryManager, MediatorCommandManager commandManager, MediatorSchemaManager schemaManager)
+    public MediatorController(MediatorCommunicationNode communicationNode, MediatorQueryManager queryManager, MediatorCommandManager commandManager, MediatorSchemaManager schemaManager)
     {
+        _communicationNode = communicationNode;
         _queryManager = queryManager;
         _commandManager = commandManager;
         _schemaManager = schemaManager;
@@ -25,43 +28,42 @@ public class MediatorController : IComponentController
         throw new NotImplementedException();
     }
 
-    public Task<Result<DataSource>> GetSchema()
+    public async Task<Result<DataSource>> GetSchema()
     {
         throw new NotImplementedException();
     }
 
-    public Result RegisterComponent(string address, int port)
+    public async Task<Result> RegisterComponent(string address, int port)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result> RunCommand(BaseCommand command)
+    public async Task<Result> RunCommand(BaseCommand command)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result<TabularData>> RunQuery(Query query)
+    public async Task<Result<TabularData>> RunQuery(Query query)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result> SaveRegisteredRemotePoints(string filePath)
+    public async Task<Result> SaveRegisteredRemotePoints(string filePath)
     {
         throw new NotImplementedException();
     }
 
-    public Result<RemotePoint> SendHello(RemotePoint remotePoint)
+    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
     {
         throw new NotImplementedException();
     }
 
-    public Result<RemotePoint> SendHello(string address, int port)
+    public async Task<Result<RemotePoint>> SendHello(string address, int port)
+        => await _communicationNode.SendHello(new MediatorRemotePoint(address, port));
+
+    public async Task<Result> UnregisterComponent(RemotePoint remotePoint)
     {
         throw new NotImplementedException();
     }
 
-    public Result UnregisterComponent(RemotePoint remotePoint)
-    {
-        throw new NotImplementedException();
-    }
 }
