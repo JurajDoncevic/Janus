@@ -9,6 +9,17 @@ using Janus.Components.Core;
 namespace Janus.Mediator.Core;
 public class MediatorController : IComponentController
 {
+    private readonly MediatorQueryManager _queryManager;
+    private readonly MediatorCommandManager _commandManager;
+    private readonly MediatorSchemaManager _schemaManager;
+
+    public MediatorController(MediatorQueryManager queryManager, MediatorCommandManager commandManager, MediatorSchemaManager schemaManager)
+    {
+        _queryManager = queryManager;
+        _commandManager = commandManager;
+        _schemaManager = schemaManager;
+    }
+
     public List<RemotePoint> GetRegisteredRemotePoints()
     {
         throw new NotImplementedException();
@@ -30,6 +41,11 @@ public class MediatorController : IComponentController
     }
 
     public Task<Result<TabularData>> RunQuery(Query query)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result> SaveRegisteredRemotePoints(string filePath)
     {
         throw new NotImplementedException();
     }

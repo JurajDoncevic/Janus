@@ -9,7 +9,25 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="configuration.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="configuration.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommandLineParser" Version="2.9.1" />
 		<PackageReference Include="FunctionalExtensions.Base" Version="1.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="NLog" Version="5.0.1" />
+		<PackageReference Include="NLog.Extensions.Hosting" Version="5.0.0" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -3,7 +3,7 @@ using Janus.Commons.QueryModels;
 
 namespace Janus.Components.Core;
 
-public interface IQueryManager
+public interface IComponentQueryManager
 {
     public TabularData ExecuteQueryOnNode(Query query, string nodeId);
     public TabularData ExecuteQueryGlobally(Query query);

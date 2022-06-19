@@ -2,7 +2,7 @@
 
 namespace Janus.Components.Core;
 
-public interface ISchemaManager
+public interface IComponentSchemaManager
 {
     public Result<DataSource> GetCurrentSchema();
     public Result<DataSource> GetSchemaFromNode(string nodeId);

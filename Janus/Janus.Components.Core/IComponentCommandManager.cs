@@ -2,7 +2,7 @@
 
 namespace Janus.Components.Core;
 
-public interface ICommandManager
+public interface IComponentCommandManager
 {
     public Result ExecuteCommandOnNode(BaseCommand command, string nodeId);
     public Result ExecuteCommandGlobally(BaseCommand command);

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Janus.Mediator.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "--conf ./configuration.json"
+    }
+  }
+}

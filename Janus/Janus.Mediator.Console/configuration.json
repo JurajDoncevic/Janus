@@ -1,0 +1,25 @@
+{
+  "ComponentOptions": {
+    "NodeId": "DebugMediatorNode",
+    "ListenPort": 20001,
+    "TimeoutMs": 5000,
+    "StartupRemotePoints": []
+  },
+
+  "NLog": {
+    "targets": {
+      "file": {
+        "type": "File",
+        "fileName": "./nlog-all-${shortdate}.log",
+        "layout": "${longdate}|${logger}|${message}"
+      }
+    },
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "file"
+      }
+    ]
+  }
+}
