@@ -14,9 +14,9 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
     /// Constructor
     /// </summary>
     /// <param name="listenPort">TCP listening port</param>
-    internal MaskNetworkAdapter(int listenPort, ILogger<MaskNetworkAdapter>? logger = null) : base(listenPort, logger)
+    internal MaskNetworkAdapter(int listenPort, ILogger? logger = null) : base(listenPort, logger)
     {
-        _logger = logger;
+        _logger = logger?.ResolveLogger<MaskNetworkAdapter>();
     }
 
     public event EventHandler<CommandResReceivedEventArgs>? CommandResponseReceived;
@@ -56,13 +56,13 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
 
     public async Task<Result> SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 }

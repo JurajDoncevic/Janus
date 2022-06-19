@@ -14,9 +14,9 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
 
     private readonly ILogger<WrapperCommunicationNode>? _logger;
 
-    internal WrapperCommunicationNode(CommunicationNodeOptions options, IWrapperNetworkAdapter networkAdapter, ILogger<WrapperCommunicationNode>? logger = null) : base(options, networkAdapter, logger)
+    internal WrapperCommunicationNode(CommunicationNodeOptions options, IWrapperNetworkAdapter networkAdapter, ILogger? logger = null) : base(options, networkAdapter, logger)
     {
-        _logger = logger;
+        _logger = logger?.ResolveLogger<WrapperCommunicationNode>();
 
         networkAdapter.CommandRequestReceived += NetworkAdapter_CommandRequestReceived;
         networkAdapter.QueryRequestReceived += NetworkAdapter_QueryRequestReceived;
@@ -28,7 +28,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -38,7 +38,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
             var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 SchemaRequestReceived?.Invoke(this, new SchemaReqEventArgs(e.Message, remotePoint));
@@ -50,7 +50,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -60,7 +60,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
             var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
@@ -72,7 +72,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -82,7 +82,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
             var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
@@ -109,8 +109,8 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
                 async (token) => await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
             .Pass(
-                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandResponse.Preamble, remotePoint, commandResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.Message)
+                result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", commandResponse.Preamble, remotePoint, commandResponse.ExchangeId),
+                result => _logger?.Info("Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }
@@ -126,8 +126,8 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
                 async (token) => await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
             .Pass(
-                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryResponse.Preamble, remotePoint, queryResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.Message)
+                result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", queryResponse.Preamble, remotePoint, queryResponse.ExchangeId),
+                result => _logger?.Info("Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }
@@ -143,8 +143,8 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
                 async (token) => await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
             .Pass(
-                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaResponse.Preamble, remotePoint, schemaResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.Message)
+                result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", schemaResponse.Preamble, remotePoint, schemaResponse.ExchangeId),
+                result => _logger?.Info("Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }

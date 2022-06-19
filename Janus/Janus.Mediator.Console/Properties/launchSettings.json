@@ -1,8 +1,12 @@
 {
   "profiles": {
-    "Janus.Mediator.Console": {
+    "Janus.Mediator.Console|Conf file": {
       "commandName": "Project",
-      "commandLineArgs": "--conf ./configuration.json"
+      "commandLineArgs": "-s --conf ./configuration.json"
+    },
+    "Janus.Mediator.Console|Args": {
+      "commandName": "Project",
+      "commandLineArgs": "-s --nodeid DebugMediatorNode --port 20001 --timeout 5000"
     }
   }
 }

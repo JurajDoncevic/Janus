@@ -6,13 +6,28 @@ using static FunctionalExtensions.Base.UnitExtensions;
 
 namespace Janus.Utils.Logging;
 
+public sealed class Logger : ILogger
+{
+    private readonly IConfiguration _configuration;
+
+    public Logger(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public LoggerAdapter<T> ResolveLogger<T>()
+    {
+        return new LoggerAdapter<T>(_configuration);
+    } 
+}
+
 public sealed class LoggerAdapter<T> : ILogger<T>
 {
     private readonly Microsoft.Extensions.Logging.ILogger<T> _logger;
 
     public LoggerAdapter(IConfiguration configuration)
     {
-        _logger = LoggerFactory.Create(builder => builder.AddNLog(configuration))//.AddConfiguration(configuration))
+        _logger = LoggerFactory.Create(builder => builder.AddNLog(configuration))
                                .CreateLogger<T>();
     }
 

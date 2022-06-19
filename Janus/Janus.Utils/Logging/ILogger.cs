@@ -7,6 +7,15 @@ namespace Janus.Utils.Logging;
 /// </summary>
 public interface ILogger
 {
+    public LoggerAdapter<T> ResolveLogger<T>();
+}
+
+/// <summary>
+/// Specialized interface for library logging
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface ILogger<T>
+{
     /// <summary>
     /// Is the Debug level enabled?
     /// </summary>
@@ -179,13 +188,4 @@ public interface ILogger
     /// <param name="messageTemplate"></param>
     /// <returns></returns>
     Unit Critical<T1, T2, T3, T4>(string messageTemplate, T1 arg1, T2 arg2, T3 arg3, T4 arg4);
-}
-
-/// <summary>
-/// Specialized interface for library logging
-/// </summary>
-/// <typeparam name="T"></typeparam>
-public interface ILogger<T> : ILogger
-{
-
 }

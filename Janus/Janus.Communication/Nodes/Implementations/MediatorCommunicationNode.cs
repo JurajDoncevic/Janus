@@ -16,9 +16,9 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
 
     private readonly ILogger<MediatorCommunicationNode>? _logger;
 
-    internal MediatorCommunicationNode(CommunicationNodeOptions options, IMediatorNetworkAdapter networkAdapter, ILogger<MediatorCommunicationNode>? logger = null) : base(options, networkAdapter, logger)
+    internal MediatorCommunicationNode(CommunicationNodeOptions options, IMediatorNetworkAdapter networkAdapter, ILogger? logger = null) : base(options, networkAdapter, logger)
     {
-        _logger = logger;
+        _logger = logger?.ResolveLogger<MediatorCommunicationNode>();
 
         networkAdapter.SchemaRequestReceived += NetworkAdapter_SchemaRequestReceived;
         networkAdapter.SchemaResponseReceived += NetworkAdapter_SchemaResponseReceived;
@@ -33,7 +33,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -43,7 +43,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 SchemaRequestReceived?.Invoke(this, new SchemaReqEventArgs(e.Message, remotePoint));
@@ -55,7 +55,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -65,7 +65,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 QueryRequestReceived?.Invoke(this, new QueryReqEventArgs(e.Message, remotePoint));
@@ -77,7 +77,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -87,7 +87,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             var enqueued = _messageStore.EnqueueRequestInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received requests", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 CommandRequestReceived?.Invoke(this, new CommandReqEventArgs(e.Message, remotePoint));
@@ -99,7 +99,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -109,14 +109,14 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 CommandResponseReceived?.Invoke(this, new CommandResEventArgs(e.Message, remotePoint));
             }
             else
             {
-                _logger?.Info($"Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
+                _logger?.Info("Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
             }
         }
     }
@@ -125,7 +125,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -135,14 +135,14 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 QueryResponseReceived?.Invoke(this, new QueryResEventArgs(e.Message, remotePoint));
             }
             else
             {
-                _logger?.Info($"Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
+                _logger?.Info("Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
             }
         }
     }
@@ -151,7 +151,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     {
         // get the message
         var message = e.Message;
-        _logger?.Info($"Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+        _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
         // is this a saved remote point and do the addresses match
         if (_remotePoints.ContainsKey(message.NodeId) && _remotePoints[message.NodeId].Address.Equals(e.SenderAddress))
         {
@@ -161,14 +161,14 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             var enqueued = _messageStore.EnqueueResponseInExchange(message.ExchangeId, message);
             if (enqueued)
             {
-                _logger?.Info($"Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
+                _logger?.Info("Added {0} from {1} in exchange {2} to received responses", message.Preamble, message.NodeId, message.ExchangeId);
 
                 // raise event
                 SchemaResponseReceived?.Invoke(this, new SchemaResEventArgs(e.Message, remotePoint));
             }
             else
             {
-                _logger?.Info($"Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
+                _logger?.Info("Unknown exchange {0} for {1}", message.ExchangeId, message.Preamble);
             }
         }
     }
@@ -198,8 +198,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             async (token) =>
                 (await _networkAdapter.SendCommandRequest(commandRequest, remotePoint)) // send the request
                     .Pass(
-                        result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandRequest.Preamble, remotePoint, commandRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.Message)
+                        result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", commandRequest.Preamble, remotePoint, commandRequest.ExchangeId),
+                        result => _logger?.Info("Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.Message)
                     )
                     .Bind(result => ResultExtensions.AsResult(() =>
                     {
@@ -208,14 +208,14 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         {
                             if (token.IsCancellationRequested)
                             {
-                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", commandRequest.Preamble, commandRequest.ExchangeId);
+                                _logger?.Info("Timeout reached waiting for {0} response in exchange {1}", commandRequest.Preamble, commandRequest.ExchangeId);
                                 token.ThrowIfCancellationRequested();
                             }
 
                         }
                         // get the hello response - exception if not correct message type
                         var commandResponse = (CommandResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
-                        _logger?.Info($"Received {0} on exchange {1} from {2}", commandResponse.Preamble, commandResponse.ExchangeId, commandResponse.NodeId);
+                        _logger?.Info("Received {0} on exchange {1} from {2}", commandResponse.Preamble, commandResponse.ExchangeId, commandResponse.NodeId);
                         // have to throw exception to register as error and get outcome message
                         return commandResponse.IsSuccess ? true : throw new Exception(commandResponse.OutcomeDescription);
                     })),
@@ -241,8 +241,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             async (token) =>
                 (await _networkAdapter.SendQueryRequest(queryRequest, remotePoint)) // send the request
                     .Pass(
-                        result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryRequest.Preamble, remotePoint, queryRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.Message)
+                        result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", queryRequest.Preamble, remotePoint, queryRequest.ExchangeId),
+                        result => _logger?.Info("Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.Message)
                     )
                     .Bind(result => ResultExtensions.AsResult(() =>
                     {
@@ -251,14 +251,14 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         {
                             if (token.IsCancellationRequested)
                             {
-                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", queryRequest.Preamble, queryRequest.ExchangeId);
+                                _logger?.Info("Timeout reached waiting for {0} response in exchange {1}", queryRequest.Preamble, queryRequest.ExchangeId);
                                 token.ThrowIfCancellationRequested();
                             }
 
                         }
                         // get the hello response - exception if not correct message type
                         var queryResponse = (QueryResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
-                        _logger?.Info($"Received returned {0} from {1} in exchange {2}", queryResponse.Preamble, queryResponse.NodeId, queryResponse.ExchangeId);
+                        _logger?.Info("Received returned {0} from {1} in exchange {2}", queryResponse.Preamble, queryResponse.NodeId, queryResponse.ExchangeId);
 
                         // have to throw exception to register as error and get outcome message
                         return queryResponse.IsSuccess ? queryResponse.TabularData : throw new Exception(queryResponse.ErrorMessage);
@@ -285,8 +285,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
             async (token) =>
                 (await _networkAdapter.SendSchemaRequest(schemaRequest, remotePoint)) // send the request
                     .Pass(
-                        result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaRequest.Preamble, remotePoint, schemaRequest.ExchangeId),
-                        result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.Message)
+                        result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", schemaRequest.Preamble, remotePoint, schemaRequest.ExchangeId),
+                        result => _logger?.Info("Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.Message)
                     )
                     .Bind(result => ResultExtensions.AsResult(() =>
                     {
@@ -295,13 +295,13 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         {
                             if (token.IsCancellationRequested)
                             {
-                                _logger?.Info($"Timeout reached waiting for {0} response in exchange {1}", schemaRequest.Preamble, schemaRequest.ExchangeId);
+                                _logger?.Info("Timeout reached waiting for {0} response in exchange {1}", schemaRequest.Preamble, schemaRequest.ExchangeId);
                                 token.ThrowIfCancellationRequested();
                             }
                         }
                         // get the hello response - exception if not correct message type
                         var schemaResponse = (SchemaResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
-                        _logger?.Info($"Received returned {0} from {1} in exchange {2}", schemaResponse.Preamble, schemaResponse.NodeId, schemaResponse.ExchangeId);
+                        _logger?.Info("Received returned {0} from {1} in exchange {2}", schemaResponse.Preamble, schemaResponse.NodeId, schemaResponse.ExchangeId);
 
                         // have to throw exception to register as error and get outcome message
                         return schemaResponse.DataSource;
@@ -325,8 +325,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 async (token) => await _networkAdapter.SendCommandResponse(commandResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
             .Pass(
-                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", commandResponse.Preamble, remotePoint, commandResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.Message)
+                result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", commandResponse.Preamble, remotePoint, commandResponse.ExchangeId),
+                result => _logger?.Info("Sending {0} to {1} failed with message {2}", commandResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }
@@ -342,8 +342,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 async (token) => await _networkAdapter.SendQueryResponse(queryResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
             .Pass(
-                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", queryResponse.Preamble, remotePoint, queryResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.Message)
+                result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", queryResponse.Preamble, remotePoint, queryResponse.ExchangeId),
+                result => _logger?.Info("Sending {0} to {1} failed with message {2}", queryResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }
@@ -359,8 +359,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 async (token) => await _networkAdapter.SendSchemaResponse(schemaResponse, remotePoint).WaitAsync(token), // send the response
                 _options.TimeoutMs))
             .Pass(
-                result => _logger?.Info($"Sending {0} to {1} successful with exchange {2}", schemaResponse.Preamble, remotePoint, schemaResponse.ExchangeId),
-                result => _logger?.Info($"Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.Message)
+                result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", schemaResponse.Preamble, remotePoint, schemaResponse.ExchangeId),
+                result => _logger?.Info("Sending {0} to {1} failed with message {2}", schemaResponse.Preamble, remotePoint, result.Message)
             );
         return result;
     }

@@ -13,9 +13,9 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
     /// Constructor
     /// </summary>
     /// <param name="listenPort">TCP listening port</param>
-    internal WrapperNetworkAdapter(int listenPort, ILogger<WrapperNetworkAdapter>? logger) : base(listenPort, logger)
+    internal WrapperNetworkAdapter(int listenPort, ILogger? logger) : base(listenPort, logger)
     {
-        _logger = logger;
+        _logger = logger?.ResolveLogger<WrapperNetworkAdapter>();
     }
 
     public event EventHandler<CommandReqReceivedEventArgs>? CommandRequestReceived;
@@ -55,13 +55,13 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
 
     public async Task<Result> SendCommandResponse(CommandResMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendQueryResponse(QueryResMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 }

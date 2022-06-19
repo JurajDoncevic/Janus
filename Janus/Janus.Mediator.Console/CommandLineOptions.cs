@@ -6,6 +6,9 @@ public class CommandLineOptions
     [CommandLine.Option('c', "conf", HelpText = "Path to the configuration file", SetName = "fileConf")]
     public string? ConfigurationFilePath { get; init; }
 
+    [CommandLine.Option('s', "--startcli", HelpText = "Does the component start with the CLI", Default = false)]
+    public bool StartWithCLI { get; init; }
+
     [CommandLine.Option('i', "nodeid", HelpText = "Component's node id", SetName = "explicitConf")]
     public string NodeId { get; init; } = Guid.NewGuid().ToString();
 

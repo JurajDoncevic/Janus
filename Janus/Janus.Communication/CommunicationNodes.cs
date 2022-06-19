@@ -15,11 +15,11 @@ public static class CommunicationNodes
     /// <returns></returns>
     public static MaskCommunicationNode CreateTcpMaskCommunicationNode(
         CommunicationNodeOptions options!!,
-        ILogger<MaskCommunicationNode>? nodeLogger = null,
-        ILogger<TcpAdapters.MaskNetworkAdapter>? networkAdapterLogger = null)
+        ILogger? logger = null)
         => new MaskCommunicationNode(
             options,
-            new TcpAdapters.MaskNetworkAdapter(options.ListenPort, networkAdapterLogger));
+            new TcpAdapters.MaskNetworkAdapter(options.ListenPort, logger),
+            logger);
 
     /// <summary>
     /// Creates a Mediator communication node over TCP
@@ -28,11 +28,11 @@ public static class CommunicationNodes
     /// <returns></returns>
     public static MediatorCommunicationNode CreateTcpMediatorCommunicationNode(
         CommunicationNodeOptions options!!,
-        ILogger<MediatorCommunicationNode>? nodeLogger = null,
-        ILogger<TcpAdapters.MediatorNetworkAdapter>? networkAdapterLogger = null)
+        ILogger? logger = null)
         => new MediatorCommunicationNode(
             options,
-            new TcpAdapters.MediatorNetworkAdapter(options.ListenPort, networkAdapterLogger));
+            new TcpAdapters.MediatorNetworkAdapter(options.ListenPort, logger), 
+            logger);
 
     /// <summary>
     /// Creates a Wrapper communication node over TCP
@@ -41,11 +41,11 @@ public static class CommunicationNodes
     /// <returns></returns>
     public static WrapperCommunicationNode CreateTcpWrapperCommunicationNode(
         CommunicationNodeOptions options!!,
-        ILogger<WrapperCommunicationNode>? nodeLogger = null,
-        ILogger<TcpAdapters.WrapperNetworkAdapter>? networkAdapterLogger = null)
+        ILogger? logger = null)
         => new WrapperCommunicationNode(
             options,
-            new TcpAdapters.WrapperNetworkAdapter(options.ListenPort, networkAdapterLogger));
+            new TcpAdapters.WrapperNetworkAdapter(options.ListenPort, logger),
+            logger);
 
 
     /// <summary>
@@ -56,8 +56,8 @@ public static class CommunicationNodes
     public static MaskCommunicationNode CreateMaskCommunicationNode(
         CommunicationNodeOptions options!!,
         IMaskNetworkAdapter networkAdapter,
-        ILogger<MaskCommunicationNode>? nodeLogger = null)
-        => new MaskCommunicationNode(options, networkAdapter);
+        ILogger? logger = null)
+        => new MaskCommunicationNode(options, networkAdapter, logger);
 
     /// <summary>
     /// Creates a Mediator communication node over a network adapter
@@ -67,8 +67,8 @@ public static class CommunicationNodes
     public static MediatorCommunicationNode CreateMediatorCommunicationNode(
         CommunicationNodeOptions options!!,
         IMediatorNetworkAdapter networkAdapter,
-        ILogger<MediatorCommunicationNode>? nodeLogger = null)
-        => new MediatorCommunicationNode(options, networkAdapter);
+        ILogger? logger = null)
+        => new MediatorCommunicationNode(options, networkAdapter, logger);
 
     /// <summary>
     /// Creates a Wrapper communication node over a network adapter
@@ -78,6 +78,6 @@ public static class CommunicationNodes
     public static WrapperCommunicationNode CreateWrapperCommunicationNode(
         CommunicationNodeOptions options!!,
         IWrapperNetworkAdapter networkAdapter,
-        ILogger<WrapperCommunicationNode>? nodeLogger = null)
-        => new WrapperCommunicationNode(options, networkAdapter);
+        ILogger? logger = null)
+        => new WrapperCommunicationNode(options, networkAdapter, logger);
 }

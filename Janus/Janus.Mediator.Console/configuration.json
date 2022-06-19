@@ -3,14 +3,25 @@
     "NodeId": "DebugMediatorNode",
     "ListenPort": 20001,
     "TimeoutMs": 5000,
-    "StartupRemotePoints": []
+    "StartupRemotePoints": [
+      {
+        "NodeType": "MASK",
+        "Address": "127.0.0.1",
+        "Port": "10001"
+      },
+      {
+        "NodeType": "WRAPPER",
+        "Address": "127.0.0.1",
+        "Port": "30001"
+      }
+    ]
   },
 
   "NLog": {
     "targets": {
       "file": {
         "type": "File",
-        "fileName": "./nlog-all-${shortdate}.log",
+        "fileName": "./log-${shortdate}.log",
         "layout": "${longdate}|${logger}|${message}"
       }
     },

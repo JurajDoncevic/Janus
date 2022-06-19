@@ -9,6 +9,9 @@ using Janus.Mediator.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NLog;
+using NLog.Extensions.Hosting;
+using NLog.Extensions.Logging;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostContext, configurationBuilder) =>
@@ -32,11 +35,25 @@ IHost host = Host.CreateDefaultBuilder(args)
                         });
                 }
 
+                configurationBuilder.AddInMemoryCollection(
+                    new Dictionary<string, string>
+                    {
+                        { "ApplicationOptions:StartWithCLI", options.StartWithCLI.ToString() }
+                    });
             })
             .WithNotParsed(errors =>
             {
             });
     })
+    .ConfigureLogging((hostContext, loggingBuilder) =>
+    {
+        var loggingSection = hostContext.Configuration.GetSection("NLog");
+        if (loggingSection != null)
+        {
+            LogManager.Configuration = new NLogLoggingConfiguration(loggingSection);
+        }
+
+    }).UseNLog()
     .ConfigureServices((hostContext, services) =>
     {
         var mediatorOptions = hostContext.Configuration
@@ -44,13 +61,21 @@ IHost host = Host.CreateDefaultBuilder(args)
                                 .Get<MediatorConfigurationOptions>()
                                 .ToMediatorOptions();
 
-        services.AddSingleton<MediatorCommunicationNode>(
+        var applicationOptions = hostContext.Configuration
+                                    .GetSection("ApplicationOptions")
+                                    .Get<ApplicationConfigurationOptions>()
+                                    .ToApplicationOptions();
+
+        services.AddSingleton<IConfiguration>(hostContext.Configuration);
+        services.AddSingleton<Janus.Utils.Logging.ILogger, Janus.Utils.Logging.Logger>();
+        services.AddSingleton<MediatorCommunicationNode>(serviceProvider =>
             CommunicationNodes.CreateTcpMediatorCommunicationNode(
                 new Janus.Communication.Nodes.CommunicationNodeOptions(
                     mediatorOptions.NodeId,
                     mediatorOptions.ListenPort,
                     mediatorOptions.TimeoutMs
-                    )
+                    ),
+                serviceProvider.GetService<Janus.Utils.Logging.ILogger>()
                 )
             );
         services.AddSingleton<MediatorQueryManager>();
@@ -58,6 +83,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<MediatorSchemaManager>();
         services.AddSingleton<MediatorController>();
         services.AddSingleton<MediatorOptions>(mediatorOptions);
+        services.AddSingleton<ApplicationOptions>(applicationOptions);
         services.AddSingleton<Application>();
     })
     .Build();

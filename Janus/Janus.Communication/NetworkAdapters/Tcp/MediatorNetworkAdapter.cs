@@ -14,9 +14,9 @@ public sealed class MediatorNetworkAdapter : NetworkAdapter, IMediatorNetworkAda
     /// Constructor
     /// </summary>
     /// <param name="listenPort">TCP listening port</param>
-    internal MediatorNetworkAdapter(int listenPort, ILogger<MediatorNetworkAdapter>? logger) : base(listenPort, logger)
+    internal MediatorNetworkAdapter(int listenPort, ILogger? logger) : base(listenPort, logger)
     {
-        _logger = logger;
+        _logger = logger?.ResolveLogger<MediatorNetworkAdapter>();
     }
 
     public event EventHandler<QueryReqReceivedEventArgs>? QueryRequestReceived;
@@ -74,25 +74,25 @@ public sealed class MediatorNetworkAdapter : NetworkAdapter, IMediatorNetworkAda
 
     public async Task<Result> SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendCommandResponse(CommandResMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendQueryResponse(QueryResMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     public async Task<Result> SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint)
         => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info($"Sending {0} to {1}", message.Preamble, remotePoint));
+            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 }
