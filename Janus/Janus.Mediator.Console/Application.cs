@@ -42,7 +42,7 @@ public class Application
             var mainMenuSelection =
             Prompt.Select<(string name, Func<Task<Result>> operation)>(conf =>
             {
-                conf.Message = "Choose and operation";
+                conf.Message = "Choose an operation";
                 conf.Items = new List<(string name, Func<Task<Result>> operation)>()
                     {
                                 ("Send HELLO ping", DisplaySendHelloPing),
