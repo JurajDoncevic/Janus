@@ -9,4 +9,6 @@ public class MediatorRemotePoint : RemotePoint
     public MediatorRemotePoint(string nodeId, string address, int listenPort) : base(nodeId, address, listenPort)
     {
     }
+
+    public override RemotePointTypes RemotePointType => RemotePointTypes.MEDIATOR;
 }

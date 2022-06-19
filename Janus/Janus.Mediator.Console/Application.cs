@@ -30,12 +30,7 @@ public class Application
     private void RunCLI()
     {
         System.Console.WriteLine("Welcome to the Janus Mediator CLI application!");
-        System.Console.WriteLine(
-            @"    __
-___( o)>
-\ <_. )
- `---'   "
-            );
+        System.Console.WriteLine($"This is Mediator {_mediatorOptions.NodeId}");
         DisplayMainMenu();
     }
 
@@ -51,7 +46,7 @@ ___( o)>
                 conf.Items = new List<(string name, Func<Task<Result>> operation)>()
                     {
                                 ("Send HELLO ping", DisplaySendHelloPing),
-                                ("Get registered nodes", DisplayRegisteredNodes),
+                                ("Get registered nodes", DisplayRegisteredRemotePoints),
                                 ("Register new remote point", DisplayRegisterRemotePoint),
                                 ("Unregister node", DisplayUnregisterNode),
                                 ("Exit and shutdown node", DisplayShutDown)
@@ -73,21 +68,62 @@ ___( o)>
 
         
         return result
-            .Pass(r => System.Console.WriteLine($"{result.Message}. Got response on:{r.Data}"))
+            .Pass(r => System.Console.WriteLine($"{r.Message}. Got HELLO response on:{r.Data}"),
+                  r => System.Console.WriteLine($"{r.Message}."))
             .Bind(r => Result.OnSuccess("Got response: " + r.ToString()));
     }
-    private async Task<Result> DisplayRegisteredNodes()
+    private async Task<Result> DisplayRegisteredRemotePoints()
     {
-        throw new NotImplementedException();
+        var nodeStrings =
+            _mediatorController.GetRegisteredRemotePoints()
+                .Select(rp => $"{rp.RemotePointType} with id {rp.NodeId} on {rp.Address}:{rp.Port}")
+                .ToList();
+        if(nodeStrings.Count > 0)
+        {
+            System.Console.WriteLine($"Registered remote points:\n{string.Join("\n", nodeStrings)}");
+        }
+        else
+        {
+            System.Console.WriteLine("No registered nodes");
+        }
+        return Result.OnSuccess();
     }
     private async Task<Result> DisplayRegisterRemotePoint()
     {
-        throw new NotImplementedException();
+        System.Console.WriteLine("Enter remote point data");
+        var address = Prompt.Input<string>("Target address");
+        var port = Prompt.Input<int>("Target port");
+        var result = await _mediatorController.RegisterRemotePoint(address, port);
+
+
+        return result
+            .Pass(r => System.Console.WriteLine($"{r.Message}. Got register response on:{r.Data}"),
+                  r => System.Console.WriteLine($"{r.Message}."))
+            .Bind(r => Result.OnSuccess("Got response: " + r.ToString()));
     }
 
     private async Task<Result> DisplayUnregisterNode()
     {
-        throw new NotImplementedException();
+        System.Console.WriteLine("Enter remote point data");
+        var nodeId = Prompt.Input<string>("Target node id");
+
+        var targetRemotePoint = _mediatorController.GetRegisteredRemotePoints()
+                                    .SingleOrDefault(rp => rp.NodeId.Equals(nodeId));
+
+        if(targetRemotePoint != null)
+        {
+            var result = await _mediatorController.UnregisterRemotePoint(targetRemotePoint);
+
+            return result
+                .Pass(r => System.Console.WriteLine($"Unregister success. {r.Message}."))
+                .Bind(r => Result.OnSuccess("Got response: " + r.ToString()));
+        }
+        else
+        {
+            System.Console.WriteLine($"Remote point with node id {nodeId} not found");
+            return Result.OnFailure($"Remote point with node id {nodeId} not found");
+        }
+
     }
 
     private async Task<Result> DisplayShutDown()

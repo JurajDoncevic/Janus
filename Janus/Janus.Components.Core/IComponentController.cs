@@ -15,20 +15,20 @@ public interface IComponentController
     /// <param name="address">Target node address</param>
     /// <param name="port">Target node port</param>
     /// <returns></returns>
-    public Task<Result> RegisterComponent(string address, int port);
+    public Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port);
 
     /// <summary>
     /// Initiates an operation to unregister a node
     /// </summary>
     /// <param name="remotePoint">Target node's remote point</param>
     /// <returns></returns>
-    public Task<Result> UnregisterComponent(RemotePoint remotePoint);
+    public Task<Result> UnregisterRemotePoint(RemotePoint remotePoint);
 
     /// <summary>
     /// Gets all the currently registered remote points
     /// </summary>
     /// <returns></returns>
-    public List<RemotePoint> GetRegisteredRemotePoints();
+    public IEnumerable<RemotePoint> GetRegisteredRemotePoints();
 
     /// <summary>
     /// Sends a HELLO ping to a remote point. Doesn't initiate a register operation

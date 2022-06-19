@@ -23,20 +23,16 @@ public class MediatorController : IComponentController
         _schemaManager = schemaManager;
     }
 
-    public List<RemotePoint> GetRegisteredRemotePoints()
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
+        => _communicationNode.RemotePoints;
 
     public async Task<Result<DataSource>> GetSchema()
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Result> RegisterComponent(string address, int port)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
+        => await _communicationNode.RegisterRemotePoint(new MediatorRemotePoint(address, port));
 
     public async Task<Result> RunCommand(BaseCommand command)
     {
@@ -54,16 +50,12 @@ public class MediatorController : IComponentController
     }
 
     public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
-    {
-        throw new NotImplementedException();
-    }
+        => await _communicationNode.SendHello(remotePoint);
 
     public async Task<Result<RemotePoint>> SendHello(string address, int port)
         => await _communicationNode.SendHello(new MediatorRemotePoint(address, port));
 
-    public async Task<Result> UnregisterComponent(RemotePoint remotePoint)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
+        => await _communicationNode.SendBye(remotePoint);
 
 }

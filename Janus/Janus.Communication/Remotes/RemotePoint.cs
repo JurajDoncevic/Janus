@@ -10,6 +10,8 @@ public abstract class RemotePoint
     public string Address => _address;
     public int Port => _listenPort;
 
+    public abstract RemotePointTypes RemotePointType { get; }
+
     internal RemotePoint(string address, int listenPort)
     {
         _nodeId = string.Empty;
@@ -44,4 +46,11 @@ public abstract class RemotePoint
     {
         return $"(NodeId:{NodeId};Address:{Address};Port:{Port})";
     }
+}
+
+public enum RemotePointTypes
+{
+    MASK,
+    MEDIATOR,
+    WRAPPER
 }
