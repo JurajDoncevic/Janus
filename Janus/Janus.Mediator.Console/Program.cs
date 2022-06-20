@@ -6,6 +6,7 @@ using Janus.Communication.Nodes;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Mediator.Console;
+using Janus.Mediator.Console.Options;
 using Janus.Mediator.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

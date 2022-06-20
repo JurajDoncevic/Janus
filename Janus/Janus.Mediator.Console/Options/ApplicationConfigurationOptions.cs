@@ -1,4 +1,6 @@
-﻿namespace Janus.Mediator.Console;
+﻿using Janus.Mediator.Console.Options;
+
+namespace Janus.Mediator.Console;
 public class ApplicationConfigurationOptions
 {
     public bool StartWithCLI { get; set; }

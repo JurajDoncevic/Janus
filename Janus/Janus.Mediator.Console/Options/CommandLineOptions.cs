@@ -1,6 +1,6 @@
 ﻿using CommandLine.Text;
 
-namespace Janus.Mediator.Console;
+namespace Janus.Mediator.Console.Options;
 public class CommandLineOptions
 {
     [CommandLine.Option('c', "conf", HelpText = "Path to the configuration file", SetName = "fileConf")]
@@ -18,7 +18,7 @@ public class CommandLineOptions
     [CommandLine.Option('t', "timeout", HelpText = "Message timeout in milliseconds", SetName = "explicitConf")]
     public int TimeoutMs { get; init; }
 
-    [CommandLine.Text.Usage(ApplicationAlias = "mediator")]
+    [Usage(ApplicationAlias = "mediator")]
     public static IEnumerable<Example> Examples
     {
         get
