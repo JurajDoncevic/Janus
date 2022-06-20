@@ -87,7 +87,9 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<MediatorOptions>(mediatorOptions);
         services.AddSingleton<ApplicationOptions>(applicationOptions);
         services.AddSingleton<Application>();
+
     })
     .Build();
-host.Start();
+await host.StartAsync();
 host.Services.GetService<Application>();
+host.WaitForShutdown();

@@ -7,12 +7,17 @@
       {
         "NodeType": "MASK",
         "Address": "127.0.0.1",
-        "Port": "10001"
+        "ListenPort": 10001
       },
       {
         "NodeType": "WRAPPER",
         "Address": "127.0.0.1",
-        "Port": "30001"
+        "ListenPort": 30001
+      },
+      {
+        "NodeType": "MEDIATOR",
+        "Address": "127.0.0.1",
+        "ListenPort": 20002
       }
     ]
   },

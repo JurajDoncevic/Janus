@@ -7,6 +7,10 @@
     "Janus.Mediator.ConsoleApp|Args": {
       "commandName": "Project",
       "commandLineArgs": "-s --nodeid DebugMediatorNode --port 20001 --timeout 5000"
+    },
+    "Janus.Mediator.ConsoleApp|NonCli": {
+      "commandName": "Project",
+      "commandLineArgs": "--conf configuration.json"
     }
   }
 }
