@@ -27,7 +27,7 @@ public class RemotePointOptions
     public string Address { get; init; }
 }
 
-public static class ConfigurationOptionsExtensions
+public static partial class ConfigurationOptionsExtensions
 {
     public static MediatorOptions ToMediatorOptions(this MediatorConfigurationOptions options)
         => new MediatorOptions(

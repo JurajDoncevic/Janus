@@ -9,6 +9,7 @@ public class Application
     private readonly MediatorOptions _mediatorOptions;
     private readonly ApplicationOptions _applicationOptions;
     private readonly ILogger<Application>? _logger;
+
     public Application(MediatorController mediatorController, MediatorOptions mediatorOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
     {
         _mediatorController = mediatorController;
@@ -30,6 +31,7 @@ public class Application
     private void RunCLI()
     {
         System.Console.WriteLine("Welcome to the Janus Mediator CLI application!");
+        System.Console.WriteLine(_janusAscii);
         System.Console.WriteLine($"This is Mediator {_mediatorOptions.NodeId}");
         DisplayMainMenu();
     }
@@ -132,4 +134,38 @@ public class Application
         Environment.Exit(0);
         return Result.OnSuccess("Exiting application");
     }
+
+    private readonly string _janusAscii = @"
+                                    __  __  _
+             _.-._ _.-'-._  _   _.-  .-' -'   '-._
+          .-'-- ._'-._'-. '-.'-._..-'__.-'  _.-'   '-.
+       .-' '-._ '-._    '-._ '-. _    _.--'     _/   ''-.
+    .-''''-._.. \_      _                    _.-'  _.-'  _\
+  .'        \_          \_      '-._/_.-'  _.-   /__.- '  \
+ |       _.'        '-._    '-._  _ _.-' _/      _.-'   _.'(
+ \'-._ .'         )               _/     __/       _.-'/ _.'
+  '._  \_     _.'  '-._/  -._  _.'      _/     _/ / __.-'(
+      \'-._'-.)_         ._       _.-'_/    _(_ _.'      )
+      (    '-.__'-.  '-.   '--.__.          _.'          |
+      /         ('-.      '-._      __/   _.'    .;:::=. |
+     (   .-===.  ('-.          '-._  _/  _/     /  .-.   )
+      ' ' .-.  \  ''-.   '-._           _.'       '-._) (
+       ) (_.-'  :   '-.         _.'     _/'      '--=.   '.
+     .'  '---= '     '-. \_       _.-'    '          )     '.
+    ;       .'       '-.    ._          _.)         /        \
+   '      (          '-.          _/     _'        /    _.--  )
+  /        \         '-.    '-.  )'-._  '.-.     .'   .' __.-'
+ (  -._   '.\        '-. '-._  -.'-._   _'-.    (   _.-'.-'
+  '-.__'---' \       '-.   . '_'('        _.\   _.-'  ___)
+     '-.'-.._ \      '-.   '-.' ) _.-'   _.-'''./'._ '._)
+     '-.'-.'-. )    '-.     '( ) )   _.-'   .-''-.__'-.-'
+     ('__\ '-.    '-.     '-.))_\ _.'   _.-'  _.-'_.-'.-'
+      (_.''-._'-.'-.'-.''-._'  '-.  _.-'  _.-'  _.'-.'_.'
+       '-.'-.'-.'-.'-._'-._'     '-. _.-'   _.-'  ).-'_.'
+      '-.'-.'-_.'-.'-.'-._'         '-._ _.'_.).-' _.-'
+     '-.'-.'-.'-.'-.'-._'              '-.__.-'_.--'
+    '-._'-.'-.'-.'-.'-.  
+     '-.'-.'-.'-.'-.'
+       '-.'-.'-.'-'
+    ";
 }
