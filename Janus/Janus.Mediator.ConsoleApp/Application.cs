@@ -40,7 +40,7 @@ public class Application
             .AsParallel()
             .Select(async rp => (rp.Address, rp.Port, Result: await _mediatorController.RegisterRemotePoint(rp.Address, rp.Port)))
             .ToList();
-            
+        
         results
             .ForEach(async r =>
             {
@@ -55,11 +55,11 @@ public class Application
                     Console.WriteLine($"Failed to register to {result.Address}:{result.Port}");
                 }
             });
-
+        
         var successResults = results.Where(r => r.Result.Result).Select(r => r.Result).ToList();
         var failResults = results.Where(r => !r.Result.Result).Select(r => r.Result).ToList();
 
-        if(successResults.Count > 0)
+        if (successResults.Count > 0)
         {
             _logger?.Info("Registered to following nodes on startup: {0}", string.Join(",", successResults.Select(r => r.Result)));
         }
@@ -72,6 +72,8 @@ public class Application
     private void RunCLI()
     {
         _cliGreetingDisplay?.Show().Wait();
-        _mainMenuDisplay?.Show().Wait();
+
+        while(true)
+            _mainMenuDisplay?.Show().Wait();
     }
 }

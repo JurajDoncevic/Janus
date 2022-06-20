@@ -34,35 +34,21 @@ public class MainMenuDisplay : BaseDisplay
 
     protected override async Task<Result> Display()
     {
-        while (true)
+        var mainMenuSelection =
+        Prompt.Select<(string name, Func<Task<Result>> command)>(conf =>
         {
-            System.Console.WriteLine($"--------{Title}--------");
-            var mainMenuSelection =
-            Prompt.Select<(string name, Func<Task<Result>> command)>(conf =>
-            {
-                conf.Message = "Choose an operation";
-                conf.Items = new List<(string name, Func<Task<Result>> command)>()
-                    {
+            conf.Message = "Choose an operation";
+            conf.Items = new List<(string name, Func<Task<Result>> command)>()
+                {
                                 ("Send HELLO ping", async () => await _sendHelloPingDisplay.Show()),
                                 ("Get registered nodes", async () => await _allRegisteredRemotePointsDisplay.Show()),
                                 ("Register new remote point", async () => await _registerRemotePointDisplay.Show()),
                                 ("Unregister node", async () => await _unregisterNodeDisplay.Show()),
                                 ("Exit and shutdown node", async () => await _shutDownDisplay.Show())
-                    };
-                conf.TextSelector = (item) => item.name;
-            });
-            System.Console.WriteLine();
-            var result = await mainMenuSelection.command.Invoke();
-        }
-    }
-
-    protected override void PreDisplay()
-    {
-        
-    }
-
-    protected override void PostDisplay()
-    {
-        
+                };
+            conf.TextSelector = (item) => item.name;
+        });
+        var result = await mainMenuSelection.command.Invoke();
+        return result;
     }
 }
