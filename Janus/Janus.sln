@@ -27,9 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Communication", "Janu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Communication.Tests", "Janus.Communication.Tests\Janus.Communication.Tests.csproj", "{FFC45DEC-597D-4B34-8D05-1FC202E0C056}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Components.Core", "Janus.Components.Core\Janus.Components.Core.csproj", "{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Components.Core", "Janus.Components.Core\Janus.Components.Core.csproj", "{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mediator.Console", "Janus.Mediator.Console\Janus.Mediator.Console.csproj", "{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.ConsoleApp", "Janus.Mediator.ConsoleApp\Janus.Mediator.ConsoleApp.csproj", "{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

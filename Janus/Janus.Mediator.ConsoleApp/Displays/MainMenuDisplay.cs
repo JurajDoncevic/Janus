@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Janus.Mediator.Console.Displays;
+namespace Janus.Mediator.ConsoleApp.Displays;
 public class MainMenuDisplay : BaseDisplay
 {
     private readonly ILogger<MainMenuDisplay>? _logger;

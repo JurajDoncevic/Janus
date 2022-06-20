@@ -1,6 +1,6 @@
 ﻿using CommandLine.Text;
 
-namespace Janus.Mediator.Console.Options;
+namespace Janus.Mediator.ConsoleApp.Options;
 public class CommandLineOptions
 {
     [CommandLine.Option('c', "conf", HelpText = "Path to the configuration file", SetName = "fileConf")]

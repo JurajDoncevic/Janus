@@ -1,7 +1,7 @@
 ﻿using Janus.Communication.Remotes;
 using Janus.Mediator.Core;
 
-namespace Janus.Mediator.Console;
+namespace Janus.Mediator.ConsoleApp;
 public class MediatorConfigurationOptions
 {
     public string NodeId { get; init; }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Janus.Mediator.Console.Displays;
+namespace Janus.Mediator.ConsoleApp.Displays;
 public class UnregisterNodeDisplay : BaseDisplay
 {
     private readonly ILogger<UnregisterNodeDisplay>? _logger;

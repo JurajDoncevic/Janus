@@ -1,10 +1,10 @@
-﻿using Janus.Mediator.Console.Displays;
-using Janus.Mediator.Console.Options;
+﻿using Janus.Mediator.ConsoleApp.Displays;
+using Janus.Mediator.ConsoleApp.Options;
 using Janus.Mediator.Core;
 using Janus.Utils.Logging;
 using Sharprompt;
 
-namespace Janus.Mediator.Console;
+namespace Janus.Mediator.ConsoleApp;
 public class Application
 {
     private readonly MediatorController _mediatorController;
