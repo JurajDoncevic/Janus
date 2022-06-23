@@ -3,7 +3,7 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Components;
 
 namespace Janus.Mediator.Core;
-public class MediatorCommandManager : IComponentCommandManager
+public class MediatorCommandManager : IComponentCommandManager, IDelegatingCommandManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
 
@@ -12,12 +12,12 @@ public class MediatorCommandManager : IComponentCommandManager
         _communicationNode = communicationNode;
     }
 
-    public Task<Result> ExecuteCommandGlobally(BaseCommand command)
+    public Task<Result> RunCommand(BaseCommand command)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Result> ExecuteCommandOnNode(BaseCommand command, string nodeId)
+    public Task<Result> RunCommandOnComponent(BaseCommand command, string nodeId)
     {
         throw new NotImplementedException();
     }

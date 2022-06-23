@@ -2,25 +2,27 @@
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
-using Janus.Communication.Nodes;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
+using Janus.Utils.Logging;
 
-namespace Janus.Mediator.Core;
-public class MediatorController : IComponentController
+namespace Janus.Wrapper.Core;
+public class WrapperController : IComponentController
 {
-    private readonly MediatorQueryManager _queryManager;
-    private readonly MediatorCommandManager _commandManager;
-    private readonly MediatorSchemaManager _schemaManager;
-    private readonly MediatorCommunicationNode _communicationNode;
+    private readonly WrapperCommunicationNode _communicationNode;
+    private readonly WrapperCommandManager _commandManager;
+    private readonly WrapperQueryManager _queryManager;
+    private readonly WrapperSchemaManager _schemaManager;
+    private readonly ILogger<WrapperController>? _logger;
 
-    public MediatorController(MediatorCommunicationNode communicationNode, MediatorQueryManager queryManager, MediatorCommandManager commandManager, MediatorSchemaManager schemaManager)
+    public WrapperController(WrapperCommunicationNode communicationNode, WrapperCommandManager commandManager, WrapperQueryManager queryManager, WrapperSchemaManager schemaManager, ILogger? logger = null)
     {
         _communicationNode = communicationNode;
-        _queryManager = queryManager;
         _commandManager = commandManager;
+        _queryManager = queryManager;
         _schemaManager = schemaManager;
+        _logger = logger?.ResolveLogger<WrapperController>();
     }
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
@@ -40,21 +42,22 @@ public class MediatorController : IComponentController
 
     public async Task<Result> SaveRegisteredRemotePoints(string filePath)
         => await ResultExtensions.AsResult(async () =>
-        {
-            await System.IO.File.WriteAllTextAsync(
-                filePath,
-                System.Text.Json.JsonSerializer.Serialize<IEnumerable<RemotePoint>>(_communicationNode.RemotePoints)
-                );
-            return true;
-        });
+            {
+                await System.IO.File.WriteAllTextAsync(
+                    filePath,
+                    System.Text.Json.JsonSerializer.Serialize<IEnumerable<RemotePoint>>(_communicationNode.RemotePoints)
+                    );
+                return true;
+            }); 
+
+            
 
     public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
         => await _communicationNode.SendHello(remotePoint);
 
     public async Task<Result<RemotePoint>> SendHello(string address, int port)
-        => await _communicationNode.SendHello(new MediatorRemotePoint(address, port));
+        => await _communicationNode.SendHello(new UndeterminedRemotePoint(address, port));
 
     public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
         => await _communicationNode.SendBye(remotePoint);
-
 }

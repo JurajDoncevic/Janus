@@ -5,6 +5,21 @@ namespace Janus.Components;
 
 public interface IComponentQueryManager
 {
-    public Task<Result<TabularData>> ExecuteQueryOnNode(Query query, string nodeId);
-    public Task<Result<TabularData>> ExecuteQueryGlobally(Query query);
+    /// <summary>
+    /// Executes a query on this component's schema
+    /// </summary>
+    /// <param name="query">Query to execute</param>
+    /// <returns></returns>
+    public Task<Result<TabularData>> RunQuery(Query query);
+}
+
+public interface IDelegatingQueryManager
+{
+    /// <summary>
+    /// Executes a query on a remote component
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="nodeId"></param>
+    /// <returns></returns>
+    public Task<Result<TabularData>> RunQueryOnComponent(Query query, string nodeId);
 }

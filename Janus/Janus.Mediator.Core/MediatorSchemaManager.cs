@@ -3,7 +3,7 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Components;
 
 namespace Janus.Mediator.Core;
-public class MediatorSchemaManager : IComponentSchemaManager
+public class MediatorSchemaManager : IComponentSchemaManager, IDelegatingSchemaManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
 
@@ -16,7 +16,7 @@ public class MediatorSchemaManager : IComponentSchemaManager
         throw new NotImplementedException();
     }
 
-    public Task<Result<DataSource>> GetSchemaFromNode(string nodeId)
+    public Task<Result<DataSource>> GetSchemaFromComponent(string nodeId)
     {
         throw new NotImplementedException();
     }
