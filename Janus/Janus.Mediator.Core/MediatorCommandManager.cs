@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.CommandModels;
 using Janus.Communication.Nodes.Implementations;
-using Janus.Components.Core;
+using Janus.Components;
 
 namespace Janus.Mediator.Core;
 public class MediatorCommandManager : IComponentCommandManager

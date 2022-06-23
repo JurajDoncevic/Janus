@@ -5,7 +5,7 @@ using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Remotes;
 
-namespace Janus.Components.Core;
+namespace Janus.Components;
 
 public interface IComponentController
 {

@@ -5,7 +5,7 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
-using Janus.Components.Core;
+using Janus.Components;
 
 namespace Janus.Mediator.Core;
 public class MediatorController : IComponentController

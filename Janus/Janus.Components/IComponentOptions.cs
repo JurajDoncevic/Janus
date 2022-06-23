@@ -1,6 +1,6 @@
 ﻿using Janus.Communication.Remotes;
 
-namespace Janus.Components.Core;
+namespace Janus.Components;
 
 public interface IComponentOptions
 {

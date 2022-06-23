@@ -1,5 +1,5 @@
 ﻿using Janus.Communication.Remotes;
-using Janus.Components.Core;
+using Janus.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;

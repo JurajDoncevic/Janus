@@ -1,7 +1,7 @@
 ﻿using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Communication.Nodes.Implementations;
-using Janus.Components.Core;
+using Janus.Components;
 
 namespace Janus.Mediator.Core;
 public class MediatorQueryManager : IComponentQueryManager

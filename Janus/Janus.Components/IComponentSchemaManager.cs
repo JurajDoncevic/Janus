@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Components.Core;
+namespace Janus.Components;
 
 public interface IComponentSchemaManager
 {

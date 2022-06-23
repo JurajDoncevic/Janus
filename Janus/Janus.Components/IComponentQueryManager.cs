@@ -1,7 +1,7 @@
 ﻿using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 
-namespace Janus.Components.Core;
+namespace Janus.Components;
 
 public interface IComponentQueryManager
 {

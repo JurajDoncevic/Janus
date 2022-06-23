@@ -1,7 +1,7 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.CommandModels;
 
-namespace Janus.Components.Core;
+namespace Janus.Components;
 
 public interface IComponentCommandManager
 {
