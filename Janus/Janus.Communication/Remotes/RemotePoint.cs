@@ -52,5 +52,6 @@ public enum RemotePointTypes
 {
     MASK,
     MEDIATOR,
-    WRAPPER
+    WRAPPER,
+    UNDETERMINED
 }

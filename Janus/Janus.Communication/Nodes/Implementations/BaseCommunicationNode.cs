@@ -202,7 +202,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     /// </summary>
     /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public async Task<Result<RemotePoint>> RegisterRemotePoint(RemotePoint remotePoint)
+    public async Task<Result<RemotePoint>> RegisterRemotePoint(UndeterminedRemotePoint remotePoint)
     {
         // create request hello message
         var helloRequest = new HelloReqMessage(_options.NodeId, _options.ListenPort, NodeType, true);

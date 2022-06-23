@@ -47,7 +47,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
-        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
         var registerResult = mediator1.RegisterRemotePoint(mediator2RemotePoint).Result;
@@ -83,8 +83,8 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = _testFixture.GetUnresponsiveMediator();
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator1");
 
-        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
-        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator1.Options.ListenPort);
 
         var helloResult = mediator2.RegisterRemotePoint(mediator1RemotePoint).Result;
 
@@ -102,7 +102,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
-        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
         var registerResult = mediator1.RegisterRemotePoint(mediator2RemotePoint).Result;
@@ -128,7 +128,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
-        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
         mediator2.CommandRequestReceived += async (sender, args) =>
@@ -157,7 +157,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
-        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
         var query = _testFixture.GetQuery();
@@ -185,7 +185,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
 
-        var mediator2RemotePoint = new MediatorRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
 
 
@@ -207,7 +207,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var schema = _testFixture.GetSchema();
 
         using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
-        var mediatorRemotePoint = new MediatorRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        var mediatorRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator.Options.ListenPort);
         mediator.SchemaRequestReceived += async (sender, args)
             => await mediator.SendSchemaResponse(args.ReceivedMessage.ExchangeId, schema, args.FromRemotePoint);
 
@@ -229,7 +229,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var queryResultData = _testFixture.GetQueryResultData();
 
         using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
-        var mediatorRemotePoint = new MediatorRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        var mediatorRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator.Options.ListenPort);
         mediator.QueryRequestReceived += async (sender, args)
             => await mediator.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResultData, args.FromRemotePoint);
 
@@ -250,7 +250,7 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
         var insertCommand = _testFixture.GetInsertCommand();
 
         using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
-        var mediatorRemotePoint = new MediatorRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        var mediatorRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator.Options.ListenPort);
         mediator.CommandRequestReceived += async (sender, args)
             => await mediator.SendCommandResponse(args.ReceivedMessage.ExchangeId, true, args.FromRemotePoint);
 
@@ -271,11 +271,12 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var wrapper = _testFixture.GetWrapperCommunicationNode("Wrapper1");
-        var wrapperRemotePoint = new WrapperRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
+        var remotePoint = new UndeterminedRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
         wrapper.SchemaRequestReceived +=
             async (sender, args) => await wrapper.SendSchemaResponse(args.ReceivedMessage.ExchangeId, schema, args.FromRemotePoint);
 
-        var registerResult = await mediator.RegisterRemotePoint(wrapperRemotePoint);
+        var registerResult = await mediator.RegisterRemotePoint(remotePoint);
+        var wrapperRemotePoint = registerResult.Data;
 
         var schemaResult = await mediator.SendSchemaRequest(wrapperRemotePoint);
 
@@ -292,11 +293,12 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var wrapper = _testFixture.GetWrapperCommunicationNode("Wrapper1");
-        var wrapperRemotePoint = new WrapperRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
+        var remotePoint = new UndeterminedRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
         wrapper.QueryRequestReceived +=
             async (sender, args) => await wrapper.SendQueryResponse(args.ReceivedMessage.ExchangeId, queryResultData, args.FromRemotePoint);
 
-        var registerResult = await mediator.RegisterRemotePoint(wrapperRemotePoint);
+        var registerResult = await mediator.RegisterRemotePoint(remotePoint);
+        var wrapperRemotePoint = registerResult.Data;
 
         var queryResult = await mediator.SendQueryRequest(query, wrapperRemotePoint);
 
@@ -312,11 +314,12 @@ public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture
 
         using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
         using var wrapper = _testFixture.GetWrapperCommunicationNode("Wrapper1");
-        var wrapperRemotePoint = new WrapperRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
+        var remotePoint = new UndeterminedRemotePoint("127.0.0.1", wrapper.Options.ListenPort);
         wrapper.CommandRequestReceived +=
             async (sender, args) => await wrapper.SendCommandResponse(args.ReceivedMessage.ExchangeId, true, args.FromRemotePoint);
 
-        var registerResult = await mediator.RegisterRemotePoint(wrapperRemotePoint);
+        var registerResult = await mediator.RegisterRemotePoint(remotePoint);
+        var wrapperRemotePoint = registerResult.Data;
 
         var commandResult = await mediator.SendCommandRequest(insertCommand, wrapperRemotePoint);
 
