@@ -18,6 +18,48 @@ public class SchemaInferrer
 
     public Result<DataSource> InferSchemaModel()
     {
-        return Result<DataSource>.OnFailure<DataSource>();
+        return
+        _provider.GetDataSource()
+            .Bind<DataSourceInfo, DataSource>(dataSourceInfo =>
+            {
+                var dataSourceBuilder = SchemaModelBuilder.InitDataSource(dataSourceInfo.Name);
+
+                var schemaInfosResult = _provider.GetSchemasInDataSource();
+                if (schemaInfosResult)
+                {
+                    foreach (var schemaInfo in schemaInfosResult.Data ?? Enumerable.Empty<SchemaInfo>())
+                    {
+                        dataSourceBuilder.AddSchema(schemaInfo.Name, schemaBuilder =>
+                        {
+                            var tableauInfosResult = _provider.GetTableausInSchema(schemaInfo.Name);
+                            if (tableauInfosResult)
+                            {
+                                foreach (var tableauInfo in tableauInfosResult.Data ?? Enumerable.Empty<TableauInfo>())
+                                {
+                                    schemaBuilder.AddTableau(tableauInfo.Name, tableauBuilder =>
+                                    {
+
+                                        var attributeInfosResult = _provider.GetAttributesInTableau(tableauInfo.Name);
+                                        if (attributeInfosResult)
+                                        {
+                                            foreach (var attributeInfo in attributeInfosResult.Data ?? Enumerable.Empty<AttributeInfo>())
+                                            {
+                                                tableauBuilder.AddAttribute(attributeInfo.Name, attributeBuilder =>
+                                                    attributeBuilder.WithDataType(attributeInfo.DataType)
+                                                                    .WithIsNullable(attributeInfo.IsNullable)
+                                                                    .WithIsPrimaryKey(attributeInfo.IsPrimaryKey)
+                                                                    .WithOrdinal(attributeInfo.Ordinal));
+                                            }
+                                        }
+                                        return tableauBuilder;
+                                    });
+                                }
+                            }
+                            return schemaBuilder;
+                        });
+                    }
+                }
+                return dataSourceBuilder.Build();
+            });
     }
 }
