@@ -9,8 +9,11 @@ using System.Threading.Tasks;
 namespace Janus.Wrapper.Core.SchemaInferrence;
 public interface ISchemaModelProvider
 {
-    Result<DataSourceInfo> GetDataSource();
-    Result<IEnumerable<SchemaInfo>> GetSchemasInDataSource();
-    Result<IEnumerable<TableauInfo>> GetTableausInSchema(string schemaName);
-    Result<IEnumerable<AttributeInfo>> GetAttributesInTableau(string tableauName);
+    public Result<DataSourceInfo> GetDataSource();
+    public Result<IEnumerable<SchemaInfo>> GetSchemas();
+    public Result SchemaExists(string schemaName);
+    public Result<IEnumerable<TableauInfo>> GetTableaus(string schemaName);
+    public Result TableauExists(string schemaName, string tableauName);
+    public Result<IEnumerable<AttributeInfo>> GetAttributes(string schemaName, string tableauName);
+    public Result AttributeExists(string schemaName, string tableauName, string attributeName);
 }

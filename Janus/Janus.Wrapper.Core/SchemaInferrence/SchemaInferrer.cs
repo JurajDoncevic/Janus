@@ -17,49 +17,46 @@ public class SchemaInferrer
     }
 
     public Result<DataSource> InferSchemaModel()
-    {
-        return
-        _provider.GetDataSource()
-            .Bind<DataSourceInfo, DataSource>(dataSourceInfo =>
+        => ResultExtensions.AsResult<DataSource>(() =>
+        {
+            var dataSourceResult = _provider.GetDataSource();
+            var schemasResult = _provider.GetSchemas();
+
+            if (dataSourceResult && schemasResult)
             {
-                var dataSourceBuilder = SchemaModelBuilder.InitDataSource(dataSourceInfo.Name);
+                var dataSourceBuilder = SchemaModelBuilder.InitDataSource(dataSourceResult.Data!.Name);
 
-                var schemaInfosResult = _provider.GetSchemasInDataSource();
-                if (schemaInfosResult)
+                foreach (var schema in schemasResult.Data!)
                 {
-                    foreach (var schemaInfo in schemaInfosResult.Data ?? Enumerable.Empty<SchemaInfo>())
+                    dataSourceBuilder.AddSchema(schema.Name, schemaBuilder =>
                     {
-                        dataSourceBuilder.AddSchema(schemaInfo.Name, schemaBuilder =>
+                        var tableausResult = _provider.GetTableaus(schema.Name);
+                        if (tableausResult)
                         {
-                            var tableauInfosResult = _provider.GetTableausInSchema(schemaInfo.Name);
-                            if (tableauInfosResult)
+                            foreach (var tableau in tableausResult.Data!)
                             {
-                                foreach (var tableauInfo in tableauInfosResult.Data ?? Enumerable.Empty<TableauInfo>())
+                                schemaBuilder.AddTableau(tableau.Name, tableauBuilder =>
                                 {
-                                    schemaBuilder.AddTableau(tableauInfo.Name, tableauBuilder =>
+                                    var attributesResult = _provider.GetAttributes(schema.Name, tableau.Name);
+                                    if (attributesResult)
                                     {
-
-                                        var attributeInfosResult = _provider.GetAttributesInTableau(tableauInfo.Name);
-                                        if (attributeInfosResult)
+                                        foreach (var attribute in attributesResult.Data!)
                                         {
-                                            foreach (var attributeInfo in attributeInfosResult.Data ?? Enumerable.Empty<AttributeInfo>())
-                                            {
-                                                tableauBuilder.AddAttribute(attributeInfo.Name, attributeBuilder =>
-                                                    attributeBuilder.WithDataType(attributeInfo.DataType)
-                                                                    .WithIsNullable(attributeInfo.IsNullable)
-                                                                    .WithIsPrimaryKey(attributeInfo.IsPrimaryKey)
-                                                                    .WithOrdinal(attributeInfo.Ordinal));
-                                            }
+                                            tableauBuilder.AddAttribute(attribute.Name, attributeBuilder => attributeBuilder.WithDataType(attribute.DataType)
+                                                                                                                            .WithIsNullable(attribute.IsNullable)
+                                                                                                                            .WithIsPrimaryKey(attribute.IsPrimaryKey)
+                                                                                                                            .WithOrdinal(attribute.Ordinal));
                                         }
-                                        return tableauBuilder;
-                                    });
-                                }
+                                    }
+                                    return tableauBuilder;
+                                });
                             }
-                            return schemaBuilder;
-                        });
-                    }
+                        }
+                        return schemaBuilder;
+                    });
                 }
                 return dataSourceBuilder.Build();
-            });
-    }
+            }
+            return null!;
+        });
 }
