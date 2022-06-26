@@ -104,4 +104,7 @@ public class Tableau
     {
         return HashCode.Combine(_name, _schema, _attributes, Id);
     }
+
+    public override string ToString()
+        => $"({Name} \n({string.Join("\n", Attributes)}))";
 }

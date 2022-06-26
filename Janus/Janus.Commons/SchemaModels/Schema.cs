@@ -111,4 +111,7 @@ public class Schema
     {
         return !(left == right);
     }
+
+    public override string ToString()
+        => $"({Name} \n({string.Join("\n", Tableaus)}))";
 }

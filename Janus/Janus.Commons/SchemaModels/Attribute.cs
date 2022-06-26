@@ -86,4 +86,7 @@ public class Attribute
     {
         return !(left == right);
     }
+
+    public override string ToString()
+        => $"({Name} {DataType} {Ordinal} {IsNullable} {IsPrimaryKey})";
 }
