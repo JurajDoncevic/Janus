@@ -11,7 +11,7 @@ public class SchemaInferrer
 {
     private readonly ISchemaModelProvider _provider;
     private readonly string? _dataSourceName;
-    public SchemaInferrer(ISchemaModelProvider schemaModelProvider, string? dataSourceName)
+    public SchemaInferrer(ISchemaModelProvider schemaModelProvider, string? dataSourceName = null)
     {
         _provider = schemaModelProvider;
         _dataSourceName = dataSourceName;

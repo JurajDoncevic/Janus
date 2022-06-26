@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Components", "Janus.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.ConsoleApp", "Janus.Mediator.ConsoleApp\Janus.Mediator.ConsoleApp.csproj", "{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Wrapper.CsvFiles", "Janus.Wrapper.CsvFiles\Janus.Wrapper.CsvFiles.csproj", "{426287E0-D4EB-441A-B0C1-25091FE60C25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.CsvFiles", "Janus.Wrapper.CsvFiles\Janus.Wrapper.CsvFiles.csproj", "{426287E0-D4EB-441A-B0C1-25091FE60C25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Wrapper.CsvFiles.Tests", "Janus.Wrapper.CsvFiles.Tests\Janus.Wrapper.CsvFiles.Tests.csproj", "{A379833C-CD89-4EBD-8228-F263DCF770C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{426287E0-D4EB-441A-B0C1-25091FE60C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{426287E0-D4EB-441A-B0C1-25091FE60C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{426287E0-D4EB-441A-B0C1-25091FE60C25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
