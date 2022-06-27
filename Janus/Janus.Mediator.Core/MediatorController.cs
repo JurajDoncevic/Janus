@@ -21,6 +21,25 @@ public class MediatorController : IComponentController
         _queryManager = queryManager;
         _commandManager = commandManager;
         _schemaManager = schemaManager;
+
+        _communicationNode.CommandRequestReceived += CommunicationNode_CommandRequestReceived;
+        _communicationNode.QueryRequestReceived += CommunicationNode_QueryRequestReceived;
+        _communicationNode.SchemaRequestReceived += CommunicationNode_SchemaRequestReceived;
+    }
+
+    private void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
+    {
+
+    }
+
+    private void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
+    {
+
+    }
+
+    private void CommunicationNode_CommandRequestReceived(object? sender, Communication.Nodes.Events.CommandReqEventArgs e)
+    {
+
     }
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
