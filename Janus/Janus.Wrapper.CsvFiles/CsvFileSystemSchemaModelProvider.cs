@@ -37,7 +37,7 @@ public class CsvFilesProvider : ISchemaModelProvider
                                                  .Map(dataLine => dataLine.Trim().Split(_delimiter))
                                                  .Data
                                                  .Map(InferAttributeType))
-                                                 .Map(r => attributeInfos.Mapi((idx, a) => new AttributeInfo(a.Name, r.ElementAt((int)idx), a.IsPrimaryKey, a.IsNullable, a.Ordinal))));
+                                                 .Map(dataTypes => attributeInfos.Mapi((idx, a) => new AttributeInfo(a.Name, dataTypes.ElementAt((int)idx), a.IsPrimaryKey, a.IsNullable, a.Ordinal))));
 
     public Result<DataSourceInfo> GetDataSource()
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type. Never occurs - AsResult handles null as failure
@@ -78,5 +78,4 @@ public class CsvFilesProvider : ISchemaModelProvider
             return DataTypes.DATETIME;
         return DataTypes.STRING;
     }
-
 }
