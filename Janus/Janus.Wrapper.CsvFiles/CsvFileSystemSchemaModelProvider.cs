@@ -34,7 +34,7 @@ public class CsvFileSystemSchemaModelProvider : ISchemaModelProvider
             .Bind(attributeInfos => ResultExtensions.AsResult(
                                         () => File.ReadLines(Path.Combine(_rootDirectoryPath, schemaName, tableauName) + ".csv").Skip(1).First()
                                                  .Identity()
-                                                 .Map(dataLine => dataLine.Trim().Split(";"))
+                                                 .Map(dataLine => dataLine.Trim().Split(_delimiter))
                                                  .Data
                                                  .Map(InferAttributeType))
                                                  .Map(r => attributeInfos.Mapi((idx, a) => new AttributeInfo(a.Name, r.ElementAt((int)idx), a.IsPrimaryKey, a.IsNullable, a.Ordinal))));
@@ -70,7 +70,7 @@ public class CsvFileSystemSchemaModelProvider : ISchemaModelProvider
     {
         if (Regex.IsMatch(value.Trim(), @"^0|-?[1-9][0-9]*$") && int.TryParse(value, out _))
             return DataTypes.INT;
-        if (Regex.IsMatch(value.Trim(), @"^-?[0-9][1-9]*[\.|,][0-9]+$") && double.TryParse(value, out _))
+        if (Regex.IsMatch(value.Trim(), @"^-?([1-9][0-9]*|0)[\.|,][0-9]+$") && double.TryParse(value, out _))
             return DataTypes.DECIMAL;
         if (bool.TryParse(value.Trim(), out _))
             return DataTypes.BOOLEAN;

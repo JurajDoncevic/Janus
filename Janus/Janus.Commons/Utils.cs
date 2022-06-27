@@ -35,7 +35,7 @@ public static class Utils
     {
         if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*$") && int.TryParse(exp, out var intValue)) // to ignore decimals 
             return intValue;
-        if (Regex.IsMatch(exp.Trim(), @"^-?[0-9][1-9]*[\.|,][0-9]+$") && double.TryParse(exp, out var decimalValue))
+        if (Regex.IsMatch(exp.Trim(), @"^-?([1-9][0-9]*|0)[\.|,][0-9]+$") && double.TryParse(exp, out var decimalValue))
             return decimalValue;
         if (bool.TryParse(exp.Trim(), out var boolValue))
             return boolValue;
