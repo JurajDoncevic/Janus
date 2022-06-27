@@ -98,7 +98,7 @@ public class WrapperCsvFilesTests
                                                                       .AddAttribute("changes", conf => conf.WithDataType(DataTypes.INT).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(3))))
             .Build();
 
-        var schemaModelProvider = new CsvFileSystemSchemaModelProvider("./DataSet", ';');
+        var schemaModelProvider = new CsvFilesProvider("./DataSet", ';');
         var schemaInferrer = new SchemaInferrer(schemaModelProvider);
 
         var result = schemaInferrer.InferSchemaModel();

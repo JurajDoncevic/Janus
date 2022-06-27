@@ -5,12 +5,12 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Janus.Wrapper.CsvFiles;
-public class CsvFileSystemSchemaModelProvider : ISchemaModelProvider
+public class CsvFilesProvider : ISchemaModelProvider
 {
     private readonly char _delimiter;
     private readonly string _rootDirectoryPath;
 
-    public CsvFileSystemSchemaModelProvider(string rootDirectoryPath, char delimiter)
+    public CsvFilesProvider(string rootDirectoryPath, char delimiter)
     {
         _delimiter = delimiter;
         _rootDirectoryPath = Path.GetFullPath(rootDirectoryPath);
