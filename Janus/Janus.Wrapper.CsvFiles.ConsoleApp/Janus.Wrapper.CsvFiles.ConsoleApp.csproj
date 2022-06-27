@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -7,5 +7,53 @@
 		<Nullable>enable</Nullable>
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="configuration.json" />
+	  <None Remove="DataSet\CarsSchema\cars.csv" />
+	  <None Remove="DataSet\CerealSchema\cereal.csv" />
+	  <None Remove="DataSet\MiscSchema\factbook.csv" />
+	  <None Remove="DataSet\MiscSchema\film.csv" />
+	  <None Remove="DataSet\MiscSchema\smallwikipedia.csv" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="configuration.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="DataSet\CarsSchema\cars.csv">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="DataSet\CerealSchema\cereal.csv">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="DataSet\MiscSchema\factbook.csv">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="DataSet\MiscSchema\film.csv">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="DataSet\MiscSchema\smallwikipedia.csv">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommandLineParser" Version="2.9.1" />
+		<PackageReference Include="FunctionalExtensions.Base" Version="1.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="NLog" Version="5.0.1" />
+		<PackageReference Include="NLog.Extensions.Hosting" Version="5.0.0" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.0.0" />
+		<PackageReference Include="Sharprompt" Version="2.4.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Janus.Wrapper.Core\Janus.Wrapper.Core.csproj" />
+	  <ProjectReference Include="..\Janus.Wrapper.CsvFiles\Janus.Wrapper.CsvFiles.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -1,10 +1,15 @@
 {
   "profiles": {
-    "Janus.Mediator.ConsoleApp|Conf file": {
+    "WSL": {
+      "commandName": "WSL2",
+      "environmentVariables": {},
+      "distributionName": ""
+    },
+    "Janus.Wrapper.CsvFiles.ConsoleApp|Conf": {
       "commandName": "Project",
       "commandLineArgs": "-s --conf ./configuration.json"
     },
-    "Janus.Mediator.ConsoleApp|Cli": {
+    "Janus.Wrapper.CsvFile.ConsoleApp|Cli": {
       "commandName": "Project",
       "commandLineArgs": "-s --nodeid DebugMediatorNode --port 20001 --timeout 5000"
     }
