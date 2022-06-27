@@ -362,8 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-
-**/appsettings.json
 /Janus/Janus.Wrapper.CsvFiles.Tests/DataSet/MiscSchema
 /Janus/Janus.Wrapper.CsvFiles.Tests/DataSet/CerealSchema
 /Janus/Janus.Wrapper.CsvFiles.Tests/DataSet/CarsSchema
+/Janus/Janus.Wrapper.CsvFiles.ConsoleApp/DataSet
