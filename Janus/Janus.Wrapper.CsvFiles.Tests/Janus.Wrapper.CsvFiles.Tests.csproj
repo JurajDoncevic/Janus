@@ -9,14 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="DataSet\CarsSchema\cars.csv" />
-	  <None Remove="DataSet\CerealSchema\cereal.csv" />
-	  <None Remove="DataSet\MiscSchema\factbook.csv" />
-	  <None Remove="DataSet\MiscSchema\film.csv" />
-	  <None Remove="DataSet\MiscSchema\smallwikipedia.csv" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Content Include="DataSet\CarsSchema\cars.csv">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
