@@ -13,6 +13,7 @@ public class WrapperOptions : IComponentOptions
     private readonly int _listenPort;
     private readonly int _timeoutMs;
     private List<RemotePoint> _startupRemotePoints;
+    private readonly string _dataSourcePath;
 
     public string NodeId => _nodeId;
 
@@ -22,11 +23,14 @@ public class WrapperOptions : IComponentOptions
 
     public IReadOnlyList<RemotePoint> StartupRemotePoints => _startupRemotePoints;
 
-    public WrapperOptions(string nodeId, int listenPort, int timeoutMs, List<RemotePoint> startupRemotePoints)
+    public string DataSourcePath => _dataSourcePath;
+
+    public WrapperOptions(string nodeId, int listenPort, int timeoutMs, string dataSourcePath, List<RemotePoint> startupRemotePoints)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;
         _timeoutMs = timeoutMs;
         _startupRemotePoints = startupRemotePoints;
+        _dataSourcePath = dataSourcePath;
     }
 }
