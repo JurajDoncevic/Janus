@@ -11,7 +11,7 @@ namespace Janus.Wrapper.Core;
 public class WrapperSchemaManager : IComponentSchemaManager
 {
     private readonly SchemaInferrer _schemaInferrer;
-    private readonly DataSource? _currentSchema;
+    private DataSource? _currentSchema;
 
     public WrapperSchemaManager(SchemaInferrer schemaInferrer)
     {
@@ -22,5 +22,5 @@ public class WrapperSchemaManager : IComponentSchemaManager
         => await Task.FromResult(_currentSchema != null ? Result<DataSource>.OnSuccess(_currentSchema) : Result<DataSource>.OnFailure<DataSource>("No schema loaded"));
 
     public async Task<Result<DataSource>> ReloadSchema(object? transformations = null)
-        => await Task.Run(() => _schemaInferrer.InferSchemaModel());
+        => await Task.Run(() => _schemaInferrer.InferSchemaModel().Pass(result => _currentSchema = result.Data));
 }

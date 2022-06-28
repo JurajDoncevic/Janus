@@ -31,6 +31,9 @@ public class WrapperController : IComponentController
     public async Task<Result<DataSource>> GetSchema()
         => await _schemaManager.GetCurrentSchema();
 
+    public async Task<Result<DataSource>> ReloadSchema()
+        => await _schemaManager.ReloadSchema();
+
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
         => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));
 
