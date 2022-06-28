@@ -4,7 +4,7 @@ using Janus.Wrapper.Core.SchemaInferrence.Model;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Janus.Wrapper.CsvFiles;
+namespace Janus.Wrapper.CsvFiles.SchemaInferrence;
 public class CsvFilesProvider : ISchemaModelProvider
 {
     private readonly char _delimiter;
@@ -30,7 +30,7 @@ public class CsvFilesProvider : ISchemaModelProvider
                       .Identity()
                       .Map(headerLine => headerLine.Trim().Split(_delimiter))
                       .Data
-                      .Mapi((idx, attributeHeader) => new AttributeInfo(attributeHeader, Commons.SchemaModels.DataTypes.STRING, false, true, (int)idx)))
+                      .Mapi((idx, attributeHeader) => new AttributeInfo(attributeHeader, DataTypes.STRING, false, true, (int)idx)))
             .Bind(attributeInfos => ResultExtensions.AsResult(
                                         () => File.ReadLines(Path.Combine(_rootDirectoryPath, schemaName, tableauName) + ".csv").Skip(1).First()
                                                  .Identity()
@@ -43,7 +43,7 @@ public class CsvFilesProvider : ISchemaModelProvider
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type. Never occurs - AsResult handles null as failure
         => ResultExtensions.AsResult(() => Path.GetFileName(_rootDirectoryPath)
                                                .Identity()
-                                               .Map(dirPath => Path.GetFileName(dirPath)) 
+                                               .Map(dirPath => Path.GetFileName(dirPath))
                                                .Map(dirName => dirName != null ? new DataSourceInfo(dirName) : null)
                                                .Data);
 #pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.

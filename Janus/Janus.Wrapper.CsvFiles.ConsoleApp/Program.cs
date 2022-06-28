@@ -15,7 +15,7 @@ using NLog;
 using NLog.Extensions.Hosting;
 using NLog.Extensions.Logging;
 using Janus.Wrapper.Core.SchemaInferrence;
-using Janus.Wrapper.CsvFiles;
+using Janus.Wrapper.CsvFiles.SchemaInferrence;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostContext, configurationBuilder) =>
