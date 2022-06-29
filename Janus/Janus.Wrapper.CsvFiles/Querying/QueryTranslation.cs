@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Janus.Wrapper.CsvFiles.Querying;
 public static class QueryTranslation
 {
-    private static HashSet<string> GetAllAttributeIdsInSelection(SelectionExpression selectionExpression)
+    public static HashSet<string> GetAllAttributeIdsInSelection(SelectionExpression selectionExpression)
         => selectionExpression switch
         {
             AndOperator andOperator => GetAllAttributeIdsInSelection(andOperator.LeftOperand).Union(GetAllAttributeIdsInSelection(andOperator.RightOperand)).ToHashSet(),
@@ -23,20 +23,18 @@ public static class QueryTranslation
             _ => new HashSet<string>()
         };
 
-    private static Func<Dictionary<string, object>, bool> TranslateSelectionExpression(SelectionExpression selectionExpression)
-    {
-        return selectionExpression switch
+    public static Func<Dictionary<string, object>, bool> TranslateSelectionExpression(SelectionExpression selectionExpression)
+        => selectionExpression switch
         {
             AndOperator andOperator => (Dictionary<string, object> args) => TranslateSelectionExpression(andOperator.LeftOperand).Invoke(args) && TranslateSelectionExpression(andOperator.RightOperand).Invoke(args),
             OrOperator orOperator => (Dictionary<string, object> args) => TranslateSelectionExpression(orOperator.LeftOperand).Invoke(args) && TranslateSelectionExpression(orOperator.RightOperand).Invoke(args),
             NotOperator notOperator => (Dictionary<string, object> args) => !TranslateSelectionExpression(notOperator.Operand).Invoke(args),
-            LesserOrEqualThan lesserOrEqualThan => (Dictionary<string, object> args) => (double)args[lesserOrEqualThan.AttributeId] <= (double)lesserOrEqualThan.Value,
-            LesserThan lesserThan => (Dictionary<string, object> args) => (double)args[lesserThan.AttributeId] < (double)lesserThan.Value,
-            GreaterOrEqualThan greaterOrEqualThan => (Dictionary<string, object> args) => (double)args[greaterOrEqualThan.AttributeId] >= (double)greaterOrEqualThan.Value,
-            GreaterThan greaterThan => (Dictionary<string, object> args) => (double)args[greaterThan.AttributeId] > (double)greaterThan.Value,
+            LesserOrEqualThan lesserOrEqualThan => (Dictionary<string, object> args) => Convert.ToDouble(args[lesserOrEqualThan.AttributeId]) <= Convert.ToDouble(lesserOrEqualThan.Value),
+            LesserThan lesserThan => (Dictionary<string, object> args) => Convert.ToDouble(args[lesserThan.AttributeId]) < Convert.ToDouble(lesserThan.Value),
+            GreaterOrEqualThan greaterOrEqualThan => (Dictionary<string, object> args) => Convert.ToDouble(args[greaterOrEqualThan.AttributeId]) >= Convert.ToDouble(greaterOrEqualThan.Value),
+            GreaterThan greaterThan => (Dictionary<string, object> args) => Convert.ToDouble(args[greaterThan.AttributeId]) > Convert.ToDouble(greaterThan.Value),
             NotEqualAs notEqualAs => (Dictionary<string, object> args) => args[notEqualAs.AttributeId] != notEqualAs.Value,
             EqualAs equalAs => (Dictionary<string, object> args) => args[equalAs.AttributeId] != equalAs.Value,
             _ => (Dictionary<string, object> args) => true
         };
-    }
 }

@@ -1,5 +1,9 @@
+using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
 using Janus.Wrapper.Core.SchemaInferrence;
+using Janus.Wrapper.CsvFiles.Querying;
+using Janus.Wrapper.CsvFiles.SchemaInferrence;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Wrapper.CsvFiles.Tests;
 
@@ -9,7 +13,7 @@ public class WrapperCsvFilesTests
     public void InferSchemaOnCsvFilesExample()
     {
         var expectedSchemaModel = SchemaModelBuilder.InitDataSource("DataSet")
-            .AddSchema("CarsSchema", 
+            .AddSchema("CarsSchema",
                 conf => conf.AddTableau("cars", conf => conf.AddAttribute("Car", conf => conf.WithDataType(DataTypes.STRING).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(0))
                                                             .AddAttribute("MPG", conf => conf.WithDataType(DataTypes.DECIMAL).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(1))
                                                             .AddAttribute("Cylinders", conf => conf.WithDataType(DataTypes.INT).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(2))
@@ -36,7 +40,7 @@ public class WrapperCsvFilesTests
                                                               .AddAttribute("weight", conf => conf.WithDataType(DataTypes.INT).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(13))
                                                               .AddAttribute("cups", conf => conf.WithDataType(DataTypes.DECIMAL).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(14))
                                                               .AddAttribute("rating", conf => conf.WithDataType(DataTypes.DECIMAL).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(15))))
-            .AddSchema("MiscSchema", 
+            .AddSchema("MiscSchema",
                 conf => conf.AddTableau("factbook", conf => conf.AddAttribute("Country", conf => conf.WithDataType(DataTypes.STRING).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(0))
                                                                 .AddAttribute("Area(sq km)", conf => conf.WithDataType(DataTypes.INT).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(1))
                                                                 .AddAttribute("Birth rate(births/1000 population)", conf => conf.WithDataType(DataTypes.DECIMAL).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(2))
@@ -107,5 +111,52 @@ public class WrapperCsvFilesTests
         Assert.NotNull(result.Data);
         Assert.Equal(expectedSchemaModel, result.Data);
 
+    }
+
+    [Fact(DisplayName = "Translate a selection expression")]
+    public void TranslateSelectionExpressionTest()
+    {
+        var dataSource = SchemaModelBuilder.InitDataSource("ds")
+            .AddSchema("s1", conf =>
+                conf.AddTableau("tab1", conf =>
+                    conf.AddAttribute("a1", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.INT))
+                        .AddAttribute("a2", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.STRING))
+                        .AddAttribute("a3", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.DECIMAL))
+                        .AddAttribute("a4", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.STRING)))
+                    .AddTableau("tab2", conf =>
+                    conf.AddAttribute("a1", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.INT))
+                        .AddAttribute("a2", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.STRING))
+                        .AddAttribute("a3", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.DECIMAL))
+                        .AddAttribute("a4", conf => conf.WithIsNullable(true).WithIsPrimaryKey(false).WithDataType(DataTypes.STRING))))
+            .Build();
+
+        var query = QueryModelBuilder.InitQueryOnDataSource("ds.s1.tab1", dataSource)
+            .WithSelection(conf => conf.WithExpression(AND(GT("ds.s1.tab1.a1", 3), EQ("ds.s1.tab1.a2", "test"))))
+            .Build();
+
+        var selection = query.Selection.Value;
+        var referencedAttributes = QueryTranslation.GetAllAttributeIdsInSelection(selection.Expression);
+        var executableSelection = QueryTranslation.TranslateSelectionExpression(selection.Expression);
+
+        var tab1Data = new List<Dictionary<string, object>> {
+            new (){ {"ds.s1.tab1.a1", 2}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // false
+            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
+            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "testXX"}, { "ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // false
+            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.4 }, { "ds.s1.tab1.a4", "somestring"} }, // true
+            new (){ {"ds.s1.tab1.a1", 4}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
+            new (){ {"ds.s1.tab1.a1", 3}, { "ds.s1.tab1.a2", "test"}, { "ds.s1.tab1.a3", 2.5 }, { "ds.s1.tab1.a4", "somestring"} }, // false
+        };
+
+        var expectedSelectedData = new List<Dictionary<string, object>>
+        {
+            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
+            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.4 }, { "ds.s1.tab1.a4", "somestring"} }, // true
+            new (){ {"ds.s1.tab1.a1", 4}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
+        };
+
+        var selectedData = tab1Data.Where(executableSelection).ToList();
+
+        Assert.Equal(3, selectedData.Count());
+        Assert.Equal(expectedSelectedData, selectedData);
     }
 }
