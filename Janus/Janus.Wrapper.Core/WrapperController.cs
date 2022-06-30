@@ -8,21 +8,21 @@ using Janus.Components;
 using Janus.Utils.Logging;
 
 namespace Janus.Wrapper.Core;
-public class WrapperController : IComponentController
+public class WrapperController<TLocalQuery, TSelectionDestination, TJoiningDestination, TProjectionDestination> : IComponentController
 {
     private readonly WrapperCommunicationNode _communicationNode;
     private readonly WrapperCommandManager _commandManager;
-    private readonly WrapperQueryManager _queryManager;
+    private readonly WrapperQueryManager<TLocalQuery, TSelectionDestination, TJoiningDestination, TProjectionDestination> _queryManager;
     private readonly WrapperSchemaManager _schemaManager;
-    private readonly ILogger<WrapperController>? _logger;
+    private readonly ILogger<WrapperController<TLocalQuery, TSelectionDestination, TJoiningDestination, TProjectionDestination>>? _logger;
 
-    public WrapperController(WrapperCommunicationNode communicationNode, WrapperCommandManager commandManager, WrapperQueryManager queryManager, WrapperSchemaManager schemaManager, ILogger? logger = null)
+    public WrapperController(WrapperCommunicationNode communicationNode, WrapperCommandManager commandManager, WrapperQueryManager<TLocalQuery, TSelectionDestination, TJoiningDestination, TProjectionDestination> queryManager, WrapperSchemaManager schemaManager, ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _commandManager = commandManager;
         _queryManager = queryManager;
         _schemaManager = schemaManager;
-        _logger = logger?.ResolveLogger<WrapperController>();
+        _logger = logger?.ResolveLogger<WrapperController<TLocalQuery, TSelectionDestination, TJoiningDestination, TProjectionDestination>>();
     }
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()

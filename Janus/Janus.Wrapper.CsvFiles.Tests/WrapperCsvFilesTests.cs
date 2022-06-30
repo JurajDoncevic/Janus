@@ -3,16 +3,16 @@ using Janus.Commons.SchemaModels;
 using Janus.Wrapper.Core.SchemaInferrence;
 using Janus.Wrapper.CsvFiles.Querying;
 using Janus.Wrapper.CsvFiles.SchemaInferrence;
+using Janus.Wrapper.CsvFiles.Translation;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Wrapper.CsvFiles.Tests;
 
 public class WrapperCsvFilesTests
 {
-    [Fact(DisplayName = "Infer a schema in the CSV files example")]
-    public void InferSchemaOnCsvFilesExample()
-    {
-        var expectedSchemaModel = SchemaModelBuilder.InitDataSource("DataSet")
+
+    private DataSource GetDataSetSchemaModel() =>
+        SchemaModelBuilder.InitDataSource("DataSet")
             .AddSchema("CarsSchema",
                 conf => conf.AddTableau("cars", conf => conf.AddAttribute("Car", conf => conf.WithDataType(DataTypes.STRING).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(0))
                                                             .AddAttribute("MPG", conf => conf.WithDataType(DataTypes.DECIMAL).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(1))
@@ -102,6 +102,11 @@ public class WrapperCsvFilesTests
                                                                       .AddAttribute("changes", conf => conf.WithDataType(DataTypes.INT).WithIsPrimaryKey(false).WithIsNullable(true).WithOrdinal(3))))
             .Build();
 
+    [Fact(DisplayName = "Infer a schema in the CSV files example")]
+    public void InferSchemaOnCsvFilesExample()
+    {
+
+        var expectedSchemaModel = GetDataSetSchemaModel();
         var schemaModelProvider = new CsvFilesProvider("./DataSet", ';');
         var schemaInferrer = new SchemaInferrer(schemaModelProvider);
 
@@ -134,29 +139,50 @@ public class WrapperCsvFilesTests
             .WithSelection(conf => conf.WithExpression(AND(GT("ds.s1.tab1.a1", 3), EQ("ds.s1.tab1.a2", "test"))))
             .Build();
 
+        CsvFilesQueryTranslator queryTranslator = new CsvFilesQueryTranslator("./ds");
+
         var selection = query.Selection.Value;
-        var referencedAttributes = QueryTranslation.GetAllAttributeIdsInSelection(selection.Expression);
-        var executableSelection = QueryTranslation.TranslateSelectionExpression(selection.Expression);
+
+        var translatedSelection = queryTranslator.TranslateSelection(query.Selection);
 
         var tab1Data = new List<Dictionary<string, object>> {
-            new (){ {"ds.s1.tab1.a1", 2}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // false
-            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
-            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "testXX"}, { "ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // false
-            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.4 }, { "ds.s1.tab1.a4", "somestring"} }, // true
-            new (){ {"ds.s1.tab1.a1", 4}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
-            new (){ {"ds.s1.tab1.a1", 3}, { "ds.s1.tab1.a2", "test"}, { "ds.s1.tab1.a3", 2.5 }, { "ds.s1.tab1.a4", "somestring"} }, // false
+            new (){ {"ds/s1/tab1/a1", 2}, {"ds/s1/tab1/a2", "test"}, {"ds/s1/tab1/a3", 2.3 }, { "ds/s1/tab1/a4", "somestring"} }, // false
+            new (){ {"ds/s1/tab1/a1", 5}, {"ds/s1/tab1/a2", "test"}, {"ds/s1/tab1/a3", 2.3 }, { "ds/s1/tab1/a4", "somestring"} }, // true
+            new (){ {"ds/s1/tab1/a1", 5}, {"ds/s1/tab1/a2", "testXX"}, { "ds/s1/tab1/a3", 2.3 }, { "ds/s1/tab1/a4", "somestring"} }, // false
+            new (){ {"ds/s1/tab1/a1", 5}, {"ds/s1/tab1/a2", "test"}, {"ds/s1/tab1/a3", 2.4 }, { "ds/s1/tab1/a4", "somestring"} }, // true
+            new (){ {"ds/s1/tab1/a1", 4}, {"ds/s1/tab1/a2", "test"}, {"ds/s1/tab1/a3", 2.3 }, { "ds/s1/tab1/a4", "somestring"} }, // true
+            new (){ {"ds/s1/tab1/a1", 3}, { "ds/s1/tab1/a2", "test"}, { "ds/s1/tab1/a3", 2.5 }, { "ds/s1/tab1/a4", "somestring"} }, // false
         };
 
         var expectedSelectedData = new List<Dictionary<string, object>>
         {
-            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
-            new (){ {"ds.s1.tab1.a1", 5}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.4 }, { "ds.s1.tab1.a4", "somestring"} }, // true
-            new (){ {"ds.s1.tab1.a1", 4}, {"ds.s1.tab1.a2", "test"}, {"ds.s1.tab1.a3", 2.3 }, { "ds.s1.tab1.a4", "somestring"} }, // true
+            new (){ {"ds/s1/tab1/a1", 5}, {"ds/s1/tab1/a2", "test"}, {"ds/s1/tab1/a3", 2.3 }, { "ds/s1/tab1/a4", "somestring"} }, // true
+            new (){ {"ds/s1/tab1/a1", 5}, {"ds/s1/tab1/a2", "test"}, {"ds/s1/tab1/a3", 2.4 }, { "ds/s1/tab1/a4", "somestring"} }, // true
+            new (){ {"ds/s1/tab1/a1", 4}, {"ds/s1/tab1/a2", "test"}, {"ds/s1/tab1/a3", 2.3 }, { "ds/s1/tab1/a4", "somestring"} }, // true
         };
 
-        var selectedData = tab1Data.Where(executableSelection).ToList();
+        var selectedData = tab1Data.Where(translatedSelection.Expression).ToList();
 
         Assert.Equal(3, selectedData.Count());
         Assert.Equal(expectedSelectedData, selectedData);
+    }
+
+    [Fact(DisplayName = "Run query on DataSet with QueryRunner")]
+    public async void CsvQueryRunnerTest()
+    {
+        var dataSource = GetDataSetSchemaModel();
+        var query = QueryModelBuilder.InitQueryOnDataSource("DataSet.CarsSchema.cars", dataSource)
+            .WithSelection(conf => conf.WithExpression(EQ("DataSet.CarsSchema.cars.Origin", "Europe")))
+            .WithProjection(conf => conf.AddAttribute("DataSet.CarsSchema.cars.Car").AddAttribute("DataSet.CarsSchema.cars.Origin"))
+            .Build();
+
+        var queryRunner = new CsvFilesQueryRunner("./DataSet");
+
+        CsvFilesQueryTranslator queryTranslator = new CsvFilesQueryTranslator("./DataSet");
+
+        var translatedQuery = queryTranslator.Translate(query);
+        var queryResult = await queryRunner.RunQuery(translatedQuery);
+
+        Assert.True(queryResult);
     }
 }

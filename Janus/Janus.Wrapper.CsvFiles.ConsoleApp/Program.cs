@@ -16,6 +16,11 @@ using NLog.Extensions.Hosting;
 using NLog.Extensions.Logging;
 using Janus.Wrapper.Core.SchemaInferrence;
 using Janus.Wrapper.CsvFiles.SchemaInferrence;
+using Janus.Wrapper.CsvFiles;
+using Janus.Wrapper.CsvFiles.Querying;
+using Janus.Wrapper.Core.Querying;
+using Janus.Components.Translation;
+using Janus.Wrapper.CsvFiles.Translation;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostContext, configurationBuilder) =>
@@ -86,10 +91,12 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddSingleton<ISchemaModelProvider, CsvFilesProvider>(serviceProvider => new CsvFilesProvider(wrapperOptions.DataSourcePath, ';'));
         services.AddSingleton<SchemaInferrer>();
-        services.AddSingleton<WrapperQueryManager>();
+        services.AddSingleton<IWrapperQueryRunner<Query>, CsvFilesQueryRunner>(serviceProvider => new CsvFilesQueryRunner(wrapperOptions.DataSourcePath));
+        services.AddSingleton<IQueryTranslator<Janus.Commons.QueryModels.Query, Janus.Commons.QueryModels.Selection, Janus.Commons.QueryModels.Joining, Janus.Commons.QueryModels.Projection, Query, Selection, Joining, Projection>, CsvFilesQueryTranslator>();
+        services.AddSingleton<WrapperQueryManager<Query, Selection, Joining, Projection>>();
         services.AddSingleton<WrapperCommandManager>();
         services.AddSingleton<WrapperSchemaManager>();
-        services.AddSingleton<WrapperController>();
+        services.AddSingleton<CsvFilesWrapperController>();
         services.AddSingleton<WrapperOptions>(wrapperOptions);
         services.AddSingleton<ApplicationOptions>(applicationOptions);
         services.AddSingleton<Application>();

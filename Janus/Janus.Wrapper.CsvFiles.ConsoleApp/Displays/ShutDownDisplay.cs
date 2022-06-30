@@ -5,7 +5,7 @@ namespace Janus.Wrapper.CsvFiles.ConsoleApp.Displays;
 public class ShutDownDisplay : BaseDisplay
 {
     private readonly ILogger<ShutDownDisplay>? _logger;
-    public ShutDownDisplay(WrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public ShutDownDisplay(CsvFilesWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<ShutDownDisplay>();
     }

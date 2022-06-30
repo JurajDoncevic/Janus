@@ -36,7 +36,7 @@ public class CsvFilesProvider : ISchemaModelProvider
                                                  .Identity()
                                                  .Map(dataLine => dataLine.Trim().Split(_delimiter))
                                                  .Data
-                                                 .Map(InferAttributeType))
+                                                 .Map(Utils.InferAttributeDataType))
                                                  .Map(dataTypes => attributeInfos.Mapi((idx, a) => new AttributeInfo(a.Name, dataTypes.ElementAt((int)idx), a.IsPrimaryKey, a.IsNullable, a.Ordinal))));
 
     public Result<DataSourceInfo> GetDataSource()
@@ -65,17 +65,4 @@ public class CsvFilesProvider : ISchemaModelProvider
 
     public Result TableauExists(string schemaName, string tableauName)
         => ResultExtensions.AsResult(() => File.Exists(Path.Combine(_rootDirectoryPath, schemaName, tableauName) + ".csv"));
-
-    private DataTypes InferAttributeType(string value)
-    {
-        if (Regex.IsMatch(value.Trim(), @"^0|-?[1-9][0-9]*$") && int.TryParse(value, out _))
-            return DataTypes.INT;
-        if (Regex.IsMatch(value.Trim(), @"^-?([1-9][0-9]*|0)[\.|,][0-9]+$") && double.TryParse(value, out _))
-            return DataTypes.DECIMAL;
-        if (bool.TryParse(value.Trim(), out _))
-            return DataTypes.BOOLEAN;
-        if (DateTime.TryParse(value.Trim(), out _))
-            return DataTypes.DATETIME;
-        return DataTypes.STRING;
-    }
 }

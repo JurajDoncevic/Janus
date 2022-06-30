@@ -11,7 +11,7 @@ namespace Janus.Wrapper.CsvFiles.ConsoleApp.Displays;
 public class ReloadSchemaDisplay : BaseDisplay
 {
     private readonly ILogger<ReloadSchemaDisplay>? _logger;
-    public ReloadSchemaDisplay(WrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public ReloadSchemaDisplay(CsvFilesWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<ReloadSchemaDisplay>();
     }

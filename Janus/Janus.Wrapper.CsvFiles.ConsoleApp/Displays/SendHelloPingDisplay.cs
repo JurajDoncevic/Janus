@@ -6,7 +6,7 @@ namespace Janus.Wrapper.CsvFiles.ConsoleApp.Displays;
 public class SendHelloPingDisplay : BaseDisplay
 {
     private readonly ILogger<SendHelloPingDisplay>? _logger;
-    public SendHelloPingDisplay(WrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
+    public SendHelloPingDisplay(CsvFilesWrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<SendHelloPingDisplay>();
     }

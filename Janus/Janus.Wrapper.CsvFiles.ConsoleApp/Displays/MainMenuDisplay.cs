@@ -15,7 +15,7 @@ public class MainMenuDisplay : BaseDisplay
     private readonly ReloadSchemaDisplay _reloadSchemaDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
-    public MainMenuDisplay(WrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
+    public MainMenuDisplay(CsvFilesWrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<MainMenuDisplay>();
 

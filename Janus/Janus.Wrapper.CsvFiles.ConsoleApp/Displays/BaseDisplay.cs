@@ -3,7 +3,7 @@
 namespace Janus.Wrapper.CsvFiles.ConsoleApp.Displays;
 public abstract class BaseDisplay
 {
-    protected WrapperController _wrapperController;
+    protected CsvFilesWrapperController _wrapperController;
     public abstract string Title { get; }
     protected abstract Task<Result> Display();
 
@@ -26,7 +26,7 @@ public abstract class BaseDisplay
         return result;
     }
 
-    protected BaseDisplay(WrapperController wrapperController!!)
+    protected BaseDisplay(CsvFilesWrapperController wrapperController!!)
     {
         _wrapperController = wrapperController;
     }

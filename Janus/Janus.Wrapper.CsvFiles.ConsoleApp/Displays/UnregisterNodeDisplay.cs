@@ -7,7 +7,7 @@ public class UnregisterNodeDisplay : BaseDisplay
 {
     private readonly ILogger<UnregisterNodeDisplay>? _logger;
 
-    public UnregisterNodeDisplay(WrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public UnregisterNodeDisplay(CsvFilesWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<UnregisterNodeDisplay>();
     }

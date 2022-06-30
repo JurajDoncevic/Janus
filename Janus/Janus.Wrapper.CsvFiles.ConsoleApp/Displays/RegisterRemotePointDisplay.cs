@@ -8,7 +8,7 @@ public class RegisterRemotePointDisplay : BaseDisplay
 
     private readonly ILogger<RegisterRemotePointDisplay>? _logger;
 
-    public RegisterRemotePointDisplay(WrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public RegisterRemotePointDisplay(CsvFilesWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<RegisterRemotePointDisplay>();
     }

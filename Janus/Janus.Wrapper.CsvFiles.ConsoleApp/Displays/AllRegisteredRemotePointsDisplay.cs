@@ -6,7 +6,7 @@ namespace Janus.Wrapper.CsvFiles.ConsoleApp.Displays;
 public class AllRegisteredRemotePointsDisplay : BaseDisplay
 {
     ILogger<AllRegisteredRemotePointsDisplay>? _logger;
-    public AllRegisteredRemotePointsDisplay(WrapperController wrapperController, ILogger? logger) : base(wrapperController)
+    public AllRegisteredRemotePointsDisplay(CsvFilesWrapperController wrapperController, ILogger? logger) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<AllRegisteredRemotePointsDisplay>();
     }

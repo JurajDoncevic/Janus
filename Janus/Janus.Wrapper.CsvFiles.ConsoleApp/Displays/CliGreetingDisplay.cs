@@ -4,7 +4,7 @@ namespace Janus.Wrapper.CsvFiles.ConsoleApp.Displays;
 public class CliGreetingDisplay : BaseDisplay
 {
     private readonly WrapperOptions _wrapperOptions;
-    public CliGreetingDisplay(WrapperController wrapperController, WrapperOptions wrapperOptions) : base(wrapperController)
+    public CliGreetingDisplay(CsvFilesWrapperController wrapperController, WrapperOptions wrapperOptions) : base(wrapperController)
     {
         _wrapperOptions = wrapperOptions;
     }

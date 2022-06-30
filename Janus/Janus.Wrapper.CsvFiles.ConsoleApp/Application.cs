@@ -8,14 +8,14 @@ using Sharprompt;
 namespace Janus.Wrapper.CsvFiles.ConsoleApp;
 public class Application
 {
-    private readonly WrapperController _wrapperController;
+    private readonly CsvFilesWrapperController _wrapperController;
     private readonly WrapperOptions _wrapperOptions;
     private readonly ApplicationOptions _applicationOptions;
     private readonly ILogger<Application>? _logger;
     private readonly MainMenuDisplay? _mainMenuDisplay;
     private readonly CliGreetingDisplay? _cliGreetingDisplay;
 
-    public Application(WrapperController wrapperController, WrapperOptions wrapperOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
+    public Application(CsvFilesWrapperController wrapperController, WrapperOptions wrapperOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
     {
         _wrapperController = wrapperController;
         _wrapperOptions = wrapperOptions;

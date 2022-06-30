@@ -10,7 +10,7 @@ namespace Janus.Wrapper.CsvFiles.ConsoleApp.Displays;
 public class CurrentSchemaDisplay : BaseDisplay
 {
     private readonly ILogger<CurrentSchemaDisplay>? _logger;
-    public CurrentSchemaDisplay(WrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public CurrentSchemaDisplay(CsvFilesWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<CurrentSchemaDisplay>();
     }
