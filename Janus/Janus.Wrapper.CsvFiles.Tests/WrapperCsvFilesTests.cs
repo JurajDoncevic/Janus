@@ -139,7 +139,7 @@ public class WrapperCsvFilesTests
             .WithSelection(conf => conf.WithExpression(AND(GT("ds.s1.tab1.a1", 3), EQ("ds.s1.tab1.a2", "test"))))
             .Build();
 
-        CsvFilesQueryTranslator queryTranslator = new CsvFilesQueryTranslator("./ds");
+        CsvFilesQueryTranslator queryTranslator = new CsvFilesQueryTranslator();
 
         var selection = query.Selection.Value;
 
