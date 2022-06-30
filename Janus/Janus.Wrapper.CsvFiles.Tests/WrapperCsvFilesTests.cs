@@ -178,7 +178,7 @@ public class WrapperCsvFilesTests
 
         var queryRunner = new CsvFilesQueryRunner("./DataSet");
 
-        CsvFilesQueryTranslator queryTranslator = new CsvFilesQueryTranslator("./DataSet");
+        CsvFilesQueryTranslator queryTranslator = new CsvFilesQueryTranslator();
 
         var translatedQuery = queryTranslator.Translate(query);
         var queryResult = await queryRunner.RunQuery(translatedQuery);
