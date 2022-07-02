@@ -21,37 +21,63 @@ public class CsvFilesQueryRunner : IWrapperQueryRunner<Query>
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await ResultExtensions.AsResult<TabularData>(async () =>
         {
-            List<Dictionary<string, object>> values;
             Dictionary<string, Commons.SchemaModels.DataTypes> attributeDataTypes;
-            List<string> columnPaths;
-            if (query.Joining.Joins.Count == 0) // no joins in this query, work over one file
+
+            List<string> columnPaths =
+                File.ReadLines(AdaptPathToDataSourceLocation(query.OnFilePath) + ".csv")
+                    .First()
+                    .Split(";")
+                    .Select(colName => query.OnFilePath + "/" + colName)
+                    .ToList();
+
+            List<Dictionary<string, object>> values =
+                (await File.ReadAllLinesAsync(AdaptPathToDataSourceLocation(query.OnFilePath) + ".csv"))
+                    .Skip(1)
+                    .Map(line => line.Trim().Split(";").Map(Utils.InferAttributeType))
+                    .Map(values => values.Mapi((idx, v) => (attrPath: columnPaths[(int)idx], value: v)))
+                    .Map(attrValues => attrValues.ToDictionary(_ => _.attrPath, _ => _.value))
+                    .ToList();
+
+            attributeDataTypes =
+                (await File.ReadAllLinesAsync(AdaptPathToDataSourceLocation(query.OnFilePath) + ".csv"))
+                    .Skip(1)
+                    .Take(1)
+                    .Map(line => line.Split(";").Mapi((idx, value) => (idx, dataType: Utils.InferAttributeDataType(value))))
+                    .First()
+                    .ToDictionary(_ => columnPaths[(int)_.idx], _ => _.dataType);
+
+            if (query.Joining.Joins.Count > 0) // there are joins in the query
             {
-                columnPaths =
-                    File.ReadLines(AdaptPathToDataSourceLocation(query.OnFilePath) + ".csv")
-                        .First()
-                        .Split(";")
-                        .Select(colName => query.OnFilePath + "/" + colName)
-                        .ToList();
+                foreach (var join in query.Joining.Joins.OrderBy(_ => _.ForeignKeyFilePath.Equals(query.OnFilePath)))
+                {
 
-                values =
-                    (await File.ReadAllLinesAsync(AdaptPathToDataSourceLocation(query.OnFilePath) + ".csv"))
-                        .Skip(1)
-                        .Map(line => line.Trim().Split(";").Map(Utils.InferAttributeType))
-                        .Map(values => values.Mapi((idx, v) => (attrPath: columnPaths[(int)idx], value: v)))
-                        .Map(attrValues => attrValues.ToDictionary(_ => _.attrPath, _ => _.value))
-                        .ToList();
+                    List<string> joiningColumnPaths =
+                        File.ReadLines(AdaptPathToDataSourceLocation(join.PrimaryKeyFilePath) + ".csv")
+                            .First()
+                            .Split(";")
+                            .Select(colName => join.PrimaryKeyFilePath + "/" + colName)
+                            .ToList();
 
-                attributeDataTypes =
-                    (await File.ReadAllLinesAsync(AdaptPathToDataSourceLocation(query.OnFilePath) + ".csv"))
+                    (await File.ReadAllLinesAsync(AdaptPathToDataSourceLocation(join.PrimaryKeyFilePath) + ".csv"))
                         .Skip(1)
                         .Take(1)
                         .Map(line => line.Split(";").Mapi((idx, value) => (idx, dataType: Utils.InferAttributeDataType(value))))
                         .First()
-                        .ToDictionary(_ => columnPaths[(int)_.idx], _ => _.dataType);
-            }
-            else
-            {
-                throw new Exception("Joining on this wrapper not yet supported");
+                        .ToDictionary(_ => joiningColumnPaths[(int)_.idx], _ => _.dataType)
+                        .ToList()
+                        .ForEach(x => attributeDataTypes.Add(x.Key, x.Value));
+
+                    var primaryKeydata =
+                        (await File.ReadAllLinesAsync(AdaptPathToDataSourceLocation(join.PrimaryKeyFilePath) + ".csv"))
+                            .Skip(1)
+                            .Map(line => line.Trim().Split(";").Map(Utils.InferAttributeType))
+                            .Map(values => values.Mapi((idx, v) => (attrPath: joiningColumnPaths[(int)idx], value: v)))
+                            .Map(attrValues => attrValues.ToDictionary(_ => _.attrPath, _ => _.value))
+                            .ToList();
+
+                    values = JoinData(values, primaryKeydata, join.ForeignKeyColumnPath, join.PrimaryKeyColumnPath);
+                }
+
             }
 
             var selectedValues =
@@ -77,4 +103,24 @@ public class CsvFilesQueryRunner : IWrapperQueryRunner<Query>
 
     private string AdaptPathToDataSourceLocation(string fullPath)
         => Path.Join(_dataSourceDirectoryPath, fullPath.Split("/", 2).ElementAt(1));
+
+    private List<Dictionary<string, object>> JoinData(List<Dictionary<string, object>> foreignKeyData, List<Dictionary<string, object>> primaryKeyData, string foreignKeyColumnPath, string primaryKeyColumnPath)
+    {
+        var result = new List<Dictionary<string, object>>();
+        foreach (var foreignKeyDataRow in foreignKeyData)
+        {
+            var foreignKey = foreignKeyDataRow[foreignKeyColumnPath];
+            
+            var primaryKeyDataRow =
+                primaryKeyData.Where(pkDataRow => pkDataRow[primaryKeyColumnPath].Equals(foreignKey))
+                              .FirstOrDefault();
+
+            var resultRow = new Dictionary<string, object>();
+            foreignKeyDataRow.ToList().ForEach(x => resultRow.Add(x.Key, x.Value));
+            primaryKeyDataRow?.ToList().ForEach(x => resultRow.Add(x.Key, x.Value));
+
+            result.Add(resultRow);
+        }
+        return result;
+    }
 }

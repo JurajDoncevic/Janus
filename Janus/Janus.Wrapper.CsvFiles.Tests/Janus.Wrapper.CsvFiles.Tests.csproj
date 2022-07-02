@@ -9,7 +9,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="DataSet\CarsSchema\origins.csv" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="DataSet\CarsSchema\cars.csv">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="DataSet\CarsSchema\origins.csv">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="DataSet\CerealSchema\cereal.csv">
