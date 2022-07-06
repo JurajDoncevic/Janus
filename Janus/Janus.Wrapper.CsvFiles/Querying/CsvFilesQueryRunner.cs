@@ -91,11 +91,11 @@ public class CsvFilesQueryRunner : IWrapperQueryRunner<Query>
                 attributeDataTypes.Where(attrDataType => query.Projection.ColumnPaths.Contains(attrDataType.Key))
                 .ToDictionary(_ => _.Key, _ => _.Value);
 
-            var resultBuilder = TabularDataBuilder.InitTabularData(projectedDataTypes);
+            var resultBuilder = TabularDataBuilder.InitTabularData(projectedDataTypes.ToDictionary(kv => kv.Key.Replace("/", "."), kv => kv.Value));
 
             foreach (var row in projectedValues)
             {
-                resultBuilder.AddRow(conf => conf.WithRowData(row!));
+                resultBuilder.AddRow(conf => conf.WithRowData(row.ToDictionary(kv => kv.Key.Replace("/", "."), kv => kv.Value)!));
             }
 
             return resultBuilder.Build();

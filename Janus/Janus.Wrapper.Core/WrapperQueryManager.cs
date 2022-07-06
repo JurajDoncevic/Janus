@@ -24,21 +24,7 @@ public class WrapperQueryManager<TLocalQuery, TSelectionDestination, TJoiningDes
     public async Task<Result<TabularData>> RunQuery(Query query)
     {
         var translatedQuery = _queryTranslator.Translate(query);
-        var queryResult = await _queryRunner.RunQuery(translatedQuery)
-                            .Bind(async data => ReconfigureReferences(data));
+        var queryResult = await _queryRunner.RunQuery(translatedQuery);
         return queryResult;
     }
-
-    private Result<TabularData> ReconfigureReferences(TabularData data)
-        => ResultExtensions.AsResult(() =>
-        {
-            var builder =
-                TabularDataBuilder.InitTabularData(data.AttributeDataTypes.ToDictionary(_ => _.Key.Replace("/", "."), _ => _.Value));
-            foreach (var row in data.RowData)
-            {
-                builder.AddRow(conf => conf.WithRowData(row.AttributeValues.ToDictionary(_ => _.Key.Replace("/", "."), _ => _.Value)));
-            }
-
-            return builder.Build();
-        });
 }
