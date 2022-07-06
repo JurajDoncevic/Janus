@@ -2,7 +2,7 @@
 
 namespace Janus.Wrapper.Core.Querying;
 
-public interface IWrapperQueryRunner<TLocalQuery>
+public interface IWrapperQueryRunner<TDestinationQuery>
 {
-    Task<Result<TabularData>> RunQuery(TLocalQuery query);
+    Task<Result<TabularData>> RunQuery(TDestinationQuery query);
 }
