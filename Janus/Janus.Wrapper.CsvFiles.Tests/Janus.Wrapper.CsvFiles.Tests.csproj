@@ -46,9 +46,4 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Janus.Wrapper.Core\Janus.Wrapper.Core.csproj" />
-		<ProjectReference Include="..\Janus.Wrapper.CsvFiles\Janus.Wrapper.CsvFiles.csproj" />
-	</ItemGroup>
-
 </Project>

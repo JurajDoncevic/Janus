@@ -13,7 +13,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
-		<ProjectReference Include="..\Janus.Wrapper.Core\Janus.Wrapper.Core.csproj" />
 	</ItemGroup>
 
 </Project>

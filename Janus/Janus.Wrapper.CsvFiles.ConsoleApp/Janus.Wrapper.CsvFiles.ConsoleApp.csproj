@@ -50,9 +50,4 @@
 		<PackageReference Include="Sharprompt" Version="2.4.1" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Janus.Wrapper.Core\Janus.Wrapper.Core.csproj" />
-	  <ProjectReference Include="..\Janus.Wrapper.CsvFiles\Janus.Wrapper.CsvFiles.csproj" />
-	</ItemGroup>
-
 </Project>
