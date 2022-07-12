@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.Core", "Janu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.Core", "Janus.Mask.Core\Janus.Mask.Core.csproj", "{0903CB67-80D4-47ED-BF7D-F652728EBEC4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.Core", "Janus.Wrapper.Core\Janus.Wrapper.Core.csproj", "{B0823681-A8A3-4B17-9EC2-DE998BA7D63A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Commons", "Janus.Commons\Janus.Commons.csproj", "{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Utils", "Janus.Utils\Janus.Utils.csproj", "{AC83576D-55C0-4664-8A2F-6E792C4F60EB}"
@@ -16,8 +14,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.Core.Tests", "Janus.Mask.Core.Tests\Janus.Mask.Core.Tests.csproj", "{0D91299D-A1F0-4811-8E1D-266EC97CD7C3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.Core.Tests", "Janus.Mediator.Core.Tests\Janus.Mediator.Core.Tests.csproj", "{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.Core.Tests", "Janus.Wrapper.Core.Tests\Janus.Wrapper.Core.Tests.csproj", "{98855392-FEFE-4AF2-9405-AC9AA1EA453B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Utils.Tests", "Janus.Utils.Tests\Janus.Utils.Tests.csproj", "{E015C759-4FCA-4C32-BCAF-591BB491B5FB}"
 EndProject
@@ -30,12 +26,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Components", "Janus.Components\Janus.Components.csproj", "{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.ConsoleApp", "Janus.Mediator.ConsoleApp\Janus.Mediator.ConsoleApp.csproj", "{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.CsvFiles", "Janus.Wrapper.CsvFiles\Janus.Wrapper.CsvFiles.csproj", "{426287E0-D4EB-441A-B0C1-25091FE60C25}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.CsvFiles.Tests", "Janus.Wrapper.CsvFiles.Tests\Janus.Wrapper.CsvFiles.Tests.csproj", "{A379833C-CD89-4EBD-8228-F263DCF770C1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Wrapper.CsvFiles.ConsoleApp", "Janus.Wrapper.CsvFiles.ConsoleApp\Janus.Wrapper.CsvFiles.ConsoleApp.csproj", "{C4EE41A4-718A-47E3-A297-76C418EAD810}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +41,6 @@ Global
 		{0903CB67-80D4-47ED-BF7D-F652728EBEC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0903CB67-80D4-47ED-BF7D-F652728EBEC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0903CB67-80D4-47ED-BF7D-F652728EBEC4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0823681-A8A3-4B17-9EC2-DE998BA7D63A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0823681-A8A3-4B17-9EC2-DE998BA7D63A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0823681-A8A3-4B17-9EC2-DE998BA7D63A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0823681-A8A3-4B17-9EC2-DE998BA7D63A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,10 +57,6 @@ Global
 		{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{98855392-FEFE-4AF2-9405-AC9AA1EA453B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98855392-FEFE-4AF2-9405-AC9AA1EA453B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98855392-FEFE-4AF2-9405-AC9AA1EA453B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98855392-FEFE-4AF2-9405-AC9AA1EA453B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E015C759-4FCA-4C32-BCAF-591BB491B5FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E015C759-4FCA-4C32-BCAF-591BB491B5FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E015C759-4FCA-4C32-BCAF-591BB491B5FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -99,18 +81,6 @@ Global
 		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{426287E0-D4EB-441A-B0C1-25091FE60C25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{426287E0-D4EB-441A-B0C1-25091FE60C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{426287E0-D4EB-441A-B0C1-25091FE60C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{426287E0-D4EB-441A-B0C1-25091FE60C25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A379833C-CD89-4EBD-8228-F263DCF770C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4EE41A4-718A-47E3-A297-76C418EAD810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4EE41A4-718A-47E3-A297-76C418EAD810}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4EE41A4-718A-47E3-A297-76C418EAD810}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4EE41A4-718A-47E3-A297-76C418EAD810}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
