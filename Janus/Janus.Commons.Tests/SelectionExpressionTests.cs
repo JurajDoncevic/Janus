@@ -136,6 +136,6 @@ public class SelectionExpressionTests
                 );
 
 
-        Assert.Equal("AND(OR(AND(OR(LT(attr1,1),EQ(attr2,STRING_VAL)),OR(GE(attr3,3,14),EQ(attr4,20.5.2022. 0:00:00))),EQ(attr6,6)),EQ(attr5,False))", expression.ToString());
+        Assert.Equal($"AND(OR(AND(OR(LT(attr1,{value1}),EQ(attr2,{value2})),OR(GE(attr3,{value3}),EQ(attr4,{value4}))),EQ(attr6,{value6})),EQ(attr5,{value5}))", expression.ToString());
     }
 }
