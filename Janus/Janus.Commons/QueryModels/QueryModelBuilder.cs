@@ -1,7 +1,7 @@
-﻿using Janus.Commons.QueryModels.Exceptions;
+﻿using Janus.Commons.SelectionExpressions;
 using Janus.Commons.QueryModels.Validation;
 using Janus.Commons.SchemaModels;
-using Janus.Commons.SelectionExpressions;
+using Janus.Commons.QueryModels.Exceptions;
 
 namespace Janus.Commons.QueryModels;
 

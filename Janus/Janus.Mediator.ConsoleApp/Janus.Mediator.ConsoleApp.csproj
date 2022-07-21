@@ -35,6 +35,8 @@
 		<ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
 		<ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
 		<ProjectReference Include="..\Janus.Mediator.Core\Janus.Mediator.Core.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Bson\Janus.Serialization.Bson.csproj" />
 		<ProjectReference Include="..\Janus.Utils\Janus.Utils.csproj" />
 	</ItemGroup>
 

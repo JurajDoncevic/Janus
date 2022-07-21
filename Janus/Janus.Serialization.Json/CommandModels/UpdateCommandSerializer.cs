@@ -1,0 +1,118 @@
+﻿using FunctionalExtensions.Base.Results;
+using Janus.Commons.CommandModels;
+using Janus.Serialization.Json.CommandModels.DTOs;
+using Janus.Serialization.Json.QueryModels;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace Janus.Serialization.Json.CommandModels;
+
+/// <summary>
+/// JSON format serializer for the delete command
+/// </summary>
+public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
+{
+    private readonly JsonSerializerOptions _serializerOptions;
+
+    public UpdateCommandSerializer()
+    {
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new SelectionExpressionJsonConverter());
+        options.Converters.Add(new JsonStringEnumConverter());
+
+        _serializerOptions = options;
+    }
+
+    /// <summary>
+    /// Deserializes an update command
+    /// </summary>
+    /// <param name="serialized">Serialized update command</param>
+    /// <returns>Deserialized update command</returns>
+    public Result<UpdateCommand> Deserialize(string serialized)
+        => ResultExtensions.AsResult(() =>
+        {
+            var updateDto = JsonSerializer.Deserialize<UpdateCommandDto>(serialized, _serializerOptions);
+
+            if (updateDto == null)
+                throw new Exception("Deserialization of UpdateCommandDto failed");
+
+            var updateCommand = FromDto(updateDto).Data!;
+
+            return updateCommand;
+        });
+
+    /// <summary>
+    /// Serializes an update command
+    /// </summary>
+    /// <param name="command">Update command to serialize</param>
+    /// <returns>Serialized update command</returns>
+    public Result<string> Serialize(UpdateCommand command)
+        => ResultExtensions.AsResult(() =>
+        {
+            var updateDto = ToDto(command).Data!;
+            var json = JsonSerializer.Serialize(updateDto, _serializerOptions);
+
+            return json;
+        });
+
+    /// <summary>
+    /// Converts an update command to its DTO
+    /// </summary>
+    /// <param name="command">Update command model</param>
+    /// <returns>Update command DTO</returns>
+    internal Result<UpdateCommandDto> ToDto(UpdateCommand updateCommand)
+        => ResultExtensions.AsResult(() =>
+        {
+            var updateDto = new UpdateCommandDto(
+                updateCommand.OnTableauId,
+                updateCommand.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value),
+                updateCommand.Selection.IsSome
+                            ? new CommandSelectionDto() { SelectionExpression = updateCommand.Selection.Value.Expression }
+                            : null
+                );
+
+            return updateDto;
+        });
+
+    /// <summary>
+    /// Converts an update command DTO to the command model
+    /// </summary>
+    /// <param name="updateCommandDto">Update command DTO</param>
+    /// <returns>Update command model</returns>
+    internal Result<UpdateCommand> FromDto(UpdateCommandDto updateCommandDto)
+        => ResultExtensions.AsResult(() =>
+        {
+            var retypedMutationDict = updateCommandDto.Mutation.ToDictionary(
+                kv => kv.Key,
+                kv => kv.Value != null ? JsonSerializer.Deserialize(((JsonElement)kv.Value), TypeNameToType(updateCommandDto.MutationTypes[kv.Key])) : null
+                );
+
+            var updateCommand =
+            UpdateCommandOpenBuilder.InitOpenUpdate(updateCommandDto.OnTableauId)
+                .WithMutation(conf => conf.WithValues(retypedMutationDict))
+                .WithSelection(conf => updateCommandDto.Selection != null
+                                        ? conf.WithExpression(updateCommandDto.Selection.SelectionExpression)
+                                        : conf)
+                .Build();
+
+            return updateCommand;
+        });
+
+    /// <summary>
+    /// Gets a concrete type for a type name
+    /// </summary>
+    /// <param name="typeName"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    private Type TypeNameToType(string typeName) =>
+        typeName switch
+        {
+            string tn when tn.Equals(typeof(int).FullName) => typeof(int),
+            string tn when tn.Equals(typeof(double).FullName) => typeof(double),
+            string tn when tn.Equals(typeof(string).FullName) => typeof(string),
+            string tn when tn.Equals(typeof(DateTime).FullName) => typeof(DateTime),
+            string tn when tn.Equals(typeof(string).FullName) => typeof(string),
+            string tn when tn.Equals(typeof(bool).FullName) => typeof(bool),
+            _ => throw new Exception($"Unknown type name {typeName}")
+        };
+}

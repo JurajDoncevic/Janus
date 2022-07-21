@@ -1,13 +1,10 @@
-﻿using Janus.Commons.DataModels.JsonConversion;
-using Janus.Commons.SchemaModels;
-using System.Text.Json.Serialization;
+﻿using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.DataModels;
 
 /// <summary>
 /// Describes tabular data
 /// </summary>
-[JsonConverter(typeof(TabularDataJsonConverter))]
 public class TabularData
 {
     private readonly List<RowData> _rowData;

@@ -1,4 +1,4 @@
-﻿using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
 using System.Collections.Concurrent;
 using static FunctionalExtensions.Base.Results.ResultExtensions;
 

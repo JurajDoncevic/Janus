@@ -1,14 +1,15 @@
-﻿using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Remotes;
+using Janus.Serialization;
 using System.Net.Sockets;
 
 namespace Janus.Communication.Tests.Mocks;
 
 public class AlwaysTimeoutTcpNetworkAdapter : NetworkAdapters.Tcp.NetworkAdapter, IMediatorNetworkAdapter
 {
-    public AlwaysTimeoutTcpNetworkAdapter(int listenPort) : base(listenPort)
+    public AlwaysTimeoutTcpNetworkAdapter(int listenPort, IBytesSerializationProvider serializationProvider) : base(listenPort, serializationProvider)
     {
         _tcpListener.Server.ReceiveTimeout = 1;
         _tcpListener.Server.SendTimeout = 1;
@@ -49,8 +50,8 @@ public class AlwaysTimeoutTcpNetworkAdapter : NetworkAdapters.Tcp.NetworkAdapter
                       {
                           System.Threading.Tasks.Task.Delay(1000).Wait();
                           tcpClient.SendTimeout = 1;
-                          var messageBytes = message.ToBson();
-                          return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
+                          var messageBytes = _serializationProvider.HelloReqMessageSerializer.Serialize(message).Data!;
+                          return tcpClient.Connected && await tcpClient.Client.SendAsync(messageBytes, SocketFlags.None) == messageBytes.Length;
                       }
                     )
             );
@@ -63,8 +64,8 @@ public class AlwaysTimeoutTcpNetworkAdapter : NetworkAdapters.Tcp.NetworkAdapter
                       {
                           System.Threading.Tasks.Task.Delay(1000).Wait();
                           tcpClient.SendTimeout = 1;
-                          var messageBytes = message.ToBson();
-                          return tcpClient.Connected && await tcpClient.Client.SendAsync(message.ToBson(), SocketFlags.None) == messageBytes.Length;
+                          var messageBytes = _serializationProvider.HelloResMessageSerializer.Serialize(message).Data!;
+                          return tcpClient.Connected && await tcpClient.Client.SendAsync(messageBytes, SocketFlags.None) == messageBytes.Length;
                       }
                     )
             );

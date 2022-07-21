@@ -1,9 +1,4 @@
-﻿using Janus.Commons.SelectionExpressions.JsonConversion;
-using System.Text.Json.Serialization;
-
-namespace Janus.Commons.SelectionExpressions;
-
-[JsonConverter(typeof(SelectionExpressionJsonConverter))]
+﻿namespace Janus.Commons.SelectionExpressions;
 public abstract class SelectionExpression
 {
     public override bool Equals(object? obj)

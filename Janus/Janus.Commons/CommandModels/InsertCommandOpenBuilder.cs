@@ -6,7 +6,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Builder class to internally construct an insert command without validation on a data source
 /// </summary>
-internal class InsertCommandOpenBuilder
+public class InsertCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<Instantiation> _instantiation;
@@ -26,7 +26,7 @@ internal class InsertCommandOpenBuilder
     /// </summary>
     /// <returns></returns>
     /// <exception cref="InstantiationNotSetException"></exception>
-    internal InsertCommand Build()
+    public InsertCommand Build()
         => _instantiation
            ? new InsertCommand(_onTableauId, _instantiation.Value)
            : throw new InstantiationNotSetException();
@@ -36,7 +36,7 @@ internal class InsertCommandOpenBuilder
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <returns></returns>
-    internal static InsertCommandOpenBuilder InitOpenInsert(string onTableauId)
+    public static InsertCommandOpenBuilder InitOpenInsert(string onTableauId)
     {
         return new InsertCommandOpenBuilder(onTableauId);
     }
@@ -46,7 +46,7 @@ internal class InsertCommandOpenBuilder
     /// </summary>
     /// <param name="configuration">Instantiation configuration</param>
     /// <returns></returns>
-    internal InsertCommandOpenBuilder WithInstantiation(Func<InstantiationOpenBuilder, InstantiationOpenBuilder> configuration)
+    public InsertCommandOpenBuilder WithInstantiation(Func<InstantiationOpenBuilder, InstantiationOpenBuilder> configuration)
     {
         var instantiationBuilder = new InstantiationOpenBuilder(_onTableauId);
         _instantiation = Option<Instantiation>.Some(configuration(instantiationBuilder).Build());
@@ -58,7 +58,7 @@ internal class InsertCommandOpenBuilder
 /// <summary>
 /// Open builder for the instatiation clause
 /// </summary>
-internal class InstantiationOpenBuilder
+public class InstantiationOpenBuilder
 {
     private readonly string _onTableauId;
     private TabularData? _tabularDataToInsert;
@@ -78,7 +78,7 @@ internal class InstantiationOpenBuilder
     /// </summary>
     /// <param name="tabularData">Data to be inserted. <b>The attributes are qualified by their names.</b> Don't use attribute ids</param>
     /// <returns></returns>
-    internal InstantiationOpenBuilder WithValues(TabularData tabulardata)
+    public InstantiationOpenBuilder WithValues(TabularData tabulardata)
     {
         _tabularDataToInsert = tabulardata;
         return this;

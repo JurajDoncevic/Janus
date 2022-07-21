@@ -1,13 +1,10 @@
-﻿using Janus.Commons.CommandModels.JsonConversion;
-using Janus.Commons.SchemaModels;
-using System.Text.Json.Serialization;
+﻿using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.CommandModels;
 
 /// <summary>
 /// Describes a delete command
 /// </summary>
-[JsonConverter(typeof(DeleteCommandJsonConverter))]
 public class DeleteCommand : BaseCommand
 {
     private readonly Option<CommandSelection> _selection;

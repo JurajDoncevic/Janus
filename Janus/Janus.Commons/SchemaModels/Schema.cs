@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.ObjectModel;
+
 namespace Janus.Commons.SchemaModels;
 
 /// <summary>

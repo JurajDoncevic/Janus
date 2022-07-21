@@ -7,7 +7,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Builder class to internally construct an update command without validation on a data source
 /// </summary>
-internal class UpdateCommandOpenBuilder
+public class UpdateCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<Mutation> _mutation;
@@ -27,7 +27,7 @@ internal class UpdateCommandOpenBuilder
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <returns></returns>
-    internal static UpdateCommandOpenBuilder InitOpenUpdate(string onTableauId)
+    public static UpdateCommandOpenBuilder InitOpenUpdate(string onTableauId)
     {
         return new UpdateCommandOpenBuilder(onTableauId);
     }
@@ -37,7 +37,7 @@ internal class UpdateCommandOpenBuilder
     /// </summary>
     /// <param name="configuration">Mutation configuration</param>
     /// <returns></returns>
-    internal UpdateCommandOpenBuilder WithMutation(Func<MutationOpenBuilder, MutationOpenBuilder> configuration)
+    public UpdateCommandOpenBuilder WithMutation(Func<MutationOpenBuilder, MutationOpenBuilder> configuration)
     {
         var mutationBuilder = new MutationOpenBuilder();
 
@@ -51,7 +51,7 @@ internal class UpdateCommandOpenBuilder
     /// </summary>
     /// <param name="configuration">Selection configuration</param>
     /// <returns></returns>
-    internal UpdateCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
+    public UpdateCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
     {
         var selectionBuilder = new CommandSelectionOpenBuilder();
         _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());
@@ -64,7 +64,7 @@ internal class UpdateCommandOpenBuilder
     /// </summary>
     /// <returns></returns>
     /// <exception cref="MutationNotSetException"></exception>
-    internal UpdateCommand Build()
+    public UpdateCommand Build()
     {
         if (!_mutation)
             throw new MutationNotSetException();
@@ -78,7 +78,7 @@ internal class UpdateCommandOpenBuilder
 /// <summary>
 /// Mutation clause open builder
 /// </summary>
-internal class MutationOpenBuilder
+public class MutationOpenBuilder
 {
     private Option<Dictionary<string, object?>> _valueUpdates;
 
@@ -94,7 +94,7 @@ internal class MutationOpenBuilder
     /// </summary>
     /// <param name="valueUpdates">Attributes to update to values</param>
     /// <returns></returns>
-    internal MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
+    public MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
     {
         _valueUpdates = Option<Dictionary<string, object?>>.Some(valueUpdates);
         return this;
@@ -113,7 +113,7 @@ internal class MutationOpenBuilder
 /// <summary>
 /// Selection clause open builder
 /// </summary>
-internal class CommandSelectionOpenBuilder
+public class CommandSelectionOpenBuilder
 {
     private Option<SelectionExpression> _expression;
 
@@ -130,7 +130,7 @@ internal class CommandSelectionOpenBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    internal CommandSelectionOpenBuilder WithExpression(SelectionExpression expression!!)
+    public CommandSelectionOpenBuilder WithExpression(SelectionExpression expression!!)
     {
         _expression = Option<SelectionExpression>.Some(expression);
         return this;

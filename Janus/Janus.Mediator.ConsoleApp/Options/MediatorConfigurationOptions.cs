@@ -1,5 +1,7 @@
-﻿using Janus.Communication.Remotes;
+﻿using Janus.Commons;
+using Janus.Communication.Remotes;
 using Janus.Mediator.Core;
+using System.Text.Json.Serialization;
 
 namespace Janus.Mediator.ConsoleApp;
 public class MediatorConfigurationOptions
@@ -9,6 +11,9 @@ public class MediatorConfigurationOptions
     public int ListenPort { get; init; }
 
     public int TimeoutMs { get; init; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public CommunicationFormats CommunicationFormat { get; init; } = CommunicationFormats.AVRO;
 
     public List<RemotePointOptions> StartupRemotePoints { get; init; } = new();
 }
@@ -34,6 +39,7 @@ public static partial class ConfigurationOptionsExtensions
             options.NodeId,
             options.ListenPort,
             options.TimeoutMs,
+            options.CommunicationFormat,
             options.StartupRemotePoints
                    .Select(remotePointOptions =>
                         (RemotePoint) (remotePointOptions switch

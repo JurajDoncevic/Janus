@@ -3,7 +3,7 @@
 /// <summary>
 /// Builder class to internally construct a delete command without validation on a data source
 /// </summary>
-internal class DeleteCommandOpenBuilder
+public class DeleteCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<CommandSelection> _selection;
@@ -22,7 +22,7 @@ internal class DeleteCommandOpenBuilder
     /// Builds the specified delete command
     /// </summary>
     /// <returns></returns>
-    internal DeleteCommand Build()
+    public DeleteCommand Build()
         => new DeleteCommand(_onTableauId, _selection);
 
     /// <summary>
@@ -30,7 +30,7 @@ internal class DeleteCommandOpenBuilder
     /// </summary>
     /// <param name="onTableauId">Command's starting tableau</param>
     /// <returns></returns>
-    internal static DeleteCommandOpenBuilder InitOpenDelete(string onTableauId)
+    public static DeleteCommandOpenBuilder InitOpenDelete(string onTableauId)
     {
         return new DeleteCommandOpenBuilder(onTableauId);
     }
@@ -40,7 +40,7 @@ internal class DeleteCommandOpenBuilder
     /// </summary>
     /// <param name="configuration">Selection configuration</param>
     /// <returns></returns>
-    internal DeleteCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
+    public DeleteCommandOpenBuilder WithSelection(Func<CommandSelectionOpenBuilder, CommandSelectionOpenBuilder> configuration)
     {
         var selectionBuilder = new CommandSelectionOpenBuilder();
         _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());

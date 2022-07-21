@@ -1,13 +1,10 @@
-﻿
-using Janus.Commons.SchemaModels.JsonConversion;
-using System.Text.Json.Serialization;
+﻿using System.Collections.ObjectModel;
 
 namespace Janus.Commons.SchemaModels;
 
 /// <summary>
 /// Describes a data source
 /// </summary>
-[JsonConverter(typeof(DataSourceJsonConverter))]
 public sealed class DataSource
 {
     private readonly string _name;

@@ -1,13 +1,10 @@
-﻿using Janus.Commons.QueryModels.JsonConversion;
-using Janus.Commons.SchemaModels;
-using System.Text.Json.Serialization;
+﻿using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.QueryModels;
 
 /// <summary>
 /// Describes a query
 /// </summary>
-[JsonConverter(typeof(QueryJsonConverter))]
 public class Query
 {
     private Option<Projection> _projection;

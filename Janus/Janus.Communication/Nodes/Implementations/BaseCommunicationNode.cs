@@ -1,4 +1,5 @@
-﻿using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
+using Janus.Commons.Nodes;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Nodes.Events;

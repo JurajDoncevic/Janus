@@ -1,4 +1,5 @@
 ﻿using CommandLine.Text;
+using Janus.Commons;
 
 namespace Janus.Mediator.ConsoleApp.Options;
 public class CommandLineOptions
@@ -17,6 +18,9 @@ public class CommandLineOptions
 
     [CommandLine.Option('t', "timeout", HelpText = "Message timeout in milliseconds", SetName = "explicitConf")]
     public int TimeoutMs { get; init; }
+
+    [CommandLine.Option('f', "format", HelpText = "Communication format (AVRO, BSON)", SetName = "explicitConf")]
+    public CommunicationFormats Format { get; init; }
 
     [Usage(ApplicationAlias = "mediator")]
     public static IEnumerable<Example> Examples

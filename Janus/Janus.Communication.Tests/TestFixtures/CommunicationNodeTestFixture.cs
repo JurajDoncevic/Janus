@@ -1,15 +1,17 @@
-﻿using Janus.Commons.CommandModels;
-using Janus.Commons.DataModels;
-using Janus.Commons.QueryModels;
-using Janus.Commons.SchemaModels;
-using Janus.Communication.Nodes.Implementations;
+﻿using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Tests.Mocks;
 using Microsoft.Extensions.Configuration;
+using Janus.Commons.SchemaModels;
+using Janus.Commons.QueryModels;
+using Janus.Commons.DataModels;
+using Janus.Commons.CommandModels;
 using static Janus.Commons.SelectionExpressions.Expressions;
+using Janus.Serialization;
+using Janus.Serialization.Avro;
 
 namespace Janus.Communication.Tests.TestFixtures;
 
-public class CommunicationNodeTestFixture
+public abstract class CommunicationNodeTestFixture
 {
     private readonly IConfiguration _configuration;
 
@@ -21,6 +23,7 @@ public class CommunicationNodeTestFixture
     private readonly Dictionary<string, CommunicationNodeOptions> _mediatorCommunicationNodeOptions;
     private readonly Dictionary<string, CommunicationNodeOptions> _wrapperCommunicationNodeOptions;
 
+    public abstract IBytesSerializationProvider SerializationProvider { get; }
 
     public CommunicationNodeTestFixture()
     {
@@ -42,13 +45,13 @@ public class CommunicationNodeTestFixture
     }
 
     public MaskCommunicationNode GetMaskCommunicationNode(string nodeId)
-        => CommunicationNodes.CreateTcpMaskCommunicationNode(_maskCommunicationNodeOptions[nodeId]);
+        => CommunicationNodes.CreateTcpMaskCommunicationNode(_maskCommunicationNodeOptions[nodeId], SerializationProvider);
 
     public MediatorCommunicationNode GetMediatorCommunicationNode(string nodeId)
-        => CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions[nodeId]);
+        => CommunicationNodes.CreateTcpMediatorCommunicationNode(_mediatorCommunicationNodeOptions[nodeId], SerializationProvider);
 
     public WrapperCommunicationNode GetWrapperCommunicationNode(string nodeId)
-        => CommunicationNodes.CreateTcpWrapperCommunicationNode(_wrapperCommunicationNodeOptions[nodeId]);
+        => CommunicationNodes.CreateTcpWrapperCommunicationNode(_wrapperCommunicationNodeOptions[nodeId], SerializationProvider);
 
     private (
         IEnumerable<CommunicationNodeOptions> maskNodeOptions,
@@ -88,7 +91,7 @@ public class CommunicationNodeTestFixture
     public MediatorCommunicationNode GetUnresponsiveMediator()
     => CommunicationNodes.CreateMediatorCommunicationNode(
         MediatorCommunicationNodeOptions["MediatorUnresponsive"],
-        new AlwaysTimeoutTcpNetworkAdapter(MediatorCommunicationNodeOptions["MediatorUnresponsive"].ListenPort)
+        new AlwaysTimeoutTcpNetworkAdapter(MediatorCommunicationNodeOptions["MediatorUnresponsive"].ListenPort, SerializationProvider)
         );
 
     public DataSource GetSchema()

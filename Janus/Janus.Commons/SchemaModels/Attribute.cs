@@ -1,5 +1,4 @@
-﻿
-namespace Janus.Commons.SchemaModels;
+﻿namespace Janus.Commons.SchemaModels;
 
 /// <summary>
 /// Describes an attribute

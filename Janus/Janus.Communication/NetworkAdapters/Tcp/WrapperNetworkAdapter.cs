@@ -1,7 +1,8 @@
-﻿using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.NetworkAdapters.Exceptions;
 using Janus.Communication.Remotes;
+using Janus.Serialization;
 using Janus.Utils.Logging;
 
 namespace Janus.Communication.NetworkAdapters.Tcp;
@@ -13,7 +14,7 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
     /// Constructor
     /// </summary>
     /// <param name="listenPort">TCP listening port</param>
-    internal WrapperNetworkAdapter(int listenPort, ILogger? logger) : base(listenPort, logger)
+    internal WrapperNetworkAdapter(int listenPort, IBytesSerializationProvider serializationProvider, ILogger? logger) : base(listenPort, serializationProvider, logger)
     {
         _logger = logger?.ResolveLogger<WrapperNetworkAdapter>();
     }
@@ -25,9 +26,9 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
     public override Result<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
-            Preambles.SCHEMA_REQUEST => MessageExtensions.ToSchemaReqMessage(messageBytes).Map(_ => (BaseMessage)_),
-            Preambles.QUERY_REQUEST => MessageExtensions.ToQueryReqMessage(messageBytes).Map(_ => (BaseMessage)_),
-            Preambles.COMMAND_REQUEST => MessageExtensions.ToCommandReqMessage(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.SCHEMA_REQUEST => _serializationProvider.SchemaReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.QUERY_REQUEST => _serializationProvider.QueryReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.COMMAND_REQUEST => _serializationProvider.CommandReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
             _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
         };
 
@@ -54,14 +55,17 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
     }
 
     public async Task<Result> SendCommandResponse(CommandResMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.CommandResMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
 
     public async Task<Result> SendQueryResponse(QueryResMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.QueryResMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
 
     public async Task<Result> SendSchemaResponse(SchemaResMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.SchemaResMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
 }

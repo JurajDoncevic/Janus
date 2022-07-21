@@ -1,4 +1,6 @@
-﻿using Janus.Commons.QueryModels.Exceptions;
+﻿
+
+using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.CommandModels;

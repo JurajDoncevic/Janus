@@ -1,13 +1,10 @@
-﻿using Janus.Commons.CommandModels.JsonConversion;
-using Janus.Commons.SchemaModels;
-using System.Text.Json.Serialization;
+﻿using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.CommandModels;
 
 /// <summary>
 /// Describes an update command
 /// </summary>
-[JsonConverter(typeof(UpdateCommandJsonConverter))]
 public class UpdateCommand : BaseCommand
 {
     private readonly Mutation _mutation;

@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Janus.Commons;
 using Janus.Communication;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.NetworkAdapters.Tcp;
@@ -8,6 +9,9 @@ using Janus.Communication.Remotes;
 using Janus.Mediator.ConsoleApp;
 using Janus.Mediator.ConsoleApp.Options;
 using Janus.Mediator.Core;
+using Janus.Serialization;
+using Janus.Serialization.Avro;
+using Janus.Serialization.Bson;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -68,8 +72,17 @@ IHost host = Host.CreateDefaultBuilder(args)
                                     .Get<ApplicationConfigurationOptions>()
                                     .ToApplicationOptions();
 
+
+
         services.AddSingleton<IConfiguration>(hostContext.Configuration);
         services.AddSingleton<Janus.Utils.Logging.ILogger, Janus.Utils.Logging.Logger>();
+        services.AddSingleton<IBytesSerializationProvider>(
+            mediatorOptions.CommunicationFormat switch
+            {
+                CommunicationFormats.AVRO => new AvroSerializationProvider(),
+                CommunicationFormats.BSON => new BsonSerializationProvider(),
+                _ => new AvroSerializationProvider()
+            });
         services.AddSingleton<MediatorCommunicationNode>(serviceProvider =>
             CommunicationNodes.CreateTcpMediatorCommunicationNode(
                 new Janus.Communication.Nodes.CommunicationNodeOptions(
@@ -77,6 +90,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                     mediatorOptions.ListenPort,
                     mediatorOptions.TimeoutMs
                     ),
+                serviceProvider.GetService<IBytesSerializationProvider>()!,
                 serviceProvider.GetService<Janus.Utils.Logging.ILogger>()
                 )
             );

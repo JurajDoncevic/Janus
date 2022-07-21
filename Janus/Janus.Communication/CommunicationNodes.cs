@@ -1,6 +1,7 @@
 ﻿using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes;
 using Janus.Communication.Nodes.Implementations;
+using Janus.Serialization;
 using Janus.Utils.Logging;
 using TcpAdapters = Janus.Communication.NetworkAdapters.Tcp;
 
@@ -15,10 +16,11 @@ public static class CommunicationNodes
     /// <returns></returns>
     public static MaskCommunicationNode CreateTcpMaskCommunicationNode(
         CommunicationNodeOptions options!!,
+        IBytesSerializationProvider serializationProvider!!,
         ILogger? logger = null)
         => new MaskCommunicationNode(
             options,
-            new TcpAdapters.MaskNetworkAdapter(options.ListenPort, logger),
+            new TcpAdapters.MaskNetworkAdapter(options.ListenPort, serializationProvider, logger),
             logger);
 
     /// <summary>
@@ -28,10 +30,11 @@ public static class CommunicationNodes
     /// <returns></returns>
     public static MediatorCommunicationNode CreateTcpMediatorCommunicationNode(
         CommunicationNodeOptions options!!,
+        IBytesSerializationProvider serializationProvider!!,
         ILogger? logger = null)
         => new MediatorCommunicationNode(
             options,
-            new TcpAdapters.MediatorNetworkAdapter(options.ListenPort, logger), 
+            new TcpAdapters.MediatorNetworkAdapter(options.ListenPort, serializationProvider, logger),
             logger);
 
     /// <summary>
@@ -41,10 +44,11 @@ public static class CommunicationNodes
     /// <returns></returns>
     public static WrapperCommunicationNode CreateTcpWrapperCommunicationNode(
         CommunicationNodeOptions options!!,
+        IBytesSerializationProvider serializationProvider!!,
         ILogger? logger = null)
         => new WrapperCommunicationNode(
             options,
-            new TcpAdapters.WrapperNetworkAdapter(options.ListenPort, logger),
+            new TcpAdapters.WrapperNetworkAdapter(options.ListenPort, serializationProvider, logger),
             logger);
 
 

@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

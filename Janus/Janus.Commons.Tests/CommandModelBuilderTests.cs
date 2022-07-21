@@ -327,66 +327,7 @@ public class CommandModelBuilderTests
         Assert.False(result);
     }
 
-    [Fact(DisplayName = "Round-trip serialize an update command")]
-    public void SerializeAndDeserializeUpdateCommand()
-    {
-        var dataSource = GetSchemaModel();
-        var tableauId = dataSource["schema1"]["tableau1"].Id;
-        var valueUpdates = new Dictionary<string, object>() { { "attr2", "TEST_STRING_MOD" }, { "attr3", 1.0 } };
 
-        var updateCommand =
-            UpdateCommandOpenBuilder.InitOpenUpdate(tableauId)
-                                .WithMutation(conf => conf.WithValues(valueUpdates))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
-                                .Build();
-
-        var json = System.Text.Json.JsonSerializer.Serialize(updateCommand);
-        var deserializedUpdate = System.Text.Json.JsonSerializer.Deserialize<UpdateCommand>(json);
-
-        Assert.Equal(updateCommand, deserializedUpdate);
-    }
-
-    [Fact(DisplayName = "Round-trip serialize an update command with a null value")]
-    public void SerializeAndDeserializeUpdateCommandWithNullValue()
-    {
-        var dataSource = GetSchemaModel();
-        var tableauId = dataSource["schema1"]["tableau1"].Id;
-        var valueUpdates = new Dictionary<string, object>() { { "attr2", null }, { "attr3", 1.0 } };
-
-        var updateCommand =
-            UpdateCommandOpenBuilder.InitOpenUpdate(tableauId)
-                                .WithMutation(conf => conf.WithValues(valueUpdates))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
-                                .Build();
-
-        var json = System.Text.Json.JsonSerializer.Serialize(updateCommand);
-        var deserializedUpdate = System.Text.Json.JsonSerializer.Deserialize<UpdateCommand>(json);
-
-        Assert.Equal(updateCommand, deserializedUpdate);
-
-    }
-
-    [Fact(DisplayName = "Round-trip serialize an insert command")]
-    public void SerializeAndDeserializeInsertCommand()
-    {
-        var dataSource = GetSchemaModel();
-        var tableauId = dataSource["schema1"]["tableau1"].Id;
-        var dataToInsert =
-            TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
-                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
-                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 }, { "attr4", 1 } }))
-                              .Build();
-
-        var insertCommand =
-            InsertCommandBuilder.InitOnDataSource(tableauId, dataSource)
-                                .WithInstantiation(conf => conf.WithValues(dataToInsert))
-                                .Build();
-
-        var json = System.Text.Json.JsonSerializer.Serialize(insertCommand);
-        var deserializedInsert = System.Text.Json.JsonSerializer.Deserialize<InsertCommand>(json);
-
-        Assert.Equal(insertCommand, deserializedInsert);
-    }
 
     [Fact(DisplayName = "Construct a valid delete command")]
     public void CreateValidDeleteCommand()
@@ -450,23 +391,5 @@ public class CommandModelBuilderTests
         Assert.Equal(tableauId, deleteCommand.OnTableauId);
         Assert.True(deleteCommand.Selection);
         Assert.True(deleteCommand.IsValidForDataSource(dataSource));
-    }
-
-    [Fact(DisplayName = "Round-trip serialize a delete command")]
-    public void SerializeAndDeserializeDeleteCommand()
-    {
-        var dataSource = GetSchemaModel();
-        var tableauId = dataSource["schema1"]["tableau1"].Id;
-
-        var deleteCommand =
-            DeleteCommandOpenBuilder
-                .InitOpenDelete(tableauId)
-                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
-                .Build();
-
-        var json = System.Text.Json.JsonSerializer.Serialize(deleteCommand);
-        var deserializedDelete = System.Text.Json.JsonSerializer.Deserialize<DeleteCommand>(json);
-
-        Assert.Equal(deleteCommand, deserializedDelete);
     }
 }

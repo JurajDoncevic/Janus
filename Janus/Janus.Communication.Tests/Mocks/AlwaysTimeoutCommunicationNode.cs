@@ -1,4 +1,5 @@
-﻿using Janus.Communication.NetworkAdapters;
+﻿using Janus.Commons.Nodes;
+using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Implementations;
 
 namespace Janus.Communication.Tests.Mocks;

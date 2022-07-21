@@ -3,6 +3,7 @@
     "NodeId": "DebugMediatorNode1",
     "ListenPort": 20001,
     "TimeoutMs": 5000,
+    "CommunicationFormat": "AVRO",
     "StartupRemotePoints": [
       {
         "NodeType": "MASK",

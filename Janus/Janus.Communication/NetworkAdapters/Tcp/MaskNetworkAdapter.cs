@@ -1,7 +1,8 @@
-﻿using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.NetworkAdapters.Exceptions;
 using Janus.Communication.Remotes;
+using Janus.Serialization;
 using Janus.Utils.Logging;
 
 namespace Janus.Communication.NetworkAdapters.Tcp;
@@ -14,7 +15,7 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
     /// Constructor
     /// </summary>
     /// <param name="listenPort">TCP listening port</param>
-    internal MaskNetworkAdapter(int listenPort, ILogger? logger = null) : base(listenPort, logger)
+    internal MaskNetworkAdapter(int listenPort, IBytesSerializationProvider serializationProvider, ILogger? logger = null) : base(listenPort, serializationProvider, logger)
     {
         _logger = logger?.ResolveLogger<MaskNetworkAdapter>();
     }
@@ -26,9 +27,9 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
     public override Result<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
-            Preambles.SCHEMA_RESPONSE => MessageExtensions.ToSchemaResMessage(messageBytes).Map(_ => (BaseMessage)_),
-            Preambles.QUERY_RESPONSE => MessageExtensions.ToQueryResMessage(messageBytes).Map(_ => (BaseMessage)_),
-            Preambles.COMMAND_RESPONSE => MessageExtensions.ToCommandResMessage(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.SCHEMA_RESPONSE => _serializationProvider.SchemaResMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.QUERY_RESPONSE => _serializationProvider.QueryResMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.COMMAND_RESPONSE => _serializationProvider.CommandResMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
             _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
         };
 
@@ -55,14 +56,17 @@ public sealed class MaskNetworkAdapter : NetworkAdapter, IMaskNetworkAdapter
     }
 
     public async Task<Result> SendCommandRequest(CommandReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.CommandReqMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
 
     public async Task<Result> SendQueryRequest(QueryReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.QueryReqMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
 
     public async Task<Result> SendSchemaRequest(SchemaReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(r => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.SchemaReqMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
 }

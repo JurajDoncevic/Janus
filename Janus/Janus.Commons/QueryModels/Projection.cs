@@ -1,5 +1,4 @@
-﻿
-namespace Janus.Commons.QueryModels;
+﻿namespace Janus.Commons.QueryModels;
 
 /// <summary>
 /// Describes a projection clause

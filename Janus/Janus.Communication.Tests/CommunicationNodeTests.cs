@@ -1,5 +1,4 @@
-﻿
-using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
 using Janus.Communication.Tests.TestFixtures;
@@ -7,11 +6,11 @@ using Xunit;
 
 namespace Janus.Communication.Tests;
 
-public class CommunicationNodeTests : IClassFixture<CommunicationNodeTestFixture>
+public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture> where TFixture : CommunicationNodeTestFixture
 {
     private readonly CommunicationNodeTestFixture _testFixture;
 
-    public CommunicationNodeTests(CommunicationNodeTestFixture testFixture)
+    protected CommunicationNodeTests(TFixture testFixture)
     {
         _testFixture = testFixture;
     }

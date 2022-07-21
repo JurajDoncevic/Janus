@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AvroConvert" Version="3.2.9" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Janus.Serialization\Janus.Serialization.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,6 +1,7 @@
-﻿using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Remotes;
+using Janus.Serialization;
 using Janus.Utils.Logging;
 using System.Net;
 using System.Net.Sockets;
@@ -16,6 +17,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     protected readonly int _listenPort;
     protected readonly CancellationTokenSource _cancellationTokenSource;
     protected Task? _listenerTask;
+    protected IBytesSerializationProvider _serializationProvider;
 
     private readonly ILogger<NetworkAdapter>? _logger;
 
@@ -23,9 +25,10 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// Constructor
     /// </summary>
     /// <param name="listenPort"></param>
-    protected NetworkAdapter(int listenPort, ILogger? logger = null)
+    protected NetworkAdapter(int listenPort, IBytesSerializationProvider serializationProvider, ILogger? logger = null)
     {
         _logger = logger?.ResolveLogger<NetworkAdapter>();
+        _serializationProvider = serializationProvider;
         _listenPort = listenPort;
         _tcpListener = new TcpListener(System.Net.IPAddress.Any, listenPort);
         _cancellationTokenSource = new CancellationTokenSource();
@@ -100,7 +103,7 @@ public abstract class NetworkAdapter : INetworkAdapter
                 client.GetStream().Read(messageBytes, 0, countBytes);
                 var str = Encoding.UTF8.GetString(messageBytes, 0, countBytes);
                 // determine message type and raise event
-                messageBytes.DeterminePreambule()
+                _serializationProvider.DetermineMessagePreamble(messageBytes)
                             .Bind<string, BaseMessage>(_ => BuildMessage(_, messageBytes))
                             .Map(_ => { RaiseMessageReceivedEvent(_, ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()); return _; });
             }
@@ -131,8 +134,11 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        =>  await Task.FromResult(_serializationProvider.HelloReqMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
+    //=> await SendMessageBytes(message.ToBson(), remotePoint)
+    //    .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     /// <summary>
     /// Sends a HELLO_RES message to the remote point
@@ -141,8 +147,9 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.HelloResMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
 
     #endregion
 
@@ -154,8 +161,9 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendByeRequest(ByeReqMessage message, RemotePoint remotePoint)
-        => await SendMessageBytes(message.ToBson(), remotePoint)
-            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
+        => await Task.FromResult(_serializationProvider.ByeReqMessageSerializer.Serialize(message))
+            .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
+                                            .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
     #endregion
 
     /// <summary>
@@ -202,9 +210,9 @@ public abstract class NetworkAdapter : INetworkAdapter
     private Result<BaseMessage> BuildMessage(string preambule, byte[] messageBytes)
         => preambule switch
         {
-            Preambles.HELLO_REQUEST => MessageExtensions.ToHelloReqMessage(messageBytes).Map(_ => (BaseMessage)_),
-            Preambles.HELLO_RESPONSE => MessageExtensions.ToHelloResMessage(messageBytes).Map(_ => (BaseMessage)_),
-            Preambles.BYE_REQUEST => MessageExtensions.ToByeReqMessage(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.HELLO_REQUEST => _serializationProvider.HelloReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.HELLO_RESPONSE => _serializationProvider.HelloResMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
+            Preambles.BYE_REQUEST => _serializationProvider.ByeReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
             _ => BuildSpecializedMessage(preambule, messageBytes)
         };
 
@@ -217,9 +225,9 @@ public abstract class NetworkAdapter : INetworkAdapter
     public abstract Result<BaseMessage> BuildSpecializedMessage(string preambule, byte[] messageBytes);
 
     /// <summary>
-    /// Sends bytes of a message (BSON) to a remote point over TCP
+    /// Sends bytes of a message to a remote point over TCP
     /// </summary>
-    /// <param name="messageBytes">BSON message</param>
+    /// <param name="messageBytes">Message serialized to bytes</param>
     /// <param name="remotePoint">Destination temote point</param>
     /// <returns>Result</returns>
     protected async Task<Result> SendMessageBytes(byte[] messageBytes, RemotePoint remotePoint)

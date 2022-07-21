@@ -1,5 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
-using Janus.Commons.CommandModels;
+﻿using Janus.Commons.CommandModels;
 
 namespace Janus.Components;
 

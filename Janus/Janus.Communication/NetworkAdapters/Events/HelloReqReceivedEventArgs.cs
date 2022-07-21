@@ -1,4 +1,4 @@
-﻿using Janus.Communication.Messages;
+﻿using Janus.Commons.Messages;
 
 namespace Janus.Communication.NetworkAdapters.Events;
 

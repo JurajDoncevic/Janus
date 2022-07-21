@@ -1,5 +1,5 @@
-﻿using Janus.Commons.QueryModels.Exceptions;
-using Janus.Commons.SelectionExpressions;
+﻿using Janus.Commons.SelectionExpressions;
+using Janus.Commons.QueryModels.Exceptions;
 
 namespace Janus.Commons.QueryModels;
 
@@ -8,7 +8,7 @@ namespace Janus.Commons.QueryModels;
 /// <summary>
 /// Determines what declarations can be made after an open query initialization
 /// </summary>
-internal interface IPostInitOpenBuilder
+public interface IPostInitOpenBuilder
 {
     /// <summary>
     /// Specifies a joining clause of the query
@@ -39,7 +39,7 @@ internal interface IPostInitOpenBuilder
 }
 #endregion
 
-internal class QueryModelOpenBuilder : IPostInitOpenBuilder
+public class QueryModelOpenBuilder : IPostInitOpenBuilder
 {
     private Option<Projection> _projection;
     private Option<Selection> _selection;
@@ -66,7 +66,7 @@ internal class QueryModelOpenBuilder : IPostInitOpenBuilder
     /// <param name="onTableauId">Id of tableau on which the query is initialized</param>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <returns>QueryOpenModelBuilder</returns>
-    internal static QueryModelOpenBuilder InitOpenQuery(string onTableauId!!)
+    public static QueryModelOpenBuilder InitOpenQuery(string onTableauId!!)
     {
         return new QueryModelOpenBuilder(onTableauId);
     }
@@ -132,7 +132,7 @@ internal class QueryModelOpenBuilder : IPostInitOpenBuilder
 /// <summary>
 /// Builder class for query selection
 /// </summary>
-internal class SelectionOpenBuilder
+public class SelectionOpenBuilder
 {
     private SelectionExpression _expression;
     internal bool IsConfigured => _expression != null;
@@ -150,7 +150,7 @@ internal class SelectionOpenBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    internal SelectionOpenBuilder WithExpression(SelectionExpression expression!!)
+    public SelectionOpenBuilder WithExpression(SelectionExpression expression!!)
     {
         _expression = expression;
         return this;
@@ -169,7 +169,7 @@ internal class SelectionOpenBuilder
 /// <summary>
 /// Builder class for query projection
 /// </summary>
-internal class ProjectionOpenBuilder
+public class ProjectionOpenBuilder
 {
     private HashSet<string> _projectionAttributes;
 
@@ -188,7 +188,7 @@ internal class ProjectionOpenBuilder
     /// </summary>
     /// <param name="attributeId">Attribute id</param>
     /// <returns>ProjectionBuilder</returns>
-    internal ProjectionOpenBuilder AddAttribute(string attributeId)
+    public ProjectionOpenBuilder AddAttribute(string attributeId)
     {
         _projectionAttributes.Add(attributeId);
 
@@ -208,7 +208,7 @@ internal class ProjectionOpenBuilder
 /// <summary>
 /// Builder class for query joins
 /// </summary>
-internal class JoiningOpenBuilder
+public class JoiningOpenBuilder
 {
     private Joining _joining;
 
@@ -226,7 +226,7 @@ internal class JoiningOpenBuilder
     /// Adds a join to the joining clause
     /// </summary>
     /// <returns></returns>
-    internal JoiningOpenBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
+    public JoiningOpenBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
     {
         // check if given ids are ok
         if (!foreignKeyAttributeId.Contains('.'))
