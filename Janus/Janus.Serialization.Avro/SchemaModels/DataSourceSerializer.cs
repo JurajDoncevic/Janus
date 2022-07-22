@@ -23,7 +23,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
         {
             var deserializedModel = AvroConvert.DeserializeHeadless<DataSourceDto>(serialized, _schema);
 
-            var dataSource = FromDto(deserializedModel).Data!;
+            var dataSource = FromDto(deserializedModel);
 
             return dataSource;
         });

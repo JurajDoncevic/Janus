@@ -24,7 +24,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
         {
             var deserializedModel = AvroConvert.DeserializeHeadless<QueryDto>(serialized, _schema);
 
-            var query = FromDto(deserializedModel).Data!;
+            var query = FromDto(deserializedModel);
 
             return query;
         });
@@ -38,7 +38,9 @@ public class QuerySerializer : IQuerySerializer<byte[]>
         => ResultExtensions.AsResult(() =>
         {
             QueryDto? queryDto = ToDto(query).Data;
-            return AvroConvert.SerializeHeadless(queryDto, _schema);
+
+            return ToDto(query)
+            .Map(queryDto => AvroConvert.SerializeHeadless(queryDto, _schema));
         });
 
     /// <summary>
@@ -50,7 +52,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
         => ResultExtensions.AsResult(() =>
         {
             if (queryDto == null)
-                throw new Exception("Deserialization of QueryDTO failed");
+                return Result<Query>.OnException(new Exception("Deserialization of QueryDTO failed"));
 
             var query =
                 QueryModelOpenBuilder.InitOpenQuery(queryDto.OnTableauId)
