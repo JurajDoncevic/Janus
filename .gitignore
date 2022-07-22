@@ -366,3 +366,6 @@ FodyWeavers.xsd
 /Janus/Janus.Wrapper.CsvFiles.Tests/DataSet/CerealSchema
 /Janus/Janus.Wrapper.CsvFiles.Tests/DataSet/CarsSchema
 /Janus/Janus.Wrapper.CsvFiles.ConsoleApp/DataSet
+
+# ignore class diagram files
+*.cd
