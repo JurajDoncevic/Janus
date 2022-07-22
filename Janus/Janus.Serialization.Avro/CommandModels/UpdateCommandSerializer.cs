@@ -21,17 +21,8 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
     /// <param name="serialized">Serialized update command</param>
     /// <returns>Deserialized update command</returns>
     public Result<UpdateCommand> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var updateCommandDto = AvroConvert.DeserializeHeadless<UpdateCommandDto>(serialized, _schema);
-
-            if (updateCommandDto == null)
-                throw new Exception("Deserialization of UpdateCommandDto failed");
-
-            var updateCommand = FromDto(updateCommandDto).Data!;
-
-            return updateCommand;
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<UpdateCommandDto>(serialized, _schema))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes an update command
@@ -39,11 +30,10 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
     /// <param name="command">Update command to serialize</param>
     /// <returns>Serialized update command</returns>
     public Result<byte[]> Serialize(UpdateCommand command)
-        => ResultExtensions.AsResult(() =>
-        {
-            var updateCommandDto = ToDto(command).Data!;
-            return AvroConvert.SerializeHeadless(updateCommandDto, _schema);
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(command)
+                .Map(updateCommandDto => AvroConvert.SerializeHeadless(updateCommandDto, _schema))
+        );
 
     /// <summary>
     /// Converts an update command to its DTO

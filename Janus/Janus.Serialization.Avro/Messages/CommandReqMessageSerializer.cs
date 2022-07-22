@@ -42,7 +42,7 @@ public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage,
                     command
                     ));
 
-            return commandCreation.Data!;
+            return commandCreation;
         });
 
     /// <summary>

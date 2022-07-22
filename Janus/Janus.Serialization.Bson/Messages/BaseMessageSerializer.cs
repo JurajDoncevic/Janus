@@ -17,9 +17,7 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <returns>Deserialized base message</returns>
     public Result<BaseMessage> Deserialize(byte[] serialized)
         => ResultExtensions.AsResult(() =>
-        {
-            return JsonSerializer.Deserialize<BaseMessage>(serialized)!;
-        });
+            JsonSerializer.Deserialize<BaseMessage>(serialized) ?? throw new Exception("Failed to deserialize message DTO"));
 
     /// <summary>
     /// Serializes a base message
@@ -27,11 +25,6 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <param name="message">Base message to serialize</param>
     /// <returns>Serialized base message</returns>
     public Result<byte[]> Serialize(BaseMessage message)
-        => ResultExtensions.AsResult(() =>
-        {
-            var json = JsonSerializer.Serialize(message);
-            var messageBytes = Encoding.UTF8.GetBytes(json);
-
-            return messageBytes;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Serialize(message))
+            .Map(Encoding.UTF8.GetBytes);           
 }

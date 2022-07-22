@@ -29,21 +29,14 @@ public class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, s
     /// <param name="serialized">Serialized SCHEMA_RES</param>
     /// <returns>Deserialized SCHEMA_RES</returns>
     public Result<SchemaResMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var schemaResMessageDto = JsonSerializer.Deserialize<SchemaResMessageDto>(serialized, _serializerOptions);
-
-            if (schemaResMessageDto == null)
-                throw new Exception("Failed to deserialize SCHEMA_RES DTO");
-
-            var dataSource = _dataSourceSerializer.FromDto(schemaResMessageDto.DataSource).Data!;
-
-            return new SchemaResMessage(
-                    schemaResMessageDto.ExchangeId,
-                    schemaResMessageDto.NodeId,
-                    dataSource
-                );
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<SchemaResMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+            .Bind(schemaResMessageDto
+                => _dataSourceSerializer.FromDto(schemaResMessageDto.DataSource)
+                    .Map(dataSource
+                        => new SchemaResMessage(
+                        schemaResMessageDto.ExchangeId,
+                        schemaResMessageDto.NodeId,
+                        dataSource)));
 
     /// <summary>
     /// Serializes a SCHEMA_RES message

@@ -20,17 +20,14 @@ public class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, b
     /// <param name="serialized">Serialized SCHEMA_RES</param>
     /// <returns>Deserialized SCHEMA_RES</returns>
     public Result<SchemaResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<SchemaResMessageDto>(serialized, _schema);
-
-            var dataSource = _dataSourceSerializer.FromDto(deserializedModel.DataSource);
-            return new SchemaResMessage(
-                deserializedModel.ExchangeId,
-                deserializedModel.NodeId,
-                dataSource.Data!
-                );
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<SchemaResMessageDto>(serialized, _schema))
+            .Bind(schemaResMessageDto =>
+                _dataSourceSerializer.FromDto(schemaResMessageDto.DataSource)
+                    .Map(dataSource =>
+                        new SchemaResMessage(
+                            schemaResMessageDto.ExchangeId,
+                            schemaResMessageDto.NodeId,
+                            dataSource)));
 
     /// <summary>
     /// Serializes a SCHEMA_RES message

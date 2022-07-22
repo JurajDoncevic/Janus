@@ -20,23 +20,16 @@ public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byt
     /// <param name="serialized">Serialized QUERY_RES</param>
     /// <returns>Deserialized QUERY_RES</returns>
     public Result<QueryResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<QueryResMessageDto>(serialized, _schema);
-
-            var tabularData = _tabularDataSerializer.FromDto(deserializedModel.TabularData!).Data;
-
-            var queryMessage = new QueryResMessage(
-                deserializedModel.ExchangeId,
-                deserializedModel.NodeId,
-                tabularData,
-                deserializedModel.ErrorMessage,
-                deserializedModel.BlockNumber,
-                deserializedModel.TotalBlocks
-                );
-
-            return queryMessage;
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<QueryResMessageDto>(serialized, _schema))
+            .Bind(queryResMessageDto => _tabularDataSerializer.FromDto(queryResMessageDto.TabularData)
+                .Map(tabularData =>
+                    new QueryResMessage(
+                        queryResMessageDto.ExchangeId,
+                        queryResMessageDto.NodeId,
+                        tabularData,
+                        queryResMessageDto.ErrorMessage,
+                        queryResMessageDto.BlockNumber,
+                        queryResMessageDto.TotalBlocks)));
 
     /// <summary>
     /// Serializes a QUERY_RES message

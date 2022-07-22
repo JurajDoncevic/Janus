@@ -32,17 +32,8 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
     /// <param name="serialized">Serialized insert command</param>
     /// <returns>Deserialized insert command</returns>
     public Result<InsertCommand> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var json = Encoding.UTF8.GetString(serialized);
-            var insertDto = JsonSerializer.Deserialize<InsertCommandDto>(serialized, _serializerOptions);
-            if (insertDto == null)
-                throw new Exception("Deserialization of InsertCommandDto failed");
-
-            var insertCommand = FromDto(insertDto).Data!;
-
-            return insertCommand;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<InsertCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize InsertCommandDTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes an insert command
@@ -50,15 +41,10 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
     /// <param name="command">Insert command to serialize</param>
     /// <returns>Serialized insert command</returns>
     public Result<byte[]> Serialize(InsertCommand command)
-        => ResultExtensions.AsResult(() =>
-        {
-            var insertDto = ToDto(command).Data!;
-
-            var json = JsonSerializer.Serialize(insertDto);
-            var bson = Encoding.UTF8.GetBytes(json);
-
-            return bson;
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(command)
+                .Map(insertDto => JsonSerializer.Serialize(insertDto, _serializerOptions))
+                .Map(Encoding.UTF8.GetBytes));
 
     /// <summary>
     /// Converts an insert command to its DTO

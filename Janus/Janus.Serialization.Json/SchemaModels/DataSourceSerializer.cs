@@ -30,19 +30,8 @@ public class DataSourceSerializer : IDataSourceSerializer<string>
     /// <param name="serialized">Serialized data source</param>
     /// <returns>Deserialized data source</returns>
     public Result<DataSource> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var dataSourceDto = JsonSerializer.Deserialize<DataSourceDto>(serialized, _serializerOptions);
-
-            if (dataSourceDto == null)
-                throw new Exception("Deserialization of DataSourceDTO failed");
-            if (dataSourceDto == null)
-                throw new Exception("Deserialization of DataSourceDTO failed");
-
-            var dataSource = FromDto(dataSourceDto).Data!;
-
-            return dataSource;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<DataSourceDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes a data source
@@ -50,13 +39,9 @@ public class DataSourceSerializer : IDataSourceSerializer<string>
     /// <param name="dataSource">Data source to serialize</param>
     /// <returns>Serialized data source</returns>
     public Result<string> Serialize(DataSource dataSource)
-        => ResultExtensions.AsResult(() =>
-        {
-            DataSourceDto dataSourceDTO = ToDto(dataSource).Data!;
-            var json = JsonSerializer.Serialize<DataSourceDto>(dataSourceDTO, _serializerOptions);
-
-            return json;
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(dataSource)
+                .Map(dataSourceDto => JsonSerializer.Serialize(dataSourceDto, _serializerOptions)));
 
     /// <summary>
     /// Converts a data source schema model to its DTO

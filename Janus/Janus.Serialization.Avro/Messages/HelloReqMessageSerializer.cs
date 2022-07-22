@@ -18,17 +18,14 @@ public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byt
     /// <param name="serialized">Serialized HELLO_REQ</param>
     /// <returns>Deserialized HELLO_REQ</returns>
     public Result<HelloReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<HelloReqMessageDto>(serialized, _schema);
-
-            return new HelloReqMessage(
-                deserializedModel.ExchangeId,
-                deserializedModel.NodeId,
-                deserializedModel.ListenPort,
-                deserializedModel.NodeType,
-                deserializedModel.RememberMe);
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<HelloReqMessageDto>(serialized, _schema))
+            .Map(helloReqMessageDto =>
+                new HelloReqMessage(
+                    helloReqMessageDto.ExchangeId,
+                    helloReqMessageDto.NodeId,
+                    helloReqMessageDto.ListenPort,
+                    helloReqMessageDto.NodeType,
+                    helloReqMessageDto.RememberMe));
 
     /// <summary>
     /// Serializes a HELLO_REQ message
@@ -38,7 +35,16 @@ public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byt
     public Result<byte[]> Serialize(HelloReqMessage message)
         => ResultExtensions.AsResult(() =>
         {
-            return AvroConvert.SerializeHeadless(message, _schema);
+            var helloReqMessageDto = new HelloReqMessageDto
+            {
+                Preamble = message.Preamble,
+                ExchangeId = message.ExchangeId,
+                NodeId = message.NodeId,
+                ListenPort = message.ListenPort,
+                NodeType = message.NodeType,
+                RememberMe = message.RememberMe
+            };
+            return AvroConvert.SerializeHeadless(helloReqMessageDto, _schema);
         });
         
 }

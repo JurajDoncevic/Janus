@@ -28,17 +28,8 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="serialized">Serialized delete command</param>
     /// <returns>Deserialized delete command</returns>
     public Result<DeleteCommand> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deleteDto = JsonSerializer.Deserialize<DeleteCommandDto>(serialized, _serializerOptions);
-
-            if (deleteDto == null)
-                throw new Exception("Deserialization of DeleteCommandDto failed");
-
-            var deleteCommand = FromDto(deleteDto).Data!;
-
-            return deleteCommand;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<DeleteCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize DeleteCommandDTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes a delete command
@@ -46,15 +37,10 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="command">Delete command to serialize</param>
     /// <returns>Serialized delete command</returns>
     public Result<byte[]> Serialize(DeleteCommand command)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deleteDto = ToDto(command).Data!;
-
-            var json = JsonSerializer.Serialize(deleteDto, _serializerOptions);
-            var bson = Encoding.UTF8.GetBytes(json);
-
-            return bson;
-        });
+        => ResultExtensions.AsResult(() 
+            => ToDto(command)
+                .Map(deleteDto => JsonSerializer.Serialize(deleteDto, _serializerOptions))
+                .Map(Encoding.UTF8.GetBytes));
 
     /// <summary>
     /// Converts a delete command to a DTO

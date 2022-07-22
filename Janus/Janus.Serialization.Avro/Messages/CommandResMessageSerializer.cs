@@ -19,20 +19,13 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <param name="serialized">Serialized COMMAND_RES</param>
     /// <returns>Deserialized COMMAND_RES</returns>
     public Result<CommandResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var commandResMessageDto = AvroConvert.DeserializeHeadless<CommandResMessageDto>(serialized, _schema);
-
-            var commandResMessage = 
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<CommandResMessageDto>(serialized, _schema))
+            .Map(commandResMessageDto => 
                 new CommandResMessage(
                     commandResMessageDto.ExchangeId,
                     commandResMessageDto.NodeId,
                     commandResMessageDto.IsSuccess,
-                    commandResMessageDto.OutcomeDescription);
-
-            return commandResMessage;
-
-        });
+                    commandResMessageDto.OutcomeDescription));
 
 
     /// <summary>
@@ -52,8 +45,6 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
                 OutcomeDescription = message.OutcomeDescription
             };
 
-            var bytes = AvroConvert.SerializeHeadless(commandMessageDto, _schema);
-
-            return bytes;
+            return AvroConvert.SerializeHeadless(commandMessageDto, _schema);
         });
 }

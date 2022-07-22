@@ -18,12 +18,8 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
     /// <param name="serialized">Serialized BYE_REQ</param>
     /// <returns>Deserialized BYE_REQ</returns>
     public Result<ByeReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<ByeReqMessageDto>(serialized, _schema);
-
-            return new ByeReqMessage(deserializedModel.ExchangeId, deserializedModel.NodeId);
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<ByeReqMessageDto>(serialized, _schema))
+            .Map(byeReqMessageDto => new ByeReqMessage(byeReqMessageDto.ExchangeId, byeReqMessageDto.NodeId));
 
     /// <summary>
     /// Serializes a BYE_REQ message
@@ -31,8 +27,6 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
     /// <param name="message">BYE_REQ message to serialize</param>
     /// <returns>Serialized BYE_REQ</returns>
     public Result<byte[]> Serialize(ByeReqMessage message)
-        => ResultExtensions.AsResult(() =>
-        {
-            return AvroConvert.SerializeHeadless(message, _schema);
-        });
+        => ResultExtensions.AsResult(() 
+            => AvroConvert.SerializeHeadless(message, _schema));
 }

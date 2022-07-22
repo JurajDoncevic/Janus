@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.Messages;
+using Janus.Commons.QueryModels;
 using Janus.Serialization.Avro.Messages.DTOs;
 using Janus.Serialization.Avro.QueryModels;
 using Janus.Serialization.Avro.QueryModels.DTOs;
@@ -21,18 +22,14 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byt
     /// <param name="serialized">Serialized QUERY_REQ</param>
     /// <returns>Deserialized QUERY_REQ</returns>
     public Result<QueryReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<QueryReqMessageDto>(serialized, _schema);
-
-            var query = _querySerializer.FromDto(deserializedModel.Query);
-
-            return new QueryReqMessage(
-                deserializedModel.ExchangeId,
-                deserializedModel.NodeId,
-                query.Data!
-                );
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<QueryReqMessageDto>(serialized, _schema))
+            .Bind(queryReqMessageDto =>
+                _querySerializer.FromDto(queryReqMessageDto.Query)
+                .Map(query =>
+                    new QueryReqMessage(
+                        queryReqMessageDto.ExchangeId,
+                        queryReqMessageDto.NodeId,
+                        query)));
 
     /// <summary>
     /// Serializes a QUERY_REQ message
@@ -40,15 +37,17 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byt
     /// <param name="message">QUERY_REQ message to serialize</param>
     /// <returns>Serialized QUERY_REQ</returns>
     public Result<byte[]> Serialize(QueryReqMessage message)
-        => ResultExtensions.AsResult(() =>
-        {
-            var dto = new QueryReqMessageDto
-            {
-                Preamble = message.Preamble,
-                ExchangeId = message.ExchangeId,
-                NodeId = message.NodeId,
-                Query = _querySerializer.ToDto(message.Query).Data!
-            };
-            return AvroConvert.SerializeHeadless(dto, _schema);
-        });
+        => ResultExtensions.AsResult(() 
+            => _querySerializer.ToDto(message.Query)
+                .Bind<QueryDto, QueryReqMessageDto>(dto => 
+                    new QueryReqMessageDto
+                    {
+                        Preamble = message.Preamble,
+                        ExchangeId = message.ExchangeId,
+                        NodeId = message.NodeId,
+                        Query = dto
+                    })
+                .Map(queryReqMessageDto =>
+                    AvroConvert.SerializeHeadless(queryReqMessageDto, _schema))
+        );
 }

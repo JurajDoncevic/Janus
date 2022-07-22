@@ -29,17 +29,8 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
     /// <param name="serialized">Serialized update command</param>
     /// <returns>Deserialized update command</returns>
     public Result<UpdateCommand> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var updateDto = JsonSerializer.Deserialize<UpdateCommandDto>(serialized, _serializerOptions);
-
-            if (updateDto == null)
-                throw new Exception("Deserialization of UpdateCommandDto failed");
-
-            var updateCommand = FromDto(updateDto).Data!;
-
-            return updateCommand;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<UpdateCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes an update command
@@ -47,13 +38,9 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
     /// <param name="command">Update command to serialize</param>
     /// <returns>Serialized update command</returns>
     public Result<string> Serialize(UpdateCommand command)
-        => ResultExtensions.AsResult(() =>
-        {
-            var updateDto = ToDto(command).Data!;
-            var json = JsonSerializer.Serialize(updateDto, _serializerOptions);
-
-            return json;
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(command)
+                .Map(commandDto => JsonSerializer.Serialize(commandDto, _serializerOptions)));
 
     /// <summary>
     /// Converts an update command to its DTO

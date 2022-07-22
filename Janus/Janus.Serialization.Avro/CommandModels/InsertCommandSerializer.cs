@@ -20,13 +20,8 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
     /// <param name="serialized">Serialized insert command</param>
     /// <returns>Deserialized insert command</returns>
     public Result<InsertCommand> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var insertCommandDto = AvroConvert.DeserializeHeadless<InsertCommandDto>(serialized, _schema);
-            var insertCommand = FromDto(insertCommandDto);
-
-            return insertCommand.Data!;
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<InsertCommandDto>(serialized, _schema))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes an insert command
@@ -34,11 +29,10 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
     /// <param name="command">Insert command to serialize</param>
     /// <returns>Serialized insert command</returns>
     public Result<byte[]> Serialize(InsertCommand command)
-        => ResultExtensions.AsResult(() =>
-        {
-            var insertCommandDto = ToDto(command).Data!;
-            return AvroConvert.SerializeHeadless(insertCommandDto, _schema);
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(command)
+                .Map(insertCommandDto => AvroConvert.SerializeHeadless(insertCommandDto, _schema))
+        );
 
     /// <summary>
     /// Converts an insert command to its DTO

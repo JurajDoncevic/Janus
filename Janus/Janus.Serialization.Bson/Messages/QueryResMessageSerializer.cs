@@ -30,24 +30,17 @@ public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byt
     /// <param name="serialized">Serialized QUERY_RES</param>
     /// <returns>Deserialized QUERY_RES</returns>
     public Result<QueryResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var queryResMessageDto = JsonSerializer.Deserialize<QueryResMessageDto>(serialized, _serializerOptions);
-
-            if (queryResMessageDto == null)
-                throw new Exception("Failed to deserialize QUERY_RES DTO");
-
-            var tabularData = _tabularDataSerializer.FromDto(queryResMessageDto.TabularData).Data;
-
-            return new QueryResMessage(
-                queryResMessageDto.ExchangeId,
-                queryResMessageDto.NodeId,
-                tabularData,
-                queryResMessageDto.ErrorMessage,
-                queryResMessageDto.BlockNumber,
-                queryResMessageDto.TotalBlocks
-                );
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<QueryResMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+            .Bind(queryResMessageDto =>
+                _tabularDataSerializer.FromDto(queryResMessageDto.TabularData)
+                    .Map(tabularData =>
+                        new QueryResMessage(
+                            queryResMessageDto.ExchangeId,
+                            queryResMessageDto.NodeId,
+                            tabularData,
+                            queryResMessageDto.ErrorMessage,
+                            queryResMessageDto.BlockNumber,
+                            queryResMessageDto.TotalBlocks)));
 
     /// <summary>
     /// Serializes a QUERY_RES message

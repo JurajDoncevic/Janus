@@ -20,18 +20,8 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="serialized">Serialized tabular data</param>
     /// <returns>Deserialized tabular data</returns>
     public Result<TabularData> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var tabularDataDto = AvroConvert.DeserializeHeadless<TabularDataDto>(serialized, _schema);
-
-            if (tabularDataDto == null)
-                throw new Exception("Deserialization of TabularDataDTO failed");
-
-            var tabularData = FromDto(tabularDataDto).Data!;
-
-
-            return tabularData;
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<TabularDataDto>(serialized, _schema))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes tabular data
@@ -39,13 +29,10 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="data">Tabular data to serialize</param>
     /// <returns>Serialized tabular data</returns>
     public Result<byte[]> Serialize(TabularData data)
-        => ResultExtensions.AsResult(() =>
-        {
-            var tabularDataDto = ToDto(data).Data!;
-
-            var messageBytes = AvroConvert.SerializeHeadless(tabularDataDto, _schema);
-            return messageBytes;
-        });
+        => ResultExtensions.AsResult(() 
+            => ToDto(data)
+               .Map(tabularDataDto => AvroConvert.SerializeHeadless(tabularDataDto, _schema))
+            );
 
     /// <summary>
     /// Converts tabular data to its DTO

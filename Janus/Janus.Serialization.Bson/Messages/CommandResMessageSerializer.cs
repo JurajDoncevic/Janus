@@ -17,20 +17,13 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <param name="serialized">Serialized COMMAND_RES</param>
     /// <returns>Deserialized COMMAND_RES</returns>
     public Result<CommandResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var commandResMessageDto = JsonSerializer.Deserialize<CommandResMessageDto>(serialized);
-
-            if (commandResMessageDto == null)
-                throw new Exception("Failed to deserialize COMMAND_RES DTO");
-
-            return new CommandResMessage(
-                commandResMessageDto.ExchangeId,
-                commandResMessageDto.NodeId,
-                commandResMessageDto.IsSuccess,
-                commandResMessageDto.OutcomeDescription
-                );
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<CommandResMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
+            .Map(commandResMessageDto => 
+                new CommandResMessage(
+                    commandResMessageDto.ExchangeId,
+                    commandResMessageDto.NodeId,
+                    commandResMessageDto.IsSuccess,
+                    commandResMessageDto.OutcomeDescription));
 
     /// <summary>
     /// Serializes a COMMAND_RES message

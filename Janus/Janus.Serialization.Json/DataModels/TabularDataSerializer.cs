@@ -28,17 +28,8 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
     /// <param name="serialized">Serialized tabular data</param>
     /// <returns>Deserialized tabular data</returns>
     public Result<TabularData> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var tabularDataDto = JsonSerializer.Deserialize<TabularDataDto>(serialized, _serializerOptions);
-
-            if (tabularDataDto == null)
-                throw new Exception("Deserialization of TabularDataDTO failed");
-
-            var tabularData = FromDto(tabularDataDto).Data!;
-
-            return tabularData;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<TabularDataDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes tabular data
@@ -46,14 +37,9 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
     /// <param name="data">Tabular data to serialize</param>
     /// <returns>Serialized tabular data</returns>
     public Result<string> Serialize(TabularData data)
-        => ResultExtensions.AsResult(() =>
-        {
-            var tabularDataDto = ToDto(data).Data!;
-
-            var json = JsonSerializer.Serialize<TabularDataDto>(tabularDataDto, _serializerOptions);
-
-            return json;
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(data)
+                .Map(dataDto => JsonSerializer.Serialize(dataDto, _serializerOptions)));
 
     /// <summary>
     /// Converts tabular data to its DTO

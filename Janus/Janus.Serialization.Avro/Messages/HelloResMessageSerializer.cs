@@ -43,6 +43,15 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
     public Result<byte[]> Serialize(HelloResMessage message)
         => ResultExtensions.AsResult(() =>
         {
-            return AvroConvert.SerializeHeadless(message, _schema);
+            var helloResMessageDto = new HelloResMessageDto
+            {
+                Preamble = message.Preamble,
+                ExchangeId = message.ExchangeId,
+                NodeId = message.NodeId,
+                ListenPort = message.ListenPort,
+                NodeType = message.NodeType,
+                RememberMe = message.RememberMe
+            };
+            return AvroConvert.SerializeHeadless(helloResMessageDto, _schema);
         });
 }

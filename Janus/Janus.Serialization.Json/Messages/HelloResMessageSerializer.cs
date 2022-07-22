@@ -27,21 +27,14 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, str
     /// <param name="serialized">Serialized HELLO_RES</param>
     /// <returns>Deserialized HELLO_RES</returns>
     public Result<HelloResMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var helloResMessageDto = JsonSerializer.Deserialize<HelloResMessageDto>(serialized, _serializerOptions);
-
-            if (helloResMessageDto == null)
-                throw new Exception("Failed to deserialize HELLO_RES DTO");
-
-            return new HelloResMessage(
-                helloResMessageDto.ExchangeId,
-                helloResMessageDto.NodeId,
-                helloResMessageDto.ListenPort,
-                helloResMessageDto.NodeType,
-                helloResMessageDto.RememberMe
-                );
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<HelloResMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+            .Map(helloResMessageDto 
+                => new HelloResMessage(
+                    helloResMessageDto.ExchangeId,
+                    helloResMessageDto.NodeId,
+                    helloResMessageDto.ListenPort,
+                    helloResMessageDto.NodeType,
+                    helloResMessageDto.RememberMe));
 
     /// <summary>
     /// Serializes a HELLO_RES message

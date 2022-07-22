@@ -17,18 +17,11 @@ public class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, b
     /// <param name="serialized">Serialized SCHEMA_REQ</param>
     /// <returns>Deserialized SCHEMA_REQ</returns>
     public Result<SchemaReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var schemaReqMessageDto = JsonSerializer.Deserialize<SchemaReqMessageDto>(serialized);
-
-            if (schemaReqMessageDto == null)
-                throw new Exception("Failed to deserialize SCHEMA_REQ DTO");
-
-            return new SchemaReqMessage(
-                schemaReqMessageDto.ExchangeId,
-                schemaReqMessageDto.NodeId
-                );
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<SchemaReqMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
+            .Map(schemaReqMessageDto =>
+                new SchemaReqMessage(
+                    schemaReqMessageDto.ExchangeId,
+                    schemaReqMessageDto.NodeId));
 
     /// <summary>
     /// Serializes a SCHEMA_REQ message

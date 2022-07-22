@@ -19,14 +19,8 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="serialized">Serialized data source</param>
     /// <returns>Deserialized data source</returns>
     public Result<DataSource> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<DataSourceDto>(serialized, _schema);
-
-            var dataSource = FromDto(deserializedModel);
-
-            return dataSource;
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<DataSourceDto>(serialized, _schema))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes a data source
@@ -34,11 +28,10 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSource">Data source to serialize</param>
     /// <returns>Serialized data source</returns>
     public Result<byte[]> Serialize(DataSource dataSource)
-        => ResultExtensions.AsResult(() =>
-        {
-            DataSourceDto? dataSourceDto = ToDto(dataSource).Data;
-            return AvroConvert.SerializeHeadless(dataSourceDto, _schema);
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(dataSource)
+                .Map(dataSourceDto => AvroConvert.SerializeHeadless(dataSourceDto, _schema))
+        );
 
     /// <summary>
     /// Converts a data source DTO to a data source from the schema model

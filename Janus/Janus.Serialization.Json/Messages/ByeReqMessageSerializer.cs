@@ -26,18 +26,11 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, string>
     /// <param name="serialized">Serialized BYE_REQ</param>
     /// <returns>Deserialized BYE_REQ</returns>
     public Result<ByeReqMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var byeReqMessageDto = JsonSerializer.Deserialize<ByeReqMessageDto>(serialized, _serializerOptions);
-
-            if (byeReqMessageDto == null)
-                throw new Exception("Failed to deserialize BYE_REQ DTO");
-
-            return new ByeReqMessage(
-                byeReqMessageDto.ExchangeId,
-                byeReqMessageDto.NodeId
-                );
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<ByeReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+            .Map(byeReqMessageDto 
+                => new ByeReqMessage(
+                    byeReqMessageDto.ExchangeId,
+                    byeReqMessageDto.NodeId));
 
     /// <summary>
     /// Serializes a BYE_REQ message

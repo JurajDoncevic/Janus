@@ -29,16 +29,8 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="serialized">Serialized query</param>
     /// <returns>Deserialized query</returns>
     public Result<Query> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var queryDto = JsonSerializer.Deserialize<QueryDto>(serialized, _serializerOptions);
-
-            if (queryDto == null)
-                throw new Exception("Deserialization of QueryDTO failed");
-
-            var query = FromDto(queryDto).Data!;
-            return query;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<QueryDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize QueryDTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes a query
@@ -46,15 +38,10 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<byte[]> Serialize(Query query)
-        => ResultExtensions.AsResult(() =>
-        {
-            var queryDto = ToDto(query).Data!;
-
-            var json = JsonSerializer.Serialize<QueryDto>(queryDto, _serializerOptions);
-            var bson = Encoding.UTF8.GetBytes(json);
-
-            return bson;
-        });
+        => ResultExtensions.AsResult(() 
+            => ToDto(query)
+                .Map(queryDto => JsonSerializer.Serialize(queryDto, _serializerOptions))
+                .Map(Encoding.UTF8.GetBytes));
 
     /// <summary>
     /// Converts a query to its DTO

@@ -20,14 +20,8 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="serialized">Serialized query</param>
     /// <returns>Deserialized query</returns>
     public Result<Query> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<QueryDto>(serialized, _schema);
-
-            var query = FromDto(deserializedModel);
-
-            return query;
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<QueryDto>(serialized, _schema))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes a query
@@ -35,13 +29,10 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<byte[]> Serialize(Query query)
-        => ResultExtensions.AsResult(() =>
-        {
-            QueryDto? queryDto = ToDto(query).Data;
-
-            return ToDto(query)
-            .Map(queryDto => AvroConvert.SerializeHeadless(queryDto, _schema));
-        });
+        => ResultExtensions.AsResult(() 
+            => ToDto(query)
+                .Map(queryDto => AvroConvert.SerializeHeadless(queryDto, _schema))
+        );
 
     /// <summary>
     /// Converts a query DTO to the query model

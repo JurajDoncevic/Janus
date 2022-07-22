@@ -29,17 +29,8 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="serialized">Serialized tabular data</param>
     /// <returns>Deserialized tabular data</returns>
     public Result<TabularData> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var tabularDataDto = JsonSerializer.Deserialize<TabularDataDto>(serialized, _serializerOptions);
-
-            if (tabularDataDto == null)
-                throw new Exception("Deserialization of TabularDataDTO failed");
-
-            var tabularData = FromDto(tabularDataDto).Data!;
-
-            return tabularData;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<TabularDataDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize TabularDataDTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes tabular data
@@ -47,14 +38,10 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="data">Tabular data to serialize</param>
     /// <returns>Serialized tabular data</returns>
     public Result<byte[]> Serialize(TabularData data)
-        => ResultExtensions.AsResult(() =>
-        {
-            var tabularDataDto = ToDto(data).Data!;
-            var json = JsonSerializer.Serialize<TabularDataDto>(tabularDataDto, _serializerOptions);
-            var bson = Encoding.UTF8.GetBytes(json);
-
-            return bson;
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(data)
+                .Map(dataDto => JsonSerializer.Serialize(dataDto, _serializerOptions))
+                .Map(Encoding.UTF8.GetBytes));
 
     /// <summary>
     /// Converts tabular data to its DTO
@@ -78,11 +65,11 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// </summary>
     /// <param name="tabularDataDto">Tabular data DTO</param>
     /// <returns>Tabular data model</returns>
-    internal Result<TabularData> FromDto(TabularDataDto tabularDataDto)
+    internal Result<TabularData?> FromDto(TabularDataDto? tabularDataDto)
         => ResultExtensions.AsResult(() =>
         {
             var tabularData =
-                tabularDataDto.AttributeValues.Fold(
+                tabularDataDto?.AttributeValues.Fold(
                     TabularDataBuilder.InitTabularData(tabularDataDto.AttributeDataTypes),
                     (attrVals, builder) => builder.AddRow(
                         conf => conf.WithRowData(attrVals.ToDictionary(

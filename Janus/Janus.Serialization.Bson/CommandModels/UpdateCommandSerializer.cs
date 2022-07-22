@@ -31,17 +31,8 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
     /// <param name="serialized">Serialized update command</param>
     /// <returns>Deserialized update command</returns>
     public Result<UpdateCommand> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var updateDto = JsonSerializer.Deserialize<UpdateCommandDto>(serialized, _serializerOptions);
-
-            if (updateDto == null)
-                throw new Exception("Deserialization of UpdateCommandDto failed");
-
-            var updateCommand = FromDto(updateDto).Data!;
-
-            return updateCommand;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<UpdateCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize UpdateCommandDTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes an update command
@@ -49,13 +40,10 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
     /// <param name="command">Update command to serialize</param>
     /// <returns>Serialized update command</returns>
     public Result<byte[]> Serialize(UpdateCommand command)
-        => ResultExtensions.AsResult(() =>
-        {
-            var updateDto = ToDto(command).Data!;
-            var json = JsonSerializer.Serialize(updateDto, _serializerOptions);
-            var bson = Encoding.UTF8.GetBytes(json);
-            return bson;
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(command)
+                .Map(updateDto => JsonSerializer.Serialize(updateDto, _serializerOptions))
+                .Map(Encoding.UTF8.GetBytes));
 
     /// <summary>
     /// Converts an update command to its DTO

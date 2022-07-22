@@ -27,21 +27,14 @@ public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, str
     /// <param name="serialized">Serialized HELLO_REQ</param>
     /// <returns>Deserialized HELLO_REQ</returns>
     public Result<HelloReqMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var helloReqMessageDto = JsonSerializer.Deserialize<HelloReqMessageDto>(serialized, _serializerOptions);
-
-            if (helloReqMessageDto == null)
-                throw new Exception("Failed to deserialize HELLO_REQ DTO");
-
-            return new HelloReqMessage(
-                helloReqMessageDto.ExchangeId,
-                helloReqMessageDto.NodeId,
-                helloReqMessageDto.ListenPort,
-                helloReqMessageDto.NodeType,
-                helloReqMessageDto.RememberMe
-                );
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<HelloReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+            .Map(helloReqMessageDto 
+                => new HelloReqMessage(
+                    helloReqMessageDto.ExchangeId,
+                    helloReqMessageDto.NodeId,
+                    helloReqMessageDto.ListenPort,
+                    helloReqMessageDto.NodeType,
+                    helloReqMessageDto.RememberMe));
 
     /// <summary>
     /// Serializes a HELLO_REQ message

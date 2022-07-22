@@ -8,30 +8,21 @@ namespace Janus.Serialization.Json.Messages;
 /// <summary>
 /// JSON base message serializer
 /// </summary>
-public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
+public class BaseMessageSerializer : IMessageSerializer<BaseMessage, string>
 {
     /// <summary>
     /// Deserializes a base message
     /// </summary>
     /// <param name="serialized">Serialized base message</param>
     /// <returns>Deserialized base message</returns>
-    public Result<BaseMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            return JsonSerializer.Deserialize<BaseMessage>(serialized)!;
-        });
+    public Result<BaseMessage> Deserialize(string serialized)
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<BaseMessage>(serialized) ?? throw new Exception("Failed to deserialize message DTO"));
 
     /// <summary>
     /// Serializes a base message
     /// </summary>
     /// <param name="message">Base message to serialize</param>
     /// <returns>Serialized base message</returns>
-    public Result<byte[]> Serialize(BaseMessage message)
-        => ResultExtensions.AsResult(() =>
-        {
-            var json = JsonSerializer.Serialize(message);
-            var messageBytes = Encoding.UTF8.GetBytes(json);
-
-            return messageBytes;
-        });
+    public Result<string> Serialize(BaseMessage message)
+        => ResultExtensions.AsResult(() => JsonSerializer.Serialize(message));
 }

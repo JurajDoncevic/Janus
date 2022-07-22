@@ -30,17 +30,8 @@ public class QuerySerializer : IQuerySerializer<string>
     /// <param name="serialized">Serialized query</param>
     /// <returns>Deserialized query</returns>
     public Result<Query> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var queryDto = JsonSerializer.Deserialize<QueryDto>(serialized, _serializerOptions);
-
-            if (queryDto == null)
-                throw new Exception("Deserialization of QueryDTO failed");
-
-            var query = FromDto(queryDto).Data!;
-
-            return query;
-        });
+        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<QueryDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes a query
@@ -48,14 +39,9 @@ public class QuerySerializer : IQuerySerializer<string>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<string> Serialize(Query query)
-        => ResultExtensions.AsResult(() =>
-        {
-            var queryDto = ToDto(query).Data!;
-
-            var json = JsonSerializer.Serialize<QueryDto>(queryDto, _serializerOptions);
-
-            return json;
-        });
+        => ResultExtensions.AsResult(() 
+            => ToDto(query)
+                .Map(queryDto => JsonSerializer.Serialize(queryDto, _serializerOptions)));
 
     /// <summary>
     /// Converts a query to its DTO

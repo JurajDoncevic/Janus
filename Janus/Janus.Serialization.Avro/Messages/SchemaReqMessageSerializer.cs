@@ -18,12 +18,9 @@ public class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, b
     /// <param name="serialized">Serialized SCHEMA_REQ</param>
     /// <returns>Deserialized SCHEMA_REQ</returns>
     public Result<SchemaReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deserializedModel = AvroConvert.DeserializeHeadless<SchemaReqMessageDto>(serialized, _schema);
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<SchemaReqMessageDto>(serialized, _schema))
+            .Bind<SchemaReqMessageDto, SchemaReqMessage>(schemaReqMessageDto => new SchemaReqMessage(schemaReqMessageDto.ExchangeId, schemaReqMessageDto.NodeId));
 
-            return new SchemaReqMessage(deserializedModel.ExchangeId, deserializedModel.NodeId);
-        });
 
     /// <summary>
     /// Serializes a SCHEMA_REQ message

@@ -20,13 +20,8 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="serialized">Serialized delete command</param>
     /// <returns>Deserialized delete command</returns>
     public Result<DeleteCommand> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deleteCommandDto = AvroConvert.DeserializeHeadless<DeleteCommandDto>(serialized, _schema);
-            var deleteCommand = FromDto(deleteCommandDto);
-
-            return deleteCommand.Data!;
-        });
+        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<DeleteCommandDto>(serialized, _schema))
+            .Bind(FromDto);
 
     /// <summary>
     /// Serializes a delete command
@@ -34,11 +29,10 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="command">Delete command to serialize</param>
     /// <returns>Serialized delete command</returns>
     public Result<byte[]> Serialize(DeleteCommand command)
-        => ResultExtensions.AsResult(() =>
-        {
-            var deleteCommandDto = ToDto(command).Data!;
-            return AvroConvert.SerializeHeadless(deleteCommandDto, _schema);
-        });
+        => ResultExtensions.AsResult(()
+            => ToDto(command)
+                .Map(deleteCommandDto => AvroConvert.SerializeHeadless(deleteCommandDto, _schema))
+        );
 
     /// <summary>
     /// Converts a delete command to a DTO
