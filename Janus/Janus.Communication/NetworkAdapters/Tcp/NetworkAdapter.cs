@@ -101,11 +101,10 @@ public abstract class NetworkAdapter : INetworkAdapter
                 byte[] messageBytes = new byte[countBytes];
                 // receive the bytes
                 client.GetStream().Read(messageBytes, 0, countBytes);
-                var str = Encoding.UTF8.GetString(messageBytes, 0, countBytes);
                 // determine message type and raise event
                 _serializationProvider.DetermineMessagePreamble(messageBytes)
-                            .Bind<string, BaseMessage>(_ => BuildMessage(_, messageBytes))
-                            .Map(_ => { RaiseMessageReceivedEvent(_, ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()); return _; });
+                            .Bind<string, BaseMessage>(preamble => BuildMessage(preamble, messageBytes))
+                            .Map(message => { RaiseMessageReceivedEvent(message, ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString()); return message; });
             }
 
         }

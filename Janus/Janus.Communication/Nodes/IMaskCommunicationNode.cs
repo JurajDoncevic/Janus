@@ -2,6 +2,7 @@
 
 public interface IMaskCommunicationNode
     : ISendsCommandReq, ISendsQueryReq, ISendsSchemaReq,
-      IReceivesCommandRes, IReceivesQueryRes, IReceivesSchemaRes
+      IReceivesCommandRes, IReceivesQueryRes, IReceivesSchemaRes,
+      ICommunicationNode
 {
 }

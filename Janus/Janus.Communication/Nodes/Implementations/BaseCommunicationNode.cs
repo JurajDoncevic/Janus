@@ -9,7 +9,7 @@ using Janus.Utils.Logging;
 
 namespace Janus.Communication.Nodes.Implementations;
 
-public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where TNetworkAdapter : INetworkAdapter
+public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICommunicationNode where TNetworkAdapter : INetworkAdapter
 {
 
     protected readonly CommunicationNodeOptions _options;
@@ -71,7 +71,6 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable where
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    /// <exception cref="NotImplementedException"></exception>
     private void NetworkAdapter_ManageByeRequestReceived(object? sender, ByeReqReceivedEventArgs e)
     {
         // get the message

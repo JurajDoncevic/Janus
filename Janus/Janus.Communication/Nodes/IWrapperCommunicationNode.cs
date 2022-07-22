@@ -2,6 +2,7 @@
 
 public interface IWrapperCommunicationNode
     : ISendsCommandRes, ISendsQueryRes, ISendsSchemaRes,
-      IReceivesCommandReq, IReceivesQueryReq, IReceivesSchemaReq
+      IReceivesCommandReq, IReceivesQueryReq, IReceivesSchemaReq,
+      ICommunicationNode
 {
 }
