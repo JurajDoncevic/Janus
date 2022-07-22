@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="FunctionalExtensions.Base" Version="1.1.1" />
+	  <PackageReference Include="FunctionalExtensions.Base" Version="1.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
