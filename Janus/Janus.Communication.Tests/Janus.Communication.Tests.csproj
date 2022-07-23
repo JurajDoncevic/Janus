@@ -28,6 +28,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Bson\Janus.Serialization.Bson.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Json\Janus.Serialization.Json.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.MongoDbBson\Janus.Serialization.MongoBson.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

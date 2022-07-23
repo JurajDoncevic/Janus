@@ -6,8 +6,9 @@ using Janus.Commons.DataModels;
 using Janus.Commons.CommandModels;
 using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Commons.QueryModels;
+using Janus.Serialization.MongoBson;
 
-namespace Janus.Serialization.Bson.Tests;
+namespace Janus.Serialization.MongoBson.Tests;
 
 public class MessageSerializationTests
 {
@@ -45,9 +46,9 @@ public class MessageSerializationTests
             .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 3 }, { "attr2", "TEST3" }, { "attr3", 3.1 } }))
             .Build();
 
-    private readonly ISerializationProvider<byte[]> _serializationProvider = new BsonSerializationProvider();
+    private readonly ISerializationProvider<byte[]> _serializationProvider = new MongoBsonSerializationProvider();
 
-    [Fact(DisplayName = "Round-trip HELLO_REQ serialization with BSON")]
+    [Fact(DisplayName = "Round-trip HELLO_REQ serialization with MongoBson")]
     public void RoundTripHelloReq()
     {
         var exchangeId = "test_exchange_id";
@@ -66,7 +67,7 @@ public class MessageSerializationTests
         Assert.Equal(helloReq, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip HELLO_RES serialization with BSON")]
+    [Fact(DisplayName = "Round-trip HELLO_RES serialization with MongoBson")]
     public void RoundTripHelloRes()
     {
         var exchangeId = "test_exchange_id";
@@ -85,7 +86,7 @@ public class MessageSerializationTests
         Assert.Equal(helloReq, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip BYE_REQ serialization with BSON")]
+    [Fact(DisplayName = "Round-trip BYE_REQ serialization with MongoBson")]
     public void RoundTripByeReq()
     {
         var exchangeId = "test_exchange_id";
@@ -101,7 +102,7 @@ public class MessageSerializationTests
         Assert.Equal(byeReq, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip insert COMMAND_REQ serialization with BSON")]
+    [Fact(DisplayName = "Round-trip insert COMMAND_REQ serialization with MongoBson")]
     public void RoundTripCommandInsertReq()
     {
         var exchangeId = "test_exchange_id";
@@ -129,7 +130,7 @@ public class MessageSerializationTests
         Assert.Equal(commandReqMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip delete COMMAND_REQ serialization with BSON")]
+    [Fact(DisplayName = "Round-trip delete COMMAND_REQ serialization with MongoBson")]
     public void RoundTripCommandDeleteReq()
     {
         var exchangeId = "test_exchange_id";
@@ -154,7 +155,7 @@ public class MessageSerializationTests
         Assert.Equal(commandReqMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip update COMMAND_REQ serialization with BSON")]
+    [Fact(DisplayName = "Round-trip update COMMAND_REQ serialization with MongoBson")]
     public void RoundTripCommandUpdateReq()
     {
         var exchangeId = "test_exchange_id";
@@ -179,7 +180,7 @@ public class MessageSerializationTests
         Assert.Equal(commandReqMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip COMMAND_RES serialization with BSON")]
+    [Fact(DisplayName = "Round-trip COMMAND_RES serialization with MongoBson")]
     public void RoundTripCommandRes()
     {
         var exchangeId = "test_exchange_id";
@@ -198,7 +199,7 @@ public class MessageSerializationTests
         Assert.Equal(commandResMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip SCHEMA_REQ serialization with BSON")]
+    [Fact(DisplayName = "Round-trip SCHEMA_REQ serialization with MongoBson")]
     public void RoundTripSchemaReq()
     {
         var exchangeId = "test_exchange_id";
@@ -215,7 +216,7 @@ public class MessageSerializationTests
         Assert.Equal(schemaReqMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip SCHEMA_RES serialization with BSON")]
+    [Fact(DisplayName = "Round-trip SCHEMA_RES serialization with MongoBson")]
     public void RoundTripSchemaRes()
     {
         var exchangeId = "test_exchange_id";
@@ -233,7 +234,7 @@ public class MessageSerializationTests
         Assert.Equal(schemaResMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip QUERY_REQ serialization with BSON")]
+    [Fact(DisplayName = "Round-trip QUERY_REQ serialization with MongoBson")]
     public void RoundTripQueryReq()
     {
         var exchangeId = "test_exchange_id";
@@ -261,7 +262,7 @@ public class MessageSerializationTests
         Assert.Equal(queryReqMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip QUERY_RES serialization with BSON")]
+    [Fact(DisplayName = "Round-trip QUERY_RES serialization with MongoBson")]
     public void RoundTripQueryRes()
     {
         var exchangeId = "test_exchange_id";
@@ -282,7 +283,7 @@ public class MessageSerializationTests
         Assert.Equal(queryResMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Determine preamble of HELLO_REQ with BSON")]
+    [Fact(DisplayName = "Determine preamble of HELLO_REQ with MongoBson")]
     public void DeterminePreambleOnHelloReq()
     {
         var exchangeId = "test_exchange_id";
@@ -300,7 +301,7 @@ public class MessageSerializationTests
         Assert.Equal(helloReq.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of HELLO_RES with BSON")]
+    [Fact(DisplayName = "Determine preamble of HELLO_RES with MongoBson")]
     public void DeterminePreambleOnHelloRes()
     {
         var exchangeId = "test_exchange_id";
@@ -318,7 +319,7 @@ public class MessageSerializationTests
         Assert.Equal(helloRes.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of BYE_REQ with BSON")]
+    [Fact(DisplayName = "Determine preamble of BYE_REQ with MongoBson")]
     public void DeterminePreambleOnByeReq()
     {
         var exchangeId = "test_exchange_id";
@@ -336,7 +337,7 @@ public class MessageSerializationTests
         Assert.Equal(byeReq.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of QUERY_REQ with BSON")]
+    [Fact(DisplayName = "Determine preamble of QUERY_REQ with MongoBson")]
     public void DeterminePreambleOnQueryReq()
     {
         var exchangeId = "test_exchange_id";
@@ -363,7 +364,7 @@ public class MessageSerializationTests
         Assert.Equal(queryReqMessage.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of QUERY_RES with BSON")]
+    [Fact(DisplayName = "Determine preamble of QUERY_RES with MongoBson")]
     public void DeterminePreambleOnQueryRes()
     {
         var exchangeId = "test_exchange_id";
@@ -383,7 +384,7 @@ public class MessageSerializationTests
         Assert.Equal(queryResMessage.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of COMMAND_REQ with BSON")]
+    [Fact(DisplayName = "Determine preamble of COMMAND_REQ with MongoBson")]
     public void DeterminePreambleOnCommandReq()
     {
         var exchangeId = "test_exchange_id";
@@ -407,7 +408,7 @@ public class MessageSerializationTests
         Assert.Equal(commandReqMessage.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of COMMAND_RES with BSON")]
+    [Fact(DisplayName = "Determine preamble of COMMAND_RES with MongoBson")]
     public void DeterminePreambleOnCommandRes()
     {
         var exchangeId = "test_exchange_id";
@@ -425,7 +426,7 @@ public class MessageSerializationTests
         Assert.Equal(commandResMessage.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of SCHEMA_REQ with BSON")]
+    [Fact(DisplayName = "Determine preamble of SCHEMA_REQ with MongoBson")]
     public void DeterminePreambleOnSchemaReq()
     {
         var exchangeId = "test_exchange_id";
@@ -441,7 +442,7 @@ public class MessageSerializationTests
         Assert.Equal(schemaReqMessage.Preamble, preamble);
     }
 
-    [Fact(DisplayName = "Determine preamble of SCHEMA_RES with BSON")]
+    [Fact(DisplayName = "Determine preamble of SCHEMA_RES with MongoBson")]
     public void DeterminePreambleOnSchemaRes()
     {
         var exchangeId = "test_exchange_id";

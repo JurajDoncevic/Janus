@@ -3,13 +3,9 @@ using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
-using Janus.Serialization.Avro.CommandModels;
-using Janus.Serialization.Avro.DataModels;
-using Janus.Serialization.Avro.QueryModels;
-using Janus.Serialization.Avro.SchemaModels;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
-namespace Janus.Serialization.Tests.Avro;
+namespace Janus.Serialization.Avro.Tests;
 public class ModelsSerializationTests
 {
     private DataSource GetTestDataSource()
@@ -47,11 +43,13 @@ public class ModelsSerializationTests
             .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 3 }, { "attr2", "TEST3" }, { "attr3", 3.1 } }))
             .Build();
 
+    private readonly ISerializationProvider<byte[]> _serializationProvider = new AvroSerializationProvider();
+
     [Fact(DisplayName = "Round-trip serialization of DataSource with Avro")]
     public void RoundTripDataSource()
     {
         var dataSource = GetTestDataSource();
-        DataSourceSerializer serializer = new DataSourceSerializer();
+        var serializer = _serializationProvider.DataSourceSerializer;
 
         var serialization = serializer.Serialize(dataSource);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -72,7 +70,7 @@ public class ModelsSerializationTests
                                             .AddAttribute("datasource1.schema1.tableau2.attr1"))
                 .WithSelection(conf => conf.WithExpression(AND(GT("datasource1.schema1.tableau2.attr1", 1), TRUE())))
                 .Build();
-        var serializer = new QuerySerializer();
+        var serializer = _serializationProvider.QuerySerializer;
 
         var serialization = serializer.Serialize(query);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -87,7 +85,7 @@ public class ModelsSerializationTests
     {
         var tabularData = GetTestTabularData();
 
-        var serializer = new TabularDataSerializer();
+        var serializer = _serializationProvider.TabularDataSerializer;
 
         var serialization = serializer.Serialize(tabularData);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -106,7 +104,8 @@ public class ModelsSerializationTests
         var deleteCommand = DeleteCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
                                 .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
                                 .Build();
-        var serializer = new DeleteCommandSerializer();
+
+        var serializer = _serializationProvider.DeleteCommandSerializer;
 
         var serialization = serializer.Serialize(deleteCommand);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -125,7 +124,8 @@ public class ModelsSerializationTests
                                 .WithMutation(conf => conf.WithValues(new() { { "attr2", null }, { "attr3", 2.0 } }))
                                 .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
                                 .Build();
-        var serializer = new UpdateCommandSerializer();
+        
+        var serializer = _serializationProvider.UpdateCommandSerializer;
 
         var serialization = serializer.Serialize(updateCommand);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -148,7 +148,7 @@ public class ModelsSerializationTests
                                 .WithInstantiation(conf => conf.WithValues(dataToInsert))
                                 .Build();
 
-        var serializer = new InsertCommandSerializer();
+        var serializer = _serializationProvider.InsertCommandSerializer;
 
         var serialization = serializer.Serialize(insertCommand);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));

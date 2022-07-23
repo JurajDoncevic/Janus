@@ -3,9 +3,10 @@ using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
+using Janus.Serialization.MongoBson;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
-namespace Janus.Serialization.Bson.Tests;
+namespace Janus.Serialization.MongoBson.Tests;
 public class ModelsSerializationTests
 {
     private DataSource GetTestDataSource()
@@ -43,9 +44,9 @@ public class ModelsSerializationTests
             .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 3 }, { "attr2", "TEST3" }, { "attr3", 3.1 } }))
             .Build();
 
-    private readonly ISerializationProvider<byte[]> _serializationProvider = new BsonSerializationProvider();
+    private readonly ISerializationProvider<byte[]> _serializationProvider = new MongoBsonSerializationProvider();
 
-    [Fact(DisplayName = "Round-trip serialization of DataSource with BSON")]
+    [Fact(DisplayName = "Round-trip serialization of DataSource with MongoBson")]
     public void RoundTripDataSource()
     {
         var dataSource = GetTestDataSource();
@@ -59,7 +60,7 @@ public class ModelsSerializationTests
         Assert.Equal(dataSource, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip serialization of Query with BSON")]
+    [Fact(DisplayName = "Round-trip serialization of Query with MongoBson")]
     public void RoundTripQuery()
     {
         var dataSource = GetTestDataSource();
@@ -80,7 +81,7 @@ public class ModelsSerializationTests
         Assert.Equal(query, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip serialization of TabularData with BSON")]
+    [Fact(DisplayName = "Round-trip serialization of TabularData with MongoBson")]
     public void RoundTripTabularData()
     {
         var tabularData = GetTestTabularData();
@@ -95,7 +96,7 @@ public class ModelsSerializationTests
         Assert.Equal(tabularData, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip serialization of DeleteCommand with BSON")]
+    [Fact(DisplayName = "Round-trip serialization of DeleteCommand with MongoBson")]
     public void RoundTripDeleteCommand()
     {
         var dataSource = GetTestDataSource();
@@ -115,7 +116,7 @@ public class ModelsSerializationTests
         Assert.Equal(deleteCommand, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip serialization of UpdateCommand with BSON")]
+    [Fact(DisplayName = "Round-trip serialization of UpdateCommand with MongoBson")]
     public void RoundTripUpdateCommand()
     {
         var dataSource = GetTestDataSource();
@@ -124,7 +125,7 @@ public class ModelsSerializationTests
                                 .WithMutation(conf => conf.WithValues(new() { { "attr2", null }, { "attr3", 2.0 } }))
                                 .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
                                 .Build();
-
+        
         var serializer = _serializationProvider.UpdateCommandSerializer;
 
         var serialization = serializer.Serialize(updateCommand);
@@ -135,7 +136,7 @@ public class ModelsSerializationTests
         Assert.Equal(updateCommand, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip serialization of InsertCommand with BSON")]
+    [Fact(DisplayName = "Round-trip serialization of InsertCommand with MongoBson")]
     public void RoundTripInsertCommand()
     {
         var dataSource = GetTestDataSource();

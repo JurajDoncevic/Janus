@@ -1,5 +1,4 @@
 using FunctionalExtensions.Base.Results;
-using Janus.Serialization.Avro.Messages;
 using Janus.Commons.Messages;
 using Janus.Commons.Nodes;
 using Janus.Commons.SchemaModels;
@@ -7,9 +6,8 @@ using Janus.Commons.DataModels;
 using Janus.Commons.CommandModels;
 using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Commons.QueryModels;
-using Janus.Serialization.Avro;
 
-namespace Janus.Serialization.Tests.Avro;
+namespace Janus.Serialization.Avro.Tests;
 
 public class MessageSerializationTests
 {
@@ -47,6 +45,8 @@ public class MessageSerializationTests
             .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 3 }, { "attr2", "TEST3" }, { "attr3", 3.1 } }))
             .Build();
 
+    private readonly ISerializationProvider<byte[]> _serializationProvider = new AvroSerializationProvider();
+
     [Fact(DisplayName = "Round-trip HELLO_REQ serialization with Avro")]
     public void RoundTripHelloReq()
     {
@@ -55,7 +55,7 @@ public class MessageSerializationTests
         var listenPort = 20001;
         var nodeType = NodeTypes.MEDIATOR_NODE;
         var rememberMe = true;
-        var serializer = new HelloReqMessageSerializer();
+        var serializer = _serializationProvider.HelloReqMessageSerializer;
         var helloReq = new HelloReqMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
 
         var serialization = serializer.Serialize(helloReq);
@@ -74,7 +74,7 @@ public class MessageSerializationTests
         var listenPort = 20001;
         var nodeType = NodeTypes.MEDIATOR_NODE;
         var rememberMe = true;
-        var serializer = new HelloResMessageSerializer();
+        var serializer = _serializationProvider.HelloResMessageSerializer;
         var helloReq = new HelloResMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
 
         var serialization = serializer.Serialize(helloReq);
@@ -90,7 +90,7 @@ public class MessageSerializationTests
     {
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
-        var serializer = new ByeReqMessageSerializer();
+        var serializer = _serializationProvider.ByeReqMessageSerializer;
         var byeReq = new ByeReqMessage(exchangeId, nodeId);
 
         var serialization = serializer.Serialize(byeReq);
@@ -119,7 +119,7 @@ public class MessageSerializationTests
 
         var commandReqMessage = new CommandReqMessage(exchangeId, nodeId, insertCommand);
 
-        var serializer = new CommandReqMessageSerializer();
+        var serializer = _serializationProvider.CommandReqMessageSerializer;
 
         var serialization = serializer.Serialize(commandReqMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -144,7 +144,7 @@ public class MessageSerializationTests
 
         var commandReqMessage = new CommandReqMessage(exchangeId, nodeId, deleteCommand);
 
-        var serializer = new CommandReqMessageSerializer();
+        var serializer = _serializationProvider.CommandReqMessageSerializer;
 
         var serialization = serializer.Serialize(commandReqMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -169,7 +169,7 @@ public class MessageSerializationTests
 
         var commandReqMessage = new CommandReqMessage(exchangeId, nodeId, updateCommand);
 
-        var serializer = new CommandReqMessageSerializer();
+        var serializer = _serializationProvider.CommandReqMessageSerializer;
 
         var serialization = serializer.Serialize(commandReqMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -188,7 +188,7 @@ public class MessageSerializationTests
         var outcomeDescription = "some outcome description";
         var commandResMessage = new CommandResMessage(exchangeId, nodeId, isSuccess, outcomeDescription);
 
-        var serializer = new CommandResMessageSerializer();
+        var serializer = _serializationProvider.CommandResMessageSerializer;
 
         var serialization = serializer.Serialize(commandResMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -205,7 +205,7 @@ public class MessageSerializationTests
         var nodeId = "test_node_id";
         var schemaReqMessage = new SchemaReqMessage(exchangeId, nodeId);
 
-        var serializer = new SchemaReqMessageSerializer();
+        var serializer = _serializationProvider.SchemaReqMessageSerializer;
 
         var serialization = serializer.Serialize(schemaReqMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -223,7 +223,7 @@ public class MessageSerializationTests
         var dataSource = GetTestDataSource();
         var schemaResMessage = new SchemaResMessage(exchangeId, nodeId, dataSource);
 
-        var serializer = new SchemaResMessageSerializer();
+        var serializer = _serializationProvider.SchemaResMessageSerializer;
 
         var serialization = serializer.Serialize(schemaResMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -251,7 +251,7 @@ public class MessageSerializationTests
 
         var queryReqMessage = new QueryReqMessage(exchangeId, nodeId, query);
 
-        var serializer = new QueryReqMessageSerializer();
+        var serializer = _serializationProvider.QueryReqMessageSerializer;
 
         var serialization = serializer.Serialize(queryReqMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -272,7 +272,7 @@ public class MessageSerializationTests
         var queryResMessage = new QueryResMessage(exchangeId, nodeId, tabularData);
 
 
-        var serializer = new QueryResMessageSerializer();
+        var serializer = _serializationProvider.QueryResMessageSerializer;
 
         var serialization = serializer.Serialize(queryResMessage);
         var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
@@ -290,12 +290,12 @@ public class MessageSerializationTests
         var listenPort = 20001;
         var nodeType = NodeTypes.MEDIATOR_NODE;
         var rememberMe = true;
-        var serializer = new HelloReqMessageSerializer();
+        var serializer = _serializationProvider.HelloReqMessageSerializer;
         var helloReq = new HelloReqMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
 
         var serialization = serializer.Serialize(helloReq);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(helloReq.Preamble, preamble);
     }
@@ -308,12 +308,12 @@ public class MessageSerializationTests
         var listenPort = 20001;
         var nodeType = NodeTypes.MEDIATOR_NODE;
         var rememberMe = true;
-        var serializer = new HelloResMessageSerializer();
+        var serializer = _serializationProvider.HelloResMessageSerializer;
         var helloRes = new HelloResMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
 
         var serialization = serializer.Serialize(helloRes);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(helloRes.Preamble, preamble);
     }
@@ -326,12 +326,12 @@ public class MessageSerializationTests
         var listenPort = 20001;
         var nodeType = NodeTypes.MEDIATOR_NODE;
         var rememberMe = true;
-        var serializer = new ByeReqMessageSerializer();
+        var serializer = _serializationProvider.ByeReqMessageSerializer;
         var byeReq = new ByeReqMessage(exchangeId, nodeId);
 
         var serialization = serializer.Serialize(byeReq);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(byeReq.Preamble, preamble);
     }
@@ -354,11 +354,11 @@ public class MessageSerializationTests
 
         var queryReqMessage = new QueryReqMessage(exchangeId, nodeId, query);
 
-        var serializer = new QueryReqMessageSerializer();
+        var serializer = _serializationProvider.QueryReqMessageSerializer;
 
         var serialization = serializer.Serialize(queryReqMessage);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(queryReqMessage.Preamble, preamble);
     }
@@ -374,11 +374,11 @@ public class MessageSerializationTests
         var queryResMessage = new QueryResMessage(exchangeId, nodeId, tabularData);
 
 
-        var serializer = new QueryResMessageSerializer();
+        var serializer = _serializationProvider.QueryResMessageSerializer;
 
         var serialization = serializer.Serialize(queryResMessage);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(queryResMessage.Preamble, preamble);
     }
@@ -398,11 +398,11 @@ public class MessageSerializationTests
 
         var commandReqMessage = new CommandReqMessage(exchangeId, nodeId, updateCommand);
 
-        var serializer = new CommandReqMessageSerializer();
+        var serializer = _serializationProvider.CommandReqMessageSerializer;
 
         var serialization = serializer.Serialize(commandReqMessage);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(commandReqMessage.Preamble, preamble);
     }
@@ -416,11 +416,11 @@ public class MessageSerializationTests
         var outcomeDescription = "some outcome description";
         var commandResMessage = new CommandResMessage(exchangeId, nodeId, isSuccess, outcomeDescription);
 
-        var serializer = new CommandResMessageSerializer();
+        var serializer = _serializationProvider.CommandResMessageSerializer;
 
         var serialization = serializer.Serialize(commandResMessage);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(commandResMessage.Preamble, preamble);
     }
@@ -432,11 +432,11 @@ public class MessageSerializationTests
         var nodeId = "test_node_id";
         var schemaReqMessage = new SchemaReqMessage(exchangeId, nodeId);
 
-        var serializer = new SchemaReqMessageSerializer();
+        var serializer = _serializationProvider.SchemaReqMessageSerializer;
 
         var serialization = serializer.Serialize(schemaReqMessage);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(schemaReqMessage.Preamble, preamble);
     }
@@ -449,11 +449,11 @@ public class MessageSerializationTests
         var dataSource = GetTestDataSource();
         var schemaResMessage = new SchemaResMessage(exchangeId, nodeId, dataSource);
 
-        var serializer = new SchemaResMessageSerializer();
+        var serializer = _serializationProvider.SchemaResMessageSerializer;
 
         var serialization = serializer.Serialize(schemaResMessage);
 
-        var preamble = serialization.Bind(new AvroSerializationProvider().DetermineMessagePreamble).Data;
+        var preamble = serialization.Bind(_serializationProvider.DetermineMessagePreamble).Data;
 
         Assert.Equal(schemaResMessage.Preamble, preamble);
     }

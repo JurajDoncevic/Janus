@@ -1,20 +1,20 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.CommandModels;
 using Janus.Commons.Messages;
-using Janus.Serialization.Avro.CommandModels;
-using Janus.Serialization.Avro.DataModels;
-using Janus.Serialization.Avro.Messages;
-using Janus.Serialization.Avro.Messages.DTOs;
-using Janus.Serialization.Avro.QueryModels;
-using Janus.Serialization.Avro.SchemaModels;
-using SolTechnology.Avro;
+using Janus.Serialization.MongoBson.CommandModels;
+using Janus.Serialization.MongoBson.DataModels;
+using Janus.Serialization.MongoBson.Messages;
+using Janus.Serialization.MongoBson.Messages.DTOs;
+using Janus.Serialization.MongoBson.QueryModels;
+using Janus.Serialization.MongoBson.SchemaModels;
+using MongoDB.Bson.Serialization;
 
-namespace Janus.Serialization.Avro;
+namespace Janus.Serialization.MongoBson;
 
 /// <summary>
-/// Avro format serialization provider
+/// MongoBson format serialization provider
 /// </summary>
-public class AvroSerializationProvider : IBytesSerializationProvider
+public class MongoBsonSerializationProvider : IBytesSerializationProvider
 {
     public ITabularDataSerializer<byte[]> TabularDataSerializer => new TabularDataSerializer();
 
@@ -49,9 +49,9 @@ public class AvroSerializationProvider : IBytesSerializationProvider
     public Result<string> DetermineMessagePreamble(byte[] messageBytes)
         => ResultExtensions.AsResult(() =>
         {
-            var schema = AvroConvert.GenerateSchema(typeof(BaseMessageDto));
-            var messageJson = AvroConvert.Avro2Json(messageBytes, schema);
-            string? preamble = System.Text.Json.JsonSerializer.Deserialize<BaseMessageDto>(messageJson)?.Preamble;
+            var baseMessageDto = BsonSerializer.Deserialize<BaseMessageDto>(messageBytes);
+            string preamble = baseMessageDto.Preamble;
             return preamble ?? "UNKNOWN";
         });
+
 }

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnablePreviewfeatures>true</EnablePreviewfeatures>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Google.Protobuf" Version="3.21.3" />
+	</ItemGroup>
+
+</Project>
