@@ -31,7 +31,7 @@
 		<ProjectReference Include="..\Janus.Serialization.Bson\Janus.Serialization.Bson.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.Json\Janus.Serialization.Json.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj" />
-		<ProjectReference Include="..\Janus.Serialization.MongoDbBson\Janus.Serialization.MongoBson.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Protobufs\Janus.Serialization.Protobufs.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
