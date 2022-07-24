@@ -95,12 +95,15 @@ public abstract class NetworkAdapter : INetworkAdapter
             if (client != null)
             {
                 _logger?.Info("Accepted client {0}", client.Client.RemoteEndPoint);
-                // see how many bytes the client is sending
-                int countBytes = client.ReceiveBufferSize;
                 // create a message bytes buffer
-                byte[] messageBytes = new byte[countBytes];
-                // receive the bytes
-                client.GetStream().Read(messageBytes, 0, countBytes);
+                byte[] messageBytes = new byte[0];
+                // get stream from tcp client
+                var stream = client.GetStream();
+                // receive the bytes from the stream
+                int readByte;
+                while ((readByte = stream.ReadByte()) != -1)
+                    messageBytes = messageBytes.Append((byte)readByte).ToArray();
+                    // .Read(messageBytes, 0, countBytes);
                 // determine message type and raise event
                 _serializationProvider.DetermineMessagePreamble(messageBytes)
                             .Bind<string, BaseMessage>(preamble => BuildMessage(preamble, messageBytes))
