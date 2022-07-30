@@ -3,17 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.Core", "Janus.Mediator.Core\Janus.Mediator.Core.csproj", "{69201653-6D00-47E0-BD30-9B2940EA5E6A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.Core", "Janus.Mask.Core\Janus.Mask.Core.csproj", "{0903CB67-80D4-47ED-BF7D-F652728EBEC4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Commons", "Janus.Commons\Janus.Commons.csproj", "{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Utils", "Janus.Utils\Janus.Utils.csproj", "{AC83576D-55C0-4664-8A2F-6E792C4F60EB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.Core.Tests", "Janus.Mask.Core.Tests\Janus.Mask.Core.Tests.csproj", "{0D91299D-A1F0-4811-8E1D-266EC97CD7C3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.Core.Tests", "Janus.Mediator.Core.Tests\Janus.Mediator.Core.Tests.csproj", "{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Utils.Tests", "Janus.Utils.Tests\Janus.Utils.Tests.csproj", "{E015C759-4FCA-4C32-BCAF-591BB491B5FB}"
 EndProject
@@ -24,8 +16,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Communication.Tests", "Janus.Communication.Tests\Janus.Communication.Tests.csproj", "{FFC45DEC-597D-4B34-8D05-1FC202E0C056}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Components", "Janus.Components\Janus.Components.csproj", "{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.ConsoleApp", "Janus.Mediator.ConsoleApp\Janus.Mediator.ConsoleApp.csproj", "{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Serialization", "Janus.Serialization\Janus.Serialization.csproj", "{17143E02-BA32-44D9-AE2F-E657A7C0E50A}"
 EndProject
@@ -41,13 +31,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Serialization.Bson.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Serialization.Json.Tests", "Janus.Serialization.Json.Tests\Janus.Serialization.Json.Tests.csproj", "{44481E2E-8754-4069-B707-2788585D2361}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Serialization.MongoBson", "Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj", "{2B8D8EC9-8115-4E5D-B572-9524934AFE80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Serialization.MongoBson", "Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj", "{2B8D8EC9-8115-4E5D-B572-9524934AFE80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Serialization.Protobufs", "Janus.Serialization.Protobufs\Janus.Serialization.Protobufs.csproj", "{1722A7C7-6169-409B-AE77-FB21F93CAFAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Serialization.Protobufs", "Janus.Serialization.Protobufs\Janus.Serialization.Protobufs.csproj", "{1722A7C7-6169-409B-AE77-FB21F93CAFAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Serialization.MongoBson.Tests", "Janus.Serialization.MongoBson.Tests\Janus.Serialization.MongoBson.Tests.csproj", "{C56A03EA-9AEC-4DC6-9E26-609A0A7AD4A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Serialization.MongoBson.Tests", "Janus.Serialization.MongoBson.Tests\Janus.Serialization.MongoBson.Tests.csproj", "{C56A03EA-9AEC-4DC6-9E26-609A0A7AD4A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Serialization.Protobufs.Tests", "Janus.Serialization.Protobufs.Tests\Janus.Serialization.Protobufs.Tests.csproj", "{162FD67C-C9DA-4DBE-B4C4-6E1F845BB0C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Serialization.Protobufs.Tests", "Janus.Serialization.Protobufs.Tests\Janus.Serialization.Protobufs.Tests.csproj", "{162FD67C-C9DA-4DBE-B4C4-6E1F845BB0C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,14 +45,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{69201653-6D00-47E0-BD30-9B2940EA5E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{69201653-6D00-47E0-BD30-9B2940EA5E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{69201653-6D00-47E0-BD30-9B2940EA5E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{69201653-6D00-47E0-BD30-9B2940EA5E6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0903CB67-80D4-47ED-BF7D-F652728EBEC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0903CB67-80D4-47ED-BF7D-F652728EBEC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0903CB67-80D4-47ED-BF7D-F652728EBEC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0903CB67-80D4-47ED-BF7D-F652728EBEC4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFF954E6-82E5-4F75-B18D-30D654AB8E5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,14 +53,6 @@ Global
 		{AC83576D-55C0-4664-8A2F-6E792C4F60EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC83576D-55C0-4664-8A2F-6E792C4F60EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC83576D-55C0-4664-8A2F-6E792C4F60EB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D91299D-A1F0-4811-8E1D-266EC97CD7C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D91299D-A1F0-4811-8E1D-266EC97CD7C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D91299D-A1F0-4811-8E1D-266EC97CD7C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D91299D-A1F0-4811-8E1D-266EC97CD7C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B4FBB6D-D1ED-40FD-B92C-A7FB90ABED3B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E015C759-4FCA-4C32-BCAF-591BB491B5FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E015C759-4FCA-4C32-BCAF-591BB491B5FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E015C759-4FCA-4C32-BCAF-591BB491B5FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -99,10 +73,6 @@ Global
 		{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A827D3D-D86F-4CA4-AAC3-935D7540F91E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6E3A441-FD2E-41B0-AA55-0E2B532D9CEE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17143E02-BA32-44D9-AE2F-E657A7C0E50A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17143E02-BA32-44D9-AE2F-E657A7C0E50A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17143E02-BA32-44D9-AE2F-E657A7C0E50A}.Release|Any CPU.ActiveCfg = Release|Any CPU
