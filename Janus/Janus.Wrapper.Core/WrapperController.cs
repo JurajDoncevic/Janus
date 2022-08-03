@@ -1,22 +1,28 @@
 ﻿using FunctionalExtensions.Base.Results;
+using static FunctionalExtensions.Base.OptionExtensions;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
-using Janus.Communication.Nodes;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 
-namespace Janus.Mediator.Core;
-public sealed class MediatorController : IComponentController
+namespace Janus.Wrapper.Core;
+public sealed class WrapperController
+    <TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
+    : IComponentController
 {
-    private readonly MediatorQueryManager _queryManager;
-    private readonly MediatorCommandManager _commandManager;
-    private readonly MediatorSchemaManager _schemaManager;
-    private readonly MediatorCommunicationNode _communicationNode;
+    private readonly WrapperQueryManager<TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> _queryManager;
+    private readonly WrapperCommandManager<TLocalSelection, TLocalMutation, TLocalInstantiation> _commandManager;
+    private readonly WrapperSchemaManager _schemaManager;
+    private readonly WrapperCommunicationNode _communicationNode;
 
-    public MediatorController(MediatorCommunicationNode communicationNode, MediatorQueryManager queryManager, MediatorCommandManager commandManager, MediatorSchemaManager schemaManager)
+    public WrapperController(
+        WrapperCommunicationNode communicationNode,
+        WrapperQueryManager<TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> queryManager,
+        WrapperCommandManager<TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
+        WrapperSchemaManager schemaManager)
     {
         _communicationNode = communicationNode;
         _queryManager = queryManager;
@@ -29,18 +35,37 @@ public sealed class MediatorController : IComponentController
     }
 
     private void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
-    {
-
-    }
+        => _schemaManager.GetCurrentSchema()
+            .Map(dataSource => _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, dataSource, e.FromRemotePoint));
 
     private void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
     {
-
+        var exchangeId = e.ReceivedMessage.ExchangeId;
+        var fromPoint = e.FromRemotePoint;
+        var query = e.ReceivedMessage.Query;
+        
+        _schemaManager.GetCurrentSchema()
+            .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
+            .Bind(result => _queryManager.RunQuery(query))
+            .Match(
+                queryResult => _communicationNode.SendQueryResponse(exchangeId, queryResult, fromPoint),
+                message => _communicationNode.SendQueryResponse(exchangeId, null, fromPoint, $"Query execution error on {_communicationNode.Options.NodeId}:" + message)
+            );
     }
 
     private void CommunicationNode_CommandRequestReceived(object? sender, Communication.Nodes.Events.CommandReqEventArgs e)
     {
+        var exchangeId = e.ReceivedMessage.ExchangeId;
+        var fromPoint = e.FromRemotePoint;
+        var command = e.ReceivedMessage.Command;
 
+        _schemaManager.GetCurrentSchema()
+            .Bind(dataSource => Task.FromResult(command.IsValidForDataSource(dataSource)))
+            .Bind(result => _commandManager.RunCommand(command))
+            .Match(
+                message => _communicationNode.SendCommandResponse(exchangeId, true, fromPoint, message),
+                message => _communicationNode.SendCommandResponse(exchangeId, false, fromPoint, $"Command execution error on {_communicationNode.Options.NodeId}:" + message)
+            );
     }
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
@@ -63,7 +88,6 @@ public sealed class MediatorController : IComponentController
             .GetCurrentSchema()
             .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
             .Bind(async validity => await _queryManager.RunQuery(query));
-
 
     public async Task<Result> SaveRegisteredRemotePoints(string filePath)
         => await ResultExtensions.AsResult(async () =>

@@ -4,7 +4,7 @@ using Janus.Components;
 using System.Text.Json.Serialization;
 
 namespace Janus.Mediator.Core;
-public class MediatorOptions : IComponentOptions
+public sealed class MediatorOptions : IComponentOptions
 {
     private readonly string _nodeId;
     private readonly int _listenPort;

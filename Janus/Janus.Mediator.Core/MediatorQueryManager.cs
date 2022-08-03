@@ -5,7 +5,7 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Components;
 
 namespace Janus.Mediator.Core;
-public class MediatorQueryManager : IComponentQueryManager, IDelegatingQueryManager
+public sealed class MediatorQueryManager : IComponentQueryManager, IDelegatingQueryManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
 

@@ -116,7 +116,7 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         return result;
     }
 
-    public async Task<Result> SendQueryResponse(string exchangeId, TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
+    public async Task<Result> SendQueryResponse(string exchangeId, TabularData? queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
     {
         // create command response message
         var queryResponse = new QueryResMessage(exchangeId, _options.NodeId, queryResult, errorMessage, blockNumber, totalBlocks);

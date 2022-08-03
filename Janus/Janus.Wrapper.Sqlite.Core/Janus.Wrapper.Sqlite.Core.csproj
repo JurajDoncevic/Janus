@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnablePreviewfeatures>true</EnablePreviewfeatures>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Janus.Wrapper.Core\Janus.Wrapper.Core.csproj" />
+	</ItemGroup>
+
+</Project>

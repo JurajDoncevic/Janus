@@ -12,9 +12,8 @@ public interface IComponentSchemaManager
     /// <summary>
     /// Reloads the schema from the current data sources
     /// </summary>
-    /// <param name="transformations"></param>
     /// <returns></returns>
-    public Task<Result<DataSource>> ReloadSchema(object? transformations = null);
+    public Task<Result<DataSource>> ReloadSchema();
 
 }
 
@@ -26,4 +25,14 @@ public interface IDelegatingSchemaManager
     /// <param name="nodeId"></param>
     /// <returns></returns>
     public Task<Result<DataSource>> GetSchemaFromComponent(string nodeId);
+}
+
+public interface ITransformingSchemaManager
+{
+    /// <summary>
+    /// Reloads the schema from the current data sources with transformations applied
+    /// </summary>
+    /// <param name="transformations"></param>
+    /// <returns></returns>
+    public Task<Result<DataSource>> ReloadSchema(object? transformations = null);
 }

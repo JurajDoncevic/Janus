@@ -4,7 +4,7 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Components;
 
 namespace Janus.Mediator.Core;
-public class MediatorCommandManager : IComponentCommandManager, IDelegatingCommandManager
+public sealed class MediatorCommandManager : IComponentCommandManager, IDelegatingCommandManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
 
