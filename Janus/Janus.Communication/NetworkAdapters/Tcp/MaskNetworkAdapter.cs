@@ -3,7 +3,7 @@ using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.NetworkAdapters.Exceptions;
 using Janus.Communication.Remotes;
 using Janus.Serialization;
-using Janus.Utils.Logging;
+using Janus.Logging;
 
 namespace Janus.Communication.NetworkAdapters.Tcp;
 

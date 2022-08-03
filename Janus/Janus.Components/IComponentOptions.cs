@@ -1,4 +1,5 @@
-﻿using Janus.Communication.Remotes;
+﻿using Janus.Commons;
+using Janus.Communication.Remotes;
 
 namespace Janus.Components;
 
@@ -16,6 +17,14 @@ public interface IComponentOptions
     /// Components general timeout in milliseconds
     /// </summary>
     public int TimeoutMs { get; }
+    /// <summary>
+    /// Component's data format for communication. Must be compatible with NetworkAdaptertype <see cref="Utils.IsDataFormatCompatibleWithAdapter(CommunicationFormats, NetworkAdapterTypes)"/>
+    /// </summary>
+    public CommunicationFormats CommunicationFormat { get; }
+    /// <summary>
+    /// Type of network adapter
+    /// </summary>
+    public NetworkAdapterTypes NetworkAdapterType { get; }
     /// <summary>
     /// Remote points to register on startup
     /// </summary>

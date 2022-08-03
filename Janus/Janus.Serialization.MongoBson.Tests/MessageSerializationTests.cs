@@ -54,7 +54,7 @@ public class MessageSerializationTests
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
         var listenPort = 20001;
-        var nodeType = NodeTypes.MEDIATOR_NODE;
+        var nodeType = NodeTypes.MEDIATOR;
         var rememberMe = true;
         var serializer = _serializationProvider.HelloReqMessageSerializer;
         var helloReq = new HelloReqMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
@@ -73,7 +73,7 @@ public class MessageSerializationTests
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
         var listenPort = 20001;
-        var nodeType = NodeTypes.MEDIATOR_NODE;
+        var nodeType = NodeTypes.MEDIATOR;
         var rememberMe = true;
         var serializer = _serializationProvider.HelloResMessageSerializer;
         var helloReq = new HelloResMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
@@ -289,7 +289,7 @@ public class MessageSerializationTests
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
         var listenPort = 20001;
-        var nodeType = NodeTypes.MEDIATOR_NODE;
+        var nodeType = NodeTypes.MEDIATOR;
         var rememberMe = true;
         var serializer = _serializationProvider.HelloReqMessageSerializer;
         var helloReq = new HelloReqMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
@@ -307,7 +307,7 @@ public class MessageSerializationTests
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
         var listenPort = 20001;
-        var nodeType = NodeTypes.MEDIATOR_NODE;
+        var nodeType = NodeTypes.MEDIATOR;
         var rememberMe = true;
         var serializer = _serializationProvider.HelloResMessageSerializer;
         var helloRes = new HelloResMessage(exchangeId, nodeId, listenPort, nodeType, rememberMe);
@@ -325,7 +325,7 @@ public class MessageSerializationTests
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
         var listenPort = 20001;
-        var nodeType = NodeTypes.MEDIATOR_NODE;
+        var nodeType = NodeTypes.MEDIATOR;
         var rememberMe = true;
         var serializer = _serializationProvider.ByeReqMessageSerializer;
         var byeReq = new ByeReqMessage(exchangeId, nodeId);

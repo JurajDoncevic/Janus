@@ -10,5 +10,5 @@ public class AlwaysTimeoutCommunicationNode : BaseCommunicationNode<IMediatorNet
     {
 
     }
-    public override NodeTypes NodeType => NodeTypes.MEDIATOR_NODE;
+    public override NodeTypes NodeType => NodeTypes.MEDIATOR;
 }

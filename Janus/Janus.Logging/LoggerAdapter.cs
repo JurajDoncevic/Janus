@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using static FunctionalExtensions.Base.UnitExtensions;
 
-namespace Janus.Utils.Logging;
+namespace Janus.Logging;
 
 public sealed class Logger : ILogger
 {

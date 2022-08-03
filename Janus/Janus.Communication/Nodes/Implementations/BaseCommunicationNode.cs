@@ -5,7 +5,7 @@ using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Nodes.Utils;
 using Janus.Communication.Remotes;
-using Janus.Utils.Logging;
+using Janus.Logging;
 
 namespace Janus.Communication.Nodes.Implementations;
 
@@ -294,9 +294,9 @@ public static partial class CommunicationNodeExtensions
     public static RemotePoint CreateRemotePoint(this HelloResMessage helloResMessage!!, string senderAddress)
         => helloResMessage.NodeType switch
         {
-            NodeTypes.MEDIATOR_NODE => new MediatorRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
-            NodeTypes.WRAPPER_NODE => new WrapperRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
-            NodeTypes.MASK_NODE => new MaskRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort)
+            NodeTypes.MEDIATOR => new MediatorRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
+            NodeTypes.WRAPPER => new WrapperRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
+            NodeTypes.MASK => new MaskRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort)
         };
     /// <summary>
     /// Creates a remote point from request and address data 
@@ -307,8 +307,8 @@ public static partial class CommunicationNodeExtensions
     public static RemotePoint CreateRemotePoint(this HelloReqMessage helloReqMessage!!, string senderAddress)
         => helloReqMessage.NodeType switch
         {
-            NodeTypes.MEDIATOR_NODE => new MediatorRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
-            NodeTypes.WRAPPER_NODE => new WrapperRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
-            NodeTypes.MASK_NODE => new MaskRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort)
+            NodeTypes.MEDIATOR => new MediatorRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
+            NodeTypes.WRAPPER => new WrapperRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
+            NodeTypes.MASK => new MaskRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort)
         };
 }

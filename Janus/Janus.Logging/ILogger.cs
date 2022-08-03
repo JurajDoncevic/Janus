@@ -1,6 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-
-namespace Janus.Utils.Logging;
+namespace Janus.Logging;
 
 /// <summary>
 /// Generic interface for library logging

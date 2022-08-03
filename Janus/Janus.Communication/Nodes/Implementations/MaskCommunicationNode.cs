@@ -7,13 +7,13 @@ using Janus.Commons.Nodes;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;
-using Janus.Utils.Logging;
+using Janus.Logging;
 
 namespace Janus.Communication.Nodes.Implementations;
 
 public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAdapter>, IMaskCommunicationNode
 {
-    public override NodeTypes NodeType => NodeTypes.MASK_NODE;
+    public override NodeTypes NodeType => NodeTypes.MASK;
 
     private readonly ILogger<MaskCommunicationNode>? _logger;
 

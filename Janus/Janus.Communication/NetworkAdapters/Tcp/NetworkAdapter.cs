@@ -2,7 +2,7 @@
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Remotes;
 using Janus.Serialization;
-using Janus.Utils.Logging;
+using Janus.Logging;
 using System.Net;
 using System.Net.Sockets;
 

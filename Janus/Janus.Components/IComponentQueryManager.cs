@@ -6,7 +6,7 @@ namespace Janus.Components;
 public interface IComponentQueryManager
 {
     /// <summary>
-    /// Executes a query on this component's schema
+    /// Runs a query on this component's schema. Masks and mediators delegate, wrappers execute the query
     /// </summary>
     /// <param name="query">Query to execute</param>
     /// <returns></returns>

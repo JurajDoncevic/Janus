@@ -20,7 +20,19 @@ public enum CommunicationFormats
     /// </summary>
     BSON,
     /// <summary>
+    /// MongoDB's Binary Javascript Object Notation (binary)
+    /// </summary>
+    MONGO_BSON,    
+    /// <summary>
+    /// ProtocolBuffers (binary)
+    /// </summary>
+    PROTOBUFS,
+    /// <summary>
     /// Javascript Object Notation (textual)
     /// </summary>
-    JSON
+    JSON,
+    /// <summary>
+    /// Unknown data format - something went bad :(
+    /// </summary>
+    UNKNOWN
 }

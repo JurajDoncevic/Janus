@@ -43,4 +43,14 @@ public static class Utils
             return dateTimeValue;
         return exp;
     }
+
+    public static bool IsDataFormatCompatibleWithAdapter(CommunicationFormats dataFormat, NetworkAdapterTypes networkAdapterType)
+        => dataFormat switch
+        {
+            CommunicationFormats.AVRO => networkAdapterType == NetworkAdapterTypes.TCP,
+            CommunicationFormats.BSON => networkAdapterType == NetworkAdapterTypes.TCP,
+            CommunicationFormats.MONGO_BSON => networkAdapterType == NetworkAdapterTypes.TCP,
+            CommunicationFormats.PROTOBUFS => networkAdapterType == NetworkAdapterTypes.TCP,
+            _ => false
+        };
 }
