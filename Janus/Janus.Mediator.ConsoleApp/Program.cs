@@ -1,7 +1,6 @@
 ﻿using CommandLine;
 using Janus.Commons;
 using Janus.Communication;
-using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Mediator.ConsoleApp;
 using Janus.Mediator.Core;
@@ -65,7 +64,7 @@ IHost host = Host.CreateDefaultBuilder(args)
             mediatorOptions.NetworkAdapterType))
             throw new Exception($"Incompatible communication data format {mediatorOptions.CommunicationFormat} for network adapter type {mediatorOptions.NetworkAdapterType}");
 
-        // set the serialization provider and network provider
+        // set the serialization provider and network adapter
         var _ =
         mediatorOptions.NetworkAdapterType switch
         {
