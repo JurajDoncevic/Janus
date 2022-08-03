@@ -2,7 +2,8 @@
 
 namespace Janus.Wrapper.Core.LocalQuerying;
 
-public interface IQueryExecutor<TSelection, TJoining, TProjection, TLocalData>
+public interface IQueryExecutor<TSelection, TJoining, TProjection, TLocalData, TLocalQuery> where TLocalQuery 
+    : LocalQuery<TSelection, TJoining, TProjection>
 {
-    public Task<Result<TLocalData>> ExecuteQuery(LocalQuery<TSelection, TJoining, TProjection> localQuery);
+    public Task<Result<TLocalData>> ExecuteQuery(TLocalQuery localQuery);
 }

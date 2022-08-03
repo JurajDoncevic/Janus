@@ -6,16 +6,18 @@ using Janus.Wrapper.Core.Translation;
 using Janus.Wrapper.Core.LocalQuerying;
 
 namespace Janus.Wrapper.Core;
-public sealed class WrapperQueryManager<TSelection, TJoining, TProjection, TLocalData> : IComponentQueryManager
+public sealed class WrapperQueryManager<TSelection, TJoining, TProjection, TLocalData, TLocalQuery> 
+    : IComponentQueryManager
+    where TLocalQuery : LocalQuery<TSelection, TJoining, TProjection>
 {
-    private readonly ILocalQueryTranslator<LocalQuery<TSelection, TJoining, TProjection>, TSelection, TJoining, TProjection> _queryTranslator;
+    private readonly ILocalQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> _queryTranslator;
     private readonly ILocalDataTranslator<TLocalData> _dataTranslator;
-    private readonly IQueryExecutor<TSelection, TJoining, TProjection, TLocalData> _queryExecutor;
+    private readonly IQueryExecutor<TSelection, TJoining, TProjection, TLocalData, TLocalQuery> _queryExecutor;
 
     public WrapperQueryManager(
-        ILocalQueryTranslator<LocalQuery<TSelection, TJoining, TProjection>, TSelection, TJoining, TProjection> queryTranslator,
+        ILocalQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> queryTranslator,
         ILocalDataTranslator<TLocalData> dataTranslator,
-        IQueryExecutor<TSelection, TJoining, TProjection, TLocalData> queryExecutor)
+        IQueryExecutor<TSelection, TJoining, TProjection, TLocalData, TLocalQuery> queryExecutor)
     {
         _queryTranslator = queryTranslator;
         _dataTranslator = dataTranslator;

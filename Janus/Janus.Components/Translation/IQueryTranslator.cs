@@ -3,6 +3,6 @@ public interface IQueryTranslator<TQuerySource, TSelectionSource, TJoiningSource
 {
     Result<TQueryDestination> Translate(TQuerySource query);
     Result<TSelectionDestination> TranslateSelection(Option<TSelectionSource> selection);
-    Result<TJoiningDestination> TranslateJoin(Option<TJoiningSource> joining);
+    Result<TJoiningDestination> TranslateJoining(Option<TJoiningSource> joining);
     Result<TProjectionDestination> TranslateProjection(Option<TProjectionSource> projection);
 }
