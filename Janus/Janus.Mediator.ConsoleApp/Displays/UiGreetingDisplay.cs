@@ -12,7 +12,7 @@ public class UiGreetingDisplay : BaseDisplay
 
     protected async override Task<Result> Display()
     {
-        System.Console.WriteLine("Welcome to the Janus Mediator CLI application!");
+        System.Console.WriteLine("Welcome to the Janus Mediator UI application!");
         System.Console.WriteLine(_janusAscii);
         System.Console.WriteLine($"This is Mediator {_mediatorOptions.NodeId} listening on port {_mediatorOptions.ListenPort}");
 
