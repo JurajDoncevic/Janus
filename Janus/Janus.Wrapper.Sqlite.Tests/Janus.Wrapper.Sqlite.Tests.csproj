@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.7" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -23,6 +24,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Wrapper.Sqlite\Janus.Wrapper.Sqlite.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="test.db">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

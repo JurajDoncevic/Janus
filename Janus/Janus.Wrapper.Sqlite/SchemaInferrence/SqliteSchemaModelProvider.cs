@@ -5,7 +5,7 @@ using Janus.Wrapper.SchemaInferrence.Model;
 using Microsoft.Data.Sqlite;
 
 namespace Janus.Wrapper.Sqlite.SchemaInferrence;
-internal class SqliteSchemaModelProvider : ISchemaModelProvider
+public class SqliteSchemaModelProvider : ISchemaModelProvider
 {
     private readonly string _connectionString;
 
@@ -23,31 +23,36 @@ internal class SqliteSchemaModelProvider : ISchemaModelProvider
     public Result<IEnumerable<AttributeInfo>> GetAttributes(string schemaName, string tableauName)
         => ResultExtensions.AsResult(() =>
         {
+            if (!TableauExists(schemaName, tableauName))
+                return Result<IEnumerable<AttributeInfo>>.OnFailure($"Tableau {tableauName} doesn't exist");
+
             var attributeInfos = Enumerable.Empty<AttributeInfo>();
 
             using var connection = new SqliteConnection(_connectionString);
             if (connection.State == System.Data.ConnectionState.Closed)
                 connection.Open();
             using var command = connection.CreateCommand();
-            command.Parameters.Add(new SqliteParameter("@tableau_name", tableauName));
+
+            // FROM doesn't take params, so a concat string has to be used
+            // injection is avoided by checking if the tableau exists
             command.CommandText =
-                "PRAGMA table_info('@tableau_name');"; // ignore some system tables
-
+                $"SELECT * FROM pragma_table_info('{tableauName}');"; 
+            
             var reader = command.ExecuteReader();
-
-            while (reader.NextResult())
+            while (reader.Read())
             {
-                attributeInfos.Append(
-                    new AttributeInfo(
-                        reader.GetFieldValue<string>(0), // name
-                        InferDataType(reader.GetFieldValue<string>(1)), // type
-                        reader.GetFieldValue<bool>(5), // pk
-                        reader.GetFieldValue<bool>(3),// nullable
-                        reader.GetFieldValue<int>(0))// ordinal (cid)
-                    );
+                attributeInfos =
+                    attributeInfos.Append(
+                        new AttributeInfo(
+                            reader.GetFieldValue<string>(1), // name
+                            InferDataType(reader.GetFieldValue<string>(2)), // type
+                            reader.GetFieldValue<bool>(5), // pk
+                            !reader.GetFieldValue<bool>(3),// nullable, notnull in db
+                            reader.GetFieldValue<int>(0))// ordinal (cid)
+                        );
             }
 
-            return attributeInfos;
+            return Result<IEnumerable<AttributeInfo>>.OnSuccess(attributeInfos);
         });
 
     public Result<DataSourceInfo> GetDataSource()
@@ -69,10 +74,11 @@ internal class SqliteSchemaModelProvider : ISchemaModelProvider
 
             var reader = command.ExecuteReader();
 
-            while (reader.NextResult())
+            while (reader.Read())
             {
-                schemaInfos.Append(
-                    new SchemaInfo(reader.GetFieldValue<string>(1))); // get `name`
+                schemaInfos = 
+                    schemaInfos.Append(
+                        new SchemaInfo(reader.GetFieldValue<string>(1))); // get `name`
             }
 
             return schemaInfos;
@@ -95,10 +101,11 @@ internal class SqliteSchemaModelProvider : ISchemaModelProvider
 
             var reader = command.ExecuteReader();
 
-            while (reader.NextResult())
+            while (reader.Read())
             {
-                tableauInfos.Append(
-                    new TableauInfo(reader.GetFieldValue<string>(0))); // get `name`
+                tableauInfos =
+                    tableauInfos.Append(
+                        new TableauInfo(reader.GetFieldValue<string>(0))); // get `name`
             }
 
             return tableauInfos;
@@ -117,18 +124,17 @@ internal class SqliteSchemaModelProvider : ISchemaModelProvider
             if (connection.State == System.Data.ConnectionState.Closed)
                 connection.Open();
             using var command = connection.CreateCommand();
-
-            command.Parameters.Add(new SqliteParameter("@tableau_name", tableauName));
-
             command.CommandText =
                 "SELECT EXISTS(" +
                 "SELECT 1 " +
                 "FROM sqlite_schema " +
-                "WHERE type = 'table' AND name NOT LIKE 'sqlite%' AND name = '@tableau_name');";
+                "WHERE type = 'table' AND name NOT LIKE 'sqlite%' AND name = $tableau_name);";
+            
+            command.Parameters.AddWithValue("$tableau_name", tableauName);
 
             var reader = command.ExecuteReader();
 
-            return reader.NextResult()
+            return reader.Read()
                 ? reader.GetFieldValue<bool>(0)
                     ? Result.OnSuccess($"Tableau {tableauName} exists")
                     : Result.OnFailure($"Tableau {tableauName} doesn't exist")

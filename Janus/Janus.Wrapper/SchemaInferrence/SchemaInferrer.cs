@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
+using Janus.Wrapper.SchemaInferrence.Model;
 
 namespace Janus.Wrapper.SchemaInferrence;
 public class SchemaInferrer
@@ -15,12 +16,17 @@ public class SchemaInferrer
     public Result<DataSource> InferSchemaModel()
         => ResultExtensions.AsResult<DataSource>(() =>
         {
-            var dataSourceResult = _provider.GetDataSource();
+            var dataSource =
+            _provider.GetDataSource()
+                .Match(
+                    ds => ds,
+                    msg => new DataSourceInfo(_dataSourceName!)
+                );
             var schemasResult = _provider.GetSchemas();
 
-            if (dataSourceResult && schemasResult)
+            if (schemasResult && dataSource != null)
             {
-                var dataSourceBuilder = SchemaModelBuilder.InitDataSource(_dataSourceName ?? dataSourceResult.Data!.Name);
+                var dataSourceBuilder = SchemaModelBuilder.InitDataSource(_dataSourceName ?? dataSource.Name);
 
                 foreach (var schema in schemasResult.Data!)
                 {
