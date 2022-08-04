@@ -147,7 +147,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
             string name when name.Contains("int") => DataTypes.INT,
             string name when name.Contains("char") || name.Contains("text") || name.Contains("clob") => DataTypes.STRING,
             string name when name.Contains("blob") => DataTypes.BINARY,
-            string name when name.Contains("real") || name.Contains("double") || name.Contains("float") || name.Contains("decimal") => DataTypes.DECIMAL,
+            string name when name.Contains("real") || name.Contains("double") || name.Contains("float") || name.Contains("decimal") || name.Contains("numeric") => DataTypes.DECIMAL,
             string name when name.Contains("boolean") => DataTypes.BOOLEAN,
             string name when name.Contains("date") => DataTypes.DATETIME, // for DATE and DATETIME
             _ => DataTypes.STRING // defaults to string
