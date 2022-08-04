@@ -3,36 +3,93 @@ using FunctionalExtensions.Base.Results;
 using Janus.Commons.QueryModels;
 using Janus.Wrapper.Translation;
 using Janus.Wrapper.Sqlite.LocalQuerying;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Janus.Commons.SelectionExpressions;
+using Janus.Commons;
 
 namespace Janus.Wrapper.Sqlite.Translation;
 internal class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, string, string>
 {
     public Result<SqliteQuery> Translate(Query query)
         => TranslateSelection(query.Selection)
-            .Bind(selection => TranslateJoining(query.Joining).Map(joining => (selection, joining)))
+            .Bind(selection => TranslateJoining(query.Joining, query.OnTableauId).Map(joining => (selection, joining)))
             .Bind(result => TranslateProjection(query.Projection).Map(projection => (result.selection, result.joining, projection)))
-            .Map(((string selection, string joining, string projection) result) 
+            .Map(((string selection, string joining, string projection) result)
                 => new SqliteQuery(query.OnTableauId, result.selection, result.joining, result.projection));
 
-    public Result<string> TranslateJoining(Option<Joining> joining)
+    public Result<string> TranslateJoining(Option<Joining> joining, string? startingWith)
         => ResultExtensions.AsResult(
-            () => joining
-                    ? "" // TODO
-                    : "");
+            () => $"FROM {CutAwayTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" + 
+                  joining.Match(
+                      j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
+                            (join, expr) => expr + $" INNER JOIN {CutAwayTableauId(join.PrimaryKeyTableauId)} ON {CutAwayAttributeId(join.PrimaryKeyAttributeId)} = {CutAwayAttributeId(join.ForeignKeyAttributeId)} "),
+                      () => ""));
 
     public Result<string> TranslateProjection(Option<Projection> projection)
         => ResultExtensions.AsResult(
-            () => projection 
-                    ? $"SELECT {string.Join(",", projection.Value.IncludedAttributeIds)}"
+            () => projection
+                    ? $"SELECT {string.Join(",", projection.Value.IncludedAttributeIds.Map(CutAwayAttributeId))}"
                     : "SELECT *");
 
     public Result<string> TranslateSelection(Option<Selection> selection)
+        => "WHERE " + selection.Match(
+                sel => GenerateExpression(sel.Expression),
+                () => "true");
+
+    private string GenerateExpression(SelectionExpression expression)
+        => expression switch
+        {
+            LogicalUnaryOperator unaryOp => GenerateUnaryOp(unaryOp),
+            LogicalBinaryOperator binaryOp => GenerateBinaryOp(binaryOp),
+            ComparisonOperator compOp => GenerateComparisonOp(compOp),
+            Literal literal => GenerateLiteral(literal),
+            _ => throw new Exception($"Unknown expression type {expression}")
+        };
+
+    private string GenerateLiteral(Literal literal)
+        => literal switch
+        {
+            TrueLiteral => "true",
+            FalseLiteral => "false",
+            _ => throw new Exception($"Uknown literal operator {literal.LiteralToken}")
+        };
+
+    private string GenerateComparisonOp(ComparisonOperator compOp)
+        => compOp switch
+        {
+            EqualAs eq => $"{CutAwayAttributeId(eq.AttributeId)}={eq.Value}",
+            NotEqualAs neq => $"{CutAwayAttributeId(neq.AttributeId)}<>{neq.Value}",
+            GreaterThan gt => $"{CutAwayAttributeId(gt.AttributeId)}>{gt.Value}",
+            GreaterOrEqualThan gte => $"{CutAwayAttributeId(gte.AttributeId)}>={gte.Value}",
+            LesserThan lt => $"{CutAwayAttributeId(lt.AttributeId)}<{lt.Value}",
+            LesserOrEqualThan lte => $"{CutAwayAttributeId(lte.AttributeId)}<={lte.Value}",
+            _ => throw new Exception($"Uknown comparison operator {compOp.OperatorString}")
+        };
+
+    private string GenerateBinaryOp(LogicalBinaryOperator binaryOp)
+        => binaryOp switch
+        {
+            AndOperator andOp => $"({GenerateExpression(andOp.LeftOperand)} AND {GenerateExpression(andOp.RightOperand)})",
+            OrOperator orOp => $"({GenerateExpression(orOp.LeftOperand)} OR {GenerateExpression(orOp.RightOperand)})",
+            _ => throw new Exception($"Unknown logical binary operator {binaryOp.OperatorString}")
+        };
+
+    private string GenerateUnaryOp(LogicalUnaryOperator unaryOp)
+        => unaryOp switch
+        {
+            NotOperator notOp => $"NOT({GenerateExpression(notOp.Operand)})",
+            _ => throw new Exception($"Unknown logical binary operator {unaryOp.OperatorString}")
+        };
+
+    private string CutAwayTableauId(string tableauId)
     {
-        throw new NotImplementedException();
+        (_, _, string tableauName) = Utils.GetNamesFromTableauId(tableauId);
+        return tableauName;
     }
+
+    private string CutAwayAttributeId(string attributeId)
+    {
+        (_, _, string tableauName, string attributeName) = Utils.GetNamesFromAttributeId(attributeId);
+        return $"{tableauName}.{attributeName}";
+    }
+
 }
