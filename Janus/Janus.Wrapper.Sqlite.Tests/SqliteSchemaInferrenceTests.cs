@@ -6,11 +6,11 @@ namespace Janus.Wrapper.Sqlite.Tests;
 public class SqliteSchemaInferrenceTests
 {
     private readonly SchemaInferrer _schemaInferrer;
-    private readonly string _connectionString;
-    public SqliteSchemaInferrenceTests(string connectionString = "Data Source=./test.db;")
+    private readonly string[] _connectionStrings
+        = new string[] { "Data Source=./chinook.db;", "Data Source=./usgs-lower-us.db;" };
+    public SqliteSchemaInferrenceTests()
     {
-        _connectionString = connectionString;
-        _schemaInferrer = new SchemaInferrer(new SqliteSchemaModelProvider(_connectionString), "testdb");
+        _schemaInferrer = new SchemaInferrer(new SqliteSchemaModelProvider(_connectionStrings[1]), "chinook");
     }
 
     [Fact]

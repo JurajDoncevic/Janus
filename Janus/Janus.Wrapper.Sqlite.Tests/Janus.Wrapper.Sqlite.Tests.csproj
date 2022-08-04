@@ -27,7 +27,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="test.db">
+	  <None Update="chinook.db">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="usgs-lower-us.db">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
