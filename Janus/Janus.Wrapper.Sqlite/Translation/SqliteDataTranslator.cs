@@ -5,7 +5,7 @@ using Janus.Wrapper.Sqlite.LocalDataModel;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper.Sqlite.Translation;
-internal class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularData>
+public class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularData>
 {
     public Result<TabularData> TranslateToTabularData(SqliteTabularData data)
         => ResultExtensions.AsResult(() =>

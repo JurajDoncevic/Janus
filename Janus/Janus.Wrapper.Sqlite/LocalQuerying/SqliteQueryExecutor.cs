@@ -4,7 +4,7 @@ using Janus.Wrapper.Sqlite.LocalDataModel;
 using Microsoft.Data.Sqlite;
 
 namespace Janus.Wrapper.Sqlite.LocalQuerying;
-internal class SqliteQueryExecutor : IQueryExecutor<string, string, string, SqliteTabularData, SqliteQuery>
+public class SqliteQueryExecutor : IQueryExecutor<string, string, string, SqliteTabularData, SqliteQuery>
 {
     private readonly string _sqliteConnectionString;
 

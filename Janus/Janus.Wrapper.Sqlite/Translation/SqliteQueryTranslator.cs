@@ -7,7 +7,7 @@ using Janus.Wrapper.Sqlite.LocalQuerying;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper.Sqlite.Translation;
-internal class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, string, string>
+public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, string, string>
 {
     public Result<SqliteQuery> Translate(Query query)
         => TranslateSelection(query.Selection)
@@ -21,13 +21,13 @@ internal class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string
             () => $"FROM {CutAwayTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
                       j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
-                            (join, expr) => expr + $" INNER JOIN {CutAwayTableauId(join.PrimaryKeyTableauId)} ON {CutAwayAttributeId(join.PrimaryKeyAttributeId)} = {CutAwayAttributeId(join.ForeignKeyAttributeId)} "),
+                            (join, expr) => expr + $" INNER JOIN {CutAwayTableauId(join.PrimaryKeyTableauId)} ON {CutAwayAttributeId(join.PrimaryKeyAttributeId)}={CutAwayAttributeId(join.ForeignKeyAttributeId)} "),
                       () => ""));
 
     public Result<string> TranslateProjection(Option<Projection> projection)
         => ResultExtensions.AsResult(
             () => projection
-                    ? $"SELECT {string.Join(",", projection.Value.IncludedAttributeIds.Map(CutAwayAttributeId))}"
+                    ? $"SELECT {string.Join(", ", projection.Value.IncludedAttributeIds.Map(CutAwayAttributeId))}"
                     : "SELECT *");
 
     public Result<string> TranslateSelection(Option<Selection> selection)
@@ -56,12 +56,12 @@ internal class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string
     private string GenerateComparisonOp(ComparisonOperator compOp)
         => compOp switch
         {
-            EqualAs eq => $"{CutAwayAttributeId(eq.AttributeId)}={eq.Value}",
-            NotEqualAs neq => $"{CutAwayAttributeId(neq.AttributeId)}<>{neq.Value}",
-            GreaterThan gt => $"{CutAwayAttributeId(gt.AttributeId)}>{gt.Value}",
-            GreaterOrEqualThan gte => $"{CutAwayAttributeId(gte.AttributeId)}>={gte.Value}",
-            LesserThan lt => $"{CutAwayAttributeId(lt.AttributeId)}<{lt.Value}",
-            LesserOrEqualThan lte => $"{CutAwayAttributeId(lte.AttributeId)}<={lte.Value}",
+            EqualAs eq => $"{CutAwayAttributeId(eq.AttributeId)}={MaybeWrapInQuot(eq.Value)}",
+            NotEqualAs neq => $"{CutAwayAttributeId(neq.AttributeId)}<>{MaybeWrapInQuot(neq.Value)}",
+            GreaterThan gt => $"{CutAwayAttributeId(gt.AttributeId)}>{MaybeWrapInQuot(gt.Value)}",
+            GreaterOrEqualThan gte => $"{CutAwayAttributeId(gte.AttributeId)}>={MaybeWrapInQuot(gte.Value)}",
+            LesserThan lt => $"{CutAwayAttributeId(lt.AttributeId)}<{MaybeWrapInQuot(lt.Value)}",
+            LesserOrEqualThan lte => $"{CutAwayAttributeId(lte.AttributeId)}<={MaybeWrapInQuot(lte.Value)}",
             _ => throw new Exception($"Uknown comparison operator {compOp.OperatorString}")
         };
 
@@ -91,5 +91,10 @@ internal class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string
         (_, _, string tableauName, string attributeName) = Utils.GetNamesFromAttributeId(attributeId);
         return $"{tableauName}.{attributeName}";
     }
+
+    private object MaybeWrapInQuot(object value)
+        => value is string
+            ? $"\"{value}\""
+            : value;
 
 }
