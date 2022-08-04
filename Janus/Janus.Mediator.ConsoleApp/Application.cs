@@ -1,6 +1,6 @@
 ﻿using Janus.Logging;
 using Janus.Mediator.ConsoleApp.Displays;
-using Janus.Mediator.Core;
+using Janus.Mediator;
 using System;
 using System.Collections.Generic;
 using System.Linq;

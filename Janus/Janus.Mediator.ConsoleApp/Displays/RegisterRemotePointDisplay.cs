@@ -1,4 +1,4 @@
-﻿using Janus.Mediator.Core;
+﻿using Janus.Mediator;
 using Janus.Logging;
 using Sharprompt;
 using FunctionalExtensions.Base.Results;

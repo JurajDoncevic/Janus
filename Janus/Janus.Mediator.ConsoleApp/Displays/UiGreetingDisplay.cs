@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base.Results;
-using Janus.Mediator.Core;
+using Janus.Mediator;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public class UiGreetingDisplay : BaseDisplay

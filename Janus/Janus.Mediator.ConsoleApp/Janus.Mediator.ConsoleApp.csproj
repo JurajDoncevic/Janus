@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Janus.Mediator.Core\Janus.Mediator.Core.csproj" />
+		<ProjectReference Include="..\Janus.Mediator\Janus.Mediator.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.Bson\Janus.Serialization.Bson.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj" />

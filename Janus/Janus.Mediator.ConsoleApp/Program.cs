@@ -3,7 +3,7 @@ using Janus.Commons;
 using Janus.Communication;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Mediator.ConsoleApp;
-using Janus.Mediator.Core;
+using Janus.Mediator;
 using Janus.Serialization;
 using Janus.Serialization.Avro;
 using Janus.Serialization.Bson;
