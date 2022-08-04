@@ -27,7 +27,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="data">Tabular data to serialize</param>
     /// <returns>Serialized tabular data</returns>
     public Result<byte[]> Serialize(TabularData data)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => ToDto(data)
                .Map(tabularDataDto => Utils.ToBson(tabularDataDto))
             );

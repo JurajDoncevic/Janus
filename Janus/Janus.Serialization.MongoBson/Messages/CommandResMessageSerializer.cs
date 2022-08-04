@@ -17,7 +17,7 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <returns>Deserialized COMMAND_RES</returns>
     public Result<CommandResMessage> Deserialize(byte[] serialized)
         => ResultExtensions.AsResult(() => Utils.FromBson<CommandResMessageDto>(serialized))
-            .Map(commandResMessageDto => 
+            .Map(commandResMessageDto =>
                 new CommandResMessage(
                     commandResMessageDto.ExchangeId,
                     commandResMessageDto.NodeId,

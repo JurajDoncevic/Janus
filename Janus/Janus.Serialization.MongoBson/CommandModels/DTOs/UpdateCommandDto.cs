@@ -1,6 +1,4 @@
-﻿using Janus.Serialization.MongoBson.QueryModels.DTOs;
-
-namespace Janus.Serialization.MongoBson.CommandModels.DTOs;
+﻿namespace Janus.Serialization.MongoBson.CommandModels.DTOs;
 
 internal class UpdateCommandDto
 {

@@ -1,9 +1,4 @@
 ﻿using Janus.Serialization.Avro.SchemaModels.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Serialization.Avro.Messages.DTOs;
 internal class SchemaResMessageDto

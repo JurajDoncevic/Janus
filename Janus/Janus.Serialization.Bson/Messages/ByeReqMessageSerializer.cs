@@ -27,7 +27,7 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
     /// <returns>Deserialized BYE_REQ</returns>
     public Result<ByeReqMessage> Deserialize(byte[] serialized)
         => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<ByeReqMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
-                .Map(byeReqMessageDto => 
+                .Map(byeReqMessageDto =>
                     new ByeReqMessage(
                         byeReqMessageDto.ExchangeId,
                         byeReqMessageDto.NodeId));

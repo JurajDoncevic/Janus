@@ -36,7 +36,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSourceDto">Data source DTO</param>
     /// <returns>Schema model data source</returns>
     internal Result<DataSource> FromDto(DataSourceDto dataSourceDto)
-        => ResultExtensions.AsResult(() => 
+        => ResultExtensions.AsResult(() =>
             dataSourceDto.Schemas.Fold(SchemaModelBuilder.InitDataSource(dataSourceDto.Name),
                     (schema, dataSourceBuilder) =>
                         dataSourceBuilder.AddSchema(schema.Name,

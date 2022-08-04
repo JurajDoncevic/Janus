@@ -4,7 +4,6 @@ using Janus.Commons.QueryModels;
 using Janus.Serialization.Bson.QueryModels.DTOs;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace Janus.Serialization.Bson.QueryModels;
 
@@ -38,7 +37,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<byte[]> Serialize(Query query)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => ToDto(query)
                 .Map(queryDto => JsonSerializer.Serialize(queryDto, _serializerOptions))
                 .Map(Encoding.UTF8.GetBytes));

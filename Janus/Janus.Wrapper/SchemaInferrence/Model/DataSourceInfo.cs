@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janus.Wrapper.SchemaInferrence.Model;
+﻿namespace Janus.Wrapper.SchemaInferrence.Model;
 public class DataSourceInfo
 {
     private readonly string _name;

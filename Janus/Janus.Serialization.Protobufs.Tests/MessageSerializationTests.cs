@@ -1,11 +1,11 @@
 using FunctionalExtensions.Base.Results;
+using Janus.Commons.CommandModels;
+using Janus.Commons.DataModels;
 using Janus.Commons.Messages;
 using Janus.Commons.Nodes;
-using Janus.Commons.SchemaModels;
-using Janus.Commons.DataModels;
-using Janus.Commons.CommandModels;
-using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Commons.QueryModels;
+using Janus.Commons.SchemaModels;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Serialization.Protobufs.Tests;
 

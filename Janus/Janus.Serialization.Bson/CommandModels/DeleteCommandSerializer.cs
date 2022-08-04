@@ -37,7 +37,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="command">Delete command to serialize</param>
     /// <returns>Serialized delete command</returns>
     public Result<byte[]> Serialize(DeleteCommand command)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => ToDto(command)
                 .Map(deleteDto => JsonSerializer.Serialize(deleteDto, _serializerOptions))
                 .Map(Encoding.UTF8.GetBytes));

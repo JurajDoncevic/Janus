@@ -2,11 +2,6 @@
 using Janus.Commons.Messages;
 using Janus.Serialization.Avro.Messages.DTOs;
 using SolTechnology.Avro;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Serialization.Avro.Messages;
 

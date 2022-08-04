@@ -1,6 +1,4 @@
-﻿using Janus.Commons.SelectionExpressions;
-using ProtoBuf;
-using static Janus.Commons.SelectionExpressions.Expressions;
+﻿using ProtoBuf;
 
 namespace Janus.Serialization.Protobufs.QueryModels.DTOs;
 

@@ -1,8 +1,8 @@
 ﻿using Janus.Commons.Messages;
 using Janus.Communication.NetworkAdapters.Events;
 using Janus.Communication.Remotes;
-using Janus.Serialization;
 using Janus.Logging;
+using Janus.Serialization;
 using System.Net;
 using System.Net.Sockets;
 
@@ -103,7 +103,7 @@ public abstract class NetworkAdapter : INetworkAdapter
                 int readByte;
                 while ((readByte = stream.ReadByte()) != -1)
                     messageBytes = messageBytes.Append((byte)readByte).ToArray();
-                    // .Read(messageBytes, 0, countBytes);
+                // .Read(messageBytes, 0, countBytes);
                 // determine message type and raise event
                 _serializationProvider.DetermineMessagePreamble(messageBytes)
                             .Bind<string, BaseMessage>(preamble => BuildMessage(preamble, messageBytes))
@@ -136,7 +136,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Target remote point</param>
     /// <returns></returns>
     public async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
-        =>  await Task.FromResult(_serializationProvider.HelloReqMessageSerializer.Serialize(message))
+        => await Task.FromResult(_serializationProvider.HelloReqMessageSerializer.Serialize(message))
             .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
                                             .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
     //=> await SendMessageBytes(message.ToBson(), remotePoint)

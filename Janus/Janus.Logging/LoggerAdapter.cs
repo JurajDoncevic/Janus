@@ -18,7 +18,7 @@ public sealed class Logger : ILogger
     public LoggerAdapter<T> ResolveLogger<T>()
     {
         return new LoggerAdapter<T>(_configuration);
-    } 
+    }
 }
 
 public sealed class LoggerAdapter<T> : ILogger<T>

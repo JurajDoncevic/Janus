@@ -129,7 +129,7 @@ internal class SqliteSchemaModelProvider : ISchemaModelProvider
             var reader = command.ExecuteReader();
 
             return reader.NextResult()
-                ? reader.GetFieldValue<bool>(0) 
+                ? reader.GetFieldValue<bool>(0)
                     ? Result.OnSuccess($"Tableau {tableauName} exists")
                     : Result.OnFailure($"Tableau {tableauName} doesn't exist")
                 : Result.OnFailure("Failed to get result");
@@ -146,5 +146,5 @@ internal class SqliteSchemaModelProvider : ISchemaModelProvider
             string name when name.Contains("date") => DataTypes.DATETIME, // for DATE and DATETIME
             _ => DataTypes.STRING // defaults to string
         };
-    
+
 }

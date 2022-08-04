@@ -1,5 +1,5 @@
-﻿using Janus.Commons.SelectionExpressions;
-using Janus.Commons.QueryModels.Exceptions;
+﻿using Janus.Commons.QueryModels.Exceptions;
+using Janus.Commons.SelectionExpressions;
 
 namespace Janus.Commons.QueryModels;
 

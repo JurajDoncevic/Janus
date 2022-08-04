@@ -1,8 +1,6 @@
 ﻿using Janus.Commons.SelectionExpressions;
-using static Janus.Commons.SelectionExpressions.Expressions;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Serialization.MongoBson.QueryModels;
 

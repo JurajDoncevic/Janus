@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janus.Commons;
+﻿namespace Janus.Commons;
 
 /// <summary>
 /// Officially recognized communication formats
@@ -22,7 +16,7 @@ public enum CommunicationFormats
     /// <summary>
     /// MongoDB's Binary Javascript Object Notation (binary)
     /// </summary>
-    MONGO_BSON,    
+    MONGO_BSON,
     /// <summary>
     /// ProtocolBuffers (binary)
     /// </summary>

@@ -1,7 +1,6 @@
-﻿using Janus.Mediator;
+﻿using FunctionalExtensions.Base.Results;
 using Janus.Logging;
 using Sharprompt;
-using FunctionalExtensions.Base.Results;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public class MainMenuDisplay : BaseDisplay

@@ -34,9 +34,9 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byt
     /// <param name="message">QUERY_REQ message to serialize</param>
     /// <returns>Serialized QUERY_REQ</returns>
     public Result<byte[]> Serialize(QueryReqMessage message)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => _querySerializer.ToDto(message.Query)
-                .Bind<QueryDto, QueryReqMessageDto>(dto => 
+                .Bind<QueryDto, QueryReqMessageDto>(dto =>
                     new QueryReqMessageDto
                     {
                         Preamble = message.Preamble,

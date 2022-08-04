@@ -1,7 +1,6 @@
-﻿using FunctionalExtensions.Base.Results;
-using Janus.Commons.QueryModels;
-using Janus.Wrapper.LocalQuerying;
+﻿using Janus.Commons.QueryModels;
 using Janus.Components.Translation;
+using Janus.Wrapper.LocalQuerying;
 
 namespace Janus.Wrapper.Translation;
 public interface ILocalQueryTranslator<TLocalQuery, TSelection, TJoinning, TProjection>

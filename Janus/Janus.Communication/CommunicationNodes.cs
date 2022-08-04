@@ -1,8 +1,8 @@
 ﻿using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes;
 using Janus.Communication.Nodes.Implementations;
-using Janus.Serialization;
 using Janus.Logging;
+using Janus.Serialization;
 using TcpAdapters = Janus.Communication.NetworkAdapters.Tcp;
 
 namespace Janus.Communication;

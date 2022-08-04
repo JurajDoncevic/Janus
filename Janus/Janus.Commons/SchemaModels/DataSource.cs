@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace Janus.Commons.SchemaModels;
+﻿namespace Janus.Commons.SchemaModels;
 
 /// <summary>
 /// Describes a data source

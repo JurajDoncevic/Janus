@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janus.Wrapper.LocalCommanding;
+﻿namespace Janus.Wrapper.LocalCommanding;
 public abstract class LocalInsert<TInstantiation> : LocalCommand
 {
     private readonly TInstantiation _instantiation;

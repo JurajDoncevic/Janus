@@ -1,6 +1,5 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.Messages;
-using System.Text;
 using System.Text.Json;
 
 namespace Janus.Serialization.Json.Messages;

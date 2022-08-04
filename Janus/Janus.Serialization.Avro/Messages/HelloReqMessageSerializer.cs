@@ -46,5 +46,5 @@ public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byt
             };
             return AvroConvert.SerializeHeadless(helloReqMessageDto, _schema);
         });
-        
+
 }

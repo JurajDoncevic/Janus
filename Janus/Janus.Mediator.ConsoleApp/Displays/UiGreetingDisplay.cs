@@ -1,5 +1,4 @@
 ﻿using FunctionalExtensions.Base.Results;
-using Janus.Mediator;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public class UiGreetingDisplay : BaseDisplay
@@ -57,11 +56,11 @@ public class UiGreetingDisplay : BaseDisplay
 
     protected override void PostDisplay()
     {
-        
+
     }
 
     protected override void PreDisplay()
     {
-        
+
     }
 }

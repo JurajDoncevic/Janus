@@ -1,7 +1,6 @@
 ﻿using Janus.Commons;
 using Janus.Commons.Nodes;
 using Janus.Communication.Remotes;
-using Janus.Mediator;
 
 namespace Janus.Mediator.ConsoleApp;
 public class MediatorConfigurationOptions

@@ -1,5 +1,4 @@
 ﻿using Janus.Serialization.Protobufs.DataModels.DTOs;
-using Janus.Serialization.Protobufs.QueryModels.DTOs;
 using ProtoBuf;
 
 namespace Janus.Serialization.Protobufs.CommandModels.DTOs;

@@ -1,13 +1,8 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Results;
 using Janus.Commons.DataModels;
-using Janus.Wrapper.Translation;
 using Janus.Wrapper.Sqlite.LocalDataModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper.Sqlite.Translation;
 internal class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularData>

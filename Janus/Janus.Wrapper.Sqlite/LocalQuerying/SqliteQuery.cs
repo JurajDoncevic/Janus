@@ -1,9 +1,4 @@
 ﻿using Janus.Wrapper.LocalQuerying;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Wrapper.Sqlite.LocalQuerying;
 internal class SqliteQuery : LocalQuery<string, string, string>

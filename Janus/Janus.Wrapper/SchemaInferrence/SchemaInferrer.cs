@@ -1,11 +1,5 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
-using Janus.Wrapper.SchemaInferrence.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Wrapper.SchemaInferrence;
 public class SchemaInferrer

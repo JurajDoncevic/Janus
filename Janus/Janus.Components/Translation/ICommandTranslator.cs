@@ -1,6 +1,6 @@
 ﻿namespace Janus.Components.Translation;
 public interface ICommandTranslator
-    <TCommandSource, TSelectionSource, TMutationSource, TInstantiationSource, 
+    <TCommandSource, TSelectionSource, TMutationSource, TInstantiationSource,
     TCommandDestination, TSelectionDestination, TMutationDestination, TInstantiationDestination>
 {
     Result<TCommandDestination> Translate(TCommandSource query);

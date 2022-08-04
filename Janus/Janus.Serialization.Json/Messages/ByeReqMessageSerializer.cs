@@ -1,7 +1,6 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.Messages;
 using Janus.Serialization.Json.Messages.DTOs;
-using System.Text;
 using System.Text.Json;
 
 namespace Janus.Serialization.Json.Messages;
@@ -27,7 +26,7 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, string>
     /// <returns>Deserialized BYE_REQ</returns>
     public Result<ByeReqMessage> Deserialize(string serialized)
         => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<ByeReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
-            .Map(byeReqMessageDto 
+            .Map(byeReqMessageDto
                 => new ByeReqMessage(
                     byeReqMessageDto.ExchangeId,
                     byeReqMessageDto.NodeId));
@@ -46,7 +45,7 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, string>
                 ExchangeId = message.ExchangeId
             };
             var json = JsonSerializer.Serialize(byeReqMessageDto, _serializerOptions);
-            
+
             return json;
         });
 }

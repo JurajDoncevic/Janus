@@ -1,13 +1,12 @@
-﻿using Janus.Communication.Nodes.Implementations;
-using Janus.Communication.Tests.Mocks;
-using Microsoft.Extensions.Configuration;
-using Janus.Commons.SchemaModels;
-using Janus.Commons.QueryModels;
+﻿using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
-using Janus.Commons.CommandModels;
-using static Janus.Commons.SelectionExpressions.Expressions;
+using Janus.Commons.QueryModels;
+using Janus.Commons.SchemaModels;
+using Janus.Communication.Nodes.Implementations;
+using Janus.Communication.Tests.Mocks;
 using Janus.Serialization;
-using Janus.Serialization.Avro;
+using Microsoft.Extensions.Configuration;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Communication.Tests.TestFixtures;
 

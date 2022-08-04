@@ -1,7 +1,7 @@
 ﻿using Janus.Commons.DataModels;
-using Janus.Commons.SchemaModels;
 using Janus.Commons.Messages;
 using Janus.Commons.Nodes;
+using Janus.Commons.SchemaModels;
 using Janus.Communication.NetworkAdapters;
 using Janus.Communication.Nodes.Events;
 using Janus.Communication.Remotes;

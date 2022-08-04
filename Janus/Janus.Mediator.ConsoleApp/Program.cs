@@ -2,8 +2,8 @@
 using Janus.Commons;
 using Janus.Communication;
 using Janus.Communication.Nodes.Implementations;
-using Janus.Mediator.ConsoleApp;
 using Janus.Mediator;
+using Janus.Mediator.ConsoleApp;
 using Janus.Serialization;
 using Janus.Serialization.Avro;
 using Janus.Serialization.Bson;
@@ -90,7 +90,7 @@ IHost host = Host.CreateDefaultBuilder(args)
                         serviceProvider.GetService<Janus.Logging.ILogger>())),
             _ => throw new Exception("Unknown network adapter type")
         };
-            
+
         services.AddSingleton<MediatorQueryManager>();
         services.AddSingleton<MediatorCommandManager>();
         services.AddSingleton<MediatorSchemaManager>();

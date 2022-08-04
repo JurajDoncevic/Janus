@@ -18,8 +18,8 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <param name="serialized">Serialized base message</param>
     /// <returns>Deserialized base message</returns>
     public Result<BaseMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() 
-            =>AvroConvert.DeserializeHeadless<BaseMessage>(serialized, _schema)
+        => ResultExtensions.AsResult(()
+            => AvroConvert.DeserializeHeadless<BaseMessage>(serialized, _schema)
         );
 
     /// <summary>
@@ -28,7 +28,7 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <param name="message">Base message to serialize</param>
     /// <returns>Serialized base message</returns>
     public Result<byte[]> Serialize(BaseMessage message)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => AvroConvert.SerializeHeadless(message, _schema)
         );
 }

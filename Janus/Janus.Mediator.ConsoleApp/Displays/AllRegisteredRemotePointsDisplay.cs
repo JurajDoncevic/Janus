@@ -1,6 +1,5 @@
-﻿using Janus.Mediator;
+﻿using FunctionalExtensions.Base.Results;
 using Janus.Logging;
-using FunctionalExtensions.Base.Results;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public class AllRegisteredRemotePointsDisplay : BaseDisplay

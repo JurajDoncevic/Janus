@@ -124,7 +124,7 @@ public class ModelsSerializationTests
                                 .WithMutation(conf => conf.WithValues(new() { { "attr2", null }, { "attr3", 2.0 } }))
                                 .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
                                 .Build();
-        
+
         var serializer = _serializationProvider.UpdateCommandSerializer;
 
         var serialization = serializer.Serialize(updateCommand);

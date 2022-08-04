@@ -4,7 +4,6 @@ using Janus.Commons.Messages;
 using Janus.Serialization.Json.CommandModels;
 using Janus.Serialization.Json.Messages.DTOs;
 using Janus.Serialization.Json.QueryModels;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -95,7 +94,7 @@ public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage,
             };
 
             var json = JsonSerializer.Serialize(commandReqMessageDto, _serializerOptions);
-            
+
             return json;
         });
 }

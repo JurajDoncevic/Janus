@@ -1,5 +1,4 @@
 ﻿using Janus.Commons.Nodes;
-using System.Text.Json.Serialization;
 
 namespace Janus.Commons.Messages;
 

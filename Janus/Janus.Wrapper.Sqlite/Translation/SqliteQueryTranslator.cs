@@ -1,10 +1,10 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Results;
-using Janus.Commons.QueryModels;
-using Janus.Wrapper.Translation;
-using Janus.Wrapper.Sqlite.LocalQuerying;
-using Janus.Commons.SelectionExpressions;
 using Janus.Commons;
+using Janus.Commons.QueryModels;
+using Janus.Commons.SelectionExpressions;
+using Janus.Wrapper.Sqlite.LocalQuerying;
+using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper.Sqlite.Translation;
 internal class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, string, string>
@@ -18,7 +18,7 @@ internal class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string
 
     public Result<string> TranslateJoining(Option<Joining> joining, string? startingWith)
         => ResultExtensions.AsResult(
-            () => $"FROM {CutAwayTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" + 
+            () => $"FROM {CutAwayTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
                       j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
                             (join, expr) => expr + $" INNER JOIN {CutAwayTableauId(join.PrimaryKeyTableauId)} ON {CutAwayAttributeId(join.PrimaryKeyAttributeId)} = {CutAwayAttributeId(join.ForeignKeyAttributeId)} "),

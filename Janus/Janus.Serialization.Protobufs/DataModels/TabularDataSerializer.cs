@@ -27,7 +27,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="data">Tabular data to serialize</param>
     /// <returns>Serialized tabular data</returns>
     public Result<byte[]> Serialize(TabularData data)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => ToDto(data)
                .Map(tabularDataDto => Utils.ToProtobufs(tabularDataDto))
             );
@@ -44,7 +44,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
             {
                 AttributeDataTypes = tabularData.AttributeDataTypes.ToDictionary(kv => kv.Key, kv => kv.Value),
                 AttributeValues = tabularData.RowData
-                                             .Select(rowData => new RowValuesDto { RowValues = rowData.AttributeValues.ToDictionary(av => av.Key, av => new DataBytesDto { Data = ConvertToBytes(av.Value, av.Value?.GetType() ?? typeof(object)) } ) })                                             
+                                             .Select(rowData => new RowValuesDto { RowValues = rowData.AttributeValues.ToDictionary(av => av.Key, av => new DataBytesDto { Data = ConvertToBytes(av.Value, av.Value?.GetType() ?? typeof(object)) }) })
                                              .ToList()
             };
 

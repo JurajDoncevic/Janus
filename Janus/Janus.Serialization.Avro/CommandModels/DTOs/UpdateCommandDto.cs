@@ -1,6 +1,4 @@
-﻿using Janus.Serialization.Avro.QueryModels.DTOs;
-
-namespace Janus.Serialization.Avro.CommandModels.DTOs;
+﻿namespace Janus.Serialization.Avro.CommandModels.DTOs;
 
 internal class UpdateCommandDto
 {

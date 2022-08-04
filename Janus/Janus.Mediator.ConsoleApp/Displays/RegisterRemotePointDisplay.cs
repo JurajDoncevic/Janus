@@ -1,8 +1,7 @@
-﻿using Janus.Mediator;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Results;
 using Janus.Logging;
 using Sharprompt;
-using FunctionalExtensions.Base.Results;
-using FunctionalExtensions.Base;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public class RegisterRemotePointDisplay : BaseDisplay

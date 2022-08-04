@@ -1,7 +1,6 @@
 ﻿using Janus.Commons;
 using Janus.Communication.Remotes;
 using Janus.Components;
-using System.Text.Json.Serialization;
 
 namespace Janus.Mediator;
 public sealed class MediatorOptions : IComponentOptions

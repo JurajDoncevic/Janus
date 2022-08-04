@@ -2,9 +2,7 @@
 using FunctionalExtensions.Base.Results;
 using Janus.Commons.QueryModels;
 using Janus.Serialization.Json.QueryModels.DTOs;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace Janus.Serialization.Json.QueryModels;
 
@@ -39,7 +37,7 @@ public class QuerySerializer : IQuerySerializer<string>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<string> Serialize(Query query)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => ToDto(query)
                 .Map(queryDto => JsonSerializer.Serialize(queryDto, _serializerOptions)));
 

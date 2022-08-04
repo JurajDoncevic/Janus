@@ -2,11 +2,11 @@
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Components;
-using Janus.Wrapper.Translation;
 using Janus.Wrapper.LocalQuerying;
+using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
-public sealed class WrapperQueryManager<TSelection, TJoining, TProjection, TLocalData, TLocalQuery> 
+public sealed class WrapperQueryManager<TSelection, TJoining, TProjection, TLocalData, TLocalQuery>
     : IComponentQueryManager
     where TLocalQuery : LocalQuery<TSelection, TJoining, TProjection>
 {

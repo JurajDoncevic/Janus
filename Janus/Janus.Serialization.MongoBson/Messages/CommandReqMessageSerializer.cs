@@ -11,9 +11,9 @@ namespace Janus.Serialization.MongoBson.Messages;
 /// </summary>
 public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage, byte[]>
 {
-    private readonly DeleteCommandSerializer _deleteCommandSerializer = new ();
-    private readonly InsertCommandSerializer _insertCommandSerializer = new ();
-    private readonly UpdateCommandSerializer _updateCommandSerializer = new ();
+    private readonly DeleteCommandSerializer _deleteCommandSerializer = new();
+    private readonly InsertCommandSerializer _insertCommandSerializer = new();
+    private readonly UpdateCommandSerializer _updateCommandSerializer = new();
 
     /// <summary>
     /// Deserializes a COMMAND_REQ message
@@ -30,7 +30,7 @@ public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage,
                 {
                     CommandReqTypes.INSERT => _insertCommandSerializer.FromDto(commandReqMessageDto.InsertCommandDto!).Map(cmd => (BaseCommand)cmd),
                     CommandReqTypes.UPDATE => _updateCommandSerializer.FromDto(commandReqMessageDto.UpdateCommandDto!).Map(cmd => (BaseCommand)cmd),
-                    CommandReqTypes.DELETE => _deleteCommandSerializer.FromDto( commandReqMessageDto.DeleteCommandDto!).Map(cmd => (BaseCommand)cmd),
+                    CommandReqTypes.DELETE => _deleteCommandSerializer.FromDto(commandReqMessageDto.DeleteCommandDto!).Map(cmd => (BaseCommand)cmd),
                     _ => throw new Exception("Unknown command type")
                 };
             var commandCreation = commandDeserialization.Map(command =>
@@ -56,7 +56,7 @@ public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage,
                 ? _deleteCommandSerializer.ToDto((DeleteCommand)message.Command).Data
                 : null;
             var insertCommand =
-                message.CommandReqType == CommandReqTypes.INSERT 
+                message.CommandReqType == CommandReqTypes.INSERT
                 ? _insertCommandSerializer.ToDto((InsertCommand)message.Command).Data
                 : null;
             var updateCommand =

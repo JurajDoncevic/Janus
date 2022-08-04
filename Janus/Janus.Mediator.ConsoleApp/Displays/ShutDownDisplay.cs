@@ -1,5 +1,4 @@
 ﻿using FunctionalExtensions.Base.Results;
-using Janus.Mediator;
 using Janus.Logging;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
@@ -18,7 +17,7 @@ public class ShutDownDisplay : BaseDisplay
 
     protected override void PostDisplay()
     {
-        
+
     }
 
     public override string Title => "SHUTDOWN";

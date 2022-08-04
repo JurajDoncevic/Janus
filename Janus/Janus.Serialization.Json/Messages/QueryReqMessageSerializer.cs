@@ -31,9 +31,9 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, str
     /// <returns>Deserialized QUERY_REQ</returns>
     public Result<QueryReqMessage> Deserialize(string serialized)
         => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<QueryReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
-            .Bind(queryReqMessageDto 
+            .Bind(queryReqMessageDto
                 => _querySerializer.FromDto(queryReqMessageDto.Query)
-                    .Map(query 
+                    .Map(query
                         => new QueryReqMessage(
                             queryReqMessageDto.ExchangeId,
                             queryReqMessageDto.NodeId,
@@ -57,7 +57,7 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, str
             };
 
             var json = JsonSerializer.Serialize(queryReqMessageDto, _serializerOptions);
-            
+
             return json;
         });
 }

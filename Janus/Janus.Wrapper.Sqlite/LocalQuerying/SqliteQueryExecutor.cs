@@ -1,5 +1,4 @@
 ﻿using FunctionalExtensions.Base.Results;
-using Janus.Commons.DataModels;
 using Janus.Wrapper.LocalQuerying;
 using Janus.Wrapper.Sqlite.LocalDataModel;
 using Microsoft.Data.Sqlite;

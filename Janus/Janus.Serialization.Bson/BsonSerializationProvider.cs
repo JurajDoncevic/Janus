@@ -52,5 +52,5 @@ public class BsonSerializationProvider : IBytesSerializationProvider
             var jsonNode = JsonSerializer.Deserialize<JsonNode>(messageBytes);
             return jsonNode["Preamble"].ToString();
         });
-        
+
 }

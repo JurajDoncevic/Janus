@@ -24,7 +24,7 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
     /// <param name="message">BYE_REQ message to serialize</param>
     /// <returns>Serialized BYE_REQ</returns>
     public Result<byte[]> Serialize(ByeReqMessage message)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => Utils.ToBson(new ByeReqMessageDto
             {
                 ExchangeId = message.ExchangeId,

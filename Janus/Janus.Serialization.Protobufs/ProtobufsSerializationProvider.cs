@@ -7,7 +7,6 @@ using Janus.Serialization.Protobufs.Messages;
 using Janus.Serialization.Protobufs.Messages.DTOs;
 using Janus.Serialization.Protobufs.QueryModels;
 using Janus.Serialization.Protobufs.SchemaModels;
-using ProtoBuf;
 
 namespace Janus.Serialization.Protobufs;
 

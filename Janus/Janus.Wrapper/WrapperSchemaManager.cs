@@ -24,5 +24,5 @@ public sealed class WrapperSchemaManager : IComponentSchemaManager
         => Task.FromResult(
             _schemaInferrer.InferSchemaModel()
                 .Pass(result => _currentSchema = result.Data));
-            
+
 }

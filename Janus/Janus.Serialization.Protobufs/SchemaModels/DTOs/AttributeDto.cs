@@ -8,7 +8,7 @@ internal class AttributeDto
 {
     [ProtoMember(1)]
     public string Name { get; set; }
-    
+
     [ProtoMember(2)]
     public DataTypes DataType { get; set; }
 

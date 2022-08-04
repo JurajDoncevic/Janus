@@ -1,11 +1,10 @@
-﻿using FunctionalExtensions.Base.Results;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
 using Janus.Serialization.Bson.SchemaModels.DTOs;
-using FunctionalExtensions.Base;
 using System.Text;
-using System.Text.Json.Nodes;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Janus.Serialization.Bson.SchemaModels;
 

@@ -1,5 +1,4 @@
 ﻿using FunctionalExtensions.Base.Results;
-using static FunctionalExtensions.Base.OptionExtensions;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
@@ -8,6 +7,7 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Wrapper.LocalQuerying;
+using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
 public sealed class WrapperController
@@ -45,7 +45,7 @@ public sealed class WrapperController
         var exchangeId = e.ReceivedMessage.ExchangeId;
         var fromPoint = e.FromRemotePoint;
         var query = e.ReceivedMessage.Query;
-        
+
         _schemaManager.GetCurrentSchema()
             .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
             .Bind(result => _queryManager.RunQuery(query))

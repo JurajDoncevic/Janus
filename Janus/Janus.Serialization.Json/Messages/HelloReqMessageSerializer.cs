@@ -28,7 +28,7 @@ public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, str
     /// <returns>Deserialized HELLO_REQ</returns>
     public Result<HelloReqMessage> Deserialize(string serialized)
         => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<HelloReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
-            .Map(helloReqMessageDto 
+            .Map(helloReqMessageDto
                 => new HelloReqMessage(
                     helloReqMessageDto.ExchangeId,
                     helloReqMessageDto.NodeId,

@@ -7,7 +7,7 @@ internal class QueryDto
 {
     [ProtoMember(1)]
     public string OnTableauId { get; set; }
-    
+
     [ProtoMember(2)]
     public List<JoinDto> Joining { get; set; }
 

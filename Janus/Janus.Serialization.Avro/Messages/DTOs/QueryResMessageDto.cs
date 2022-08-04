@@ -1,10 +1,4 @@
 ﻿using Janus.Serialization.Avro.DataModels.DTOs;
-using Janus.Serialization.Avro.QueryModels.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Serialization.Avro.Messages.DTOs;
 internal class QueryResMessageDto

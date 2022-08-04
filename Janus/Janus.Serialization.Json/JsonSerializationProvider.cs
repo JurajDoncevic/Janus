@@ -52,5 +52,5 @@ public class JsonSerializationProvider : IStringSerializationProvider
             var jsonNode = JsonSerializer.Deserialize<JsonNode>(messageBytes);
             return jsonNode["Preamble"].ToString();
         });
-        
+
 }

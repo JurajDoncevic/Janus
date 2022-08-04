@@ -1,11 +1,5 @@
 ﻿using Janus.Logging;
 using Janus.Mediator.ConsoleApp.Displays;
-using Janus.Mediator;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Mediator.ConsoleApp;
 internal class Application

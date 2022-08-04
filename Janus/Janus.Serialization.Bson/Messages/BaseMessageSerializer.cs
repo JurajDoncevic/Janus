@@ -26,5 +26,5 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <returns>Serialized base message</returns>
     public Result<byte[]> Serialize(BaseMessage message)
         => ResultExtensions.AsResult(() => JsonSerializer.Serialize(message))
-            .Map(Encoding.UTF8.GetBytes);           
+            .Map(Encoding.UTF8.GetBytes);
 }

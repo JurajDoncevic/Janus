@@ -15,7 +15,7 @@ internal static class Utils
 
     internal static T FromProtobufs<T>(byte[] bytes)
     {
-        using(var stream = new MemoryStream(bytes))
+        using (var stream = new MemoryStream(bytes))
         {
             return Serializer.Deserialize<T>(stream);
         }

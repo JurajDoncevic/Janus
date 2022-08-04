@@ -3,7 +3,6 @@ using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
-using Janus.Serialization.MongoBson;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Serialization.MongoBson.Tests;
@@ -125,7 +124,7 @@ public class ModelsSerializationTests
                                 .WithMutation(conf => conf.WithValues(new() { { "attr2", null }, { "attr3", 2.0 } }))
                                 .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
                                 .Build();
-        
+
         var serializer = _serializationProvider.UpdateCommandSerializer;
 
         var serialization = serializer.Serialize(updateCommand);

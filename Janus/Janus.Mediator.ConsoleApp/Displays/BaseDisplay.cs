@@ -1,5 +1,4 @@
 ﻿using FunctionalExtensions.Base.Results;
-using Janus.Mediator;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public abstract class BaseDisplay

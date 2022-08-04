@@ -55,7 +55,7 @@ public class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, s
                 DataSource = dataSourceDto
             };
             var json = JsonSerializer.Serialize(schemaResMessageDto, _serializerOptions);
-            
+
             return json;
         });
 }

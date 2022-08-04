@@ -1,6 +1,5 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.Messages;
-using Janus.Commons.QueryModels;
 using Janus.Serialization.Avro.Messages.DTOs;
 using Janus.Serialization.Avro.QueryModels;
 using Janus.Serialization.Avro.QueryModels.DTOs;
@@ -37,9 +36,9 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byt
     /// <param name="message">QUERY_REQ message to serialize</param>
     /// <returns>Serialized QUERY_REQ</returns>
     public Result<byte[]> Serialize(QueryReqMessage message)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => _querySerializer.ToDto(message.Query)
-                .Bind<QueryDto, QueryReqMessageDto>(dto => 
+                .Bind<QueryDto, QueryReqMessageDto>(dto =>
                     new QueryReqMessageDto
                     {
                         Preamble = message.Preamble,

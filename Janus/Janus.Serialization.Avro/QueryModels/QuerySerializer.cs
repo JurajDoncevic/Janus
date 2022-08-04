@@ -29,7 +29,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<byte[]> Serialize(Query query)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => ToDto(query)
                 .Map(queryDto => AvroConvert.SerializeHeadless(queryDto, _schema))
         );

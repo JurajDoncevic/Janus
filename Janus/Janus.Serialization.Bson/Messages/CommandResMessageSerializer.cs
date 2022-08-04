@@ -18,7 +18,7 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <returns>Deserialized COMMAND_RES</returns>
     public Result<CommandResMessage> Deserialize(byte[] serialized)
         => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<CommandResMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
-            .Map(commandResMessageDto => 
+            .Map(commandResMessageDto =>
                 new CommandResMessage(
                     commandResMessageDto.ExchangeId,
                     commandResMessageDto.NodeId,
