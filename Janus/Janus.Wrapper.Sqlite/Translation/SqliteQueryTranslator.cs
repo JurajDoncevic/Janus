@@ -21,7 +21,7 @@ public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, 
             () => $"FROM {CutAwayTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
                       j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
-                            (join, expr) => expr + $" INNER JOIN {CutAwayTableauId(join.PrimaryKeyTableauId)} ON {CutAwayAttributeId(join.PrimaryKeyAttributeId)}={CutAwayAttributeId(join.ForeignKeyAttributeId)} "),
+                            (join, expr) => expr + $" INNER JOIN {CutAwayTableauId(join.PrimaryKeyTableauId)} ON {CutAwayAttributeId(join.PrimaryKeyAttributeId)}={CutAwayAttributeId(join.ForeignKeyAttributeId)}"),
                       () => ""));
 
     public Result<string> TranslateProjection(Option<Projection> projection)

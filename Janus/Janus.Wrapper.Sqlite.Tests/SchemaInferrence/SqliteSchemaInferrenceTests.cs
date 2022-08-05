@@ -15,7 +15,7 @@ public abstract class SqliteSchemaInferrenceTests
         _schemaInferrer = new SchemaInferrer(new SqliteSchemaModelProvider(ConnectionString), DataSourceName);
     }
 
-    [Fact]
+    [Fact(DisplayName = "Inferr a schema model on Sqlite source")]
     public void InferSchemaTest()
     {
         var inferrenceResult = _schemaInferrer.InferSchemaModel();
