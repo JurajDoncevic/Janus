@@ -38,7 +38,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
             command.CommandText =
                 $"SELECT * FROM pragma_table_info('{tableauName}');"; 
             
-            var reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
             while (reader.Read())
             {
                 attributeInfos =
@@ -72,7 +72,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
 
             command.CommandText = "PRAGMA database_list;";
 
-            var reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
             while (reader.Read())
             {
@@ -99,7 +99,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
                 "FROM sqlite_schema " +
                 "WHERE type='table' AND name NOT LIKE 'sqlite%';"; // ignore some system tables
 
-            var reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
             while (reader.Read())
             {
@@ -132,7 +132,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
             
             command.Parameters.AddWithValue("$tableau_name", tableauName);
 
-            var reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader();
 
             return reader.Read()
                 ? reader.GetFieldValue<bool>(0)

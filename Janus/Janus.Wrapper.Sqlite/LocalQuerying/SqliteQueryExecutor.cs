@@ -35,14 +35,14 @@ public class SqliteQueryExecutor : IQueryExecutor<string, string, string, Sqlite
                 {
                     foreach (var col in await reader.GetColumnSchemaAsync())
                     {
-                        rowSchema.Add(col.ColumnName, col.DataType!);
+                        rowSchema.Add($"{col.BaseCatalogName}.{col.BaseTableName}.{col.ColumnName}", col.DataType!);
                     }
                 }
 
                 var row = new Dictionary<string, (Type, object)>();
                 foreach (var columnName in rowSchema.Keys)
                 {
-                    row.Add(columnName, (rowSchema[columnName], reader.GetValue(reader.GetOrdinal(columnName))));
+                    row.Add(columnName, (rowSchema[columnName], reader.GetValue(rowSchema.Keys.ToList().IndexOf(columnName))));
                 }
 
                 results.Add(row);

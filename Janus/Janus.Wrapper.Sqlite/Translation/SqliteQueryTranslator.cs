@@ -18,16 +18,16 @@ public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, 
 
     public Result<string> TranslateJoining(Option<Joining> joining, string? startingWith)
         => ResultExtensions.AsResult(
-            () => $"FROM {CutAwayTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
+            () => $"FROM {ExtractTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
                       j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
-                            (join, expr) => expr + $" INNER JOIN {CutAwayTableauId(join.PrimaryKeyTableauId)} ON {CutAwayAttributeId(join.PrimaryKeyAttributeId)}={CutAwayAttributeId(join.ForeignKeyAttributeId)}"),
+                            (join, expr) => expr + $" INNER JOIN {ExtractTableauId(join.PrimaryKeyTableauId)} ON {ExtractAttributeId(join.PrimaryKeyAttributeId)}={ExtractAttributeId(join.ForeignKeyAttributeId)}"),
                       () => ""));
 
     public Result<string> TranslateProjection(Option<Projection> projection)
         => ResultExtensions.AsResult(
             () => projection
-                    ? $"SELECT {string.Join(", ", projection.Value.IncludedAttributeIds.Map(CutAwayAttributeId))}"
+                    ? $"SELECT {string.Join(", ", projection.Value.IncludedAttributeIds.Map(ExtractAttributeId))}"
                     : "SELECT *");
 
     public Result<string> TranslateSelection(Option<Selection> selection)
@@ -56,12 +56,12 @@ public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, 
     private string GenerateComparisonOp(ComparisonOperator compOp)
         => compOp switch
         {
-            EqualAs eq => $"{CutAwayAttributeId(eq.AttributeId)}={MaybeWrapInQuot(eq.Value)}",
-            NotEqualAs neq => $"{CutAwayAttributeId(neq.AttributeId)}<>{MaybeWrapInQuot(neq.Value)}",
-            GreaterThan gt => $"{CutAwayAttributeId(gt.AttributeId)}>{MaybeWrapInQuot(gt.Value)}",
-            GreaterOrEqualThan gte => $"{CutAwayAttributeId(gte.AttributeId)}>={MaybeWrapInQuot(gte.Value)}",
-            LesserThan lt => $"{CutAwayAttributeId(lt.AttributeId)}<{MaybeWrapInQuot(lt.Value)}",
-            LesserOrEqualThan lte => $"{CutAwayAttributeId(lte.AttributeId)}<={MaybeWrapInQuot(lte.Value)}",
+            EqualAs eq => $"{ExtractAttributeId(eq.AttributeId)}={MaybeWrapInQuot(eq.Value)}",
+            NotEqualAs neq => $"{ExtractAttributeId(neq.AttributeId)}<>{MaybeWrapInQuot(neq.Value)}",
+            GreaterThan gt => $"{ExtractAttributeId(gt.AttributeId)}>{MaybeWrapInQuot(gt.Value)}",
+            GreaterOrEqualThan gte => $"{ExtractAttributeId(gte.AttributeId)}>={MaybeWrapInQuot(gte.Value)}",
+            LesserThan lt => $"{ExtractAttributeId(lt.AttributeId)}<{MaybeWrapInQuot(lt.Value)}",
+            LesserOrEqualThan lte => $"{ExtractAttributeId(lte.AttributeId)}<={MaybeWrapInQuot(lte.Value)}",
             _ => throw new Exception($"Uknown comparison operator {compOp.OperatorString}")
         };
 
@@ -80,13 +80,13 @@ public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, 
             _ => throw new Exception($"Unknown logical binary operator {unaryOp.OperatorString}")
         };
 
-    private string CutAwayTableauId(string tableauId)
+    private string ExtractTableauId(string tableauId)
     {
         (_, _, string tableauName) = Utils.GetNamesFromTableauId(tableauId);
         return tableauName;
     }
 
-    private string CutAwayAttributeId(string attributeId)
+    private string ExtractAttributeId(string attributeId)
     {
         (_, _, string tableauName, string attributeName) = Utils.GetNamesFromAttributeId(attributeId);
         return $"{tableauName}.{attributeName}";
