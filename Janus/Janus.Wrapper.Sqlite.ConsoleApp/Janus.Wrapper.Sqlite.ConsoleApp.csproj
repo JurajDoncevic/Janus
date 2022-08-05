@@ -7,9 +7,33 @@
 		<Nullable>enable</Nullable>
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="FunctionalExtensions.Base" Version="1.1.3" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageReference Include="NLog" Version="5.0.1" />
+		<PackageReference Include="NLog.Extensions.Hosting" Version="5.0.0" />
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.0.0" />
+		<PackageReference Include="Sharprompt" Version="2.4.1" />
+		<PackageReference Include="CommandLineParser" Version="2.9.1" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Bson\Janus.Serialization.Bson.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj" />
+		<ProjectReference Include="..\Janus.Serialization.Protobufs\Janus.Serialization.Protobufs.csproj" />
+		<ProjectReference Include="..\Janus.Wrapper.Sqlite\Janus.Wrapper.Sqlite.csproj" />
+		<ProjectReference Include="..\Janus.Wrapper\Janus.Wrapper.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Janus.Wrapper.Sqlite\Janus.Wrapper.Sqlite.csproj" />
+	  <None Update="appsettings.Development.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
