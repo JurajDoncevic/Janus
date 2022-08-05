@@ -203,24 +203,27 @@ internal static class JoiningUtils
     {
         // vertices are tableaus
         // joins on tableaus are edges
-        List<(string, string)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
+        List<(string fk, string pk)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
         edges.Add((join.ForeignKeyTableauId, join.PrimaryKeyTableauId));
-        edges = edges.OrderBy(e => e.Item1).ToList();
+
+        // set the initial tableau vertex first
+        // edges = edges.OrderByDescending(e => e.fk.Equals(initialTableauId)).ToList();
+        //edges = edges.OrderBy(e => edges.Count(e_ => e_.Item1.Equals(e.Item1)) == 1).ToList();
 
         var getNeighbouringVertices =
-            (string edge) => edges.Where(e => e.Item1.Equals(edge))
-                                  .Select(e => e.Item2)
+            (string vertex) => edges.Where(e => e.fk.Equals(vertex))
+                                  .Select(e => e.pk)
                                   .ToList();
 
         Stack<string> verticesToVisit = new Stack<string>();
         HashSet<string> visitedVertices = new HashSet<string>();
 
-        visitedVertices.Add(edges.First().Item1);
-
-        getNeighbouringVertices(edges.First().Item1)
+        // visit the initial tableau vertex
+        visitedVertices.Add(initialTableauId);
+        // get the initial neighbours and assign them for visists
+        getNeighbouringVertices(initialTableauId)
             .ForEach(v => verticesToVisit.Push(v));
 
-        verticesToVisit.Push(initialTableauId);
 
         while (verticesToVisit.Count > 0)
         {
