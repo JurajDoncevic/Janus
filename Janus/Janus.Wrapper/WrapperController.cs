@@ -10,7 +10,7 @@ using Janus.Wrapper.LocalQuerying;
 using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
-public sealed class WrapperController
+public class WrapperController
     <TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation, TLocalQuery>
     : IComponentController
     where TLocalQuery : LocalQuery<TLocalSelection, TLocalJoining, TLocalProjection>
