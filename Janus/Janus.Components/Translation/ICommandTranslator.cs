@@ -1,10 +1,12 @@
 ﻿namespace Janus.Components.Translation;
 public interface ICommandTranslator
-    <TCommandSource, TSelectionSource, TMutationSource, TInstantiationSource,
-    TCommandDestination, TSelectionDestination, TMutationDestination, TInstantiationDestination>
+    <TDeleteCommandSource, TInsertCommandSource, TUpdateCommandSource, TSelectionSource, TMutationSource, TInstantiationSource,
+    TDeleteCommandDestination, TInsertCommandDestination, TUpdateCommandDestination, TSelectionDestination, TMutationDestination, TInstantiationDestination>
 {
-    Result<TCommandDestination> Translate(TCommandSource query);
+    Result<TDeleteCommandDestination> TranslateDelete(TDeleteCommandSource query);
+    Result<TInsertCommandDestination> TranslateInsert(TInsertCommandSource query);
+    Result<TUpdateCommandDestination> TranslateUpdate(TUpdateCommandSource query);
     Result<TSelectionDestination> TranslateSelection(Option<TSelectionSource> selection);
-    Result<TMutationDestination> TranslateJoin(Option<TMutationSource> mutation);
+    Result<TMutationDestination> TranslateMutation(Option<TMutationSource> mutation);
     Result<TInstantiationDestination> TranslateProjection(Option<TInstantiationSource> instantiation);
 }

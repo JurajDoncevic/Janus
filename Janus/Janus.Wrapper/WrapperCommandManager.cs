@@ -5,21 +5,33 @@ using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
-public class WrapperCommandManager<TSelection, TMutation, TInstantiation> : IComponentCommandManager
+public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> 
+    : IComponentCommandManager
+    where TDeleteCommand : LocalDelete<TSelection>
+    where TInsertCommand : LocalInsert<TInstantiation>
+    where TUpdateCommand : LocalUpdate<TSelection, TMutation>
 {
-    private readonly ILocalCommandTranslator<LocalCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
-    private readonly ICommandExecutor<TSelection, TMutation, TInstantiation> _commandExecutor;
+    private readonly ILocalCommandTranslator<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> _commandTranslator;
+    private readonly ICommandExecutor<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> _commandExecutor;
 
     public WrapperCommandManager(
-        ILocalCommandTranslator<LocalCommand, TSelection, TMutation, TInstantiation> commandTranslator,
-        ICommandExecutor<TSelection, TMutation, TInstantiation> commandExecutor)
+        ILocalCommandTranslator<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> commandTranslator,
+        ICommandExecutor<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> commandExecutor)
     {
         _commandTranslator = commandTranslator;
         _commandExecutor = commandExecutor;
     }
 
     public async Task<Result> RunCommand(BaseCommand command)
-        => await Task.FromResult(_commandTranslator.Translate(command))
-            .Bind(_commandExecutor.ExecuteCommand);
+        => await (command switch
+            {
+                DeleteCommand deleteCommand => Task.FromResult(_commandTranslator.TranslateDelete(deleteCommand))
+                                                .Bind(_commandExecutor.ExecuteDeleteCommand),
+                InsertCommand insertCommand => Task.FromResult(_commandTranslator.TranslateInsert(insertCommand))
+                                                .Bind(_commandExecutor.ExecuteInsertCommand),
+                UpdateCommand updateCommand => Task.FromResult(_commandTranslator.TranslateUpdate(updateCommand))
+                                                .Bind(_commandExecutor.ExecuteUpdateCommand),   
+                _ => Task.FromResult(Result.OnFailure("Unknown command type"))
+            });
 
 }
