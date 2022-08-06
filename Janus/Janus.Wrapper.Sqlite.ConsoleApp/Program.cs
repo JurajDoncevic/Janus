@@ -99,7 +99,7 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         // setup querying
         services.AddSingleton<SqliteQueryTranslator>();
-        services.AddSingleton<SqliteDataTranslator>();
+        services.AddSingleton<SqliteDataTranslator>(provider => new SqliteDataTranslator(wrapperOptions.NodeId));
         services.AddSingleton<SqliteQueryExecutor>(provider => new SqliteQueryExecutor(wrapperOptions.SourceConnectionString));
         services.AddSingleton<SqliteWrapperQueryManager>();
         
@@ -109,7 +109,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<SqliteWrapperCommandManager>();
 
         // setup schema managment
-        services.AddSingleton<SqliteSchemaModelProvider>();
+        services.AddSingleton<SqliteSchemaModelProvider>(provider => new SqliteSchemaModelProvider(wrapperOptions.SourceConnectionString));
         services.AddSingleton<SchemaInferrer>(
             provider => new SchemaInferrer(provider.GetService<SqliteSchemaModelProvider>()!, wrapperOptions.NodeId));
         services.AddSingleton<SqliteWrapperSchemaManager>();

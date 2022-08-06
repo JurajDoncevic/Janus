@@ -11,12 +11,12 @@ public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateComman
     where TInsertCommand : LocalInsert<TInstantiation>
     where TUpdateCommand : LocalUpdate<TSelection, TMutation>
 {
-    private readonly ILocalCommandTranslator<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> _commandTranslator;
-    private readonly ICommandExecutor<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> _commandExecutor;
+    private readonly ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
+    private readonly ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandExecutor;
 
     public WrapperCommandManager(
-        ILocalCommandTranslator<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> commandTranslator,
-        ICommandExecutor<LocalDelete<TSelection>, LocalInsert<TInstantiation>, LocalUpdate<TSelection, TMutation>, TSelection, TMutation, TInstantiation> commandExecutor)
+        ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
+        ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandExecutor)
     {
         _commandTranslator = commandTranslator;
         _commandExecutor = commandExecutor;

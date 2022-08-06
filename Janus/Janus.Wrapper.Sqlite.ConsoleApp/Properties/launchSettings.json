@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Janus.Wrapper.Sqlite.ConsoleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "--ui --settings appsettings.Development.json"
+    }
+  }
+}
