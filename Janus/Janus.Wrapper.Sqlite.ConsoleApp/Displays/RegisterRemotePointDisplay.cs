@@ -1,15 +1,16 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Results;
 using Janus.Logging;
+using Janus.Wrapper.Sqlite;
 using Sharprompt;
 
-namespace Janus.Wrapper.ConsoleApp.Displays;
+namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class RegisterRemotePointDisplay : BaseDisplay
 {
 
     private readonly ILogger<RegisterRemotePointDisplay>? _logger;
 
-    public RegisterRemotePointDisplay(WrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public RegisterRemotePointDisplay(SqliteWrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
     {
         _logger = logger?.ResolveLogger<RegisterRemotePointDisplay>();
     }

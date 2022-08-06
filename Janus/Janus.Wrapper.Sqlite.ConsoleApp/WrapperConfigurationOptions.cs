@@ -2,7 +2,7 @@
 using Janus.Commons.Nodes;
 using Janus.Communication.Remotes;
 
-namespace Janus.Wrapper.ConsoleApp;
+namespace Janus.Wrapper.Sqlite.ConsoleApp;
 public class WrapperConfigurationOptions
 {
     public string NodeId { get; init; }

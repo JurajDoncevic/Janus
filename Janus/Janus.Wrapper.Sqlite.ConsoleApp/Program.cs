@@ -3,7 +3,7 @@ using Janus.Commons;
 using Janus.Communication;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Wrapper;
-using Janus.Wrapper.ConsoleApp;
+using Janus.Wrapper.Sqlite.ConsoleApp;
 using Janus.Serialization;
 using Janus.Serialization.Avro;
 using Janus.Serialization.Bson;
@@ -16,6 +16,10 @@ using NLog;
 using NLog.Extensions.Hosting;
 using NLog.Extensions.Logging;
 using Janus.Wrapper.Sqlite;
+using Janus.Wrapper.Sqlite.Translation;
+using Janus.Wrapper.Sqlite.LocalQuerying;
+using Janus.Wrapper.Sqlite.SchemaInferrence;
+using Janus.Wrapper.SchemaInferrence;
 
 // get the application options
 var applicationOptions =
@@ -50,7 +54,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) => // configure services and injections
     {
         // get the mediator options from the ComponentOptions section
-        var mediatorOptions = hostContext.Configuration
+        var wrapperOptions = hostContext.Configuration
                                 .GetSection("ComponentOptions")
                                 .Get<WrapperConfigurationOptions>()
                                 .ToWrapperOptions();
@@ -61,18 +65,18 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         // check if the given data format and network adapter type are compatible
         if (!Utils.IsDataFormatCompatibleWithAdapter(
-            mediatorOptions.CommunicationFormat,
-            mediatorOptions.NetworkAdapterType))
-            throw new Exception($"Incompatible communication data format {mediatorOptions.CommunicationFormat} for network adapter type {mediatorOptions.NetworkAdapterType}");
+            wrapperOptions.CommunicationFormat,
+            wrapperOptions.NetworkAdapterType))
+            throw new Exception($"Incompatible communication data format {wrapperOptions.CommunicationFormat} for network adapter type {wrapperOptions.NetworkAdapterType}");
 
-        // set the serialization provider and network adapter
+        // set the serialization provider, network adapter and communication node
         var _ =
-        mediatorOptions.NetworkAdapterType switch
+        wrapperOptions.NetworkAdapterType switch
         {
             NetworkAdapterTypes.TCP =>
                 services
                 .AddSingleton<IBytesSerializationProvider>(
-                    mediatorOptions.CommunicationFormat switch
+                    wrapperOptions.CommunicationFormat switch
                     {
                         CommunicationFormats.AVRO => new AvroSerializationProvider(),
                         CommunicationFormats.BSON => new BsonSerializationProvider(),
@@ -83,25 +87,40 @@ IHost host = Host.CreateDefaultBuilder(args)
                 .AddSingleton<WrapperCommunicationNode>(serviceProvider =>
                     CommunicationNodes.CreateTcpWrapperCommunicationNode(
                         new Janus.Communication.Nodes.CommunicationNodeOptions(
-                            mediatorOptions.NodeId,
-                            mediatorOptions.ListenPort,
-                            mediatorOptions.TimeoutMs
+                            wrapperOptions.NodeId,
+                            wrapperOptions.ListenPort,
+                            wrapperOptions.TimeoutMs
                             ),
                         serviceProvider.GetService<IBytesSerializationProvider>()!,
                         serviceProvider.GetService<Janus.Logging.ILogger>())),
             _ => throw new Exception("Unknown network adapter type")
         };
 
-        services.AddSingleton<WrapperQueryManager>();
-        services.AddSingleton<WrapperCommandManager>();
-        services.AddSingleton<WrapperSchemaManager>();
+        // setup querying
+        services.AddSingleton<SqliteQueryTranslator>();
+        services.AddSingleton<SqliteDataTranslator>();
+        services.AddSingleton<SqliteQueryExecutor>();
+        services.AddSingleton<SqliteWrapperQueryManager>();
+        
+        // setup commanding
+        services.AddSingleton<SqliteWrapperCommandManager>();
+
+        // setup schema managment
+        services.AddSingleton<SqliteSchemaModelProvider>();
+        services.AddSingleton<SchemaInferrer>(
+            provider => new SchemaInferrer(provider.GetService<SqliteSchemaModelProvider>()!, wrapperOptions.NodeId));
+        services.AddSingleton<SqliteWrapperSchemaManager>();
+        
+        // setup controller
         services.AddSingleton<SqliteWrapperController>();
-        services.AddSingleton<WrapperOptions>(mediatorOptions);
+
+        services.AddSingleton<WrapperOptions>(wrapperOptions);
         services.AddSingleton<ApplicationOptions>(applicationOptions);
         services.AddSingleton<Application>();
 
     })
     .Build();
+
 await host.StartAsync();
 host.Services.GetService<Application>();
 host.WaitForShutdown();

@@ -11,18 +11,18 @@ using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
 public class WrapperController
-    <TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation, TLocalQuery>
+    <TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
     : IComponentController
     where TLocalQuery : LocalQuery<TLocalSelection, TLocalJoining, TLocalProjection>
 {
-    private readonly WrapperQueryManager<TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalQuery> _queryManager;
+    private readonly WrapperQueryManager<TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> _queryManager;
     private readonly WrapperCommandManager<TLocalSelection, TLocalMutation, TLocalInstantiation> _commandManager;
     private readonly WrapperSchemaManager _schemaManager;
     private readonly WrapperCommunicationNode _communicationNode;
 
     public WrapperController(
         WrapperCommunicationNode communicationNode,
-        WrapperQueryManager<TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalQuery> queryManager,
+        WrapperQueryManager<TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> queryManager,
         WrapperCommandManager<TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
         WrapperSchemaManager schemaManager)
     {

@@ -1,19 +1,20 @@
 ﻿using FunctionalExtensions.Base.Results;
+using Janus.Wrapper.Sqlite;
 
-namespace Janus.Wrapper.ConsoleApp.Displays;
+namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class UiGreetingDisplay : BaseDisplay
 {
-    private readonly WrapperOptions _mediatorOptions;
-    public UiGreetingDisplay(WrapperController mediatorController, WrapperOptions mediatorOptions) : base(mediatorController)
+    private readonly WrapperOptions _wrapperOptions;
+    public UiGreetingDisplay(SqliteWrapperController wrapperController, WrapperOptions wrapperOptions) : base(wrapperController)
     {
-        _mediatorOptions = mediatorOptions;
+        _wrapperOptions = wrapperOptions;
     }
 
     protected async override Task<Result> Display()
     {
         System.Console.WriteLine("Welcome to the Janus Wrapper UI application!");
         System.Console.WriteLine(_janusAscii);
-        System.Console.WriteLine($"This is Wrapper {_mediatorOptions.NodeId} listening on port {_mediatorOptions.ListenPort}");
+        System.Console.WriteLine($"This is Wrapper {_wrapperOptions.NodeId} listening on port {_wrapperOptions.ListenPort}");
 
         return await Task.FromResult(Result.OnSuccess());
     }

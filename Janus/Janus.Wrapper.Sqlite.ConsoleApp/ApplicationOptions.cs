@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace Janus.Wrapper.ConsoleApp;
+namespace Janus.Wrapper.Sqlite.ConsoleApp;
 internal class ApplicationOptions
 {
     [Option("ui", Default = false, HelpText = "Starts mediator application with the user interface")]

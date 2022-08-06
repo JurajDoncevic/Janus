@@ -5,7 +5,7 @@ using Janus.Components;
 using Janus.Wrapper.SchemaInferrence;
 
 namespace Janus.Wrapper;
-public sealed class WrapperSchemaManager : IComponentSchemaManager
+public class WrapperSchemaManager : IComponentSchemaManager
 {
     private readonly SchemaInferrer _schemaInferrer;
     private DataSource? _currentSchema;

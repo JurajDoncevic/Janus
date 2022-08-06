@@ -1,40 +1,40 @@
 ﻿using Janus.Logging;
-using Janus.Wrapper.ConsoleApp.Displays;
+using Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 
-namespace Janus.Wrapper.ConsoleApp;
+namespace Janus.Wrapper.Sqlite.ConsoleApp;
 internal class Application
 {
-    private readonly WrapperController _mediatorController;
-    private readonly WrapperOptions _mediatorOptions;
+    private readonly SqliteWrapperController _wrapperController;
+    private readonly WrapperOptions _wrapperOptions;
     private readonly ApplicationOptions _applicationOptions;
     private readonly ILogger<Application>? _logger;
     private readonly MainMenuDisplay? _mainMenuDisplay;
     private readonly UiGreetingDisplay? _cliGreetingDisplay;
 
-    public Application(WrapperController mediatorController, WrapperOptions mediatorOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
+    public Application(SqliteWrapperController wrapperController, WrapperOptions wrapperOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
     {
-        _mediatorController = mediatorController;
-        _mediatorOptions = mediatorOptions;
+        _wrapperController = wrapperController;
+        _wrapperOptions = wrapperOptions;
         _applicationOptions = applicationOptions;
         _logger = logger?.ResolveLogger<Application>();
         RunStart();
         if (applicationOptions.StartWithUserInterface)
         {
-            _cliGreetingDisplay = new UiGreetingDisplay(_mediatorController, _mediatorOptions);
-            _mainMenuDisplay = new MainMenuDisplay(_mediatorController, logger);
+            _cliGreetingDisplay = new UiGreetingDisplay(_wrapperController, _wrapperOptions);
+            _mainMenuDisplay = new MainMenuDisplay(_wrapperController, logger);
             RunCLI();
         }
     }
     private void RunStart()
     {
-        _logger?.Info("Starting application with" + (_applicationOptions.StartWithUserInterface ? " CLI enabled" : "out CLI" + $". With node id {_mediatorOptions.NodeId} on port {_mediatorOptions.ListenPort}"));
+        _logger?.Info("Starting application with" + (_applicationOptions.StartWithUserInterface ? " CLI enabled" : "out CLI" + $". With node id {_wrapperOptions.NodeId} on port {_wrapperOptions.ListenPort}"));
         System.Console.WriteLine("Started Janus Wrapper service");
-        _logger?.Info("Attempting to connect to startup remote nodes: {0}", string.Join(",", _mediatorOptions.StartupRemotePoints));
+        _logger?.Info("Attempting to connect to startup remote nodes: {0}", string.Join(",", _wrapperOptions.StartupRemotePoints));
 
         var results =
-        _mediatorOptions.StartupRemotePoints
+        _wrapperOptions.StartupRemotePoints
             .AsParallel()
-            .Select(async rp => (rp.Address, rp.Port, Result: await _mediatorController.RegisterRemotePoint(rp.Address, rp.Port)))
+            .Select(async rp => (rp.Address, rp.Port, Result: await _wrapperController.RegisterRemotePoint(rp.Address, rp.Port)))
             .ToList();
 
         results

@@ -1,13 +1,14 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Results;
 using Janus.Logging;
+using Janus.Wrapper.Sqlite;
 using Sharprompt;
 
-namespace Janus.Wrapper.ConsoleApp.Displays;
+namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class SendHelloPingDisplay : BaseDisplay
 {
     private readonly ILogger<SendHelloPingDisplay>? _logger;
-    public SendHelloPingDisplay(WrapperController mediatorController!!, ILogger? logger = null) : base(mediatorController)
+    public SendHelloPingDisplay(SqliteWrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<SendHelloPingDisplay>();
     }

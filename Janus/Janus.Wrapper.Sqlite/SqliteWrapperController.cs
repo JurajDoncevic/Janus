@@ -1,4 +1,5 @@
-﻿using Janus.Wrapper.Sqlite.LocalDataModel;
+﻿using Janus.Communication.Nodes.Implementations;
+using Janus.Wrapper.Sqlite.LocalDataModel;
 using Janus.Wrapper.Sqlite.LocalQuerying;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Janus.Wrapper.Sqlite;
-public class SqliteWrapperController 
-    : WrapperController<string, string, string, SqliteTabularData, string, string, SqliteQuery>
+public class SqliteWrapperController
+    : WrapperController<SqliteQuery,string, string, string, SqliteTabularData, string, string>
 {
+    public SqliteWrapperController(WrapperCommunicationNode communicationNode, SqliteWrapperQueryManager queryManager, SqliteWrapperCommandManager commandManager, SqliteWrapperSchemaManager schemaManager) : base(communicationNode, queryManager, commandManager, schemaManager)
+    {
+    }
 }

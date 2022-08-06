@@ -1,9 +1,10 @@
 ﻿using FunctionalExtensions.Base.Results;
+using Janus.Wrapper.Sqlite;
 
-namespace Janus.Wrapper.ConsoleApp.Displays;
+namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public abstract class BaseDisplay
 {
-    protected WrapperController _wrapperController;
+    protected SqliteWrapperController _wrapperController;
     public abstract string Title { get; }
     protected abstract Task<Result> Display();
 
@@ -26,8 +27,8 @@ public abstract class BaseDisplay
         return result;
     }
 
-    protected BaseDisplay(WrapperController mediatorController!!)
+    protected BaseDisplay(SqliteWrapperController wrapperController!!)
     {
-        _wrapperController = mediatorController;
+        _wrapperController = wrapperController;
     }
 }

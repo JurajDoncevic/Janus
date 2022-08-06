@@ -1,11 +1,12 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Logging;
+using Janus.Wrapper.Sqlite;
 
-namespace Janus.Wrapper.ConsoleApp.Displays;
+namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class ShutDownDisplay : BaseDisplay
 {
     private readonly ILogger<ShutDownDisplay>? _logger;
-    public ShutDownDisplay(WrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public ShutDownDisplay(SqliteWrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
     {
         _logger = logger?.ResolveLogger<ShutDownDisplay>();
     }

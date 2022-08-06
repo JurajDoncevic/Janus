@@ -5,7 +5,7 @@ using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
-public sealed class WrapperCommandManager<TSelection, TMutation, TInstantiation> : IComponentCommandManager
+public class WrapperCommandManager<TSelection, TMutation, TInstantiation> : IComponentCommandManager
 {
     private readonly ILocalCommandTranslator<LocalCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
     private readonly ICommandExecutor<TSelection, TMutation, TInstantiation> _commandExecutor;

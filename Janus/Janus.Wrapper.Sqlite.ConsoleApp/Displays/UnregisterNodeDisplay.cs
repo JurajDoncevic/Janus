@@ -1,14 +1,15 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Results;
 using Janus.Logging;
+using Janus.Wrapper.Sqlite;
 using Sharprompt;
 
-namespace Janus.Wrapper.ConsoleApp.Displays;
+namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class UnregisterNodeDisplay : BaseDisplay
 {
     private readonly ILogger<UnregisterNodeDisplay>? _logger;
 
-    public UnregisterNodeDisplay(WrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public UnregisterNodeDisplay(SqliteWrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
     {
         _logger = logger?.ResolveLogger<UnregisterNodeDisplay>();
     }

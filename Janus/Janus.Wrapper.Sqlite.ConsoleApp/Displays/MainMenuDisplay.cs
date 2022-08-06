@@ -1,8 +1,9 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Logging;
+using Janus.Wrapper.Sqlite;
 using Sharprompt;
 
-namespace Janus.Wrapper.ConsoleApp.Displays;
+namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class MainMenuDisplay : BaseDisplay
 {
     private readonly ILogger<MainMenuDisplay>? _logger;
@@ -13,15 +14,15 @@ public class MainMenuDisplay : BaseDisplay
     private readonly RegisterRemotePointDisplay _registerRemotePointDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
-    public MainMenuDisplay(WrapperController mediatorController!!, ILogger? logger = null) : base(mediatorController)
+    public MainMenuDisplay(SqliteWrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<MainMenuDisplay>();
 
-        _sendHelloPingDisplay = new SendHelloPingDisplay(mediatorController, logger);
-        _allRegisteredRemotePointsDisplay = new AllRegisteredRemotePointsDisplay(mediatorController, logger);
-        _unregisterNodeDisplay = new UnregisterNodeDisplay(mediatorController, logger);
-        _registerRemotePointDisplay = new RegisterRemotePointDisplay(mediatorController, logger);
-        _shutDownDisplay = new ShutDownDisplay(mediatorController, logger);
+        _sendHelloPingDisplay = new SendHelloPingDisplay(wrapperController, logger);
+        _allRegisteredRemotePointsDisplay = new AllRegisteredRemotePointsDisplay(wrapperController, logger);
+        _unregisterNodeDisplay = new UnregisterNodeDisplay(wrapperController, logger);
+        _registerRemotePointDisplay = new RegisterRemotePointDisplay(wrapperController, logger);
+        _shutDownDisplay = new ShutDownDisplay(wrapperController, logger);
 
     }
 
