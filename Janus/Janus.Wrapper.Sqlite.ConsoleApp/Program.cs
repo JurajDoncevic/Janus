@@ -20,6 +20,7 @@ using Janus.Wrapper.Sqlite.Translation;
 using Janus.Wrapper.Sqlite.LocalQuerying;
 using Janus.Wrapper.Sqlite.SchemaInferrence;
 using Janus.Wrapper.SchemaInferrence;
+using Janus.Wrapper.Sqlite.LocalCommanding;
 
 // get the application options
 var applicationOptions =
@@ -99,10 +100,12 @@ IHost host = Host.CreateDefaultBuilder(args)
         // setup querying
         services.AddSingleton<SqliteQueryTranslator>();
         services.AddSingleton<SqliteDataTranslator>();
-        services.AddSingleton<SqliteQueryExecutor>();
+        services.AddSingleton<SqliteQueryExecutor>(provider => new SqliteQueryExecutor(wrapperOptions.SourceConnectionString));
         services.AddSingleton<SqliteWrapperQueryManager>();
         
         // setup commanding
+        services.AddSingleton<SqliteCommandTranslator>();
+        services.AddSingleton<SqliteCommandExecutor>(provider => new SqliteCommandExecutor(wrapperOptions.SourceConnectionString));
         services.AddSingleton<SqliteWrapperCommandManager>();
 
         // setup schema managment

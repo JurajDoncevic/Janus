@@ -7,7 +7,7 @@ public interface ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand
     where TInsertCommand : LocalInsert<TInstantiation>
     where TUpdateCommand : LocalUpdate<TSelection, TMutation>
 {
-    public Task<Result> ExecuteDeleteCommand(TDeleteCommand command);
-    public Task<Result> ExecuteInsertCommand(TInsertCommand command);
-    public Task<Result> ExecuteUpdateCommand(TUpdateCommand command);
+    public Task<Result> ExecuteDeleteCommand(TDeleteCommand deleteCommand);
+    public Task<Result> ExecuteInsertCommand(TInsertCommand insertCommand);
+    public Task<Result> ExecuteUpdateCommand(TUpdateCommand updateCommand);
 }

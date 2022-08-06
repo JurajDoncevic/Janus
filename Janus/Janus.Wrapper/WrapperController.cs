@@ -6,24 +6,28 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
+using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.LocalQuerying;
 using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
 public class WrapperController
-    <TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
+    <TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
     : IComponentController
     where TLocalQuery : LocalQuery<TLocalSelection, TLocalJoining, TLocalProjection>
+    where TDeleteCommand : LocalDelete<TLocalSelection>
+    where TInsertCommand : LocalInsert<TLocalInstantiation>
+    where TUpdateCommand : LocalUpdate<TLocalSelection, TLocalMutation>
 {
     private readonly WrapperQueryManager<TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> _queryManager;
-    private readonly WrapperCommandManager<TLocalSelection, TLocalMutation, TLocalInstantiation> _commandManager;
+    private readonly WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> _commandManager;
     private readonly WrapperSchemaManager _schemaManager;
     private readonly WrapperCommunicationNode _communicationNode;
 
     public WrapperController(
         WrapperCommunicationNode communicationNode,
         WrapperQueryManager<TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> queryManager,
-        WrapperCommandManager<TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
+        WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
         WrapperSchemaManager schemaManager)
     {
         _communicationNode = communicationNode;
