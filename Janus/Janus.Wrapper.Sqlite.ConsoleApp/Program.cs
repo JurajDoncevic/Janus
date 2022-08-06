@@ -53,7 +53,7 @@ IHost host = Host.CreateDefaultBuilder(args)
     }).UseNLog()
     .ConfigureServices((hostContext, services) => // configure services and injections
     {
-        // get the mediator options from the ComponentOptions section
+        // get the wrapper options from the ComponentOptions section
         var wrapperOptions = hostContext.Configuration
                                 .GetSection("ComponentOptions")
                                 .Get<WrapperConfigurationOptions>()
