@@ -78,7 +78,10 @@ public class WrapperController
         => _communicationNode.RemotePoints;
 
     public async Task<Result<DataSource>> GetSchema()
-        => await _schemaManager.GetCurrentSchema();
+        => await (await _schemaManager.GetCurrentSchema())
+            .Match(async (DataSource dataSource) => await Task.FromResult(Result<DataSource>.OnSuccess(dataSource)),
+                   async message => await _schemaManager.ReloadSchema());
+
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
         => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));

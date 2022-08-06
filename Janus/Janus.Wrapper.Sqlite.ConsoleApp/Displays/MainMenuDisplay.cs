@@ -12,6 +12,7 @@ public class MainMenuDisplay : BaseDisplay
     private readonly AllRegisteredRemotePointsDisplay _allRegisteredRemotePointsDisplay;
     private readonly UnregisterNodeDisplay _unregisterNodeDisplay;
     private readonly RegisterRemotePointDisplay _registerRemotePointDisplay;
+    private readonly GetCurrentSchemaDisplay _getCurrentSchemaDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
     public MainMenuDisplay(SqliteWrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
@@ -22,6 +23,7 @@ public class MainMenuDisplay : BaseDisplay
         _allRegisteredRemotePointsDisplay = new AllRegisteredRemotePointsDisplay(wrapperController, logger);
         _unregisterNodeDisplay = new UnregisterNodeDisplay(wrapperController, logger);
         _registerRemotePointDisplay = new RegisterRemotePointDisplay(wrapperController, logger);
+        _getCurrentSchemaDisplay = new GetCurrentSchemaDisplay(wrapperController, logger);
         _shutDownDisplay = new ShutDownDisplay(wrapperController, logger);
 
     }
@@ -40,6 +42,7 @@ public class MainMenuDisplay : BaseDisplay
                                 ("Get registered nodes", async () => await _allRegisteredRemotePointsDisplay.Show()),
                                 ("Register new remote point", async () => await _registerRemotePointDisplay.Show()),
                                 ("Unregister node", async () => await _unregisterNodeDisplay.Show()),
+                                ("Get current schema", async () => await _getCurrentSchemaDisplay.Show()),
                                 ("Exit and shutdown node", async () => await _shutDownDisplay.Show())
                 };
             conf.TextSelector = (item) => item.name;
