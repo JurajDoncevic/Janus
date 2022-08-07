@@ -46,20 +46,20 @@ public sealed class MediatorController : IComponentController
         => _communicationNode.RemotePoints;
 
     public async Task<Result<DataSource>> GetSchema()
-        => await _schemaManager.GetCurrentSchema();
+        => await _schemaManager.GetCurrentOutputSchema();
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
         => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));
 
     public async Task<Result> RunCommand(BaseCommand command)
         => await _schemaManager
-            .GetCurrentSchema()
+            .GetCurrentOutputSchema()
             .Bind(dataSource => Task.FromResult(command.IsValidForDataSource(dataSource)))
             .Bind(async validity => await _commandManager.RunCommand(command));
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _schemaManager
-            .GetCurrentSchema()
+            .GetCurrentOutputSchema()
             .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
             .Bind(async validity => await _queryManager.RunQuery(query));
 
@@ -87,8 +87,8 @@ public sealed class MediatorController : IComponentController
         => _schemaManager.SchemaInferredRemotePoints;
 
     public Result AddRemotePointToSchemaInferrence(RemotePoint remotePoint)
-        => _schemaManager.AddRemotePointToSchemaInferrence(remotePoint.NodeId);
+        => _schemaManager.AddRemotePointToSchemaInferrence(remotePoint);
 
     public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint)
-        => _schemaManager.RemoveRemotePointFromSchemaInferrence(remotePoint.NodeId);
+        => _schemaManager.RemoveRemotePointFromSchemaInferrence(remotePoint);
 }

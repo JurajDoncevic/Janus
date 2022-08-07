@@ -14,13 +14,13 @@ public class WrapperSchemaManager : IComponentSchemaManager
         _schemaInferrer = schemaInferrer;
     }
 
-    public Task<Result<DataSource>> GetCurrentSchema()
+    public Task<Result<DataSource>> GetCurrentOutputSchema()
         => Task.FromResult(
             _currentSchema != null
                 ? Result<DataSource>.OnSuccess(_currentSchema)
                 : Result<DataSource>.OnFailure("No schema loaded currently"));
 
-    public Task<Result<DataSource>> ReloadSchema()
+    public Task<Result<DataSource>> ReloadOutputSchema()
         => Task.FromResult(
             _schemaInferrer.InferSchemaModel()
                 .Pass(result => _currentSchema = result.Data));

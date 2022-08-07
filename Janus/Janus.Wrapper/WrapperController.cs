@@ -41,7 +41,7 @@ public class WrapperController
     }
 
     private void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
-        => _schemaManager.GetCurrentSchema()
+        => _schemaManager.GetCurrentOutputSchema()
             .Map(dataSource => _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, dataSource, e.FromRemotePoint));
 
     private void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
@@ -50,7 +50,7 @@ public class WrapperController
         var fromPoint = e.FromRemotePoint;
         var query = e.ReceivedMessage.Query;
 
-        _schemaManager.GetCurrentSchema()
+        _schemaManager.GetCurrentOutputSchema()
             .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
             .Bind(result => _queryManager.RunQuery(query))
             .Match(
@@ -65,7 +65,7 @@ public class WrapperController
         var fromPoint = e.FromRemotePoint;
         var command = e.ReceivedMessage.Command;
 
-        _schemaManager.GetCurrentSchema()
+        _schemaManager.GetCurrentOutputSchema()
             .Bind(dataSource => Task.FromResult(command.IsValidForDataSource(dataSource)))
             .Bind(result => _commandManager.RunCommand(command))
             .Match(
@@ -78,9 +78,9 @@ public class WrapperController
         => _communicationNode.RemotePoints;
 
     public async Task<Result<DataSource>> GetSchema()
-        => await (await _schemaManager.GetCurrentSchema())
+        => await (await _schemaManager.GetCurrentOutputSchema())
             .Match(async (DataSource dataSource) => await Task.FromResult(Result<DataSource>.OnSuccess(dataSource)),
-                   async message => await _schemaManager.ReloadSchema());
+                   async message => await _schemaManager.ReloadOutputSchema());
 
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
@@ -88,13 +88,13 @@ public class WrapperController
 
     public async Task<Result> RunCommand(BaseCommand command)
         => await _schemaManager
-            .GetCurrentSchema()
+            .GetCurrentOutputSchema()
             .Bind(dataSource => Task.FromResult(command.IsValidForDataSource(dataSource)))
             .Bind(async validity => await _commandManager.RunCommand(command));
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _schemaManager
-            .GetCurrentSchema()
+            .GetCurrentOutputSchema()
             .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
             .Bind(async validity => await _queryManager.RunQuery(query));
 
