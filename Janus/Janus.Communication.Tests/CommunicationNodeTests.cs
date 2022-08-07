@@ -60,6 +60,25 @@ public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture>
 
     }
 
+    [Fact(DisplayName = "BASE: Refuse register nodes with same ID")]
+    public void RefuseRegister()
+    {
+        using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator1X");
+
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+
+        var registerResult = mediator1.RegisterRemotePoint(mediator2RemotePoint).Result;
+        var resultRemotePoint = registerResult.Data;
+
+        Assert.False(registerResult);
+        Assert.Contains("same id", registerResult.Message);
+        Assert.DoesNotContain(mediator2RemotePoint, mediator1.RemotePoints);
+        Assert.DoesNotContain(mediator1RemotePoint, mediator2.RemotePoints);
+
+    }
+
     [Fact(DisplayName = "BASE: Test HELLO timeout")]
     public void SendHelloTimeout()
     {

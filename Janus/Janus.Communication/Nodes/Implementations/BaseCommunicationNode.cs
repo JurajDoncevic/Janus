@@ -127,33 +127,41 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
         // get message
         var message = e.Message;
         _logger?.Info("Managing {0} from node {1} in exchange {2}", message.Preamble, message.NodeId, message.ExchangeId);
+
+        // declare response
+        HelloResMessage response = null;
+
         // create remote point
         var remotePoint = message.CreateRemotePoint(e.SenderAddress);
-        // if remember me, save to remote points
+
+        // this is a register scenario, see if you should save to remote points
         if (message.RememberMe)
         {
-            // don't register the node if it has the same id
-            // a response is sent to avoid timeout - the receiving node will also conclude equality of node id
-            bool isNodeIdEqual = Options.NodeId.Equals(message.NodeId);
-            if (isNodeIdEqual)
+            var isOkToRegister = IsRemotePointOkToRegister(remotePoint);
+            if (!isOkToRegister)
             {
-                _logger?.Info("Refused to register remote point {0} on request due to equal node id as this node", remotePoint);
+                // create negative response
+                response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, isOkToRegister, isOkToRegister.Message);
+                _logger?.Info("Refused to register remote point {0} on request: {1}", remotePoint, isOkToRegister.Message);
             }
-            else
+            else // this remote point is ok to register
             {
                 _remotePoints[message.NodeId] = remotePoint;
                 _logger?.Info("Registered remote point {0}", remotePoint);
+                response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, message.RememberMe);
             }
-
         }
-        // create response
-        var response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, message.RememberMe);
-        _logger?.Info("Sending {0} as a response to remote point {1} in exchange {2}", response.Preamble, remotePoint, response.ExchangeId);
-        // send response, but don't wait
-        _networkAdapter.SendHelloResponse(response, remotePoint);
+        else // this is a simple HELLO ping scenario
+        {
+            response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, message.RememberMe);
+        }
 
+        // send response, but don't wait
+        _logger?.Info("Sending {0} as a response to remote point {1} in exchange {2}", response.Preamble, remotePoint, response.ExchangeId);
+        _networkAdapter.SendHelloResponse(response, remotePoint);
+        
         // invoke event
-        HelloRequestReceived?.Invoke(this, new HelloReqEventArgs(message, remotePoint));
+        HelloRequestReceived?.Invoke(this, new HelloReqEventArgs(message, remotePoint, response.RememberMe));
     }
 
     #endregion
@@ -246,17 +254,17 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
                         _logger?.Info("Received {0} on exchange {1} from {2}. Registering remote point.", helloResponse.Preamble, helloResponse.ExchangeId, helloResponse.NodeId);
 
                         // create a remote point from the message and sender address
-                        var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
-                        // don't register the node if it has the same id
-                        if (Options.NodeId.Equals(confirmedRemotePoint.NodeId))
+                        var respondingRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
+                        // don't register the node if it refused registration
+                        if (!helloResponse.RememberMe)
                         {
-                            _logger?.Info("Refused to register remote point {0} due to equal node id as this node", confirmedRemotePoint);
-                            return Result<RemotePoint>.OnFailure($"Can't register node with the same node id {Options.NodeId}");
+                            _logger?.Info("Remote point {0} refused register. Reason: {1}", respondingRemotePoint, helloResponse.ContextMessage);
+                            return Result<RemotePoint>.OnFailure($"Remote point {respondingRemotePoint} refused register. Reason: {helloResponse.ContextMessage}");
                         }
                         // add update the remote point into the known remote point dictionary
-                        _remotePoints[confirmedRemotePoint.NodeId] = confirmedRemotePoint;
+                        _remotePoints[respondingRemotePoint.NodeId] = respondingRemotePoint;
                         // turn the remote point into a data result
-                        return confirmedRemotePoint;
+                        return respondingRemotePoint;
                     })),
                 _options.TimeoutMs);
 
@@ -293,6 +301,13 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
     }
 
     #endregion
+
+    /// <summary>
+    /// Determines if the requesting remote point should be registered
+    /// </summary>
+    /// <param name="remotePoint">Remote point requesting registration</param>
+    /// <returns>Result with message of possible refusal reason</returns>
+    protected abstract Result IsRemotePointOkToRegister(RemotePoint remotePoint);
 
     public void Dispose()
     {

@@ -38,9 +38,9 @@ public abstract class CommunicationNodeTestFixture
 
         var options = LoadCommunicationNodeOptions(_configuration);
 
-        _maskCommunicationNodeOptions = options.maskNodeOptions.ToDictionary(o => o.NodeId, o => o);
-        _mediatorCommunicationNodeOptions = options.mediatorNodeOptions.ToDictionary(o => o.NodeId, o => o);
-        _wrapperCommunicationNodeOptions = options.wrapperNodeOptions.ToDictionary(o => o.NodeId, o => o);
+        _maskCommunicationNodeOptions = options.maskNodeOptions.ToDictionary(o => o.key, o => o.Item2);
+        _mediatorCommunicationNodeOptions = options.mediatorNodeOptions.ToDictionary(o => o.key, o => o.Item2);
+        _wrapperCommunicationNodeOptions = options.wrapperNodeOptions.ToDictionary(o => o.key, o => o.Item2);
     }
 
     public MaskCommunicationNode GetMaskCommunicationNode(string nodeId)
@@ -53,9 +53,9 @@ public abstract class CommunicationNodeTestFixture
         => CommunicationNodes.CreateTcpWrapperCommunicationNode(_wrapperCommunicationNodeOptions[nodeId], SerializationProvider);
 
     private (
-        IEnumerable<CommunicationNodeOptions> maskNodeOptions,
-        IEnumerable<CommunicationNodeOptions> mediatorNodeOptions,
-        IEnumerable<CommunicationNodeOptions> wrapperNodeOptions)
+        IEnumerable<(string key, CommunicationNodeOptions)> maskNodeOptions,
+        IEnumerable<(string key, CommunicationNodeOptions)> mediatorNodeOptions,
+        IEnumerable<(string key, CommunicationNodeOptions)> wrapperNodeOptions)
         LoadCommunicationNodeOptions(IConfiguration configuration)
     {
         return (
@@ -65,24 +65,24 @@ public abstract class CommunicationNodeTestFixture
                          .GetChildren()
                          .SingleOrDefault(section => section.Key.Equals("Masks"))?
                          .GetChildren()
-                         .Select(maskSection => maskSection.GetCommunicationNodeOptions())
-                         .ToList() ?? new List<CommunicationNodeOptions>(),
+                         .Select(maskSection => (maskSection.Key, maskSection.GetCommunicationNodeOptions()))
+                         .ToList() ?? new List<(string key, CommunicationNodeOptions)>(),
             configuration.GetChildren()
                          .ToList()
                          .SingleOrDefault(section => section.Key.Equals("Nodes"))?
                          .GetChildren()
                          .SingleOrDefault(section => section.Key.Equals("Mediators"))?
                          .GetChildren()
-                         .Select(maskSection => maskSection.GetCommunicationNodeOptions())
-                         .ToList() ?? new List<CommunicationNodeOptions>(),
+                         .Select(mediatorSection => (mediatorSection.Key, mediatorSection.GetCommunicationNodeOptions()))
+                         .ToList() ?? new List<(string key, CommunicationNodeOptions)>(),
             configuration.GetChildren()
                          .ToList()
                          .SingleOrDefault(section => section.Key.Equals("Nodes"))?
                          .GetChildren()
                          .SingleOrDefault(section => section.Key.Equals("Wrappers"))?
                          .GetChildren()
-                         .Select(maskSection => maskSection.GetCommunicationNodeOptions())
-                         .ToList() ?? new List<CommunicationNodeOptions>()
+                         .Select(wrapperSection => (wrapperSection.Key, wrapperSection.GetCommunicationNodeOptions()))
+                         .ToList() ?? new List<(string key, CommunicationNodeOptions)>()
                      );
 
     }

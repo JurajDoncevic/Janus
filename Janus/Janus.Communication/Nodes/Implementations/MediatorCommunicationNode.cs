@@ -366,4 +366,12 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         return result;
     }
     #endregion
+
+    protected override Result IsRemotePointOkToRegister(RemotePoint remotePoint)
+    {
+        if (Options.NodeId.Equals(remotePoint.NodeId))
+            return Result.OnFailure($"This node has the same id {Options.NodeId}.");
+
+        return Result.OnSuccess();
+    }
 }

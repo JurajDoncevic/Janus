@@ -243,4 +243,16 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
         return result;
     }
     #endregion
+
+    protected override Result IsRemotePointOkToRegister(RemotePoint remotePoint)
+    {
+        if (Options.NodeId.Equals(remotePoint.NodeId))
+            return Result.OnFailure($"This node has the same id {Options.NodeId}.");
+        if (remotePoint.RemotePointType == RemotePointTypes.MASK)
+            return Result.OnFailure("This is a MASK. Can't connect a MASK to a MASK.");
+        if (RemotePoints.Count > 0)
+            return Result.OnFailure("This MASK already has a connected component.");
+
+        return Result.OnSuccess();
+    }
 }

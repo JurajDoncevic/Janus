@@ -25,7 +25,8 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
                 deserializedModel.NodeId,
                 deserializedModel.ListenPort,
                 deserializedModel.NodeType,
-                deserializedModel.RememberMe);
+                deserializedModel.RememberMe,
+                deserializedModel.ContextMessage);
         });
 
     /// <summary>
@@ -43,7 +44,8 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
                 NodeId = message.NodeId,
                 ListenPort = message.ListenPort,
                 NodeType = message.NodeType,
-                RememberMe = message.RememberMe
+                RememberMe = message.RememberMe,
+                ContextMessage = message.ContextMessage
             };
             return Utils.ToProtobufs(helloResMessageDto);
         });

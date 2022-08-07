@@ -6,4 +6,5 @@ internal class HelloResMessageDto : BaseMessageDto
     public int ListenPort { get; set; }
     public NodeTypes NodeType { get; set; }
     public bool RememberMe { get; set; }
+    public string ContextMessage { get; set; }
 }

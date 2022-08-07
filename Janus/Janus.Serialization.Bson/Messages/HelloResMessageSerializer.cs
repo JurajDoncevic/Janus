@@ -35,7 +35,8 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
                     helloResMessageDto.NodeId,
                     helloResMessageDto.ListenPort,
                     helloResMessageDto.NodeType,
-                    helloResMessageDto.RememberMe));
+                    helloResMessageDto.RememberMe,
+                    helloResMessageDto.ContextMessage));
 
     /// <summary>
     /// Serializes a HELLO_RES message
@@ -51,7 +52,8 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
                 NodeId = message.NodeId,
                 ListenPort = message.ListenPort,
                 NodeType = message.NodeType,
-                RememberMe = message.RememberMe
+                RememberMe = message.RememberMe,
+                ContextMessage = message.ContextMessage
             };
             var json = JsonSerializer.Serialize(helloResMessageDto, _serializerOptions);
             var messageBytes = Encoding.UTF8.GetBytes(json);

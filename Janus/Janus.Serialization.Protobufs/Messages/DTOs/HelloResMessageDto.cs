@@ -22,5 +22,8 @@ internal class HelloResMessageDto
     public NodeTypes NodeType { get; set; }
 
     [ProtoMember(6)]
-    public bool RememberMe { get; set; }
+    public bool RememberMe { get; set; }    
+    
+    [ProtoMember(7)]
+    public string ContextMessage { get; set; }
 }
