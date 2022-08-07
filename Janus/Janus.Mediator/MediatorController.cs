@@ -1,4 +1,5 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Results;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
@@ -91,4 +92,12 @@ public sealed class MediatorController : IComponentController
 
     public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint)
         => _schemaManager.RemoveRemotePointFromSchemaInferrence(remotePoint);
+
+    public Result ClearRemotePointsFromSchemaInferrence()
+        => _schemaManager.SchemaInferredRemotePoints
+            .Map(_schemaManager.RemoveRemotePointFromSchemaInferrence)
+            .All(result => result);
+
+    public async Task<IEnumerable<Result<DataSource>>> GetInputSchemata()
+        => await _schemaManager.GetInputSchemata();
 }

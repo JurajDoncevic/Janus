@@ -69,7 +69,7 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, ITransformi
         return await _communicationNode.SendSchemaRequest(remotePoint);
     }
 
-    public async Task<IEnumerable<Result<DataSource>>> GetInputSchemataFromComponents()
+    public async Task<IEnumerable<Result<DataSource>>> GetInputSchemata()
     {
         var schemaRequestTasks =
         _schemaInferredRemotePoints

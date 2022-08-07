@@ -132,8 +132,19 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
         // if remember me, save to remote points
         if (message.RememberMe)
         {
-            _remotePoints[message.NodeId] = remotePoint;
-            _logger?.Info("Registered remote point {0}", remotePoint);
+            // don't register the node if it has the same id
+            // a response is sent to avoid timeout - the receiving node will also conclude equality of node id
+            bool isNodeIdEqual = Options.NodeId.Equals(message.NodeId);
+            if (isNodeIdEqual)
+            {
+                _logger?.Info("Refused to register remote point {0} on request due to equal node id as this node", remotePoint);
+            }
+            else
+            {
+                _remotePoints[message.NodeId] = remotePoint;
+                _logger?.Info("Registered remote point {0}", remotePoint);
+            }
+
         }
         // create response
         var response = new HelloResMessage(message.ExchangeId, _options.NodeId, _options.ListenPort, NodeType, message.RememberMe);
@@ -186,6 +197,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
 
                         // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
+
                         // turn it into a data result
                         return confirmedRemotePoint;
                     })),
@@ -235,6 +247,12 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
 
                         // create a remote point from the message and sender address
                         var confirmedRemotePoint = helloResponse.CreateRemotePoint(remotePoint.Address);
+                        // don't register the node if it has the same id
+                        if (Options.NodeId.Equals(confirmedRemotePoint.NodeId))
+                        {
+                            _logger?.Info("Refused to register remote point {0} due to equal node id as this node", confirmedRemotePoint);
+                            return Result<RemotePoint>.OnFailure($"Can't register node with the same node id {Options.NodeId}");
+                        }
                         // add update the remote point into the known remote point dictionary
                         _remotePoints[confirmedRemotePoint.NodeId] = confirmedRemotePoint;
                         // turn the remote point into a data result
