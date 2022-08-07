@@ -82,4 +82,13 @@ public sealed class MediatorController : IComponentController
 
     public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
         => await _communicationNode.SendBye(remotePoint);
+
+    public IReadOnlyList<RemotePoint> SchemaInferredRemotePoints
+        => _schemaManager.SchemaInferredRemotePoints;
+
+    public Result AddRemotePointToSchemaInferrence(RemotePoint remotePoint)
+        => _schemaManager.AddRemotePointToSchemaInferrence(remotePoint.NodeId);
+
+    public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint)
+        => _schemaManager.RemoveRemotePointFromSchemaInferrence(remotePoint.NodeId);
 }

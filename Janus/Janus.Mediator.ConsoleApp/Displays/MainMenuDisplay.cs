@@ -11,6 +11,7 @@ public class MainMenuDisplay : BaseDisplay
     private readonly AllRegisteredRemotePointsDisplay _allRegisteredRemotePointsDisplay;
     private readonly UnregisterNodeDisplay _unregisterNodeDisplay;
     private readonly RegisterRemotePointDisplay _registerRemotePointDisplay;
+    private readonly SchemaInferrenceSelectionDisplay _schemaInferrenceSelectionDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
     public MainMenuDisplay(MediatorController mediatorController!!, ILogger? logger = null) : base(mediatorController)
@@ -21,6 +22,7 @@ public class MainMenuDisplay : BaseDisplay
         _allRegisteredRemotePointsDisplay = new AllRegisteredRemotePointsDisplay(mediatorController, logger);
         _unregisterNodeDisplay = new UnregisterNodeDisplay(mediatorController, logger);
         _registerRemotePointDisplay = new RegisterRemotePointDisplay(mediatorController, logger);
+        _schemaInferrenceSelectionDisplay = new SchemaInferrenceSelectionDisplay(mediatorController, logger);
         _shutDownDisplay = new ShutDownDisplay(mediatorController, logger);
 
     }
@@ -37,6 +39,7 @@ public class MainMenuDisplay : BaseDisplay
                 {
                                 ("Send HELLO ping", async () => await _sendHelloPingDisplay.Show()),
                                 ("Get registered nodes", async () => await _allRegisteredRemotePointsDisplay.Show()),
+                                ("Set remote points for schema inferrence", async () => await _schemaInferrenceSelectionDisplay.Show()),
                                 ("Register new remote point", async () => await _registerRemotePointDisplay.Show()),
                                 ("Unregister node", async () => await _unregisterNodeDisplay.Show()),
                                 ("Exit and shutdown node", async () => await _shutDownDisplay.Show())
