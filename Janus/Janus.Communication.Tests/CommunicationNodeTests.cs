@@ -60,11 +60,12 @@ public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture>
 
     }
 
-    [Fact(DisplayName = "BASE: Refuse register nodes with same ID")]
-    public void RefuseRegister()
+
+    [Fact(DisplayName = "BASE: Refuse mediator register on node with same ID")]
+    public void RefuseMediatorRegisterOnSameId()
     {
         using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
-        using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator1X");
+        using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator1_Copy");
 
         var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
         var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
@@ -74,8 +75,108 @@ public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture>
 
         Assert.False(registerResult);
         Assert.Contains("same id", registerResult.Message);
-        Assert.DoesNotContain(mediator2RemotePoint, mediator1.RemotePoints);
-        Assert.DoesNotContain(mediator1RemotePoint, mediator2.RemotePoints);
+        Assert.Empty(mediator1.RemotePoints);
+        Assert.Empty(mediator2.RemotePoints);
+
+    }
+
+    [Fact(DisplayName = "BASE: Refuse mask register on node with same ID")]
+    public void RefuseMaskRegisterOnSameId()
+    {
+        using var mask = _testFixture.GetMaskCommunicationNode("MaskNodeX");
+        using var mediator = _testFixture.GetMediatorCommunicationNode("MediatorNodeX");
+
+        var mediatorRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        var maskRemotePoint = new MaskRemotePoint(mask.Options.NodeId, "127.0.0.1", mask.Options.ListenPort);
+
+        var registerResult = mask.RegisterRemotePoint(mediatorRemotePoint).Result;
+        var resultRemotePoint = registerResult.Data;
+
+        Assert.False(registerResult);
+        Assert.Contains("same id", registerResult.Message);
+        Assert.DoesNotContain(maskRemotePoint, mediator.RemotePoints);
+        Assert.DoesNotContain(mediatorRemotePoint, mask.RemotePoints);
+
+    }
+
+    [Fact(DisplayName = "BASE: Refuse wrapper register on node with same ID")]
+    public void RefuseWrapperRegisterOnSameId()
+    {
+        using var wrapper = _testFixture.GetWrapperCommunicationNode("WrapperNodeX");
+        using var mediator = _testFixture.GetMediatorCommunicationNode("MediatorNodeX");
+
+        var mediatorRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        var wrapperRemotePoint = new WrapperRemotePoint(wrapper.Options.NodeId, "127.0.0.1", wrapper.Options.ListenPort);
+
+        var registerResult = wrapper.RegisterRemotePoint(mediatorRemotePoint).Result;
+        var resultRemotePoint = registerResult.Data;
+
+        Assert.False(registerResult);
+        Assert.Contains("same id", registerResult.Message);
+        Assert.Empty(mediator.RemotePoints);
+        Assert.Empty(wrapper.RemotePoints);
+
+    }
+
+    [Fact(DisplayName = "BASE: Refuse mask on mask register")]
+    public void RefuseMaskOnMaskRegister()
+    {
+        using var mask1 = _testFixture.GetMaskCommunicationNode("Mask1");
+        using var mask2 = _testFixture.GetMaskCommunicationNode("Mask2");
+
+        var mask2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mask2.Options.ListenPort);
+        var mask1RemotePoint = new MaskRemotePoint(mask1.Options.NodeId, "127.0.0.1", mask1.Options.ListenPort);
+
+        var registerResult = mask1.RegisterRemotePoint(mask2RemotePoint).Result;
+        var resultRemotePoint = registerResult.Data;
+
+        Assert.False(registerResult);
+        Assert.Empty(mask2.RemotePoints);
+        Assert.Empty(mask1.RemotePoints);
+
+    }
+
+    [Fact(DisplayName = "BASE: Refuse wrapper on wrapper register")]
+    public void RefuseWrapperOnWrapperRegister()
+    {
+        using var wrapper1 = _testFixture.GetWrapperCommunicationNode("Wrapper1");
+        using var wrapper2 = _testFixture.GetWrapperCommunicationNode("Wrapper2");
+
+        var wrapper2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", wrapper2.Options.ListenPort);
+        var wrapper1RemotePoint = new WrapperRemotePoint(wrapper1.Options.NodeId, "127.0.0.1", wrapper1.Options.ListenPort);
+
+        var registerResult = wrapper1.RegisterRemotePoint(wrapper2RemotePoint).Result;
+        var resultRemotePoint = registerResult.Data;
+
+        Assert.False(registerResult);
+        Assert.Empty(wrapper2.RemotePoints);
+        Assert.Empty(wrapper1.RemotePoints);
+
+    }
+
+    [Fact(DisplayName = "BASE: Refuse more than one registered node on mask")]
+    public void RefuseMoreThanOneRegisteredNodeOnMask()
+    {
+        using var mask = _testFixture.GetMaskCommunicationNode("Mask1");
+        using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
+
+        var mediator1RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator1.Options.ListenPort);
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var maskRemotePoint = new MaskRemotePoint(mask.Options.NodeId, "127.0.0.1", mask.Options.ListenPort);
+        var undeterminedMaskRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mask.Options.ListenPort);
+
+        var mediator1RegisterResult = mask.RegisterRemotePoint(mediator1RemotePoint).Result;
+        var mediator2RegisterResult = mediator2.RegisterRemotePoint(undeterminedMaskRemotePoint).Result;
+        var resultRemotePoint = mediator1RegisterResult.Data;
+
+        Assert.True(mediator1RegisterResult);
+        Assert.Contains(maskRemotePoint, mediator1.RemotePoints);
+        Assert.Contains(new MediatorRemotePoint(mediator1.Options.NodeId, mediator1RemotePoint.Address, mediator1RemotePoint.Port), mask.RemotePoints);
+
+        Assert.False(mediator2RegisterResult);
+        Assert.DoesNotContain(maskRemotePoint, mediator2.RemotePoints);
+        Assert.DoesNotContain(new MediatorRemotePoint(mediator2.Options.NodeId, mediator2RemotePoint.Address, mediator2RemotePoint.Port), mask.RemotePoints);
 
     }
 
