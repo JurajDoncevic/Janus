@@ -6,7 +6,7 @@ namespace Janus.Commons.SchemaModels;
 /// </summary>
 public class AttributeNameAssignedException : Exception
 {
-    internal AttributeNameAssignedException(string attributeName!!, string tableauName!!)
+    internal AttributeNameAssignedException(string attributeName, string tableauName)
         : base($"Attribute with name {attributeName} already exists in tableau {tableauName}.")
     {
 

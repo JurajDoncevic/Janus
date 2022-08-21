@@ -7,7 +7,7 @@ namespace Janus.Commons.SchemaModels.Exceptions;
 public class AttributeOrdinalOutOfRange : Exception
 {
 
-    internal AttributeOrdinalOutOfRange(string attributeName!!)
+    internal AttributeOrdinalOutOfRange(string attributeName)
         : base($"Attribute ordinal set out of range for {attributeName}. Attribute ordinals must have values >= 0")
     {
 

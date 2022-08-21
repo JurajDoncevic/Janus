@@ -40,9 +40,9 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
     /// </summary>
     /// <param name="options">Communication node options</param>
     /// <param name="networkAdapter">Node's network adapter</param>
-    internal protected BaseCommunicationNode(CommunicationNodeOptions options!!, TNetworkAdapter networkAdapter, ILogger? logger = null)
+    protected BaseCommunicationNode(CommunicationNodeOptions options, TNetworkAdapter networkAdapter, ILogger? logger = null)
     {
-        _options = options;
+        _options = options ?? throw new ArgumentNullException(nameof(options));
         _remotePoints = new();
         _networkAdapter = networkAdapter;
 
@@ -324,24 +324,39 @@ public static partial class CommunicationNodeExtensions
     /// <param name="helloResMessage">HELLO_RES message</param>
     /// <param name="senderAddress">Sender address of the HELLO_RES message</param>
     /// <returns></returns>
-    public static RemotePoint CreateRemotePoint(this HelloResMessage helloResMessage!!, string senderAddress)
-        => helloResMessage.NodeType switch
+    public static RemotePoint CreateRemotePoint(this HelloResMessage helloResMessage, string senderAddress)
+    {
+        if (helloResMessage is null)
+        {
+            throw new ArgumentNullException(nameof(helloResMessage));
+        }
+
+        return helloResMessage.NodeType switch
         {
             NodeTypes.MEDIATOR => new MediatorRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
             NodeTypes.WRAPPER => new WrapperRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort),
             NodeTypes.MASK => new MaskRemotePoint(helloResMessage.NodeId, senderAddress, helloResMessage.ListenPort)
         };
+    }
+
     /// <summary>
     /// Creates a remote point from request and address data 
     /// </summary>
     /// <param name="helloResMessage">HELLO_REQ message</param>
     /// <param name="senderAddress">Sender address of the HELLO_REQ message</param>
     /// <returns></returns>
-    public static RemotePoint CreateRemotePoint(this HelloReqMessage helloReqMessage!!, string senderAddress)
-        => helloReqMessage.NodeType switch
+    public static RemotePoint CreateRemotePoint(this HelloReqMessage helloReqMessage, string senderAddress)
+    {
+        if (helloReqMessage is null)
+        {
+            throw new ArgumentNullException(nameof(helloReqMessage));
+        }
+
+        return helloReqMessage.NodeType switch
         {
             NodeTypes.MEDIATOR => new MediatorRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
             NodeTypes.WRAPPER => new WrapperRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort),
             NodeTypes.MASK => new MaskRemotePoint(helloReqMessage.NodeId, senderAddress, helloReqMessage.ListenPort)
         };
+    }
 }

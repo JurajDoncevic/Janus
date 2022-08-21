@@ -35,8 +35,13 @@ public sealed class DataSource
     /// Constructor
     /// </summary>
     /// <param name="name">Data source name</param>
-    internal DataSource(string name!!)
+    internal DataSource(string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
         _name = name;
         _schemas = new();
     }
@@ -46,8 +51,18 @@ public sealed class DataSource
     /// </summary>
     /// <param name="name">Data source name</param>
     /// <param name="schemas">Underlying schemas</param>
-    internal DataSource(string name!!, List<Schema> schemas!!)
+    internal DataSource(string name, List<Schema> schemas)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
+        if (schemas is null)
+        {
+            throw new ArgumentNullException(nameof(schemas));
+        }
+
         _name = name;
         _schemas = schemas.ToDictionary(schema => schema.Name, schema => schema);
     }
@@ -57,8 +72,13 @@ public sealed class DataSource
     /// </summary>
     /// <param name="schema">Schema object</param>
     /// <returns>true if new schema is added, false if a schema with the given name exists</returns>
-    internal bool AddSchema(Schema schema!!)
+    internal bool AddSchema(Schema schema)
     {
+        if (schema is null)
+        {
+            throw new ArgumentNullException(nameof(schema));
+        }
+
         if (!_schemas.ContainsKey(schema.Name))
         {
             schema = new Schema(schema.Name, schema.Tableaus.ToList(), this);
@@ -73,8 +93,13 @@ public sealed class DataSource
     /// </summary>
     /// <param name="schemaName">Schema name</param>
     /// <returns>true if a schema is found and removed, else false</returns>
-    internal bool RemoveSchema(string schemaName!!)
+    internal bool RemoveSchema(string schemaName)
     {
+        if (schemaName is null)
+        {
+            throw new ArgumentNullException(nameof(schemaName));
+        }
+
         return _schemas.Remove(schemaName);
     }
 

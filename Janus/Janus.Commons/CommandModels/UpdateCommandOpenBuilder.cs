@@ -94,8 +94,13 @@ public class MutationOpenBuilder
     /// </summary>
     /// <param name="valueUpdates">Attributes to update to values</param>
     /// <returns></returns>
-    public MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
+    public MutationOpenBuilder WithValues(Dictionary<string, object?> valueUpdates)
     {
+        if (valueUpdates is null)
+        {
+            throw new ArgumentNullException(nameof(valueUpdates));
+        }
+
         _valueUpdates = Option<Dictionary<string, object?>>.Some(valueUpdates);
         return this;
     }
@@ -130,8 +135,13 @@ public class CommandSelectionOpenBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public CommandSelectionOpenBuilder WithExpression(SelectionExpression expression!!)
+    public CommandSelectionOpenBuilder WithExpression(SelectionExpression expression)
     {
+        if (expression is null)
+        {
+            throw new ArgumentNullException(nameof(expression));
+        }
+
         _expression = Option<SelectionExpression>.Some(expression);
         return this;
     }

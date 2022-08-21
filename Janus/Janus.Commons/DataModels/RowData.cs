@@ -11,9 +11,9 @@ public class RowData
     /// Constructor
     /// </summary>
     /// <param name="attributeValues">Values of attributes in the row</param>
-    internal RowData(Dictionary<string, object?> attributeValues!!)
+    internal RowData(Dictionary<string, object?> attributeValues)
     {
-        _attributeValues = attributeValues;
+        _attributeValues = attributeValues ?? throw new ArgumentNullException(nameof(attributeValues));
     }
 
     /// <summary>

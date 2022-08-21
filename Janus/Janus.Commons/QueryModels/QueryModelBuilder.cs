@@ -122,13 +122,18 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     /// </summary>
     /// <param name="queryOnTableauId">Id of tableau on which the query is initialized</param>
     /// <param name="dataSource">Data source on which the query will be executed</param>
-    private QueryModelBuilder(string queryOnTableauId!!, DataSource dataSource!!)
+    private QueryModelBuilder(string queryOnTableauId, DataSource dataSource)
     {
+        if (string.IsNullOrEmpty(queryOnTableauId))
+        {
+            throw new ArgumentException($"'{nameof(queryOnTableauId)}' cannot be null or empty.", nameof(queryOnTableauId));
+        }
+
         _projection = Option<Projection>.None;
         _selection = Option<Selection>.None;
         _joining = Option<Joining>.None;
         _queryOnTableauId = queryOnTableauId;
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _referencedTableauIds = new HashSet<string>();
         _referencedTableauIds.Add(queryOnTableauId);
     }
@@ -141,8 +146,18 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <returns>QueryModelBuilder</returns>
     /// <exception cref="TableauDoesNotExistException"></exception>
-    public static IPostInitBuilder InitQueryOnDataSource(string onTableauId!!, DataSource dataSource!!)
+    public static IPostInitBuilder InitQueryOnDataSource(string onTableauId, DataSource dataSource)
     {
+        if (string.IsNullOrEmpty(onTableauId))
+        {
+            throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
+        }
+
+        if (dataSource is null)
+        {
+            throw new ArgumentNullException(nameof(dataSource));
+        }
+
         if (!dataSource.ContainsTableau(onTableauId))
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
 
@@ -227,11 +242,11 @@ public class SelectionBuilder
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
-    internal SelectionBuilder(DataSource dataSource!!, HashSet<string> referencedTableauIds!!)
+    internal SelectionBuilder(DataSource dataSource, HashSet<string> referencedTableauIds)
     {
         _expression = null;
-        _dataSource = dataSource;
-        _referencedTableauIds = referencedTableauIds;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _referencedTableauIds = referencedTableauIds ?? throw new ArgumentNullException(nameof(referencedTableauIds));
     }
 
     /// <summary>
@@ -277,11 +292,11 @@ public class ProjectionBuilder
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
-    internal ProjectionBuilder(DataSource dataSource!!, HashSet<string> referencedTableauIds!!)
+    internal ProjectionBuilder(DataSource dataSource, HashSet<string> referencedTableauIds)
     {
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _projectionAttributes = new HashSet<string>();
-        _referencedTableauIds = referencedTableauIds;
+        _referencedTableauIds = referencedTableauIds ?? throw new ArgumentNullException(nameof(referencedTableauIds));
     }
 
     /// <summary>
@@ -334,10 +349,15 @@ public class JoiningBuilder
     /// Constructor
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
-    internal JoiningBuilder(string initialTableauId, DataSource dataSource!!)
+    internal JoiningBuilder(string initialTableauId, DataSource dataSource)
     {
+        if (string.IsNullOrEmpty(initialTableauId))
+        {
+            throw new ArgumentException($"'{nameof(initialTableauId)}' cannot be null or empty.", nameof(initialTableauId));
+        }
+
         _initialTableauId = initialTableauId;
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _joining = new Joining();
     }
 

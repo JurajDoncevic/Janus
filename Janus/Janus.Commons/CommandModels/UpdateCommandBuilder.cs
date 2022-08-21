@@ -133,8 +133,10 @@ public class MutationBuilder
     /// <exception cref="AttributeNotInTargetTableauException"></exception>
     /// <exception cref="IncompatibleMutationDataTypesException"></exception>
     /// <exception cref="NullGivenForNonNullableAttributeException"></exception>
-    public MutationBuilder WithValues(Dictionary<string, object?> valueUpdates!!)
+    public MutationBuilder WithValues(Dictionary<string, object?> valueUpdates)
     {
+        _valueUpdates = valueUpdates ?? throw new ArgumentNullException(nameof(valueUpdates));
+
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 
         var referencedAttrNames = valueUpdates.Keys.ToHashSet();
@@ -175,7 +177,7 @@ public class MutationBuilder
             }
         }
 
-        _valueUpdates = valueUpdates;
+
         return this;
     }
 
@@ -202,11 +204,11 @@ public class CommandSelectionBuilder
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
-    internal CommandSelectionBuilder(DataSource dataSource!!, HashSet<string> referencedTableauIds!!)
+    internal CommandSelectionBuilder(DataSource dataSource, HashSet<string> referencedTableauIds)
     {
         _expression = Option<SelectionExpression>.None;
-        _dataSource = dataSource;
-        _referencedTableauIds = referencedTableauIds;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _referencedTableauIds = referencedTableauIds ?? throw new ArgumentNullException(nameof(referencedTableauIds));
     }
 
     /// <summary>
@@ -214,8 +216,13 @@ public class CommandSelectionBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public CommandSelectionBuilder WithExpression(SelectionExpression expression!!)
+    public CommandSelectionBuilder WithExpression(SelectionExpression expression)
     {
+        if (expression is null)
+        {
+            throw new ArgumentNullException(nameof(expression));
+        }
+
         var referencableAttrNames = _referencedTableauIds.Select(tId => Utils.GetNamesFromTableauId(tId))
                                                      .SelectMany(names => _dataSource[names.schemaName][names.tableauName].Attributes.Map(a => (a.Name, a.DataType)))
                                                      .ToDictionary(x => x.Name, x => x.DataType);

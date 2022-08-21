@@ -12,9 +12,9 @@ public class Projection
     /// Constructor
     /// </summary>
     /// <param name="includedAttributeIds">Attribute ids to be included in the projection</param>
-    internal Projection(HashSet<string> includedAttributeIds!!)
+    internal Projection(HashSet<string> includedAttributeIds)
     {
-        _includedAttributeIds = includedAttributeIds;
+        _includedAttributeIds = includedAttributeIds ?? throw new ArgumentNullException(nameof(includedAttributeIds));
     }
 
     /// <summary>

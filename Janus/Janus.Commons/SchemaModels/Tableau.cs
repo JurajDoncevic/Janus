@@ -42,10 +42,20 @@ public class Tableau
     /// <param name="name">Tableau name</param>
     /// <param name="schema">Parent schema</param>
     /// <param name="attributes">Underlying attributes</param>
-    internal Tableau(string name!!, List<Attribute> attributes!!, Schema schema!!)
+    internal Tableau(string name, List<Attribute> attributes, Schema schema)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
+        if (attributes is null)
+        {
+            throw new ArgumentNullException(nameof(attributes));
+        }
+
         _name = name;
-        _schema = schema;
+        _schema = schema ?? throw new ArgumentNullException(nameof(schema));
         _attributes = attributes.ToDictionary(attribute => attribute.Name, attribute => attribute); ;
     }
     /// <summary>
@@ -53,10 +63,15 @@ public class Tableau
     /// </summary>
     /// <param name="name">Tableau name</param>
     /// <param name="schema">Parent schema</param>
-    internal Tableau(string name!!, Schema schema!!)
+    internal Tableau(string name, Schema schema)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
         _name = name;
-        _schema = schema;
+        _schema = schema ?? throw new ArgumentNullException(nameof(schema));
         _attributes = new();
     }
 
@@ -65,8 +80,13 @@ public class Tableau
     /// </summary>
     /// <param name="attribute">Attribute object</param>
     /// <returns>true if new attribute is added, false if an attribute with the given name or ordinal exists</returns>
-    internal bool AddAttribute(Attribute attribute!!)
+    internal bool AddAttribute(Attribute attribute)
     {
+        if (attribute is null)
+        {
+            throw new ArgumentNullException(nameof(attribute));
+        }
+
         int automaticOrdinal = attribute.Ordinal < 0
             ? (_attributes.Values.Max(a => a.Ordinal as int?) ?? -1) + 1
             : attribute.Ordinal;
@@ -85,8 +105,13 @@ public class Tableau
     /// </summary>
     /// <param name="attributeName">Attribute name</param>
     /// <returns>true if a attribute is found and removed, else false</returns>
-    internal bool RemoveAttribute(string attributeName!!)
+    internal bool RemoveAttribute(string attributeName)
     {
+        if (attributeName is null)
+        {
+            throw new ArgumentNullException(nameof(attributeName));
+        }
+
         return _attributes.Remove(attributeName);
     }
 

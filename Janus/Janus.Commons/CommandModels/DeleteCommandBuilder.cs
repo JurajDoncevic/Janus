@@ -36,10 +36,15 @@ public class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
     /// </summary>
     /// <param name="onTableauId">Command's starting tableau</param>
     /// <param name="dataSource">Target data source for the command</param>
-    private DeleteCommandBuilder(string onTableauId!!, DataSource dataSource!!)
+    private DeleteCommandBuilder(string onTableauId, DataSource dataSource)
     {
+        if (string.IsNullOrEmpty(onTableauId))
+        {
+            throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
+        }
+
         _onTableauId = onTableauId;
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _selection = Option<CommandSelection>.None;
     }
 
@@ -50,8 +55,18 @@ public class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
     /// <param name="dataSource"></param>
     /// <returns></returns>
     /// <exception cref="TableauDoesNotExistException"></exception>
-    public static IPostInitDeleteCommandBuilder InitOnDataSource(string onTableauId!!, DataSource dataSource!!)
+    public static IPostInitDeleteCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
     {
+        if (string.IsNullOrEmpty(onTableauId))
+        {
+            throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
+        }
+
+        if (dataSource is null)
+        {
+            throw new ArgumentNullException(nameof(dataSource));
+        }
+
         if (!dataSource.ContainsTableau(onTableauId))
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
 

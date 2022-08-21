@@ -50,8 +50,13 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
     /// <summary>
     /// Constructor. Used when build-time validation is NOT required.
     /// </summary>
-    private QueryModelOpenBuilder(string queryOnTableauId!!)
+    private QueryModelOpenBuilder(string queryOnTableauId)
     {
+        if (string.IsNullOrEmpty(queryOnTableauId))
+        {
+            throw new ArgumentException($"'{nameof(queryOnTableauId)}' cannot be null or empty.", nameof(queryOnTableauId));
+        }
+
         _projection = Option<Projection>.None;
         _selection = Option<Selection>.None;
         _joining = Option<Joining>.None;
@@ -66,8 +71,13 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
     /// <param name="onTableauId">Id of tableau on which the query is initialized</param>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <returns>QueryOpenModelBuilder</returns>
-    public static QueryModelOpenBuilder InitOpenQuery(string onTableauId!!)
+    public static QueryModelOpenBuilder InitOpenQuery(string onTableauId)
     {
+        if (string.IsNullOrEmpty(onTableauId))
+        {
+            throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
+        }
+
         return new QueryModelOpenBuilder(onTableauId);
     }
 
@@ -150,9 +160,9 @@ public class SelectionOpenBuilder
     /// </summary>
     /// <param name="expression"></param>
     /// <returns>SelectionBuilder</returns>
-    public SelectionOpenBuilder WithExpression(SelectionExpression expression!!)
+    public SelectionOpenBuilder WithExpression(SelectionExpression expression)
     {
-        _expression = expression;
+        _expression = expression ?? throw new ArgumentNullException(nameof(expression));
         return this;
     }
 

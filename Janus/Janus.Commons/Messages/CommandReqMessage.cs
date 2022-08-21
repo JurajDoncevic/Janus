@@ -26,9 +26,9 @@ public class CommandReqMessage : BaseMessage
     /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
     /// <param name="nodeId">Sender's node ID</param>
     /// <param name="command">The requested command</param>
-    public CommandReqMessage(string exchangeId, string nodeId, BaseCommand command!!) : base(exchangeId, nodeId, Preambles.COMMAND_REQUEST)
+    public CommandReqMessage(string exchangeId, string nodeId, BaseCommand command) : base(exchangeId, nodeId, Preambles.COMMAND_REQUEST)
     {
-        _command = command;
+        _command = command ?? throw new ArgumentNullException(nameof(command));
         _commandReqType = command.DetermineMessageType();
     }
     /// <summary>

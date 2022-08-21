@@ -7,9 +7,12 @@ namespace Janus.Communication.Tests.Mocks;
 
 public class AlwaysTimeoutCommunicationNode : BaseCommunicationNode<IMediatorNetworkAdapter>
 {
-    public AlwaysTimeoutCommunicationNode(CommunicationNodeOptions options!!, IMediatorNetworkAdapter networkAdapter) : base(options, networkAdapter)
+    public AlwaysTimeoutCommunicationNode(CommunicationNodeOptions options, IMediatorNetworkAdapter networkAdapter) : base(options, networkAdapter)
     {
-
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
     }
     public override NodeTypes NodeType => NodeTypes.MEDIATOR;
 

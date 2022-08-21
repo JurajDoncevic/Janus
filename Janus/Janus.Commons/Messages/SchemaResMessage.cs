@@ -13,14 +13,14 @@ public class SchemaResMessage : BaseMessage
     /// </summary>
     /// <param name="nodeId">Sender's node ID</param>
     /// <param name="dataSource">Data source to be sent</param>
-    public SchemaResMessage(string nodeId, DataSource dataSource!!) : base(nodeId, Preambles.SCHEMA_RESPONSE)
+    public SchemaResMessage(string nodeId, DataSource dataSource) : base(nodeId, Preambles.SCHEMA_RESPONSE)
     {
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
-    public SchemaResMessage(string exchangeId, string nodeId, DataSource dataSource!!) : base(exchangeId, nodeId, Preambles.SCHEMA_RESPONSE)
+    public SchemaResMessage(string exchangeId, string nodeId, DataSource dataSource) : base(exchangeId, nodeId, Preambles.SCHEMA_RESPONSE)
     {
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
     /// <summary>

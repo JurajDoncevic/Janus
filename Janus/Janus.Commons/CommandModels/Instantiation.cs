@@ -18,9 +18,9 @@ public class Instantiation
     /// Constructor
     /// </summary>
     /// <param name="tabularData">Tabular data to use</param>
-    internal Instantiation(TabularData tabularData!!)
+    internal Instantiation(TabularData tabularData)
     {
-        _tabularData = tabularData;
+        _tabularData = tabularData ?? throw new ArgumentNullException(nameof(tabularData));
     }
 
     public override bool Equals(object? obj)

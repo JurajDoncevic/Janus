@@ -15,8 +15,13 @@ public class MainMenuDisplay : BaseDisplay
     private readonly InputSchemataDisplay _inputSchemataDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
-    public MainMenuDisplay(MediatorController mediatorController!!, ILogger? logger = null) : base(mediatorController)
+    public MainMenuDisplay(MediatorController mediatorController, ILogger? logger = null) : base(mediatorController)
     {
+        if (mediatorController is null)
+        {
+            throw new ArgumentNullException(nameof(mediatorController));
+        }
+
         _logger = logger?.ResolveLogger<MainMenuDisplay>();
 
         _sendHelloPingDisplay = new SendHelloPingDisplay(mediatorController, logger);

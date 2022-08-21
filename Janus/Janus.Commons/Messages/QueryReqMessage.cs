@@ -20,17 +20,17 @@ public class QueryReqMessage : BaseMessage
     /// </summary>
     /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
     /// <param name="nodeId">Sender's node ID</param>
-    public QueryReqMessage(string exchangeId, string nodeId, Query query!!) : base(exchangeId, nodeId, Preambles.QUERY_REQUEST)
+    public QueryReqMessage(string exchangeId, string nodeId, Query query) : base(exchangeId, nodeId, Preambles.QUERY_REQUEST)
     {
-        _query = query;
+        _query = query ?? throw new ArgumentNullException(nameof(query));
     }
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="nodeId">Sender's node ID</param>
-    public QueryReqMessage(string nodeId, Query query!!) : base(nodeId, Preambles.QUERY_REQUEST)
+    public QueryReqMessage(string nodeId, Query query) : base(nodeId, Preambles.QUERY_REQUEST)
     {
-        _query = query;
+        _query = query ?? throw new ArgumentNullException(nameof(query));
     }
 
     public override bool Equals(object? obj)

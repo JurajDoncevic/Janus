@@ -50,14 +50,19 @@ public class Attribute
     /// <param name="isNullable">Is this attribute's value nullable</param>
     /// <param name="ordinal">Ordinal number position of the attribute</param>
     /// <param name="tableau">Parent tableau</param>
-    internal Attribute(string name!!, DataTypes dataType, bool isPrimaryKey, bool isNullable, int ordinal, Tableau tableau!!)
+    internal Attribute(string name, DataTypes dataType, bool isPrimaryKey, bool isNullable, int ordinal, Tableau tableau)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
         _name = name;
         _dataType = dataType;
         _isPrimaryKey = isPrimaryKey;
         _isNullable = isNullable;
         _ordinal = ordinal;
-        _tableau = tableau;
+        _tableau = tableau ?? throw new ArgumentNullException(nameof(tableau));
     }
 
     public override bool Equals(object? obj)

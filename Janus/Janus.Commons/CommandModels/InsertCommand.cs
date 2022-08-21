@@ -15,9 +15,14 @@ public class InsertCommand : BaseCommand
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="instantiation">Instantiation clause</param>
-    internal InsertCommand(string onTableauId!!, Instantiation instantiation!!) : base(onTableauId)
+    internal InsertCommand(string onTableauId, Instantiation instantiation) : base(onTableauId)
     {
-        _instantiation = instantiation;
+        if (string.IsNullOrEmpty(onTableauId))
+        {
+            throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
+        }
+
+        _instantiation = instantiation ?? throw new ArgumentNullException(nameof(instantiation));
     }
 
     public override Result IsValidForDataSource(DataSource dataSource)

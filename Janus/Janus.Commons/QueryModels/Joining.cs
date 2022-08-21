@@ -89,9 +89,29 @@ public class Join
     /// <param name="primaryKeyAttributeId">Referencing attribute id</param>
     /// <param name="foreignKeyTableauId">Referenced tableau id</param>
     /// <param name="foreignKeyAttributeId">Referenced attribute id</param>
-    internal Join(string primaryKeyTableauId!!, string primaryKeyAttributeId!!,
-                  string foreignKeyTableauId!!, string foreignKeyAttributeId!!)
+    internal Join(string primaryKeyTableauId, string primaryKeyAttributeId,
+                  string foreignKeyTableauId, string foreignKeyAttributeId)
     {
+        if (string.IsNullOrEmpty(primaryKeyTableauId))
+        {
+            throw new ArgumentException($"'{nameof(primaryKeyTableauId)}' cannot be null or empty.", nameof(primaryKeyTableauId));
+        }
+
+        if (string.IsNullOrEmpty(primaryKeyAttributeId))
+        {
+            throw new ArgumentException($"'{nameof(primaryKeyAttributeId)}' cannot be null or empty.", nameof(primaryKeyAttributeId));
+        }
+
+        if (string.IsNullOrEmpty(foreignKeyTableauId))
+        {
+            throw new ArgumentException($"'{nameof(foreignKeyTableauId)}' cannot be null or empty.", nameof(foreignKeyTableauId));
+        }
+
+        if (string.IsNullOrEmpty(foreignKeyAttributeId))
+        {
+            throw new ArgumentException($"'{nameof(foreignKeyAttributeId)}' cannot be null or empty.", nameof(foreignKeyAttributeId));
+        }
+
         _primaryKeyTableauId = primaryKeyTableauId;
         _primaryKeyAttributeId = primaryKeyAttributeId;
         _foreignKeyTableauId = foreignKeyTableauId;

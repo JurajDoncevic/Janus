@@ -13,8 +13,13 @@ public abstract class BaseCommand
     /// Constructor
     /// </summary>
     /// <param name="onTableauId">The command's starting tableau</param>
-    protected BaseCommand(string onTableauId!!)
+    protected BaseCommand(string onTableauId)
     {
+        if (string.IsNullOrEmpty(onTableauId))
+        {
+            throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
+        }
+
         _onTableauId = onTableauId;
     }
 

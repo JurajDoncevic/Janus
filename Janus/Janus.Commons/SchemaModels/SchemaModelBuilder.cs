@@ -50,8 +50,13 @@ public class DataSourceBuilder
     /// Constructor
     /// </summary>
     /// <param name="dataSourceName">name of the initialized data source</param>
-    internal DataSourceBuilder(string dataSourceName!!)
+    internal DataSourceBuilder(string dataSourceName)
     {
+        if (string.IsNullOrEmpty(dataSourceName))
+        {
+            throw new ArgumentException($"'{nameof(dataSourceName)}' cannot be null or empty.", nameof(dataSourceName));
+        }
+
         _dataSource = new DataSource(dataSourceName);
     }
 
@@ -95,8 +100,18 @@ public class SchemaBuilder
     /// </summary>
     /// <param name="schemaName">Schema name</param>
     /// <param name="parentDataSource">Data source inside which the builder works</param>
-    internal SchemaBuilder(string schemaName!!, DataSource parentDataSource!!)
+    internal SchemaBuilder(string schemaName, DataSource parentDataSource)
     {
+        if (string.IsNullOrEmpty(schemaName))
+        {
+            throw new ArgumentException($"'{nameof(schemaName)}' cannot be null or empty.", nameof(schemaName));
+        }
+
+        if (parentDataSource is null)
+        {
+            throw new ArgumentNullException(nameof(parentDataSource));
+        }
+
         _schema = new Schema(schemaName, parentDataSource);
     }
 
@@ -192,10 +207,15 @@ public class AttributeBuilder
     /// </summary>
     /// <param name="attributeName">Attribute</param>
     /// <param name="parentTableau">Tableau inside which the builder works</param>
-    internal AttributeBuilder(string attributeName!!, Tableau parentTableau!!)
+    internal AttributeBuilder(string attributeName, Tableau parentTableau)
     {
+        if (string.IsNullOrEmpty(attributeName))
+        {
+            throw new ArgumentException($"'{nameof(attributeName)}' cannot be null or empty.", nameof(attributeName));
+        }
+
         _attributeName = attributeName;
-        _parentTableau = parentTableau;
+        _parentTableau = parentTableau ?? throw new ArgumentNullException(nameof(parentTableau));
     }
 
     /// <summary>
@@ -203,8 +223,13 @@ public class AttributeBuilder
     /// </summary>
     /// <param name="name">Attribute name</param>
     /// <returns></returns>
-    public AttributeBuilder WithName(string name!!)
+    public AttributeBuilder WithName(string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
         _attributeName = name;
         return this;
     }

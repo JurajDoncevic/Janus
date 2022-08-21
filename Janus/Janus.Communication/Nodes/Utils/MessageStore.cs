@@ -38,8 +38,13 @@ public class MessageStore
     /// </summary>
     /// <param name="exchangeId"></param>
     /// <returns>Returns <code>true</code> if the exchange is not already registered, else <code>false</code></returns>
-    public bool RegisterExchange(string exchangeId!!)
+    public bool RegisterExchange(string exchangeId)
     {
+        if (string.IsNullOrEmpty(exchangeId))
+        {
+            throw new ArgumentException($"'{nameof(exchangeId)}' cannot be null or empty.", nameof(exchangeId));
+        }
+
         return _registeredExchangeIds.TryAdd(exchangeId, Unit());
     }
 
@@ -48,8 +53,13 @@ public class MessageStore
     /// </summary>
     /// <param name="exchangeId"></param>
     /// <returns>Returns <code>true</code> if the exchange is unregistered, else <code>false</code></returns>
-    public bool UnregisterExchange(string exchangeId!!)
+    public bool UnregisterExchange(string exchangeId)
     {
+        if (exchangeId is null)
+        {
+            throw new ArgumentNullException(nameof(exchangeId));
+        }
+
         return _registeredExchangeIds.TryRemove(exchangeId, out _) && _receivedResponseMessages.TryRemove(exchangeId, out _);
     }
 
@@ -58,8 +68,13 @@ public class MessageStore
     /// </summary>
     /// <param name="exchangeId">Exchange id</param>
     /// <returns></returns>
-    public bool IsRegisteredExchange(string exchangeId!!)
+    public bool IsRegisteredExchange(string exchangeId)
     {
+        if (exchangeId is null)
+        {
+            throw new ArgumentNullException(nameof(exchangeId));
+        }
+
         return _registeredExchangeIds.ContainsKey(exchangeId);
     }
 
@@ -69,8 +84,18 @@ public class MessageStore
     /// <param name="exchangeId">Exchange id</param>
     /// <param name="message">Message to enqueue</param>
     /// <returns></returns>
-    public bool EnqueueResponseInExchange(string exchangeId!!, BaseMessage message!!)
+    public bool EnqueueResponseInExchange(string exchangeId, BaseMessage message)
     {
+        if (exchangeId is null)
+        {
+            throw new ArgumentNullException(nameof(exchangeId));
+        }
+
+        if (message is null)
+        {
+            throw new ArgumentNullException(nameof(message));
+        }
+
         if (!_registeredExchangeIds.ContainsKey(exchangeId))
             return false;
 
@@ -99,8 +124,17 @@ public class MessageStore
     /// <param name="exchangeId">Exchange id</param>
     /// <param name="message">Message to enqueue</param>
     /// <returns></returns>
-    public bool EnqueueRequestInExchange(string exchangeId!!, BaseMessage message!!)
+    public bool EnqueueRequestInExchange(string exchangeId, BaseMessage message)
     {
+        if (exchangeId is null)
+        {
+            throw new ArgumentNullException(nameof(exchangeId));
+        }
+
+        if (message is null)
+        {
+            throw new ArgumentNullException(nameof(message));
+        }
         // if the exchange already exists
         if (_receivedRequestMessages.ContainsKey(exchangeId))
         {
@@ -125,9 +159,16 @@ public class MessageStore
     /// </summary>
     /// <param name="exchangeId">Exchange id</param>
     /// <returns></returns>
-    public bool AnyResponsesExist(string exchangeId!!)
-        => _receivedResponseMessages.ContainsKey(exchangeId)
+    public bool AnyResponsesExist(string exchangeId)
+    {
+        if (exchangeId is null)
+        {
+            throw new ArgumentNullException(nameof(exchangeId));
+        }
+
+        return _receivedResponseMessages.ContainsKey(exchangeId)
            && !_receivedResponseMessages[exchangeId].IsEmpty;
+    }
 
     /// <summary>
     /// Dequeues a response from the exchange
@@ -154,9 +195,16 @@ public class MessageStore
     /// </summary>
     /// <param name="exchangeId">Exchange id</param>
     /// <returns></returns>
-    public bool AnyRequestsExist(string exchangeId!!)
-    => _receivedRequestMessages.ContainsKey(exchangeId)
+    public bool AnyRequestsExist(string exchangeId)
+    {
+        if (exchangeId is null)
+        {
+            throw new ArgumentNullException(nameof(exchangeId));
+        }
+
+        return _receivedRequestMessages.ContainsKey(exchangeId)
        && !_receivedRequestMessages[exchangeId].IsEmpty;
+    }
 
     /// <summary>
     /// Dequeues a request from the exchange
@@ -164,8 +212,14 @@ public class MessageStore
     /// <param name="exchangeId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public Result<BaseMessage> DequeueRequestFromExchange(string exchangeId!!)
-        => AsResult(() =>
+    public Result<BaseMessage> DequeueRequestFromExchange(string exchangeId)
+    {
+        if (exchangeId is null)
+        {
+            throw new ArgumentNullException(nameof(exchangeId));
+        }
+
+        return AsResult(() =>
         {
             if (AnyResponsesExist(exchangeId) && _receivedRequestMessages[exchangeId].TryDequeue(out var message))
             {
@@ -177,4 +231,5 @@ public class MessageStore
             }
             throw new Exception($"Failed to get response from {exchangeId}");
         });
+    }
 }

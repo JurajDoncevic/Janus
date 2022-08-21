@@ -26,9 +26,14 @@ public class UpdateCommand : BaseCommand
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="mutation">Mutation clause</param>
     /// <param name="selection">Selection clause</param>
-    internal UpdateCommand(string onTableauId!!, Mutation mutation!!, Option<CommandSelection> selection) : base(onTableauId)
+    internal UpdateCommand(string onTableauId, Mutation mutation, Option<CommandSelection> selection) : base(onTableauId)
     {
-        _mutation = mutation;
+        if (string.IsNullOrEmpty(onTableauId))
+        {
+            throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
+        }
+
+        _mutation = mutation ?? throw new ArgumentNullException(nameof(mutation));
         _selection = selection;
     }
 

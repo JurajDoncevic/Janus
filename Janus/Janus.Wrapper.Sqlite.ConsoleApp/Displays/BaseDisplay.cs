@@ -27,8 +27,8 @@ public abstract class BaseDisplay
         return result;
     }
 
-    protected BaseDisplay(SqliteWrapperController wrapperController!!)
+    protected BaseDisplay(SqliteWrapperController wrapperController)
     {
-        _wrapperController = wrapperController;
+        _wrapperController = wrapperController ?? throw new ArgumentNullException(nameof(wrapperController));
     }
 }

@@ -41,11 +41,16 @@ public class Schema
     /// </summary>
     /// <param name="name">Schema name</param>
     /// <param name="dataSource">Parent data source</param>
-    internal Schema(string name!!, DataSource dataSource!!)
+    internal Schema(string name, DataSource dataSource)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
         _name = name;
         _tableaus = new();
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
     /// <summary>
@@ -54,11 +59,21 @@ public class Schema
     /// <param name="name">Schema name</param>
     /// <param name="dataSource">Parent data source</param>
     /// <param name="tableaus">Underlying tableaus</param>
-    internal Schema(string name!!, List<Tableau> tableaus!!, DataSource dataSource!!)
+    internal Schema(string name, List<Tableau> tableaus, DataSource dataSource)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+        }
+
+        if (tableaus is null)
+        {
+            throw new ArgumentNullException(nameof(tableaus));
+        }
+
         _name = name;
         _tableaus = tableaus.ToDictionary(tableau => tableau.Name, tableau => tableau);
-        _dataSource = dataSource;
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
     /// <summary>
@@ -66,8 +81,12 @@ public class Schema
     /// </summary>
     /// <param name="tableau">Tableau object</param>
     /// <returns>true if new tableau is added, false if a tableau with the given name exists</returns>
-    internal bool AddTableau(Tableau tableau!!)
+    internal bool AddTableau(Tableau tableau)
     {
+        if (tableau is null)
+        {
+            throw new ArgumentNullException(nameof(tableau));
+        }
 
         if (!_tableaus.ContainsKey(tableau.Name))
         {
@@ -83,8 +102,13 @@ public class Schema
     /// </summary>
     /// <param name="tableauName">Tableau name</param>
     /// <returns>true if a tableau is found and removed, else false</returns>
-    internal bool RemoveTableau(string tableauName!!)
+    internal bool RemoveTableau(string tableauName)
     {
+        if (tableauName is null)
+        {
+            throw new ArgumentNullException(nameof(tableauName));
+        }
+
         return _tableaus.Remove(tableauName);
     }
 

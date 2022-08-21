@@ -30,10 +30,10 @@ public class CommandResMessage : BaseMessage
     /// <param name="nodeId">Sender's node ID</param>
     /// <param name="isSuccess">Success of the requested command</param>
     /// <param name="outcomeDescription">Requested command's outcome descriptio (e.g. error message)</param>
-    public CommandResMessage(string exchangeId, string nodeId, bool isSuccess, string outcomeDescription!! = "") : base(exchangeId, nodeId, Preambles.COMMAND_RESPONSE)
+    public CommandResMessage(string exchangeId, string nodeId, bool isSuccess, string outcomeDescription = "") : base(exchangeId, nodeId, Preambles.COMMAND_RESPONSE)
     {
         _isSuccess = isSuccess;
-        _outcomeDescription = outcomeDescription;
+        _outcomeDescription = outcomeDescription ?? throw new ArgumentNullException(nameof(outcomeDescription));
     }
     /// <summary>
     /// Constructor
@@ -41,10 +41,10 @@ public class CommandResMessage : BaseMessage
     /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
     /// <param name="isSuccess">Success of the requested command</param>
     /// <param name="outcomeDescription">Requested command's outcome descriptio (e.g. error message)</param>
-    public CommandResMessage(string nodeId, bool isSuccess, string outcomeDescription!! = "") : base(nodeId, Preambles.COMMAND_RESPONSE)
+    public CommandResMessage(string nodeId, bool isSuccess, string outcomeDescription = "") : base(nodeId, Preambles.COMMAND_RESPONSE)
     {
         _isSuccess = isSuccess;
-        _outcomeDescription = outcomeDescription;
+        _outcomeDescription = outcomeDescription ?? throw new ArgumentNullException(nameof(outcomeDescription));
     }
 
     public override bool Equals(object? obj)

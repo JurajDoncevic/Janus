@@ -16,9 +16,9 @@ public class Mutation
     /// Constructor
     /// </summary>
     /// <param name="valueUpdates">Value updates specification. <b>Use attribute names, not ids!</b></param>
-    internal Mutation(Dictionary<string, object?> valueUpdates!!)
+    internal Mutation(Dictionary<string, object?> valueUpdates)
     {
-        _valueUpdates = valueUpdates;
+        _valueUpdates = valueUpdates ?? throw new ArgumentNullException(nameof(valueUpdates));
     }
 
     public override bool Equals(object? obj)

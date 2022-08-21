@@ -15,13 +15,25 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static MaskCommunicationNode CreateTcpMaskCommunicationNode(
-        CommunicationNodeOptions options!!,
-        IBytesSerializationProvider serializationProvider!!,
+        CommunicationNodeOptions options,
+        IBytesSerializationProvider serializationProvider,
         ILogger? logger = null)
-        => new MaskCommunicationNode(
+    {
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        if (serializationProvider is null)
+        {
+            throw new ArgumentNullException(nameof(serializationProvider));
+        }
+
+        return new MaskCommunicationNode(
             options,
             new TcpAdapters.MaskNetworkAdapter(options.ListenPort, serializationProvider, logger),
             logger);
+    }
 
     /// <summary>
     /// Creates a Mediator communication node over TCP
@@ -29,13 +41,25 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static MediatorCommunicationNode CreateTcpMediatorCommunicationNode(
-        CommunicationNodeOptions options!!,
-        IBytesSerializationProvider serializationProvider!!,
+        CommunicationNodeOptions options,
+        IBytesSerializationProvider serializationProvider,
         ILogger? logger = null)
-        => new MediatorCommunicationNode(
+    {
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        if (serializationProvider is null)
+        {
+            throw new ArgumentNullException(nameof(serializationProvider));
+        }
+
+        return new MediatorCommunicationNode(
             options,
             new TcpAdapters.MediatorNetworkAdapter(options.ListenPort, serializationProvider, logger),
             logger);
+    }
 
     /// <summary>
     /// Creates a Wrapper communication node over TCP
@@ -43,13 +67,25 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static WrapperCommunicationNode CreateTcpWrapperCommunicationNode(
-        CommunicationNodeOptions options!!,
-        IBytesSerializationProvider serializationProvider!!,
+        CommunicationNodeOptions options,
+        IBytesSerializationProvider serializationProvider,
         ILogger? logger = null)
-        => new WrapperCommunicationNode(
+    {
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        if (serializationProvider is null)
+        {
+            throw new ArgumentNullException(nameof(serializationProvider));
+        }
+
+        return new WrapperCommunicationNode(
             options,
             new TcpAdapters.WrapperNetworkAdapter(options.ListenPort, serializationProvider, logger),
             logger);
+    }
 
 
     /// <summary>
@@ -58,10 +94,17 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static MaskCommunicationNode CreateMaskCommunicationNode(
-        CommunicationNodeOptions options!!,
+        CommunicationNodeOptions options,
         IMaskNetworkAdapter networkAdapter,
         ILogger? logger = null)
-        => new MaskCommunicationNode(options, networkAdapter, logger);
+    {
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        return new MaskCommunicationNode(options, networkAdapter, logger);
+    }
 
     /// <summary>
     /// Creates a Mediator communication node over a network adapter
@@ -69,10 +112,17 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static MediatorCommunicationNode CreateMediatorCommunicationNode(
-        CommunicationNodeOptions options!!,
+        CommunicationNodeOptions options,
         IMediatorNetworkAdapter networkAdapter,
         ILogger? logger = null)
-        => new MediatorCommunicationNode(options, networkAdapter, logger);
+    {
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        return new MediatorCommunicationNode(options, networkAdapter, logger);
+    }
 
     /// <summary>
     /// Creates a Wrapper communication node over a network adapter
@@ -80,8 +130,15 @@ public static class CommunicationNodes
     /// <param name="options"></param>
     /// <returns></returns>
     public static WrapperCommunicationNode CreateWrapperCommunicationNode(
-        CommunicationNodeOptions options!!,
+        CommunicationNodeOptions options,
         IWrapperNetworkAdapter networkAdapter,
         ILogger? logger = null)
-        => new WrapperCommunicationNode(options, networkAdapter, logger);
+    {
+        if (options is null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        return new WrapperCommunicationNode(options, networkAdapter, logger);
+    }
 }

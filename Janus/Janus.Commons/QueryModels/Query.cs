@@ -67,9 +67,14 @@ public class Query
     /// </summary>
     /// <param name="dataSource">Data source over which the query should be run</param>
     /// <returns>Validation result</returns>
-    public Result IsValidForDataSource(DataSource dataSource!!)
+    public Result IsValidForDataSource(DataSource dataSource)
      => ResultExtensions.AsResult(() =>
      {
+         if (dataSource is null)
+         {
+             throw new ArgumentNullException(nameof(dataSource));
+         }
+
          QueryModelBuilder.InitQueryOnDataSource(_onTableauId, dataSource)
              .WithJoining(configuration =>
                  _joining.Match(

@@ -15,8 +15,13 @@ public class MainMenuDisplay : BaseDisplay
     private readonly GetCurrentSchemaDisplay _getCurrentSchemaDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
-    public MainMenuDisplay(SqliteWrapperController wrapperController!!, ILogger? logger = null) : base(wrapperController)
+    public MainMenuDisplay(SqliteWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
     {
+        if (wrapperController is null)
+        {
+            throw new ArgumentNullException(nameof(wrapperController));
+        }
+
         _logger = logger?.ResolveLogger<MainMenuDisplay>();
 
         _sendHelloPingDisplay = new SendHelloPingDisplay(wrapperController, logger);

@@ -26,8 +26,8 @@ public abstract class BaseDisplay
         return result;
     }
 
-    protected BaseDisplay(MediatorController mediatorController!!)
+    protected BaseDisplay(MediatorController mediatorController)
     {
-        _mediatorController = mediatorController;
+        _mediatorController = mediatorController ?? throw new ArgumentNullException(nameof(mediatorController));
     }
 }
