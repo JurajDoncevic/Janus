@@ -46,7 +46,7 @@ public class SchemaInferrer
                                         {
                                             tableauBuilder.AddAttribute(attribute.Name, attributeBuilder => attributeBuilder.WithDataType(attribute.DataType)
                                                                                                                             .WithIsNullable(attribute.IsNullable)
-                                                                                                                            .WithIsPrimaryKey(attribute.IsPrimaryKey)
+                                                                                                                            .WithIsIdentity(attribute.IsPrimaryKey)
                                                                                                                             .WithOrdinal(attribute.Ordinal));
                                         }
                                     }

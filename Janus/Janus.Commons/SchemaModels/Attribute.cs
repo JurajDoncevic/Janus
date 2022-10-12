@@ -3,13 +3,14 @@
 /// <summary>
 /// Describes an attribute
 /// </summary>
-public class Attribute
+public sealed class Attribute
 {
     private readonly string _name;
     private readonly DataTypes _dataType;
-    private readonly bool _isPrimaryKey;
+    private readonly bool _isIdentity;
     private readonly bool _isNullable;
     private readonly int _ordinal;
+    private readonly string _description;
     private readonly Tableau _tableau;
 
     /// <summary>
@@ -25,9 +26,9 @@ public class Attribute
     /// </summary>
     public DataTypes DataType => _dataType;
     /// <summary>
-    /// Is this attribute a primary key or part of a composite key
+    /// Is this attribute an identity or part of a composite identity
     /// </summary>
-    public bool IsPrimaryKey => _isPrimaryKey;
+    public bool IsIdentity => _isIdentity;
     /// <summary>
     /// Is this attribute's value nullable
     /// </summary>
@@ -36,6 +37,10 @@ public class Attribute
     /// Ordinal number position of the attribute
     /// </summary>
     public int Ordinal => _ordinal;
+    /// <summary>
+    /// Attribute description
+    /// </summary>
+    public string Description => _description;
     /// <summary>
     /// Parent tableau
     /// </summary>
@@ -46,11 +51,12 @@ public class Attribute
     /// </summary>
     /// <param name="name">Attribute name</param>
     /// <param name="dataType">Attribute data type</param>
-    /// <param name="isPrimaryKey">Is this attribute part a primary key or part of a composite key</param>
+    /// <param name="isIdentity">Is this attribute part a primary key or part of a composite key</param>
     /// <param name="isNullable">Is this attribute's value nullable</param>
     /// <param name="ordinal">Ordinal number position of the attribute</param>
+    /// <param name="description">Attribute description</param>
     /// <param name="tableau">Parent tableau</param>
-    internal Attribute(string name, DataTypes dataType, bool isPrimaryKey, bool isNullable, int ordinal, Tableau tableau)
+    internal Attribute(string name, DataTypes dataType, bool isIdentity, bool isNullable, int ordinal, Tableau tableau, string description = "")
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -59,9 +65,10 @@ public class Attribute
 
         _name = name;
         _dataType = dataType;
-        _isPrimaryKey = isPrimaryKey;
+        _isIdentity = isIdentity;
         _isNullable = isNullable;
         _ordinal = ordinal;
+        _description = description;
         _tableau = tableau ?? throw new ArgumentNullException(nameof(tableau));
     }
 
@@ -70,15 +77,16 @@ public class Attribute
         return obj is Attribute attribute &&
                _name == attribute._name &&
                _dataType == attribute._dataType &&
-               _isPrimaryKey == attribute._isPrimaryKey &&
+               _isIdentity == attribute._isIdentity &&
                _isNullable == attribute._isNullable &&
                _ordinal == attribute._ordinal &&
-               _tableau.Id == attribute._tableau.Id;
+               _tableau.Id == attribute._tableau.Id &&
+               _description.Equals(attribute._description);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_name, _dataType, _isPrimaryKey, _isNullable, _ordinal, _tableau);
+        return HashCode.Combine(_name, _dataType, _isIdentity, _isNullable, _ordinal, _tableau, _description);
     }
 
     public static bool operator ==(Attribute? left, Attribute? right)
@@ -92,5 +100,5 @@ public class Attribute
     }
 
     public override string ToString()
-        => $"({Name} {DataType} {Ordinal} {IsNullable} {IsPrimaryKey})";
+        => $"({Name} {DataType} {Ordinal} {IsNullable} {IsIdentity})";
 }

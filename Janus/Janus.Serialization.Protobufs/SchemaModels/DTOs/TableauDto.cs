@@ -13,5 +13,11 @@ internal class TableauDto
     public string Name { get; set; }
 
     [ProtoMember(2)]
+    public string Description { get; set; }
+
+    [ProtoMember(3)]
     public List<AttributeDto> Attributes { get; set; } = new List<AttributeDto>();
+
+    [ProtoMember(4)]
+    public HashSet<UpdateSetDto> UpdateSets { get; set; } = new HashSet<UpdateSetDto>();
 }

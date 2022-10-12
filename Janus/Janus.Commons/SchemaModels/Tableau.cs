@@ -3,11 +3,13 @@
 /// <summary>
 /// Describes a tableau
 /// </summary>
-public class Tableau
+public sealed class Tableau
 {
     private readonly string _name;
     private readonly Schema _schema;
+    private readonly string _description;
     private readonly Dictionary<string, Attribute> _attributes;
+    private readonly HashSet<UpdateSet> _updateSets;
 
     /// <summary>
     /// Tableau ID
@@ -17,6 +19,10 @@ public class Tableau
     /// Tableau name
     /// </summary>
     public string Name => _name;
+    /// <summary>
+    /// Tableau description
+    /// </summary>
+    public string Description => _description;
     /// <summary>
     /// Parent schema
     /// </summary>
@@ -30,6 +36,11 @@ public class Tableau
     /// </summary>
     public List<string> AttributeNames => _attributes.Keys.ToList();
     /// <summary>
+    /// Attribute update sets
+    /// </summary>
+    public ReadOnlyCollection<UpdateSet> UpdateSets => _updateSets.ToList().AsReadOnly();
+
+    /// <summary>
     /// Get attribute with name
     /// </summary>
     /// <param name="attributeName"></param>
@@ -42,7 +53,7 @@ public class Tableau
     /// <param name="name">Tableau name</param>
     /// <param name="schema">Parent schema</param>
     /// <param name="attributes">Underlying attributes</param>
-    internal Tableau(string name, List<Attribute> attributes, Schema schema)
+    internal Tableau(string name, List<Attribute> attributes, Schema schema, HashSet<UpdateSet>? updateSets = null, string description = "")
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -55,15 +66,17 @@ public class Tableau
         }
 
         _name = name;
+        _description = description;
         _schema = schema ?? throw new ArgumentNullException(nameof(schema));
-        _attributes = attributes.ToDictionary(attribute => attribute.Name, attribute => attribute); ;
+        _attributes = attributes.ToDictionary(attribute => attribute.Name, attribute => attribute);
+        _updateSets = updateSets ?? new HashSet<UpdateSet>();
     }
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="name">Tableau name</param>
     /// <param name="schema">Parent schema</param>
-    internal Tableau(string name, Schema schema)
+    internal Tableau(string name, Schema schema, string description = "")
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -71,8 +84,10 @@ public class Tableau
         }
 
         _name = name;
+        _description = description;
         _schema = schema ?? throw new ArgumentNullException(nameof(schema));
         _attributes = new();
+        _updateSets = new();
     }
 
     /// <summary>
@@ -94,7 +109,7 @@ public class Tableau
 
         if (!_attributes.ContainsKey(attribute.Name) && !_attributes.Values.ToList().Exists(a => a.Ordinal == attribute.Ordinal))
         {
-            attribute = new Attribute(attribute.Name, attribute.DataType, attribute.IsPrimaryKey, attribute.IsNullable, automaticOrdinal, this);
+            attribute = new Attribute(attribute.Name, attribute.DataType, attribute.IsIdentity, attribute.IsNullable, automaticOrdinal, this);
             _attributes.Add(attribute.Name, attribute);
             return true;
         }
@@ -115,13 +130,41 @@ public class Tableau
         return _attributes.Remove(attributeName);
     }
 
+    /// <summary>
+    /// Add an update set on the tableau
+    /// </summary>
+    /// <param name="updateSet"></param>
+    /// <returns>True on success, false on failure or if an overlap would be created</returns>
+    internal bool AddUpdateSet(UpdateSet updateSet)
+    {
+        if(updateSet.AttributeIds.All(attrId => Attributes.Select(attr => attr.Id).Contains(attrId)) && // all attributes in update set exist on this tableau
+           !_updateSets.Any(us => us.OverlapsWith(updateSet))) // no current update sets overlap with the new update set
+        {
+            return _updateSets.Add(updateSet);
+        }
+        // overlap found
+        return false;
+    }
+
+    /// <summary>
+    /// Remove an update set from the tablueau
+    /// </summary>
+    /// <param name="updateSet"></param>
+    /// <returns></returns>
+    internal bool RemoveUpdateSet(UpdateSet updateSet)
+    {
+        return _updateSets.Remove(updateSet);
+    }
+
     public override bool Equals(object? obj)
     {
         return obj is Tableau tableau &&
-               _name == tableau._name &&
+               _name.Equals(tableau._name) &&
                _attributes.SequenceEqual(tableau._attributes) &&
-               _schema.Id == tableau.Schema.Id &&
-               Id == tableau.Id;
+               _schema.Id.Equals(tableau.Schema.Id) &&
+               _description.Equals(tableau._description) &&
+               _updateSets.SetEquals(tableau._updateSets) &&
+               Id.Equals(Id);
     }
 
     public override int GetHashCode()

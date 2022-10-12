@@ -7,6 +7,8 @@ public sealed class DataSource
 {
     private readonly string _name;
     private readonly Dictionary<string, Schema> _schemas;
+    private readonly string _description;
+    private readonly string _version;
 
     /// <summary>
     /// Data source ID
@@ -25,6 +27,15 @@ public sealed class DataSource
     /// </summary>
     public List<string> SchemaNames => _schemas.Keys.ToList();
     /// <summary>
+    /// Data source version
+    /// </summary>
+    public string Version => _version;
+    /// <summary>
+    /// Data source description
+    /// </summary>
+    public string Description => _description;
+
+    /// <summary>
     /// Get schema with name
     /// </summary>
     /// <param name="schemaName"></param>
@@ -35,7 +46,7 @@ public sealed class DataSource
     /// Constructor
     /// </summary>
     /// <param name="name">Data source name</param>
-    internal DataSource(string name)
+    internal DataSource(string name, string description, string version)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -44,14 +55,17 @@ public sealed class DataSource
 
         _name = name;
         _schemas = new();
+        _description = description;
+        _version = String.IsNullOrEmpty(version) ? Guid.NewGuid().ToString() : version;
     }
+
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="name">Data source name</param>
     /// <param name="schemas">Underlying schemas</param>
-    internal DataSource(string name, List<Schema> schemas)
+    internal DataSource(string name, string description, string version, List<Schema> schemas)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -64,6 +78,8 @@ public sealed class DataSource
         }
 
         _name = name;
+        _description = description;
+        _version = String.IsNullOrEmpty(version) ? Guid.NewGuid().ToString() : version;
         _schemas = schemas.ToDictionary(schema => schema.Name, schema => schema);
     }
 
@@ -135,13 +151,15 @@ public sealed class DataSource
     public override bool Equals(object? obj)
     {
         return obj is DataSource source &&
-               _name == source._name &&
+               _name.Equals(source._name) &&
+               _version.Equals(source._version) &&
+               _description.Equals(source._description) &&
                _schemas.SequenceEqual(source._schemas);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_name, _schemas);
+        return HashCode.Combine(_name, _schemas, _version, _description);
     }
 
     public static bool operator ==(DataSource? left, DataSource? right)

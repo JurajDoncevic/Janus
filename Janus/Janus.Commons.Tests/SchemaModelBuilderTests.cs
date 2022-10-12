@@ -17,17 +17,17 @@ public class SchemaModelBuilderTests
                                                       attributeBuilder.WithIsNullable(false)
                                                                       .WithDataType(DataTypes.INT)
                                                                       .WithOrdinal(0)
-                                                                      .WithIsPrimaryKey(true))
+                                                                      .WithIsIdentity(true))
                                                   .AddAttribute("attr2", attributeBuilder =>
                                                       attributeBuilder.WithIsNullable(true)
                                                                       .WithDataType(DataTypes.STRING)
                                                                       .WithOrdinal(1)
-                                                                      .WithIsPrimaryKey(false))
+                                                                      .WithIsIdentity(false))
                                                   .AddAttribute("attr3", attributeBuilder =>
                                                       attributeBuilder.WithIsNullable(true)
                                                                       .WithDataType(DataTypes.DECIMAL)
                                                                       .WithOrdinal(2)
-                                                                      .WithIsPrimaryKey(false)))
+                                                                      .WithIsIdentity(false)))
                                          .AddTableau("tableau2", tableauBuilder => tableauBuilder)
                                          .AddTableau("tableau3", tableauBuilder => tableauBuilder))
                           .AddSchema("schema2", schemaBuilder => schemaBuilder)
@@ -48,9 +48,9 @@ public class SchemaModelBuilderTests
         Assert.Equal(DataTypes.INT, dataSource["schema1"]["tableau1"]["attr1_FK"].DataType);
         Assert.Equal(DataTypes.STRING, dataSource["schema1"]["tableau1"]["attr2"].DataType);
         Assert.Equal(DataTypes.DECIMAL, dataSource["schema1"]["tableau1"]["attr3"].DataType);
-        Assert.True(dataSource["schema1"]["tableau1"]["attr1_FK"].IsPrimaryKey);
-        Assert.False(dataSource["schema1"]["tableau1"]["attr2"].IsPrimaryKey);
-        Assert.False(dataSource["schema1"]["tableau1"]["attr3"].IsPrimaryKey);
+        Assert.True(dataSource["schema1"]["tableau1"]["attr1_FK"].IsIdentity);
+        Assert.False(dataSource["schema1"]["tableau1"]["attr2"].IsIdentity);
+        Assert.False(dataSource["schema1"]["tableau1"]["attr3"].IsIdentity);
         Assert.False(dataSource["schema1"]["tableau1"]["attr1_FK"].IsNullable);
         Assert.True(dataSource["schema1"]["tableau1"]["attr2"].IsNullable);
         Assert.True(dataSource["schema1"]["tableau1"]["attr3"].IsNullable);

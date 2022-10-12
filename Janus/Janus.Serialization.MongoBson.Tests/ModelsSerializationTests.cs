@@ -16,17 +16,17 @@ public class ModelsSerializationTests
                                                          attributeBuilder.WithIsNullable(false)
                                                                          .WithDataType(DataTypes.INT)
                                                                          .WithOrdinal(0)
-                                                                         .WithIsPrimaryKey(true))
+                                                                         .WithIsIdentity(true))
                                                      .AddAttribute("attr2", attributeBuilder =>
                                                          attributeBuilder.WithIsNullable(true)
                                                                          .WithDataType(DataTypes.STRING)
                                                                          .WithOrdinal(1)
-                                                                         .WithIsPrimaryKey(false))
+                                                                         .WithIsIdentity(false))
                                                      .AddAttribute("attr3", attributeBuilder =>
                                                          attributeBuilder.WithIsNullable(true)
                                                                          .WithDataType(DataTypes.DECIMAL)
                                                                          .WithOrdinal(2)
-                                                                         .WithIsPrimaryKey(false)))
+                                                                         .WithIsIdentity(false)))
                                             .AddTableau("tableau2", tableauBuilder =>
                                                 tableauBuilder.AddAttribute("attr1", attributeBuilder =>
                                                         attributeBuilder.WithDataType(DataTypes.INT)

@@ -1,6 +1,7 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
+using Janus.Commons.SchemaModels.Building;
 using Janus.Serialization.Protobufs.SchemaModels.DTOs;
 
 namespace Janus.Serialization.Protobufs.SchemaModels;
@@ -36,24 +37,32 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSourceDto">Data source DTO</param>
     /// <returns>Schema model data source</returns>
     internal Result<DataSource> FromDto(DataSourceDto dataSourceDto)
-        => ResultExtensions.AsResult(() =>
-            dataSourceDto.Schemas.Fold(SchemaModelBuilder.InitDataSource(dataSourceDto.Name),
-                    (schema, dataSourceBuilder) =>
-                        dataSourceBuilder.AddSchema(schema.Name,
-                            schemaBuilder => schema.Tableaus.Fold(schemaBuilder,
-                                (tableau, schemaBuilder) => schemaBuilder.AddTableau(tableau.Name,
-                                    tableauBuilder => tableau.Attributes.Fold(tableauBuilder,
-                                        (attribute, tableauBuilder) => tableauBuilder.AddAttribute(attribute.Name,
-                                            attributeBuilder => attributeBuilder.WithDataType(attribute.DataType)
-                                                                                .WithIsNullable(attribute.IsNullable)
-                                                                                .WithIsPrimaryKey(attribute.IsPrimaryKey)
-                                                                                .WithOrdinal(attribute.Ordinal)
-                                        )
-                                    )
-                                )
-                            )
+    => ResultExtensions.AsResult(() =>
+            SchemaModelBuilder.InitDataSource(dataSourceDto.Name)
+                .WithDescription(dataSourceDto.Description)
+                .WithVersion(dataSourceDto.Version)
+                .AddSchemasWith(dataSourceDto.Schemas,
+                    (schemaDto, scAdding) => scAdding.AddSchema(schemaDto.Name,
+                        scBuilder => scBuilder.WithDescription(schemaDto.Description)
+                                              .AddTableausWith(schemaDto.Tableaus,
+                                                (tableauDto, tbAdding) => tbAdding.AddTableau(tableauDto.Name,
+                                                    tbBuilder => tbBuilder.WithDescription(tableauDto.Description)
+                                                                          .AddAttributesWith(tableauDto.Attributes,
+                                                                                (attributeDto, atAdding) => atAdding.AddAttribute(attributeDto.Name,
+                                                                                        atBuilder => atBuilder.WithDescription(attributeDto.Description)
+                                                                                                              .WithDataType(attributeDto.DataType)
+                                                                                                              .WithIsIdentity(attributeDto.IsIdentity)
+                                                                                                              .WithIsNullable(attributeDto.IsNullable)
+                                                                                                              .WithOrdinal(attributeDto.Ordinal)
+                                                                                    )
+                                                                            )
+                                                                          .AddUpdateSetsWith(tableauDto.UpdateSets,
+                                                                                (updateSetDto, usAdding) => usAdding.AddUpdateSet(usBuilder => usBuilder.FromEnumerable(updateSetDto.AttributeIds))
+                                                                            )
+                                                    )
+                                                )
                         )
-                ).Build());
+                    ).Build());
 
     /// <summary>
     /// Converts a data source schema model to its DTO
@@ -61,29 +70,39 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSource">Data source schema model</param>
     /// <returns>Data source DTO</returns>
     internal Result<DataSourceDto> ToDto(DataSource dataSource)
-        => ResultExtensions.AsResult(() =>
-            new DataSourceDto()
-            {
-                Name = dataSource.Name,
-                Schemas =
-                        dataSource.Schemas.Map(schema =>
-                            new SchemaDto()
-                            {
-                                Name = schema.Name,
-                                Tableaus = schema.Tableaus.Map(tableau =>
-                                    new TableauDto()
-                                    {
-                                        Name = tableau.Name,
-                                        Attributes = tableau.Attributes.Map(attr =>
-                                            new AttributeDto()
-                                            {
-                                                Name = attr.Name,
-                                                DataType = attr.DataType,
-                                                IsNullable = attr.IsNullable,
-                                                IsPrimaryKey = attr.IsPrimaryKey,
-                                                Ordinal = attr.Ordinal
-                                            }).ToList()
-                                    }).ToList()
-                            }).ToList()
-            });
+    => ResultExtensions.AsResult(() =>
+        new DataSourceDto()
+        {
+            Name = dataSource.Name,
+            Description = dataSource.Description,
+            Version = dataSource.Version,
+            Schemas =
+                    dataSource.Schemas.Map(schema =>
+                        new SchemaDto()
+                        {
+                            Name = schema.Name,
+                            Description = schema.Description,
+                            Tableaus = schema.Tableaus.Map(tableau =>
+                                new TableauDto()
+                                {
+                                    Name = tableau.Name,
+                                    Description = tableau.Description,
+                                    Attributes = tableau.Attributes.Map(attr =>
+                                        new AttributeDto()
+                                        {
+                                            Name = attr.Name,
+                                            DataType = attr.DataType,
+                                            IsNullable = attr.IsNullable,
+                                            IsIdentity = attr.IsIdentity,
+                                            Ordinal = attr.Ordinal,
+                                            Description = attr.Description
+                                        }).ToList(),
+                                    UpdateSets = tableau.UpdateSets.Map(us =>
+                                        new UpdateSetDto
+                                        {
+                                            AttributeIds = us.AttributeIds
+                                        }).ToHashSet()
+                                }).ToList()
+                        }).ToList()
+        });
 }

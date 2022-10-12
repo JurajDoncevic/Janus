@@ -338,7 +338,7 @@ public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture>
 
         Assert.True(registerResult);
         Assert.True(schemaResult);
-        Assert.Equal(_testFixture.GetSchema(), schemaResult.Data);
+        Assert.Equal(schema, schemaResult.Data);
     }
 
     [Fact(DisplayName = "MASK: Send a QUERY_REQ and get results")]

@@ -8,4 +8,6 @@ internal class DataSourceDto
 {
     public string Name { get; set; }
     public List<SchemaDto> Schemas { get; set; }
+    public string Version { get; set; }
+    public string Description { get; set; }
 }

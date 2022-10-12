@@ -171,7 +171,7 @@ public class MutationBuilder
 
         foreach (var referencedAttrName in referencedAttrNames)
         {
-            if (_dataSource[schemaName][tableauName][referencedAttrName].IsPrimaryKey)
+            if (_dataSource[schemaName][tableauName][referencedAttrName].IsIdentity)
             {
                 throw new MutationOnPrimaryKeyNotAllowedException(referencedAttrName);
             }

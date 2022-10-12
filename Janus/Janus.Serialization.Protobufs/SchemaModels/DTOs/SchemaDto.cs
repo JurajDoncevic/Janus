@@ -15,5 +15,8 @@ internal class SchemaDto
     public string Name { get; set; }
 
     [ProtoMember(2)]
+    public string Description { get; set; }
+
+    [ProtoMember(3)]
     public List<TableauDto> Tableaus { get; set; } = new List<TableauDto>();
 }

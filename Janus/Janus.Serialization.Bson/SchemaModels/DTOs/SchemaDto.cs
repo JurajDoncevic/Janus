@@ -9,5 +9,6 @@ namespace Janus.Serialization.Bson.SchemaModels.DTOs;
 internal class SchemaDto
 {
     public string Name { get; set; }
+    public string Description { get; set; }
     public List<TableauDto> Tableaus { get; set; }
 }

@@ -24,7 +24,7 @@ public class CommandModelBuilderTests
                                                                                          .WithIsNullable(false))
                                               .AddAttribute("attr4", attrConf => attrConf.WithDataType(DataTypes.INT)
                                                                                          .WithIsNullable(false)
-                                                                                         .WithIsPrimaryKey(true)))
+                                                                                         .WithIsIdentity(true)))
                 .AddTableau("tableau2",
                     tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
                                                                                          .WithIsNullable(false))

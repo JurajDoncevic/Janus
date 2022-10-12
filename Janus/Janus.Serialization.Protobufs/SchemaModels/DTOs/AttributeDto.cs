@@ -13,11 +13,14 @@ internal class AttributeDto
     public DataTypes DataType { get; set; }
 
     [ProtoMember(3)]
-    public bool IsPrimaryKey { get; set; }
+    public bool IsIdentity { get; set; }
 
     [ProtoMember(4)]
     public bool IsNullable { get; set; }
 
     [ProtoMember(5)]
-    public int Ordinal { get; set; }
+    public int Ordinal { get; set; }    
+    
+    [ProtoMember(6)]
+    public string Description { get; set; }
 }
