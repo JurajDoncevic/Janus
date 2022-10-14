@@ -3,41 +3,60 @@
 namespace Janus.Commons.SchemaModels.Building;
 public class UpdateSetBuilder : IUpdateSetBuilder
 {
-    private HashSet<string> _setOfAttributeIds;
-    private Tableau _parentTableau;
+    private HashSet<string> _attributeNames;
+    private readonly Tableau _parentTableau;
+
+    private IReadOnlySet<string> AttributeIds => _attributeNames.Map(attrName => $"{_parentTableau.Id}.{attrName}").ToHashSet();
 
     public UpdateSetBuilder(Tableau parentTableau)
     {
         _parentTableau = parentTableau ?? throw new ArgumentNullException(nameof(parentTableau));
-        _setOfAttributeIds = new HashSet<string>();
+        _attributeNames = new HashSet<string>();
     }
 
     public UpdateSet Build()
     {
-        return new UpdateSet(_setOfAttributeIds ?? new HashSet<string>());
+        return new UpdateSet(_attributeNames ?? new HashSet<string>(), _parentTableau);
     }
 
-    public IUpdateSetBuilder FromEnumerable(IEnumerable<string> attributeIds)
+    public IUpdateSetBuilder WithAttributesNamed(params string[] attributeNames)
     {
-        if(attributeIds is null || attributeIds.Count() == 0)
+        if(attributeNames is null || attributeNames.Count() == 0)
         {
             throw new UpdateSetEmptyException();
         }
-        var attrIdsInTableau = _parentTableau.Attributes.Select(attr => attr.Id).ToList();
-        if (!_setOfAttributeIds.All(attrIdsInTableau.Contains))
+        var attrNamesInTableau = _parentTableau.AttributeNames;
+        if (!attributeNames.All(attrNamesInTableau.Contains))
         {
-            var unknownAttrId = _setOfAttributeIds.FirstOrDefault(attrId => !attrIdsInTableau.Contains(attrId));
-            throw new UpdateSetAttributeDoesNotExist(unknownAttrId ?? string.Empty, _parentTableau.Name);
+            var unknownAttrName = _attributeNames.FirstOrDefault(attrId => !attrNamesInTableau.Contains(attrId));
+            throw new UpdateSetAttributeDoesNotExist(unknownAttrName ?? string.Empty, _parentTableau.Name);
         }
-        _setOfAttributeIds = new HashSet<string>(attributeIds);
+        _attributeNames = new HashSet<string>(attributeNames);
         return this;
     }
+    public IUpdateSetBuilder WithAttributesNamed(IEnumerable<string> attributeNames)
+    {
+        if (attributeNames is null || attributeNames.Count() == 0)
+        {
+            throw new UpdateSetEmptyException();
+        }
+        var attrIdsInTableau = _parentTableau.Attributes.Map(attr => attr.Id);
+        if (!AttributeIds.All(attrIdsInTableau.Contains))
+        {
+            var unknownAttrId = _attributeNames.FirstOrDefault(attrId => !attrIdsInTableau.Contains(attrId));
+            throw new UpdateSetAttributeDoesNotExist(unknownAttrId ?? string.Empty, _parentTableau.Name);
+        }
+        _attributeNames = new HashSet<string>(attributeNames);
+        return this;
+    }
+
 }
 
 
 public interface IUpdateSetBuilder : IUpdateSetBuilding
 {
-    public IUpdateSetBuilder FromEnumerable(IEnumerable<string> values);
+    public IUpdateSetBuilder WithAttributesNamed(params string[] attributeNames);
+    public IUpdateSetBuilder WithAttributesNamed(IEnumerable<string> attributeNames);
 }
 
 public interface IUpdateSetBuilding

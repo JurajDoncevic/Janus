@@ -1,5 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
 using Janus.Commons.SchemaModels.Exceptions;
+using System.Linq;
 using Xunit;
 
 namespace Janus.Commons.Tests;
@@ -27,7 +28,8 @@ public class SchemaModelBuilderTests
                                                       attributeBuilder.WithIsNullable(true)
                                                                       .WithDataType(DataTypes.DECIMAL)
                                                                       .WithOrdinal(2)
-                                                                      .WithIsIdentity(false)))
+                                                                      .WithIsIdentity(false))
+                                                  .AddUpdateSet(updateSetBuilder => updateSetBuilder.WithAttributesNamed("attr1_FK", "attr2", "attr3")))
                                          .AddTableau("tableau2", tableauBuilder => tableauBuilder)
                                          .AddTableau("tableau3", tableauBuilder => tableauBuilder))
                           .AddSchema("schema2", schemaBuilder => schemaBuilder)
@@ -54,6 +56,46 @@ public class SchemaModelBuilderTests
         Assert.False(dataSource["schema1"]["tableau1"]["attr1_FK"].IsNullable);
         Assert.True(dataSource["schema1"]["tableau1"]["attr2"].IsNullable);
         Assert.True(dataSource["schema1"]["tableau1"]["attr3"].IsNullable);
+    }
+
+    [Fact(DisplayName = "Exception is thrown when adding an unknown attribute to a tableau update set")]
+    public void BuildWithUnknownAttributeInUpdateSet()
+    {
+        Assert.Throws<UpdateSetAttributeDoesNotExist>(() =>
+        {
+            var dataSource =
+                SchemaModelBuilder.InitDataSource("testDataSource")
+                    .AddSchema("testSchema", schemaBuilder =>
+                        schemaBuilder
+                            .AddTableau("testTableau", tableauBuilder => 
+                                tableauBuilder.AddAttribute("attr1", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr2", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr3", attrBuilder => attrBuilder)
+                                              .AddUpdateSet(conf => conf.WithAttributesNamed("attr1", "attrX", "attr3"))
+                                              )
+                            )
+                .Build();
+        });
+    }
+
+    [Fact(DisplayName = "Exception is thrown when adding an empty update set")]
+    public void BuildWithEmptyUpdateSet()
+    {
+        Assert.Throws<UpdateSetEmptyException>(() =>
+        {
+            var dataSource =
+                SchemaModelBuilder.InitDataSource("testDataSource")
+                    .AddSchema("testSchema", schemaBuilder =>
+                        schemaBuilder
+                            .AddTableau("testTableau", tableauBuilder =>
+                                tableauBuilder.AddAttribute("attr1", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr2", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr3", attrBuilder => attrBuilder)
+                                              .AddUpdateSet(conf => conf.WithAttributesNamed(Enumerable.Empty<string>()))
+                                              )
+                            )
+                .Build();
+        });
     }
 
     [Fact(DisplayName = "Exception is thrown when adding a schema with existing name")]

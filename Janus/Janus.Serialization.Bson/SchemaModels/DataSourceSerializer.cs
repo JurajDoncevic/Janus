@@ -81,7 +81,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
                                             UpdateSets = tableau.UpdateSets.Map(us => 
                                                 new UpdateSetDto
                                                 {
-                                                    AttributeIds = us.AttributeIds
+                                                    AttributeIds = us.AttributeNames.ToHashSet()
                                                 }).ToHashSet()
                                         }).ToList()
                                 }).ToList()
@@ -118,7 +118,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
                                                                                         )
                                                                                 )
                                                                               .AddUpdateSetsWith(tableauDto.UpdateSets,
-                                                                                    (updateSetDto, usAdding) => usAdding.AddUpdateSet(usBuilder => usBuilder.FromEnumerable(updateSetDto.AttributeIds))
+                                                                                    (updateSetDto, usAdding) => usAdding.AddUpdateSet(usBuilder => usBuilder.WithAttributesNamed(updateSetDto.AttributeIds))
                                                                                 )
                                                         )
                                                     )

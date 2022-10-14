@@ -6,8 +6,8 @@ namespace Janus.Commons.SchemaModels.Exceptions;
 /// </summary>
 public class UpdateSetAttributeDoesNotExist : Exception
 {
-    internal UpdateSetAttributeDoesNotExist(string attributeId, string tableauName)
-        : base($"Attribute with id {attributeId} referenced in update set doesn't exist in {tableauName}.")
+    internal UpdateSetAttributeDoesNotExist(string attributeName, string tableauName)
+        : base($"Attribute {attributeName} referenced in update set doesn't exist in {tableauName}.")
     {
 
     }

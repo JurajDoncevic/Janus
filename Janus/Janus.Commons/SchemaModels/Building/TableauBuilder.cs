@@ -75,16 +75,6 @@ public class TableauBuilder : ITableauBuilder
         return _tableau ?? new Tableau(_tableauName, _parentSchema, _tableauDescription);
     }
 
-    public IUpdateSetAdding AddUpdateSet(UpdateSet updateSet)
-    {
-        if (_tableau is null)
-        {
-            _tableau = new Tableau(_tableauName, _parentSchema, _tableauDescription);
-        }
-        _tableau.AddUpdateSet(updateSet);
-        return this;
-    }
-
     public IUpdateSetAdding AddUpdateSet(Func<IUpdateSetBuilder, IUpdateSetBuilder> configuration)
     {
         if (_tableau is null)
@@ -109,47 +99,6 @@ public class TableauBuilder : ITableauBuilder
         return this;
     }
 
-    public IUpdateSetAdding WithUpdateSets(HashSet<UpdateSet> updateSets)
-    {
-        bool existsUnknownAttributeId =
-            updateSets.SelectMany(us => us.AttributeIds)
-            .All(attrId => (_tableau?.Attributes.Select(a => a.Id) ?? Enumerable.Empty<string>()).Contains(attrId));
-
-        // check if update sets overlap
-        bool existsOverlap =
-            updateSets.SelectMany(us2 => updateSets.Map(us1 => (us1, us2)))
-                  .Where(tuple => !tuple.us1.Equals(tuple.us2))
-                  .Any(tuple => tuple.us1.OverlapsWith(tuple.us2));
-
-        if (existsOverlap)
-        {
-            throw new UpdateSetsOverlapException(updateSets, _tableauName);
-        }
-
-        if (_tableau is null)
-        {
-            _tableau = new Tableau(_tableauName, _parentSchema, _tableauDescription);
-        }
-        // clear update sets
-        _tableau =
-            _tableau.UpdateSets.Fold(_tableau, (updateSet, tableau) =>
-            {
-                tableau.RemoveUpdateSet(updateSet);
-                return tableau;
-            });
-        // add new update sets
-        _tableau =
-            updateSets.Fold(_tableau, (updateSet, tableau) =>
-            {
-                if (!updateSet.IsEmpty())
-                {
-                    tableau.AddUpdateSet(updateSet);
-                }
-                return tableau;
-            });
-        return this;
-    }
-
     public IUpdateSetAdding WithDefaultUpdateSet()
     {
         if (_tableau is null)
@@ -163,11 +112,13 @@ public class TableauBuilder : ITableauBuilder
                 tableau.RemoveUpdateSet(updateSet);
                 return tableau;
             });
-        // add new update set
-        UpdateSet updateSet = new UpdateSet(_tableau.Attributes.Select(attr => attr.Id).ToHashSet());
+        // add new update set if tableau has attributes
+        if(_tableau.Attributes.Count > 0)
+        {
+            UpdateSet updateSet = new UpdateSet(_tableau.AttributeNames.ToHashSet(), _tableau);
 
-        _tableau.AddUpdateSet(updateSet);
-
+            _tableau.AddUpdateSet(updateSet);
+        }
         return this;
     }
 }
@@ -213,22 +164,9 @@ public interface IAttributeAdding : IUpdateSetAdding
 
 public interface IUpdateSetAdding : ITableauBuilding
 {
-    /// <summary>
-    /// Adds an update set to the tableau
-    /// </summary>
-    /// <param name="updateSet"></param>
-    /// <returns></returns>
-    IUpdateSetAdding AddUpdateSet(UpdateSet updateSet);
 
     /// <summary>
-    /// Adds update sets to the tableau. Clears previously added update sets
-    /// </summary>
-    /// <param name="updateSet"></param>
-    /// <returns></returns>
-    IUpdateSetAdding WithUpdateSets(HashSet<UpdateSet> updateSets);
-
-    /// <summary>
-    /// Adds update set to tableau that covers all atributes. 
+    /// Adds a single update set to the tableau covering all atributes. 
     /// </summary>
     /// <param name="updateSets"></param>
     /// <returns></returns>

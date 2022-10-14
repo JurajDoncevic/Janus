@@ -7,22 +7,33 @@ namespace Janus.Commons.SchemaModels;
 /// </summary>
 public class UpdateSet
 {
-    private readonly HashSet<string> _attributeIds;
+    private readonly HashSet<string> _attributeNames;
+    private readonly Tableau _parentTableau;
+
+    /// <summary>
+    /// Names of attributes belonging to this update group
+    /// </summary>
+    public IReadOnlySet<string> AttributeNames => _attributeNames;
 
     /// <summary>
     /// Attribute IDs of attributes belonging to this update group
     /// </summary>
-    public HashSet<string> AttributeIds => _attributeIds;
+    public IReadOnlySet<string> AttributeIds => _attributeNames.Map(attrName => $"{_parentTableau.Id}.{attrName}").ToHashSet();
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="attributeIds">Attribute IDs in the update group</param>
-    internal UpdateSet(HashSet<string> attributeIds)
+    /// <param name="attributeNames">Attribute IDs in the update group</param>
+    internal UpdateSet(HashSet<string> attributeNames, Tableau parentTableau)
     {
-        if (_attributeIds is null || _attributeIds.Count == 0)
+        if(parentTableau is null)
+            throw new ArgumentNullException(nameof(parentTableau));
+
+        if (attributeNames is null || attributeNames.Count == 0)
             throw new UpdateSetEmptyException();
-        _attributeIds = attributeIds;
+
+        _attributeNames = attributeNames;
+        _parentTableau = parentTableau;
     }
 
     /// <summary>
@@ -32,7 +43,7 @@ public class UpdateSet
     /// <returns>True on overlap, else false</returns>
     public bool OverlapsWith(UpdateSet updateSet)
     {
-        return updateSet.AttributeIds.Overlaps(_attributeIds);
+        return updateSet.AttributeIds.Overlaps(AttributeIds);
     }
 
     /// <summary>
@@ -41,17 +52,17 @@ public class UpdateSet
     /// <returns></returns>
     public bool IsEmpty()
     {
-        return _attributeIds.Count == 0;
+        return _attributeNames.Count == 0;
     }
 
     public override bool Equals(object? obj)
     {
         return obj is UpdateSet set &&
-               _attributeIds.SetEquals(set._attributeIds);
+               _attributeNames.SetEquals(set._attributeNames);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_attributeIds);
+        return HashCode.Combine(_attributeNames);
     }
 }
