@@ -26,7 +26,7 @@ public class UpdateSet
     /// <param name="attributeNames">Attribute IDs in the update group</param>
     internal UpdateSet(HashSet<string> attributeNames, Tableau parentTableau)
     {
-        if(parentTableau is null)
+        if (parentTableau is null)
             throw new ArgumentNullException(nameof(parentTableau));
 
         if (attributeNames is null || attributeNames.Count == 0)
@@ -63,7 +63,7 @@ public class UpdateSet
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_attributeNames);
+        return HashCode.Combine(string.Join(";", _attributeNames));
     }
 
     public override string ToString()
