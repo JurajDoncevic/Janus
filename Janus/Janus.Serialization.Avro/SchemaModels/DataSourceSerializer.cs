@@ -103,8 +103,8 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
                                     UpdateSets = tableau.UpdateSets.Map(us => 
                                         new UpdateSetDto 
                                         { 
-                                            AttributeIds = us.AttributeNames.ToHashSet() 
-                                        }).ToHashSet()
+                                            AttributeIds = us.AttributeNames.ToList()
+                                        }).ToList()
                                 }).ToList()
                         }).ToList()
         });

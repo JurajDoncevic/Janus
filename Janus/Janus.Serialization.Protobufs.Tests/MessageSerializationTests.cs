@@ -29,11 +29,16 @@ public class MessageSerializationTests
                                                          attributeBuilder.WithIsNullable(true)
                                                                          .WithDataType(DataTypes.DECIMAL)
                                                                          .WithOrdinal(2)
-                                                                         .WithIsIdentity(false)))
+                                                                         .WithIsIdentity(false))
+                                                     .WithDefaultUpdateSet())
                                             .AddTableau("tableau2", tableauBuilder =>
                                                 tableauBuilder.AddAttribute("attr1", attributeBuilder =>
                                                         attributeBuilder.WithDataType(DataTypes.INT)
-                                                                        .WithIsNullable(false)))
+                                                                        .WithIsNullable(false))
+                                                              .AddAttribute("attr2", attributeBuilder =>
+                                                        attributeBuilder.WithDataType(DataTypes.STRING)
+                                                                        .WithIsNullable(false))
+                                                              .AddUpdateSet(conf => conf.WithAttributesNamed("attr1", "attr2")))
                                             .AddTableau("tableau3", tableauBuilder => tableauBuilder))
                              .AddSchema("schema2", schemaBuilder => schemaBuilder)
                              .AddSchema("schema3", schemaBuilder => schemaBuilder)

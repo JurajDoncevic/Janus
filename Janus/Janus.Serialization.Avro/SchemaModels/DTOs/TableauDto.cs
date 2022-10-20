@@ -10,5 +10,5 @@ internal class TableauDto
     public List<AttributeDto> Attributes { get; set; }
     public string Description { get; set; }
 
-    public HashSet<UpdateSetDto> UpdateSets { get; set; }
+    public List<UpdateSetDto> UpdateSets { get; set; }
 }

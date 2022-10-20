@@ -10,5 +10,5 @@ namespace Janus.Serialization.Avro.SchemaModels.DTOs;
 /// </summary>
 internal class UpdateSetDto
 {
-    public HashSet<string> AttributeIds { get; set; } = new HashSet<string>();
+    public List<string> AttributeIds { get; set; } = new List<string>();
 }
