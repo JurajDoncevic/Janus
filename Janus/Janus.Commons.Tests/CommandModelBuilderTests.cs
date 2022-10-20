@@ -24,14 +24,27 @@ public class CommandModelBuilderTests
                                                                                          .WithIsNullable(false))
                                               .AddAttribute("attr4", attrConf => attrConf.WithDataType(DataTypes.INT)
                                                                                          .WithIsNullable(false)
-                                                                                         .WithIsIdentity(true)))
+                                                                                         .WithIsIdentity(true))
+                                              .WithDefaultUpdateSet())
                 .AddTableau("tableau2",
                     tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
                                                                                          .WithIsNullable(false))
                                               .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
                                                                                          .WithIsNullable(false))
                                               .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.DECIMAL)
-                                                                                         .WithIsNullable(false))))
+                                                                                         .WithIsNullable(false))
+                                              .WithDefaultUpdateSet())
+                .AddTableau("tableau3",
+                    tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
+                                                                                         .WithIsNullable(false))
+                                              .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
+                                                                                         .WithIsNullable(false))
+                                              .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.INT)
+                                                                                         .WithIsNullable(false))
+                                              .AddAttribute("attr4", attrConf => attrConf.WithDataType(DataTypes.STRING)
+                                                                                         .WithIsNullable(false))
+                                              .AddUpdateSet(conf => conf.WithAttributesNamed("attr1", "attr2"))
+                                              .AddUpdateSet(conf => conf.WithAttributesNamed("attr3", "attr4"))))
             .Build();
 
 
@@ -78,6 +91,27 @@ public class CommandModelBuilderTests
         Assert.Equal(tableauId, insertCommand.OnTableauId);
         Assert.NotNull(insertCommand.Instantiation);
 
+    }
+
+
+    [Fact(DisplayName = "Fail to create a valid insert command without tableau-wide update set")]
+    public void FailToCreateInsertCommandWithoutTableauWideUpdateSet()
+    {
+        var dataSource = GetSchemaModel();
+        var tableauId = dataSource["schema1"]["tableau3"].Id;
+        var dataToInsert =
+            TabularDataBuilder.InitTabularData(new() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.INT } })
+                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 1 }, { "attr2", "TEST_STRING" }, { "attr3", 1.2 }, { "attr4", 0 } }))
+                              .AddRow(conf => conf.WithRowData(new() { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.3 }, { "attr4", 1 } }))
+                              .Build();
+
+        Assert.Throws<CommandAllowedOnTableauWideUpdateSetException>(() =>
+        {
+            var insertCommand =
+            InsertCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                .WithInstantiation(conf => conf.WithValues(dataToInsert))
+                                .Build();
+        });
     }
 
     [Fact(DisplayName = "Fail to create an insert command without all tableau values")]
@@ -220,6 +254,40 @@ public class CommandModelBuilderTests
 
     }
 
+    [Fact(DisplayName = "Fail to construct a valid update command outside an update set")]
+    public void ConstructInvalidUpdateCommandWithAttributesOutsideUpdateSet()
+    {
+        var dataSource = GetSchemaModel();
+        var tableauId = dataSource["schema1"]["tableau3"].Id;
+        var valueUpdates = new Dictionary<string, object>() { { "attr2", "TEST_STRING_MOD" }, { "attr3", 1 } };
+
+        Assert.Throws<NoUpdateSetFoundForExpressionAttributesException>(() =>
+        {
+            var updateCommand =
+            UpdateCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                .WithMutation(conf => conf.WithValues(valueUpdates))
+                                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                .Build();
+        });
+    }
+
+    [Fact(DisplayName = "Fail to construct a valid update command with an update set mismatch in clause")]
+    public void ConstructInvalidUpdateCommandWithUpdateSetMismatch()
+    {
+        var dataSource = GetSchemaModel();
+        var tableauId = dataSource["schema1"]["tableau3"].Id;
+        var valueUpdates = new Dictionary<string, object>() { { "attr2", "TEST_STRING_MOD" }, { "attr1", 1 } };
+
+        Assert.Throws<UpdateSetMismatchBetweenClausesException>(() =>
+        {
+            var updateCommand =
+            UpdateCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                .WithMutation(conf => conf.WithValues(valueUpdates))
+                                .WithSelection(conf => conf.WithExpression(EQ("attr3", 1)))
+                                .Build();
+        });
+    }
+
     [Fact(DisplayName = "Fail to construct an update command with an unknown attribute mutation")]
     public void ConstructInvalidUpdateWithNonExistingAttribute()
     {
@@ -343,6 +411,21 @@ public class CommandModelBuilderTests
         Assert.NotNull(deleteCommand);
         Assert.Equal(tableauId, deleteCommand.OnTableauId);
         Assert.True(deleteCommand.Selection);
+    }
+
+    [Fact(DisplayName = "Fail to create a delete command with attribute references outside of a update set")]
+    public void CreateInvalidDeleteCommandOutsideUpdateSet()
+    {
+        var dataSource = GetSchemaModel();
+        var tableauId = dataSource["schema1"]["tableau3"].Id;
+
+        Assert.Throws<CommandAllowedOnTableauWideUpdateSetException>(() =>
+        {
+            var deleteCommand =
+                DeleteCommandBuilder.InitOnDataSource(tableauId, dataSource)
+                                    .WithSelection(conf => conf.WithExpression(AND(EQ("attr1", 1), EQ("attr3", 1))))
+                                    .Build();
+        });
     }
 
     [Fact(DisplayName = "Fail to create a delete command with unknown attribute")]

@@ -105,14 +105,16 @@ public abstract class CommunicationNodeTestFixture
                                                                                              .WithIsNullable(false))
                                                   .AddAttribute("attr4", attrConf => attrConf.WithDataType(DataTypes.INT)
                                                                                              .WithIsNullable(false)
-                                                                                             .WithIsIdentity(true)))
+                                                                                             .WithIsIdentity(true))
+                                                  .WithDefaultUpdateSet())
                     .AddTableau("tableau2",
                         tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
                                                                                              .WithIsNullable(false))
                                                   .AddAttribute("attr2", attrConf => attrConf.WithDataType(DataTypes.STRING)
                                                                                              .WithIsNullable(false))
                                                   .AddAttribute("attr3", attrConf => attrConf.WithDataType(DataTypes.DECIMAL)
-                                                                                             .WithIsNullable(false))))
+                                                                                             .WithIsNullable(false))
+                                                  .WithDefaultUpdateSet()))
                 .Build();
 
     public Query GetQuery()

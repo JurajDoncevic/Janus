@@ -72,4 +72,23 @@ internal static class CommandSelectionUtils
             Literal literal => true,
             _ => throw new Exception($"Unkown operation or expression type {selectionExpression}")
         };
+
+    internal static HashSet<string> GetReferencedAttributeNames(SelectionExpression selectionExpression)
+        => selectionExpression switch
+        {
+            LogicalUnaryOperator unaryOp => GetReferencedAttributeNames(unaryOp.Operand),
+            LogicalBinaryOperator binaryOp => GetReferencedAttributeNames(binaryOp.LeftOperand).Union(GetReferencedAttributeNames(binaryOp.RightOperand)).ToHashSet(),
+            ComparisonOperator compareOp => new HashSet<string> { compareOp.AttributeId },
+            Literal literal => new HashSet<string>(),
+            _ => throw new Exception($"Unkown operation or expression type {selectionExpression}")
+        };
+
+    internal static UpdateSet? UpdateSetForExpressionAttributes(SelectionExpression selectionExpression, Tableau referencedTableau)
+    {
+        var referencedAttributeNames = GetReferencedAttributeNames(selectionExpression);
+
+        return referencedTableau
+            .UpdateSets
+            .FirstOrDefault(us => referencedAttributeNames.IsSubsetOf(us.AttributeNames));
+    }
 }

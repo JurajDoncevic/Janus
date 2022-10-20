@@ -65,6 +65,12 @@ public class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostInstatia
         {
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
         }
+
+        (string _, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(onTableauId);
+
+        if (!dataSource[schemaName][tableauName].UpdateSets.Any(us => us.AttributeNames.SequenceEqual(dataSource[schemaName][tableauName].AttributeNames)))
+            throw new CommandAllowedOnTableauWideUpdateSetException();
+
         return new InsertCommandBuilder(onTableauId, dataSource);
     }
 
@@ -112,20 +118,20 @@ public class InstantiationBuilder
         (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
 
         var referencableAttributes = _dataSource[schemaName][tableauName].Attributes.Select(attr => attr.Name).ToHashSet();
-        var referencedAttributes = tabularData.AttributeNames;
+        var referencedAttributeNames = tabularData.AttributeNames;
 
-        if (!referencedAttributes.All(referencableAttributes.Contains))
+        if (!referencedAttributeNames.All(referencableAttributes.Contains))
         {
-            var invalidAttrRef = referencedAttributes.Where(referencedAttr => !referencableAttributes.Contains(referencedAttr)).First();
+            var invalidAttrRef = referencedAttributeNames.Where(referencedAttr => !referencableAttributes.Contains(referencedAttr)).First();
             throw new AttributeNotInTargetTableauException(invalidAttrRef, _onTableauId);
         }
-        if (!referencableAttributes.All(referencedAttributes.Contains))
+        if (!referencableAttributes.All(referencedAttributeNames.Contains))
         {
-            var unreferencedAttrs = referencableAttributes.Except(referencedAttributes).ToList();
+            var unreferencedAttrs = referencableAttributes.Except(referencedAttributeNames).ToList();
             throw new MissingInstantiationAttributesException(unreferencedAttrs, _onTableauId);
         }
 
-        foreach (var referencedAttr in referencedAttributes)
+        foreach (var referencedAttr in referencedAttributeNames)
         {
             var referencedDataType = _dataSource[schemaName][tableauName][referencedAttr].DataType;
             var referencingDataType = tabularData.AttributeDataTypes[referencedAttr];
@@ -146,6 +152,16 @@ public class InstantiationBuilder
             }
         }
         _tableauDataToInsert = tabularData;
+
+        var existsValidUpdateSet =
+            _dataSource[schemaName][tableauName]
+                .UpdateSets
+                .Any(us => referencedAttributeNames.IsSubsetOf(us.AttributeNames));
+
+        if (!existsValidUpdateSet)
+        {
+            throw new NoUpdateSetFoundForExpressionAttributesException(referencedAttributeNames, _dataSource[schemaName][tableauName]);
+        }
 
         return this;
     }

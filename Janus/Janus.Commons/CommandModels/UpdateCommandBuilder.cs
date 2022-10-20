@@ -3,6 +3,7 @@ using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
+using System.Security.Cryptography;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Commons.CommandModels;
@@ -50,6 +51,7 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
     private readonly DataSource _dataSource;
     private Option<Mutation> _mutation;
     private Option<CommandSelection> _selection;
+    private UpdateSet? _targetUpdateSet;
 
     /// <summary>
     /// Constructor
@@ -82,15 +84,22 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
         var mutationBuilder = new MutationBuilder(_onTableauId, _dataSource);
 
         _mutation = Option<Mutation>.Some(configuration(mutationBuilder).Build());
-
+        _targetUpdateSet = mutationBuilder.ReferencedUpdateSet;
         return this;
     }
 
     public IPostSelectionUpdateCommandBuilder WithSelection(Func<CommandSelectionBuilder, CommandSelectionBuilder> configuration)
     {
-        var selectionBuilder = new CommandSelectionBuilder(_dataSource, new() { _onTableauId });
+        var selectionBuilder = new CommandSelectionBuilder(_dataSource, _onTableauId);
         _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());
-
+        
+        if(selectionBuilder.ReferencedUpdateSet is not null &&
+           _targetUpdateSet is not null &&
+           !selectionBuilder.ReferencedUpdateSet.IsEmpty() &&
+           !_targetUpdateSet.Equals(selectionBuilder.ReferencedUpdateSet))
+        {
+            throw new UpdateSetMismatchBetweenClausesException(_targetUpdateSet, selectionBuilder.ReferencedUpdateSet, _onTableauId);
+        }
         return this;
     }
 
@@ -113,6 +122,9 @@ public class MutationBuilder
     private Dictionary<string, object?>? _valueUpdates;
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
+    private UpdateSet? _referencedUpdateSet;
+
+    internal UpdateSet? ReferencedUpdateSet => _referencedUpdateSet;
 
     /// <summary>
     /// Constructor
@@ -177,6 +189,15 @@ public class MutationBuilder
             }
         }
 
+        _referencedUpdateSet =
+            _dataSource[schemaName][tableauName]
+                .UpdateSets
+                .FirstOrDefault(us => referencedAttrNames.IsSubsetOf(us.AttributeNames));
+
+        if (_referencedUpdateSet is null)
+        {
+            throw new NoUpdateSetFoundForExpressionAttributesException(referencedAttrNames, _dataSource[schemaName][tableauName]);
+        }
 
         return this;
     }
@@ -196,19 +217,26 @@ public class CommandSelectionBuilder
 {
     private Option<SelectionExpression> _expression;
     private readonly DataSource _dataSource;
-    private readonly HashSet<string> _referencedTableauIds;
+    private readonly string _referencedTableauId;
+    private UpdateSet? _referencedUpdateSet;
     internal bool IsConfigured => _expression.IsSome;
+    internal UpdateSet? ReferencedUpdateSet => _referencedUpdateSet;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
-    /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
-    internal CommandSelectionBuilder(DataSource dataSource, HashSet<string> referencedTableauIds)
+    /// <param name="referencedTableauId">Id of the tableau referenced in the command</param>
+    internal CommandSelectionBuilder(DataSource dataSource, string referencedTableauId)
     {
+        if (string.IsNullOrEmpty(referencedTableauId))
+        {
+            throw new ArgumentException($"'{nameof(referencedTableauId)}' cannot be null or empty.", nameof(referencedTableauId));
+        }
+
         _expression = Option<SelectionExpression>.None;
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        _referencedTableauIds = referencedTableauIds ?? throw new ArgumentNullException(nameof(referencedTableauIds));
+        _referencedTableauId = referencedTableauId;
     }
 
     /// <summary>
@@ -223,13 +251,23 @@ public class CommandSelectionBuilder
             throw new ArgumentNullException(nameof(expression));
         }
 
-        var referencableAttrNames = _referencedTableauIds.Select(tId => Utils.GetNamesFromTableauId(tId))
-                                                     .SelectMany(names => _dataSource[names.schemaName][names.tableauName].Attributes.Map(a => (a.Name, a.DataType)))
-                                                     .ToDictionary(x => x.Name, x => x.DataType);
+        (string _, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_referencedTableauId);
+
+        var referencedTableau = _dataSource[schemaName][tableauName];
+
+        var referencableAttrNames = referencedTableau.Attributes.ToDictionary(attr => attr.Name, attr => attr.DataType);
 
         CommandSelectionUtils.CheckAttributeReferences(expression, referencableAttrNames.Keys.ToHashSet());
         CommandSelectionUtils.CheckAttributeTypesOnComparison(expression, referencableAttrNames ?? new());
 
+        _referencedUpdateSet = CommandSelectionUtils.UpdateSetForExpressionAttributes(expression, referencedTableau);
+        if (_referencedUpdateSet is null)
+        {
+            throw new NoUpdateSetFoundForExpressionAttributesException(
+                CommandSelectionUtils.GetReferencedAttributeNames(expression),
+                referencedTableau
+                );
+        }
 
         _expression = Option<SelectionExpression>.Some(expression);
         return this;

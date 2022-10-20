@@ -1,7 +1,9 @@
 ﻿
 
+using Janus.Commons.CommandModels.Exceptions;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
+using System.Linq;
 
 namespace Janus.Commons.CommandModels;
 
@@ -70,13 +72,18 @@ public class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
         if (!dataSource.ContainsTableau(onTableauId))
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
 
+        (string _, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(onTableauId);
+
+        if (!dataSource[schemaName][tableauName].UpdateSets.Any(us => us.AttributeNames.SequenceEqual(dataSource[schemaName][tableauName].AttributeNames)))
+            throw new CommandAllowedOnTableauWideUpdateSetException();
+
         return new DeleteCommandBuilder(onTableauId, dataSource);
     }
 
 
     public IPostInitDeleteCommandBuilder WithSelection(Func<CommandSelectionBuilder, CommandSelectionBuilder> configuration)
     {
-        var selectionBuilder = new CommandSelectionBuilder(_dataSource, new() { _onTableauId });
+        var selectionBuilder = new CommandSelectionBuilder(_dataSource, _onTableauId);
         _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());
 
         return this;
