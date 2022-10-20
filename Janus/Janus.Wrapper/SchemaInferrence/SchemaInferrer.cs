@@ -50,6 +50,7 @@ public class SchemaInferrer
                                                                                                                             .WithOrdinal(attribute.Ordinal));
                                         }
                                     }
+                                    tableauBuilder.WithDefaultUpdateSet();
                                     return tableauBuilder;
                                 });
                             }
