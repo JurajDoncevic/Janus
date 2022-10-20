@@ -1,5 +1,7 @@
 ﻿using Janus.Commons.SchemaModels;
+using Janus.Commons.SchemaModels.Building;
 using Janus.Commons.SchemaModels.Exceptions;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -14,10 +16,12 @@ public class SchemaModelBuilderTests
         SchemaModelBuilder.InitDataSource("datasource1")
                           .AddSchema("schema1", schemaBuilder =>
                             schemaBuilder.AddTableau("tableau1", tableauBuilder =>
-                                    tableauBuilder.AddAttribute("attr1_FK", attributeBuilder =>
+                                    tableauBuilder.WithDescription("tableau1 description")
+                                                  .AddAttribute("attr1_FK", attributeBuilder =>
                                                       attributeBuilder.WithIsNullable(false)
                                                                       .WithDataType(DataTypes.INT)
                                                                       .WithOrdinal(0)
+                                                                      .WithDescription("attr1_FK description")
                                                                       .WithIsIdentity(true))
                                                   .AddAttribute("attr2", attributeBuilder =>
                                                       attributeBuilder.WithIsNullable(true)
@@ -30,8 +34,19 @@ public class SchemaModelBuilderTests
                                                                       .WithOrdinal(2)
                                                                       .WithIsIdentity(false))
                                                   .AddUpdateSet(updateSetBuilder => updateSetBuilder.WithAttributesNamed("attr1_FK", "attr2", "attr3")))
-                                         .AddTableau("tableau2", tableauBuilder => tableauBuilder)
-                                         .AddTableau("tableau3", tableauBuilder => tableauBuilder))
+                                         .AddTableau("tableau2", tableauBuilder => 
+                                            tableauBuilder.AddAttribute("attrX", attributeBuilder => attributeBuilder)
+                                                          .AddAttribute("attrY", attributeBuilder => attributeBuilder)
+                                                          .WithDefaultUpdateSet())
+                                         .AddTableau("tableau3", tableauBuilder =>
+                                            tableauBuilder.AddAttribute("attrX", attributeBuilder => attributeBuilder)
+                                                          .AddAttribute("attrY", attributeBuilder => attributeBuilder)
+                                                          .AddAttribute("attrZ", attributeBuilder => attributeBuilder)
+                                                          .AddAttribute("attrQ", attributeBuilder => attributeBuilder)
+                                                          .AddAttribute("attrP", attributeBuilder => attributeBuilder)
+                                                          .AddUpdateSet(conf => conf.WithAttributesNamed("attrX", "attrY", "attrZ"))
+                                                          .AddUpdateSet(conf => conf.WithAttributesNamed("attrQ", "attrP"))
+                                                          ))
                           .AddSchema("schema2", schemaBuilder => schemaBuilder)
                           .AddSchema("schema3", schemaBuilder => schemaBuilder)
                           .Build();
@@ -42,9 +57,16 @@ public class SchemaModelBuilderTests
         Assert.Contains("schema2", dataSource.SchemaNames);
         Assert.Contains("schema3", dataSource.SchemaNames);
         Assert.Equal("tableau1", dataSource["schema1"]["tableau1"].Name);
+        Assert.Equal("tableau1 description", dataSource["schema1"]["tableau1"].Description);
+        Assert.Single(dataSource["schema1"]["tableau1"].UpdateSets);
+        Assert.Equal(new UpdateSet(new HashSet<string> { "attr1_FK", "attr2", "attr3" }, dataSource["schema1"]["tableau1"]), dataSource["schema1"]["tableau1"].UpdateSets.First());
         Assert.Equal("tableau2", dataSource["schema1"]["tableau2"].Name);
+        Assert.Single(dataSource["schema1"]["tableau2"].UpdateSets);
+        Assert.Equal(new UpdateSet(new HashSet<string> { "attrX", "attrY" }, dataSource["schema1"]["tableau2"]), dataSource["schema1"]["tableau2"].UpdateSets.First());
         Assert.Equal("tableau3", dataSource["schema1"]["tableau3"].Name);
+        Assert.Equal(2, dataSource["schema1"]["tableau3"].UpdateSets.Count);
         Assert.Equal("attr1_FK", dataSource["schema1"]["tableau1"]["attr1_FK"].Name);
+        Assert.Equal("attr1_FK description", dataSource["schema1"]["tableau1"]["attr1_FK"].Description);
         Assert.Equal("attr2", dataSource["schema1"]["tableau1"]["attr2"].Name);
         Assert.Equal("attr3", dataSource["schema1"]["tableau1"]["attr3"].Name);
         Assert.Equal(DataTypes.INT, dataSource["schema1"]["tableau1"]["attr1_FK"].DataType);
@@ -72,6 +94,29 @@ public class SchemaModelBuilderTests
                                               .AddAttribute("attr2", attrBuilder => attrBuilder)
                                               .AddAttribute("attr3", attrBuilder => attrBuilder)
                                               .AddUpdateSet(conf => conf.WithAttributesNamed("attr1", "attrX", "attr3"))
+                                              )
+                            )
+                .Build();
+        });
+    }
+
+    [Fact(DisplayName = "Exception is thrown when adding an overlapping update set")]
+    public void BuildWithOverlapingUpdateSet()
+    {
+        Assert.Throws<UpdateSetsOverlapException>(() =>
+        {
+            var dataSource =
+                SchemaModelBuilder.InitDataSource("testDataSource")
+                    .AddSchema("testSchema", schemaBuilder =>
+                        schemaBuilder
+                            .AddTableau("testTableau", tableauBuilder =>
+                                tableauBuilder.AddAttribute("attr1", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr2", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr3", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr4", attrBuilder => attrBuilder)
+                                              .AddAttribute("attr5", attrBuilder => attrBuilder)
+                                              .AddUpdateSet(conf => conf.WithAttributesNamed("attr1", "attr2", "attr3"))
+                                              .AddUpdateSet(conf => conf.WithAttributesNamed("attr3", "attr4", "attr5"))
                                               )
                             )
                 .Build();

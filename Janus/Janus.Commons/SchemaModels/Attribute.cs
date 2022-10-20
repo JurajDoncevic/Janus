@@ -68,7 +68,7 @@ public sealed class Attribute
         _isIdentity = isIdentity;
         _isNullable = isNullable;
         _ordinal = ordinal;
-        _description = description;
+        _description = description ?? string.Empty;
         _tableau = tableau ?? throw new ArgumentNullException(nameof(tableau));
     }
 

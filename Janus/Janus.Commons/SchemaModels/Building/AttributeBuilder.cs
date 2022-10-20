@@ -97,9 +97,9 @@ public class AttributeBuilder : IAttributeBuilder
     }
 
     /// <summary>
-    /// Sets the attribute's description
+    /// Sets the attribute description
     /// </summary>
-    /// <param name="isNullable"></param>
+    /// <param name="attributeDescription"></param>
     /// <returns></returns>
     public AttributeBuilder WithDescription(string attributeDescription)
     {

@@ -84,7 +84,7 @@ public sealed class Tableau
         }
 
         _name = name;
-        _description = description;
+        _description = description ?? string.Empty;
         _schema = schema ?? throw new ArgumentNullException(nameof(schema));
         _attributes = new();
         _updateSets = new();
@@ -109,7 +109,7 @@ public sealed class Tableau
 
         if (!_attributes.ContainsKey(attribute.Name) && !_attributes.Values.ToList().Exists(a => a.Ordinal == attribute.Ordinal))
         {
-            attribute = new Attribute(attribute.Name, attribute.DataType, attribute.IsIdentity, attribute.IsNullable, automaticOrdinal, this);
+            attribute = new Attribute(attribute.Name, attribute.DataType, attribute.IsIdentity, attribute.IsNullable, automaticOrdinal, this, attribute.Description);
             _attributes.Add(attribute.Name, attribute);
             return true;
         }
@@ -137,7 +137,7 @@ public sealed class Tableau
     /// <returns>True on success, false on failure or if an overlap would be created</returns>
     internal bool AddUpdateSet(UpdateSet updateSet)
     {
-        if(updateSet.AttributeNames.All(attrId => Attributes.Select(attr => attr.Id).Contains(attrId)) && // all attributes in update set exist on this tableau
+        if(updateSet.AttributeNames.All(attrName => AttributeNames.Contains(attrName)) && // all attributes in update set exist on this tableau
            !_updateSets.Any(us => us.OverlapsWith(updateSet))) // no current update sets overlap with the new update set
         {
             return _updateSets.Add(updateSet);
@@ -173,5 +173,5 @@ public sealed class Tableau
     }
 
     public override string ToString()
-        => $"({Name} \n({string.Join("\n", Attributes)}))";
+        => $"({Name} \n({string.Join("\n", Attributes)}) \n({string.Join("\n", UpdateSets)}))";
 }

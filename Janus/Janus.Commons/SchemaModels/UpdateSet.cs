@@ -65,4 +65,9 @@ public class UpdateSet
     {
         return HashCode.Combine(_attributeNames);
     }
+
+    public override string ToString()
+    {
+        return $"({string.Join(" ", AttributeNames)})";
+    }
 }

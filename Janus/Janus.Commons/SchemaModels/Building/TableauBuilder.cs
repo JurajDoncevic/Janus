@@ -72,7 +72,12 @@ public class TableauBuilder : ITableauBuilder
     /// <returns></returns>
     public Tableau Build()
     {
-        return _tableau ?? new Tableau(_tableauName, _parentSchema, _tableauDescription);
+        return _tableau ?? new Tableau(
+            _tableauName, 
+            _tableau?.Attributes.ToList() ?? new List<Attribute>(), 
+            _parentSchema, 
+            _updateSets, 
+            _tableauDescription);
     }
 
     public IUpdateSetAdding AddUpdateSet(Func<IUpdateSetBuilder, IUpdateSetBuilder> configuration)
@@ -96,6 +101,7 @@ public class TableauBuilder : ITableauBuilder
             throw new UpdateSetsOverlapException(_updateSets, _tableauName);
         }
 
+        _tableau.AddUpdateSet(updateSet);
         return this;
     }
 

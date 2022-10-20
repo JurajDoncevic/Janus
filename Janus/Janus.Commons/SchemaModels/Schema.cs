@@ -54,7 +54,7 @@ public sealed class Schema
         }
 
         _name = name;
-        _description = description;
+        _description = description ?? string.Empty;
         _tableaus = new();
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
@@ -97,7 +97,7 @@ public sealed class Schema
 
         if (!_tableaus.ContainsKey(tableau.Name))
         {
-            tableau = new Tableau(tableau.Name, tableau.Attributes.ToList(), this); // copy just in case to assign correct parent
+            tableau = new Tableau(tableau.Name, tableau.Attributes.ToList(), this, tableau.UpdateSets.ToHashSet(), tableau.Description); // copy just in case to assign correct parent
             _tableaus.Add(tableau.Name, tableau);
             return true;
         }

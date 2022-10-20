@@ -78,7 +78,7 @@ public sealed class DataSource
         }
 
         _name = name;
-        _description = description;
+        _description = description ?? string.Empty;
         _version = String.IsNullOrEmpty(version) ? Guid.NewGuid().ToString() : version;
         _schemas = schemas.ToDictionary(schema => schema.Name, schema => schema);
     }
@@ -97,7 +97,7 @@ public sealed class DataSource
 
         if (!_schemas.ContainsKey(schema.Name))
         {
-            schema = new Schema(schema.Name, schema.Tableaus.ToList(), this);
+            schema = new Schema(schema.Name, schema.Tableaus.ToList(), this, schema.Description);
             _schemas.Add(schema.Name, schema);
             return true;
         }
