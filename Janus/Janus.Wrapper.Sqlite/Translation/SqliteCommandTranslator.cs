@@ -20,7 +20,7 @@ public class SqliteCommandTranslator
             .Bind<string, SqliteInsert>(instantiation => new SqliteInsert(instantiation, LocalizeTableauId(insert.OnTableauId)));
 
     public Result<string> TranslateMutation(Option<Mutation> mutation)
-        => ResultExtensions.AsResult(() 
+        => ResultExtensions.AsResult(()
             => mutation
                 ? $"SET {ValueUpdatesToSetExpression(mutation.Value.ValueUpdates)}"
                 : "SET ");
@@ -29,7 +29,7 @@ public class SqliteCommandTranslator
         => string.Join(
             ", ",
             valueUpdates.Map(kv => $"{kv.Key} = {MaybeWrapInQuot(kv.Value)}"));
-            
+
 
     public Result<string> TranslateInstantiation(Option<Instantiation> instantiation)
         => ResultExtensions.AsResult(()
@@ -39,7 +39,7 @@ public class SqliteCommandTranslator
                 : "DEFAULT VALUES");
     private string RowToInstantiationString(RowData row)
         => $"({string.Join(",", row.AttributeValues.Values.Map(MaybeWrapInQuot))})";
-            
+
 
     public Result<string> TranslateSelection(Option<CommandSelection> selection)
         => ResultExtensions.AsResult(()
@@ -110,7 +110,7 @@ public class SqliteCommandTranslator
     }
 
     private object? MaybeWrapInQuot(object? value)
-        => value == null 
+        => value == null
             ? null
             : value is string
                 ? $"\"{value}\""

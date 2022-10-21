@@ -3,7 +3,6 @@ using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
-using System.Security.Cryptography;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Commons.CommandModels;
@@ -92,8 +91,8 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
     {
         var selectionBuilder = new CommandSelectionBuilder(_dataSource, _onTableauId);
         _selection = Option<CommandSelection>.Some(configuration(selectionBuilder).Build());
-        
-        if(selectionBuilder.ReferencedUpdateSet is not null &&
+
+        if (selectionBuilder.ReferencedUpdateSet is not null &&
            _targetUpdateSet is not null &&
            !selectionBuilder.ReferencedUpdateSet.IsEmpty() &&
            !_targetUpdateSet.Equals(selectionBuilder.ReferencedUpdateSet))

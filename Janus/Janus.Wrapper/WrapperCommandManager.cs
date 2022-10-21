@@ -5,7 +5,7 @@ using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
-public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> 
+public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>
     : IComponentCommandManager
     where TDeleteCommand : LocalDelete<TSelection>
     where TInsertCommand : LocalInsert<TInstantiation>
@@ -24,14 +24,14 @@ public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateComman
 
     public async Task<Result> RunCommand(BaseCommand command)
         => await (command switch
-            {
-                DeleteCommand deleteCommand => Task.FromResult(_commandTranslator.TranslateDelete(deleteCommand))
-                                                .Bind(_commandExecutor.ExecuteDeleteCommand),
-                InsertCommand insertCommand => Task.FromResult(_commandTranslator.TranslateInsert(insertCommand))
-                                                .Bind(_commandExecutor.ExecuteInsertCommand),
-                UpdateCommand updateCommand => Task.FromResult(_commandTranslator.TranslateUpdate(updateCommand))
-                                                .Bind(_commandExecutor.ExecuteUpdateCommand),   
-                _ => Task.FromResult(Result.OnFailure("Unknown command type"))
-            });
+        {
+            DeleteCommand deleteCommand => Task.FromResult(_commandTranslator.TranslateDelete(deleteCommand))
+                                            .Bind(_commandExecutor.ExecuteDeleteCommand),
+            InsertCommand insertCommand => Task.FromResult(_commandTranslator.TranslateInsert(insertCommand))
+                                            .Bind(_commandExecutor.ExecuteInsertCommand),
+            UpdateCommand updateCommand => Task.FromResult(_commandTranslator.TranslateUpdate(updateCommand))
+                                            .Bind(_commandExecutor.ExecuteUpdateCommand),
+            _ => Task.FromResult(Result.OnFailure("Unknown command type"))
+        });
 
 }

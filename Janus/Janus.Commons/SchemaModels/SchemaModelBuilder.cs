@@ -1,5 +1,4 @@
 ﻿using Janus.Commons.SchemaModels.Building;
-using Janus.Commons.SchemaModels.Exceptions;
 
 namespace Janus.Commons.SchemaModels;
 

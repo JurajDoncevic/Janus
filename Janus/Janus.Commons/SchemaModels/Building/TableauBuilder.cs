@@ -73,10 +73,10 @@ public class TableauBuilder : ITableauBuilder
     public Tableau Build()
     {
         return _tableau ?? new Tableau(
-            _tableauName, 
-            _tableau?.Attributes.ToList() ?? new List<Attribute>(), 
-            _parentSchema, 
-            _updateSets, 
+            _tableauName,
+            _tableau?.Attributes.ToList() ?? new List<Attribute>(),
+            _parentSchema,
+            _updateSets,
             _tableauDescription);
     }
 
@@ -119,7 +119,7 @@ public class TableauBuilder : ITableauBuilder
                 return tableau;
             });
         // add new update set if tableau has attributes
-        if(_tableau.Attributes.Count > 0)
+        if (_tableau.Attributes.Count > 0)
         {
             UpdateSet updateSet = new UpdateSet(_tableau.AttributeNames.ToHashSet(), _tableau);
 

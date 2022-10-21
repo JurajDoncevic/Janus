@@ -16,7 +16,7 @@ public static class Helpers
     public static ISchemaAdding AddSchemasWith<T>(this IDataSourceEditing dataSourceEditing, IEnumerable<T> values, Func<T, ISchemaAdding, ISchemaAdding> addingFunc)
     {
         ISchemaAdding schemaAdding = (ISchemaAdding)dataSourceEditing;
-        foreach(var item in values)
+        foreach (var item in values)
         {
             schemaAdding = addingFunc(item, schemaAdding);
         }

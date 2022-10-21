@@ -1,5 +1,4 @@
 ﻿using Janus.Commons.SchemaModels;
-using Janus.Commons.SchemaModels.Building;
 using Janus.Commons.SchemaModels.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +33,7 @@ public class SchemaModelBuilderTests
                                                                       .WithOrdinal(2)
                                                                       .WithIsIdentity(false))
                                                   .AddUpdateSet(updateSetBuilder => updateSetBuilder.WithAttributesNamed("attr1_FK", "attr2", "attr3")))
-                                         .AddTableau("tableau2", tableauBuilder => 
+                                         .AddTableau("tableau2", tableauBuilder =>
                                             tableauBuilder.AddAttribute("attrX", attributeBuilder => attributeBuilder)
                                                           .AddAttribute("attrY", attributeBuilder => attributeBuilder)
                                                           .WithDefaultUpdateSet())
@@ -89,7 +88,7 @@ public class SchemaModelBuilderTests
                 SchemaModelBuilder.InitDataSource("testDataSource")
                     .AddSchema("testSchema", schemaBuilder =>
                         schemaBuilder
-                            .AddTableau("testTableau", tableauBuilder => 
+                            .AddTableau("testTableau", tableauBuilder =>
                                 tableauBuilder.AddAttribute("attr1", attrBuilder => attrBuilder)
                                               .AddAttribute("attr2", attrBuilder => attrBuilder)
                                               .AddAttribute("attr3", attrBuilder => attrBuilder)

@@ -21,7 +21,7 @@ public class UpdateSetBuilder : IUpdateSetBuilder
 
     public IUpdateSetBuilder WithAttributesNamed(params string[] attributeNames)
     {
-        if(attributeNames is null || attributeNames.Count() == 0)
+        if (attributeNames is null || attributeNames.Count() == 0)
         {
             throw new UpdateSetEmptyException();
         }

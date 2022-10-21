@@ -40,7 +40,7 @@ public class DataSourceBuilder : IDataSourceBuilder
     public ISchemaAdding AddSchema(string schemaName, Func<ISchemaBuilder, ISchemaBuilding> configuration)
     {
         // on first add initiate the data source
-        if(_dataSource == null)
+        if (_dataSource == null)
         {
             _dataSource = new DataSource(_dataSourceName, _dataSourceDescription, _dataSourceVersion);
         }

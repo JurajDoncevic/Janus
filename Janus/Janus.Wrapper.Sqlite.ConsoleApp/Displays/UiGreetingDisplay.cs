@@ -1,5 +1,4 @@
 ﻿using FunctionalExtensions.Base.Results;
-using Janus.Wrapper.Sqlite;
 
 namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class UiGreetingDisplay : BaseDisplay

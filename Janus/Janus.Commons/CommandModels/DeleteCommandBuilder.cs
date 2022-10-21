@@ -3,7 +3,6 @@
 using Janus.Commons.CommandModels.Exceptions;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
-using System.Linq;
 
 namespace Janus.Commons.CommandModels;
 

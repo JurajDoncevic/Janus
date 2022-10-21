@@ -100,9 +100,9 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
                                             Ordinal = attr.Ordinal,
                                             Description = attr.Description
                                         }).ToList(),
-                                    UpdateSets = tableau.UpdateSets.Map(us => 
-                                        new UpdateSetDto 
-                                        { 
+                                    UpdateSets = tableau.UpdateSets.Map(us =>
+                                        new UpdateSetDto
+                                        {
                                             AttributeIds = us.AttributeNames.ToList()
                                         }).ToList()
                                 }).ToList()

@@ -1,5 +1,4 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Results;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
@@ -27,13 +26,13 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, ITransformi
         // get the remote point from the communication node via node id
         // cannot be a MASK or UNKNOWN
         var registeredRemotePoint = _communicationNode.RemotePoints
-                            .FirstOrDefault(rp => rp.Equals(remotePoint) && 
-                                                  rp.RemotePointType != RemotePointTypes.MASK && 
+                            .FirstOrDefault(rp => rp.Equals(remotePoint) &&
+                                                  rp.RemotePointType != RemotePointTypes.MASK &&
                                                   rp.RemotePointType != RemotePointTypes.UNDETERMINED);
-        if(registeredRemotePoint == null)
+        if (registeredRemotePoint == null)
         {
             return Result.OnFailure($"Remote point {remotePoint} isn't registered or is of incorrect type");
-        }    
+        }
 
         return _schemaInferredRemotePoints.Add(registeredRemotePoint)
             ? Result.OnSuccess($"Added {registeredRemotePoint} to schema inferrence")
@@ -43,7 +42,7 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, ITransformi
     public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint)
     {
         var inferredRemotePoint = _schemaInferredRemotePoints.FirstOrDefault(rp => rp.Equals(remotePoint));
-        if(inferredRemotePoint == null)
+        if (inferredRemotePoint == null)
         {
             return Result.OnFailure($"Remote point {remotePoint} not in schema inferrence");
         }
@@ -74,7 +73,7 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, ITransformi
         var schemaRequestTasks =
         _schemaInferredRemotePoints
             .Select(_communicationNode.SendSchemaRequest);
-            
+
 
         return await Task.WhenAll(schemaRequestTasks);
     }

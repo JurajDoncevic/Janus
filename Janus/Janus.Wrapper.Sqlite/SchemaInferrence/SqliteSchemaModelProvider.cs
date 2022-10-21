@@ -36,8 +36,8 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
             // FROM doesn't take params, so a concat string has to be used
             // injection is avoided by checking if the tableau exists
             command.CommandText =
-                $"SELECT * FROM pragma_table_info('{tableauName}');"; 
-            
+                $"SELECT * FROM pragma_table_info('{tableauName}');";
+
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -76,7 +76,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
 
             while (reader.Read())
             {
-                schemaInfos = 
+                schemaInfos =
                     schemaInfos.Append(
                         new SchemaInfo(reader.GetFieldValue<string>(1))); // get `name`
             }
@@ -129,7 +129,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
                 "SELECT 1 " +
                 "FROM sqlite_schema " +
                 "WHERE type = 'table' AND name NOT LIKE 'sqlite%' AND name = $tableau_name);";
-            
+
             command.Parameters.AddWithValue("$tableau_name", tableauName);
 
             using var reader = command.ExecuteReader();

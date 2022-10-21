@@ -19,8 +19,8 @@ internal class AttributeDto
     public bool IsNullable { get; set; }
 
     [ProtoMember(5)]
-    public int Ordinal { get; set; }    
-    
+    public int Ordinal { get; set; }
+
     [ProtoMember(6)]
     public string Description { get; set; }
 }

@@ -159,7 +159,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
         // send response, but don't wait
         _logger?.Info("Sending {0} as a response to remote point {1} in exchange {2}", response.Preamble, remotePoint, response.ExchangeId);
         _networkAdapter.SendHelloResponse(response, remotePoint);
-        
+
         // invoke event
         HelloRequestReceived?.Invoke(this, new HelloReqEventArgs(message, remotePoint, response.RememberMe));
     }

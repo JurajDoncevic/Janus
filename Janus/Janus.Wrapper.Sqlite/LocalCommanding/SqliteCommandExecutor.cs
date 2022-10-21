@@ -1,11 +1,6 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Wrapper.LocalCommanding;
 using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Wrapper.Sqlite.LocalCommanding;
 public class SqliteCommandExecutor : ICommandExecutor<SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string>

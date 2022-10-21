@@ -1,5 +1,4 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Results;
 using Janus.Communication.Remotes;
 using Janus.Logging;
 using Sharprompt;

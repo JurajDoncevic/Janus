@@ -137,7 +137,7 @@ public sealed class Tableau
     /// <returns>True on success, false on failure or if an overlap would be created</returns>
     internal bool AddUpdateSet(UpdateSet updateSet)
     {
-        if(updateSet.AttributeNames.All(attrName => AttributeNames.Contains(attrName)) && // all attributes in update set exist on this tableau
+        if (updateSet.AttributeNames.All(attrName => AttributeNames.Contains(attrName)) && // all attributes in update set exist on this tableau
            !_updateSets.Any(us => us.OverlapsWith(updateSet))) // no current update sets overlap with the new update set
         {
             return _updateSets.Add(updateSet);

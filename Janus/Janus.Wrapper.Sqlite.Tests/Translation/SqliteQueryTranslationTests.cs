@@ -2,8 +2,8 @@
 using Janus.Wrapper.SchemaInferrence;
 using Janus.Wrapper.Sqlite.SchemaInferrence;
 using Janus.Wrapper.Sqlite.Translation;
-using static Janus.Commons.SelectionExpressions.Expressions;
 using Xunit;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Wrapper.Sqlite.Tests.Translation;
 public class SqliteQueryTranslationTests

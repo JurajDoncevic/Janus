@@ -1,11 +1,11 @@
-﻿using Janus.Commons.QueryModels;
-using static Janus.Commons.SelectionExpressions.Expressions;
+﻿using FunctionalExtensions.Base.Results;
+using Janus.Commons.QueryModels;
 using Janus.Wrapper.SchemaInferrence;
 using Janus.Wrapper.Sqlite.LocalQuerying;
 using Janus.Wrapper.Sqlite.SchemaInferrence;
 using Janus.Wrapper.Sqlite.Translation;
-using FunctionalExtensions.Base.Results;
 using Xunit;
+using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Wrapper.Sqlite.Tests;
 public class SqliteQueryExecutionTests
@@ -16,7 +16,7 @@ public class SqliteQueryExecutionTests
     [Fact(DisplayName = "Execute query over Sqlite chinook data source")]
     public async void ChinookQueryExecutionTest()
     {
-        var dataSource = 
+        var dataSource =
                 new SchemaInferrer(new SqliteSchemaModelProvider(_connectionString), "chinook")
                     .InferSchemaModel().Data!;
 

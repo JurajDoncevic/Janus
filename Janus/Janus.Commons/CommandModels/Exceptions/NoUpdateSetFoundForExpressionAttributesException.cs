@@ -1,5 +1,4 @@
 ﻿using Janus.Commons.SchemaModels;
-using System.Runtime.Serialization;
 
 namespace Janus.Commons.CommandModels.Exceptions;
 [Serializable]

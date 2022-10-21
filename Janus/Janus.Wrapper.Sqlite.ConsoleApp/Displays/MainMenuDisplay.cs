@@ -1,6 +1,5 @@
 ﻿using FunctionalExtensions.Base.Results;
 using Janus.Logging;
-using Janus.Wrapper.Sqlite;
 using Sharprompt;
 
 namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;

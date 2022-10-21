@@ -43,7 +43,7 @@ public class SchemaBuilder : ISchemaBuilder
     /// <exception cref="TableauNameAssignedException"></exception>
     public ITableauAdding AddTableau(string tableauName, Func<ITableauBuilder, ITableauBuilding> configuration)
     {
-        if(_schema is null)
+        if (_schema is null)
         {
             _schema = new Schema(_schemaName, _parentDataSource, _schemaDescription);
         }

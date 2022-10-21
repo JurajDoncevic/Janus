@@ -2,25 +2,25 @@
 using Janus.Commons;
 using Janus.Communication;
 using Janus.Communication.Nodes.Implementations;
-using Janus.Wrapper;
-using Janus.Wrapper.Sqlite.ConsoleApp;
 using Janus.Serialization;
 using Janus.Serialization.Avro;
 using Janus.Serialization.Bson;
 using Janus.Serialization.MongoBson;
 using Janus.Serialization.Protobufs;
+using Janus.Wrapper;
+using Janus.Wrapper.SchemaInferrence;
+using Janus.Wrapper.Sqlite;
+using Janus.Wrapper.Sqlite.ConsoleApp;
+using Janus.Wrapper.Sqlite.LocalCommanding;
+using Janus.Wrapper.Sqlite.LocalQuerying;
+using Janus.Wrapper.Sqlite.SchemaInferrence;
+using Janus.Wrapper.Sqlite.Translation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog;
 using NLog.Extensions.Hosting;
 using NLog.Extensions.Logging;
-using Janus.Wrapper.Sqlite;
-using Janus.Wrapper.Sqlite.Translation;
-using Janus.Wrapper.Sqlite.LocalQuerying;
-using Janus.Wrapper.Sqlite.SchemaInferrence;
-using Janus.Wrapper.SchemaInferrence;
-using Janus.Wrapper.Sqlite.LocalCommanding;
 
 // get the application options
 var applicationOptions =
@@ -102,7 +102,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<SqliteDataTranslator>(provider => new SqliteDataTranslator(wrapperOptions.NodeId));
         services.AddSingleton<SqliteQueryExecutor>(provider => new SqliteQueryExecutor(wrapperOptions.SourceConnectionString));
         services.AddSingleton<SqliteWrapperQueryManager>();
-        
+
         // setup commanding
         services.AddSingleton<SqliteCommandTranslator>();
         services.AddSingleton<SqliteCommandExecutor>(provider => new SqliteCommandExecutor(wrapperOptions.SourceConnectionString));
@@ -113,7 +113,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<SchemaInferrer>(
             provider => new SchemaInferrer(provider.GetService<SqliteSchemaModelProvider>()!, wrapperOptions.NodeId));
         services.AddSingleton<SqliteWrapperSchemaManager>();
-        
+
         // setup controller
         services.AddSingleton<SqliteWrapperController>();
 

@@ -1,11 +1,6 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Results;
 using Janus.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public class InputSchemataDisplay : BaseDisplay

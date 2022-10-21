@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janus.Wrapper.Sqlite.Tests.SchemaInferrence;
+﻿namespace Janus.Wrapper.Sqlite.Tests.SchemaInferrence;
 public class SqliteSchemaInferrenceUsgsTests : SqliteSchemaInferrenceTests
 {
     public override string ConnectionString => "Data Source=./usgs-lower-us.db;";
