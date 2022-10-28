@@ -387,7 +387,7 @@ public class JoiningBuilder
 
         // check attribute (and tableau) existence
         if (!_dataSource.ContainsAttribute(foreignKeyAttributeId))
-            throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSource.Name);
+            throw new AttributeDoesNotExistException(foreignKeyAttributeId, _dataSource.Name);
         if (!_dataSource.ContainsAttribute(primaryKeyAttributeId))
             throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSource.Name);
 
