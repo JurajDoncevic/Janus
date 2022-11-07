@@ -53,6 +53,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.Sqlite.Consol
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.Sqlite.Tests", "Janus.Wrapper.Sqlite.Tests\Janus.Wrapper.Sqlite.Tests.csproj", "{803ECC90-3F5C-4621-9942-E166A4ADAF0B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediation", "Janus.Mediation\Janus.Mediation.csproj", "{284D0294-7F19-4DF7-A880-66B10D8410CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediation.Tests", "Janus.Mediation.Tests\Janus.Mediation.Tests.csproj", "{97928F81-735E-4450-846F-1857BEFDA742}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +163,14 @@ Global
 		{803ECC90-3F5C-4621-9942-E166A4ADAF0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{803ECC90-3F5C-4621-9942-E166A4ADAF0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{803ECC90-3F5C-4621-9942-E166A4ADAF0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{284D0294-7F19-4DF7-A880-66B10D8410CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{284D0294-7F19-4DF7-A880-66B10D8410CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{284D0294-7F19-4DF7-A880-66B10D8410CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{284D0294-7F19-4DF7-A880-66B10D8410CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97928F81-735E-4450-846F-1857BEFDA742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97928F81-735E-4450-846F-1857BEFDA742}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97928F81-735E-4450-846F-1857BEFDA742}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97928F81-735E-4450-846F-1857BEFDA742}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
