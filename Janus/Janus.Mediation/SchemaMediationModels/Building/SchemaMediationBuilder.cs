@@ -1,4 +1,4 @@
-﻿namespace Janus.Mediation.MediationModels.Building;
+﻿namespace Janus.Mediation.SchemaMediationModels.Building;
 
 /// <summary>
 /// Schema mediation builder interface

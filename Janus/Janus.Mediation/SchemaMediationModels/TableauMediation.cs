@@ -1,6 +1,6 @@
-﻿using Janus.Mediation.MediationModels.MediationQueryModels;
+﻿using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 
-namespace Janus.Mediation.MediationModels;
+namespace Janus.Mediation.SchemaMediationModels;
 /// <summary>
 /// Describes a tableau mediation
 /// </summary>

@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
-using Janus.Mediation.MediationModels.Exceptions;
-using Janus.Mediation.MediationModels.SourceQueryModels.Building;
+using Janus.Mediation.SchemaMediationModels.Exceptions;
+using Janus.Mediation.SchemaMediationModels.SourceQueryModels.Building;
 
 namespace Janus.Mediation.Tests.SourceQueryModels;
 public class SourceQueryModelsTests

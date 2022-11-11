@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Mediation.MediationModels.Exceptions;
+namespace Janus.Mediation.SchemaMediationModels.Exceptions;
 
 public class JoinedAttributesNotOfSameTypeException : Exception
 {

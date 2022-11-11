@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Mediation.MediationModels;
+namespace Janus.Mediation.SchemaMediationModels;
 
 /// <summary>
 /// Describes a data source mediation

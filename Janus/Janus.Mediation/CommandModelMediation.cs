@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.CommandModels;
 using Janus.Commons.SchemaModels;
-using Janus.Mediation.MediationModels;
+using Janus.Mediation.SchemaMediationModels;
 
 namespace Janus.Mediation;
 /// <summary>

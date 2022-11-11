@@ -1,4 +1,4 @@
-﻿namespace Janus.Mediation.MediationModels;
+﻿namespace Janus.Mediation.SchemaMediationModels;
 
 /// <summary>
 /// Describes a schema mediation

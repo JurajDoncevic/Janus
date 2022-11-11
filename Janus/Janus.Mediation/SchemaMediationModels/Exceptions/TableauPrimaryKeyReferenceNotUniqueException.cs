@@ -1,6 +1,6 @@
-﻿using Janus.Mediation.MediationModels.MediationQueryModels;
+﻿using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 
-namespace Janus.Mediation.MediationModels.Exceptions;
+namespace Janus.Mediation.SchemaMediationModels.Exceptions;
 
 public class TableauPrimaryKeyReferenceNotUniqueException : Exception
 {

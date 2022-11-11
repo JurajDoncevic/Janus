@@ -1,4 +1,4 @@
-﻿namespace Janus.Mediation.MediationModels.MediationQueryModels;
+﻿namespace Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 
 /// <summary>
 /// Describes a projection clause

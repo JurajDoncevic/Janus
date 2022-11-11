@@ -1,9 +1,9 @@
 ﻿using Janus.Commons.SchemaModels;
-using Janus.Mediation.MediationModels.Exceptions;
-using Janus.Mediation.MediationModels.MediationQueryModels;
+using Janus.Mediation.SchemaMediationModels.Exceptions;
+using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 using Janus.Commons;
 
-namespace Janus.Mediation.MediationModels.SourceQueryModels.Building;
+namespace Janus.Mediation.SchemaMediationModels.SourceQueryModels.Building;
 /// <summary>
 /// Mediation source query builder starting interface
 /// </summary>

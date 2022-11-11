@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Mediation.MediationModels.Building;
+namespace Janus.Mediation.SchemaMediationModels.Building;
 
 /// <summary>
 /// Mediation builder entry point

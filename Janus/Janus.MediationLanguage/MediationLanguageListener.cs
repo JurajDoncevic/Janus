@@ -1,10 +1,10 @@
 ﻿using Antlr4.Runtime.Misc;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
-using Janus.Mediation.MediationModels;
-using Janus.Mediation.MediationModels.Building;
-using Janus.Mediation.MediationModels.MediationQueryModels;
-using Janus.Mediation.MediationModels.SourceQueryModels.Building;
+using Janus.Mediation.SchemaMediationModels;
+using Janus.Mediation.SchemaMediationModels.Building;
+using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
+using Janus.Mediation.SchemaMediationModels.SourceQueryModels.Building;
 
 namespace Janus.MediationLanguage;
 public class MediationLanguageListener : MediationLanguageBaseListener

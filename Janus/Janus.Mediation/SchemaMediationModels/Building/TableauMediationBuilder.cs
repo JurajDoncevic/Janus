@@ -1,7 +1,7 @@
-﻿using Janus.Mediation.MediationModels.Exceptions;
-using Janus.Mediation.MediationModels.MediationQueryModels;
+﻿using Janus.Mediation.SchemaMediationModels.Exceptions;
+using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 
-namespace Janus.Mediation.MediationModels.Building;
+namespace Janus.Mediation.SchemaMediationModels.Building;
 
 /// <summary>
 /// Tableau mediation builder interface

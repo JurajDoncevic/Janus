@@ -1,4 +1,4 @@
-﻿namespace Janus.Mediation.MediationModels.Exceptions;
+﻿namespace Janus.Mediation.SchemaMediationModels.Exceptions;
 
 public class JoinsNotConnectedException : Exception
 {

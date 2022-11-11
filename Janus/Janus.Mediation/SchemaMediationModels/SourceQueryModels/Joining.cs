@@ -1,6 +1,6 @@
 ﻿using FunctionalExtensions.Base;
 
-namespace Janus.Mediation.MediationModels.MediationQueryModels;
+namespace Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 
 /// <summary>
 /// Describes a source query joining clause
