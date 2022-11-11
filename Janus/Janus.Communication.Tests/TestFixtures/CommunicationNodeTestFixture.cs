@@ -119,6 +119,7 @@ public abstract class CommunicationNodeTestFixture
 
     public Query GetQuery()
         => QueryModelBuilder.InitQueryOnDataSource("dataSource.schema1.tableau1", GetSchema())
+            .WithName("testQuery")
             .WithJoining(conf => conf.AddJoin("dataSource.schema1.tableau1.attr1", "dataSource.schema1.tableau2.attr1"))
             .WithSelection(conf => conf.WithExpression(LT("dataSource.schema1.tableau1.attr3", 7.0)))
             .WithProjection(conf => conf.AddAttribute("dataSource.schema1.tableau1.attr1")
@@ -139,6 +140,7 @@ public abstract class CommunicationNodeTestFixture
                 { "dataSource.schema1.tableau2.attr1", DataTypes.INT },
                 { "dataSource.schema1.tableau2.attr3", DataTypes.DECIMAL }
                 })
+                .WithName("testData")
                 .AddRow(conf => conf.WithRowData(new()
                 {
                 { "dataSource.schema1.tableau1.attr1", 1 },
