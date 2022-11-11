@@ -110,6 +110,7 @@ public class QueryModelBuilderTests
 
         var query =
         QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
+                    .WithName("testQuery")
                     .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr2", "testDataSource.schema1.tableau2.attr1")
                                              .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
                     .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
@@ -128,6 +129,7 @@ public class QueryModelBuilderTests
         Assert.Equal(tableauId, query.OnTableauId);
         Assert.True(query.Joining);
         Assert.Equal(2, query.Joining.Value.Joins.Count);
+        Assert.Equal("testQuery", query.Name);
     }
 
 
@@ -337,6 +339,7 @@ public class QueryModelBuilderTests
 
         var query =
         QueryModelOpenBuilder.InitOpenQuery(tableauId)
+                    .WithName("testOpenQuery")
                     .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr2", "testDataSource.schema1.tableau2.attr1")
                                              .AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau3.attr1"))
                     .WithProjection(conf => conf.AddAttribute("testDataSource.schema1.tableau1.attr1")
@@ -356,6 +359,7 @@ public class QueryModelBuilderTests
         Assert.True(query.Joining);
         Assert.Equal(2, query.Joining.Value.Joins.Count);
         Assert.True(query.IsValidForDataSource(dataSource));
+        Assert.Equal("testOpenQuery", query.Name);
     }
 
 

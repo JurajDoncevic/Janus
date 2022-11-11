@@ -46,11 +46,12 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
     /// </summary>
     /// <param name="tabularData">Tabular data model</param>
     /// <returns>tabular data DTO</returns>
-    internal Result<TabularDataDto> ToDto(TabularData? tabularData)
+    internal Result<TabularDataDto> ToDto(TabularData tabularData)
         => ResultExtensions.AsResult(() =>
         {
             var tabularDataDto = new TabularDataDto
             {
+                Name = tabularData.Name,
                 AttributeDataTypes = tabularData.AttributeDataTypes.ToDictionary(kv => kv.Key, kv => kv.Value),
                 AttributeValues = tabularData.RowData.Select(rd => rd.AttributeValues.ToDictionary(kv => kv.Key, kv => kv.Value)).ToList()
             };
@@ -68,7 +69,8 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
         {
             var tabularData =
                 tabularDataDto.AttributeValues.Fold(
-                    TabularDataBuilder.InitTabularData(tabularDataDto.AttributeDataTypes),
+                    TabularDataBuilder.InitTabularData(tabularDataDto.AttributeDataTypes)
+                                      .WithName(tabularDataDto.Name),
                     (attrVals, builder) => builder.AddRow(
                         conf => conf.WithRowData(attrVals.ToDictionary(
                             av => av.Key,

@@ -7,6 +7,7 @@ namespace Janus.Commons.QueryModels;
 /// </summary>
 public class Query
 {
+    private readonly string _name;
     private Option<Projection> _projection;
     private Option<Selection> _selection;
     private Option<Joining> _joining;
@@ -19,12 +20,13 @@ public class Query
     /// <param name="projection">Projection clause</param>
     /// <param name="selection">Selection clause</param>
     /// <param name="joining">Joining clause</param>
-    internal Query(string onTableuId, Option<Projection> projection, Option<Selection> selection, Option<Joining> joining)
+    internal Query(string onTableuId, Option<Projection> projection, Option<Selection> selection, Option<Joining> joining, string? name = null)
     {
         _onTableauId = onTableuId;
         _projection = projection;
         _selection = selection;
         _joining = joining;
+        _name = string.IsNullOrEmpty(name) ? Guid.NewGuid().ToString() : name;
     }
 
     /// <summary>
@@ -47,9 +49,15 @@ public class Query
     /// </summary>
     public string OnTableauId { get => _onTableauId; set => _onTableauId = value; }
 
+    /// <summary>
+    /// Identifier for this query and its possible results
+    /// </summary>
+    public string Name => _name;
+
     public override bool Equals(object? obj)
     {
         return obj is Query query &&
+               _name.Equals(query.Name) &&
                EqualityComparer<Option<Projection>>.Default.Equals(_projection, query._projection) &&
                EqualityComparer<Option<Selection>>.Default.Equals(_selection, query._selection) &&
                EqualityComparer<Option<Joining>>.Default.Equals(_joining, query._joining) &&
@@ -58,7 +66,7 @@ public class Query
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_projection, _selection, _joining, _onTableauId);
+        return HashCode.Combine(_projection, _selection, _joining, _onTableauId, _name);
     }
 
 

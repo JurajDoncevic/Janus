@@ -11,6 +11,13 @@ namespace Janus.Commons.QueryModels;
 public interface IPostInitOpenBuilder
 {
     /// <summary>
+    /// Sets the query name identifier for the query
+    /// </summary>
+    /// <param name="queryName">Query name</param>
+    /// <returns>Current builder</returns>
+    IPostInitOpenBuilder WithName(string queryName);
+
+    /// <summary>
     /// Specifies a joining clause of the query
     /// </summary>
     /// <param name="configuration">Joining configuration over a <see cref="JoiningBuilder"/></param>
@@ -46,6 +53,7 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
     private Option<Joining> _joining;
     private readonly string _queryOnTableauId;
     private HashSet<string> _referencedTableaus;
+    private string? _queryName;
 
     /// <summary>
     /// Constructor. Used when build-time validation is NOT required.
@@ -135,7 +143,14 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
     /// <returns>Query</returns>
     public Query Build()
     {
-        return new Query(_queryOnTableauId, _projection, _selection, _joining);
+        return new Query(_queryOnTableauId, _projection, _selection, _joining, _queryName);
+    }
+
+    public IPostInitOpenBuilder WithName(string queryName)
+    {
+        _queryName = queryName;
+
+        return this;
     }
 }
 
@@ -144,7 +159,7 @@ public class QueryModelOpenBuilder : IPostInitOpenBuilder
 /// </summary>
 public class SelectionOpenBuilder
 {
-    private SelectionExpression _expression;
+    private SelectionExpression? _expression;
     internal bool IsConfigured => _expression != null;
 
     /// <summary>

@@ -77,6 +77,13 @@ public interface IPostJoiningBuilder
 public interface IPostInitBuilder
 {
     /// <summary>
+    /// Sets the query name as a identifier
+    /// </summary>
+    /// <param name="queryName">Query name</param>
+    /// <returns>Current builder</returns>
+    public IPostInitBuilder WithName(string queryName);
+
+    /// <summary>
     /// Specifies a joining clause of the query
     /// </summary>
     /// <param name="configuration">Joining configuration over a <see cref="JoiningBuilder"/></param>
@@ -116,6 +123,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     private readonly string _queryOnTableauId;
     private readonly DataSource _dataSource;
     private HashSet<string> _referencedTableauIds;
+    private string? _queryName;
 
     /// <summary>
     /// Constructor. Used when build-time validation is required.
@@ -223,7 +231,14 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
     /// <returns>Query</returns>
     public Query Build()
     {
-        return new Query(_queryOnTableauId, _projection, _selection, _joining);
+        return new Query(_queryOnTableauId, _projection, _selection, _joining, _queryName);
+    }
+
+    public IPostInitBuilder WithName(string queryName)
+    {
+        _queryName = queryName;
+
+        return this;
     }
 }
 

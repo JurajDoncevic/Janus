@@ -6,11 +6,23 @@ namespace Janus.Commons.DataModels;
 public interface IPostInitTabularDataBuilder
 {
     /// <summary>
+    /// Sets the tabular data's ID
+    /// </summary>
+    /// <param name="tabularDataName"></param>
+    /// <returns>Current builder</returns>
+    IPostInitTabularDataBuilder WithName(string tabularDataName);
+
+    /// <summary>
     /// Adds the configured row of data to the tabular data
     /// </summary>
     /// <param name="configuration"></param>
-    /// <returns></returns>
+    /// <returns>Current builder</returns>
     IPostInitTabularDataBuilder AddRow(Func<RowDataBuilder, RowDataBuilder> configuration);
+
+    /// <summary>
+    /// Builds the configured tabular data
+    /// </summary>
+    /// <returns></returns>
     TabularData Build();
 }
 
@@ -21,6 +33,7 @@ public class TabularDataBuilder : IPostInitTabularDataBuilder
 {
     private readonly Dictionary<string, DataTypes> _attributeDataTypes;
     private readonly List<RowData> _rows;
+    private string? _name = null;
 
     private TabularDataBuilder(Dictionary<string, DataTypes> attributeDataTypes)
     {
@@ -38,6 +51,12 @@ public class TabularDataBuilder : IPostInitTabularDataBuilder
         return new TabularDataBuilder(attributeDataTypes);
     }
 
+    public IPostInitTabularDataBuilder WithName(string tabularDataName)
+    {
+        _name = tabularDataName;
+        return this;
+    }
+
     public IPostInitTabularDataBuilder AddRow(Func<RowDataBuilder, RowDataBuilder> configuration)
     {
         var rowDataBuilder = RowDataBuilder.InitRowWithDataTypes(_attributeDataTypes);
@@ -47,7 +66,7 @@ public class TabularDataBuilder : IPostInitTabularDataBuilder
         return this;
     }
 
-    public TabularData Build() => new TabularData(_rows, _attributeDataTypes);
+    public TabularData Build() => new TabularData(_rows, _attributeDataTypes, _name);
 }
 
 public class RowDataBuilder

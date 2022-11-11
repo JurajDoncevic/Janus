@@ -22,6 +22,7 @@ public class TabularDataBuilderTests
                 { "attrBOOLEAN", DataTypes.BOOLEAN },
                 { "attrSTRING", DataTypes.STRING }
             })
+            .WithName("testData")
             .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>
             {
                 { "attrINT", 0 },
@@ -51,6 +52,7 @@ public class TabularDataBuilderTests
 
         Assert.NotNull(tabularData);
         Assert.Equal(3, tabularData.RowData.Count);
+        Assert.Equal("testData", tabularData.Name);
         Assert.Equal(new DateTime(2022, 5, 28), Convert.ChangeType(tabularData[1]["attrDATETIME"], targetType));
     }
 

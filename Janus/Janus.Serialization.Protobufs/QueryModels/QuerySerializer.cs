@@ -45,6 +45,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
 
             var query =
                 QueryModelOpenBuilder.InitOpenQuery(queryDto.OnTableauId)
+                    .WithName(queryDto.Name)
                     .WithJoining(conf => queryDto.Joining != null
                                          ? queryDto.Joining.Fold(conf, (j, c) => conf.AddJoin(j.ForeignKeyAttributeId, j.PrimaryKeyAttributeId))
                                          : conf)
@@ -69,6 +70,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
         {
             var queryDto = new QueryDto
             {
+                Name = query.Name,
                 OnTableauId = query.OnTableauId,
                 Joining =
                     query.Joining

@@ -44,6 +44,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
         {
             var tabularDataDto = new TabularDataDto
             {
+                Name = tabularData.Name,
                 AttributeDataTypes = tabularData.AttributeDataTypes.ToDictionary(kv => kv.Key, kv => kv.Value),
                 AttributeValues = tabularData.RowData
                                              .Select(rd => rd.AttributeValues.ToDictionary(kv => kv.Key, kv => ConvertToBytes(kv.Value, kv.Value?.GetType() ?? typeof(object))))
@@ -63,7 +64,8 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
         {
             var tabularData =
             tabularDataDto.AttributeValues.Fold(
-                        TabularDataBuilder.InitTabularData(tabularDataDto.AttributeDataTypes),
+                        TabularDataBuilder.InitTabularData(tabularDataDto.AttributeDataTypes)
+                                          .WithName(tabularDataDto.Name),
                         (attrVals, builder) => builder.AddRow(
                             conf => conf.WithRowData(attrVals.ToDictionary(
                                 av => av.Key,
