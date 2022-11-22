@@ -188,7 +188,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
                         result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
                         result => _logger?.Info("Sending {0} to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsResult(() =>
+                    .Bind(result => Results.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -238,7 +238,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
                         result => _logger?.Info("Sending {0} with registering intention to {1} with exchange {2} successful.", helloRequest.Preamble, remotePoint, helloRequest.ExchangeId),
                         result => _logger?.Info("Sending {0} with registering intention to {1} failed with message {2}", helloRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsResult(() =>
+                    .Bind(result => Results.AsResult(() =>
                     {
                         // wait for the response
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -259,7 +259,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
                         if (!helloResponse.RememberMe)
                         {
                             _logger?.Info("Remote point {0} refused register. Reason: {1}", respondingRemotePoint, helloResponse.ContextMessage);
-                            return Result<RemotePoint>.OnFailure($"Remote point {respondingRemotePoint} refused register. Reason: {helloResponse.ContextMessage}");
+                            return Results.OnFailure<RemotePoint>($"Remote point {respondingRemotePoint} refused register. Reason: {helloResponse.ContextMessage}");
                         }
                         // add update the remote point into the known remote point dictionary
                         _remotePoints[respondingRemotePoint.NodeId] = respondingRemotePoint;
@@ -282,7 +282,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
     public async Task<Result> SendBye(RemotePoint remotePoint)
     {
         if (!_remotePoints.ContainsValue(remotePoint))
-            return ResultExtensions.AsResult(() => false);
+            return Results.AsResult(() => false);
 
         var message = new ByeReqMessage(_options.NodeId);
 

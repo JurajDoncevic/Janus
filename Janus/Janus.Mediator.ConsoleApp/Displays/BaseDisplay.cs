@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
 public abstract class BaseDisplay

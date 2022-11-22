@@ -76,7 +76,7 @@ public class Query
     /// <param name="dataSource">Data source over which the query should be run</param>
     /// <returns>Validation result</returns>
     public Result IsValidForDataSource(DataSource dataSource)
-     => ResultExtensions.AsResult(() =>
+     => Results.AsResult(() =>
      {
          if (dataSource is null)
          {

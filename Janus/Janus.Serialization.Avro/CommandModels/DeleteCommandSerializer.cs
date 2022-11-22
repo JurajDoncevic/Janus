@@ -1,5 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
-using Janus.Commons.CommandModels;
+﻿using Janus.Commons.CommandModels;
 using Janus.Serialization.Avro.CommandModels.DTOs;
 using Janus.Serialization.Avro.QueryModels;
 using SolTechnology.Avro;
@@ -20,7 +19,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="serialized">Serialized delete command</param>
     /// <returns>Deserialized delete command</returns>
     public Result<DeleteCommand> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<DeleteCommandDto>(serialized, _schema))
+        => Results.AsResult(() => AvroConvert.DeserializeHeadless<DeleteCommandDto>(serialized, _schema))
             .Bind(FromDto);
 
     /// <summary>
@@ -29,7 +28,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="command">Delete command to serialize</param>
     /// <returns>Serialized delete command</returns>
     public Result<byte[]> Serialize(DeleteCommand command)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(command)
                 .Map(deleteCommandDto => AvroConvert.SerializeHeadless(deleteCommandDto, _schema))
         );
@@ -40,7 +39,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="deleteCommand">Delete command</param>
     /// <returns>Delete commmand DTO</returns>
     internal Result<DeleteCommandDto> ToDto(DeleteCommand deleteCommand)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var deleteCommandDto = new DeleteCommandDto(
                 deleteCommand.OnTableauId,
@@ -58,7 +57,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
     /// <param name="deleteCommandDto">Delete command DTO</param>
     /// <returns>Delete command model</returns>
     internal Result<DeleteCommand> FromDto(DeleteCommandDto deleteCommandDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var deleteCommand =
             DeleteCommandOpenBuilder.InitOpenDelete(deleteCommandDto.OnTableauId)

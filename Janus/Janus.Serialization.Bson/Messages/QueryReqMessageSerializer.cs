@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Bson.Messages.DTOs;
 using Janus.Serialization.Bson.QueryModels;
@@ -31,7 +31,7 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byt
     /// <param name="serialized">Serialized QUERY_REQ</param>
     /// <returns>Deserialized QUERY_REQ</returns>
     public Result<QueryReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<QueryReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<QueryReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
             .Bind(queryReqMessageDto
                 => _querySerializer.FromDto(queryReqMessageDto.Query)
                     .Map(query =>
@@ -46,7 +46,7 @@ public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byt
     /// <param name="message">QUERY_REQ message to serialize</param>
     /// <returns>Serialized QUERY_REQ</returns>
     public Result<byte[]> Serialize(QueryReqMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var queryDto = _querySerializer.ToDto(message.Query).Data!;
 

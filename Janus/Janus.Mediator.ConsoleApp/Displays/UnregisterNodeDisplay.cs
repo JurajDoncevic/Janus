@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Logging;
 using Sharprompt;
 
@@ -29,12 +29,12 @@ public class UnregisterNodeDisplay : BaseDisplay
 
             return result
                 .Pass(r => System.Console.WriteLine($"Unregister success. {r.Message}."))
-                .Bind(r => Result.OnSuccess("Got response: " + r.ToString()));
+                .Bind(r => Results.OnSuccess("Got response: " + r.ToString()));
         }
         else
         {
             System.Console.WriteLine($"Remote point with node id {nodeId} not found");
-            return Result.OnFailure($"Remote point with node id {nodeId} not found");
+            return Results.OnFailure($"Remote point with node id {nodeId} not found");
         }
     }
 }

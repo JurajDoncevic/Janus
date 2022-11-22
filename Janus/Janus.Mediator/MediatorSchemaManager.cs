@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
@@ -31,12 +31,12 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, ITransformi
                                                   rp.RemotePointType != RemotePointTypes.UNDETERMINED);
         if (registeredRemotePoint == null)
         {
-            return Result.OnFailure($"Remote point {remotePoint} isn't registered or is of incorrect type");
+            return Results.OnFailure($"Remote point {remotePoint} isn't registered or is of incorrect type");
         }
 
         return _schemaInferredRemotePoints.Add(registeredRemotePoint)
-            ? Result.OnSuccess($"Added {registeredRemotePoint} to schema inferrence")
-            : Result.OnFailure($"Remote point {registeredRemotePoint} already in schema inferrence");
+            ? Results.OnSuccess($"Added {registeredRemotePoint} to schema inferrence")
+            : Results.OnFailure($"Remote point {registeredRemotePoint} already in schema inferrence");
     }
 
     public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint)
@@ -44,25 +44,25 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, ITransformi
         var inferredRemotePoint = _schemaInferredRemotePoints.FirstOrDefault(rp => rp.Equals(remotePoint));
         if (inferredRemotePoint == null)
         {
-            return Result.OnFailure($"Remote point {remotePoint} not in schema inferrence");
+            return Results.OnFailure($"Remote point {remotePoint} not in schema inferrence");
         }
 
         return _schemaInferredRemotePoints.Remove(inferredRemotePoint)
-            ? Result.OnSuccess($"Removed {inferredRemotePoint} from schema inferrence")
-            : Result.OnFailure($"Failed to remove {inferredRemotePoint} from schema inferrence");
+            ? Results.OnSuccess($"Removed {inferredRemotePoint} from schema inferrence")
+            : Results.OnFailure($"Failed to remove {inferredRemotePoint} from schema inferrence");
     }
 
     public async Task<Result<DataSource>> GetCurrentOutputSchema()
         => await (_currentOutputSchema != null
-            ? Task.FromResult(Result<DataSource>.OnSuccess(_currentOutputSchema))
-            : Task.FromResult(Result<DataSource>.OnFailure("No schema loaded")));
+            ? Task.FromResult(Results.OnSuccess(_currentOutputSchema))
+            : Task.FromResult(Results.OnFailure<DataSource>("No schema loaded")));
 
     public async Task<Result<DataSource>> GetSchemaFromRemotePoint(RemotePoint remotePoint)
     {
         var inferredRemotePoint = _schemaInferredRemotePoints.FirstOrDefault(rp => rp.Equals(remotePoint));
         if (remotePoint == null)
         {
-            return Result<DataSource>.OnFailure($"Remote point {remotePoint} not in schema inferrence");
+            return Results.OnFailure<DataSource>($"Remote point {remotePoint} not in schema inferrence");
         }
 
         return await _communicationNode.SendSchemaRequest(remotePoint);

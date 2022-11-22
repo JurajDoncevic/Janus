@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Serialization.Json.DataModels.DTOs;
 using System.Text.Json;
@@ -28,7 +28,7 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
     /// <param name="serialized">Serialized tabular data</param>
     /// <returns>Deserialized tabular data</returns>
     public Result<TabularData> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<TabularDataDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<TabularDataDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
             .Bind(FromDto);
 
     /// <summary>
@@ -37,7 +37,7 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
     /// <param name="data">Tabular data to serialize</param>
     /// <returns>Serialized tabular data</returns>
     public Result<string> Serialize(TabularData data)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(data)
                 .Map(dataDto => JsonSerializer.Serialize(dataDto, _serializerOptions)));
 
@@ -47,7 +47,7 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
     /// <param name="tabularData">Tabular data model</param>
     /// <returns>tabular data DTO</returns>
     internal Result<TabularDataDto> ToDto(TabularData tabularData)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularDataDto = new TabularDataDto
             {
@@ -65,7 +65,7 @@ public class TabularDataSerializer : ITabularDataSerializer<string>
     /// <param name="tabularDataDto">Tabular data DTO</param>
     /// <returns>Tabular data model</returns>
     internal Result<TabularData> FromDto(TabularDataDto tabularDataDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularData =
                 tabularDataDto.AttributeValues.Fold(

@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.Messages;
 using System.Collections.Concurrent;
-using static FunctionalExtensions.Base.Results.ResultExtensions;
+using static FunctionalExtensions.Base.Resulting.Results;
 
 namespace Janus.Communication.Nodes.Utils;
 

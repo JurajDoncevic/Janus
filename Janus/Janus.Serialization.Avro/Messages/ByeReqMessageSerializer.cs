@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Avro.Messages.DTOs;
 using SolTechnology.Avro;
@@ -18,7 +18,7 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
     /// <param name="serialized">Serialized BYE_REQ</param>
     /// <returns>Deserialized BYE_REQ</returns>
     public Result<ByeReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<ByeReqMessageDto>(serialized, _schema))
+        => Results.AsResult(() => AvroConvert.DeserializeHeadless<ByeReqMessageDto>(serialized, _schema))
             .Map(byeReqMessageDto => new ByeReqMessage(byeReqMessageDto.ExchangeId, byeReqMessageDto.NodeId));
 
     /// <summary>
@@ -27,6 +27,6 @@ public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
     /// <param name="message">BYE_REQ message to serialize</param>
     /// <returns>Serialized BYE_REQ</returns>
     public Result<byte[]> Serialize(ByeReqMessage message)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => AvroConvert.SerializeHeadless(message, _schema));
 }

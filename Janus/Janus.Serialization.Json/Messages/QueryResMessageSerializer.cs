@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Json.DataModels;
 using Janus.Serialization.Json.Messages.DTOs;
@@ -29,7 +29,7 @@ public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, str
     /// <param name="serialized">Serialized QUERY_RES</param>
     /// <returns>Deserialized QUERY_RES</returns>
     public Result<QueryResMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<QueryResMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<QueryResMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
             .Bind(queryResMessageDto => _tabularDataSerializer.FromDto(queryResMessageDto.TabularData)
                     .Map(tabularData =>
                         new QueryResMessage(
@@ -46,7 +46,7 @@ public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, str
     /// <param name="message">QUERY_RES message to serialize</param>
     /// <returns>Serialized QUERY_RES</returns>
     public Result<string> Serialize(QueryResMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularDataDto = _tabularDataSerializer.ToDto(message.TabularData).Data;
             var queryResMessageDto = new QueryResMessageDto

@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Serialization.Json.CommandModels.DTOs;
 using Janus.Serialization.Json.QueryModels;
@@ -27,7 +27,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, string>
     /// <param name="serialized">Serialized delete command</param>
     /// <returns>Deserialized delete command</returns>
     public Result<DeleteCommand> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<DeleteCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<DeleteCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
             .Bind(FromDto);
 
     /// <summary>
@@ -36,7 +36,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, string>
     /// <param name="command">Delete command to serialize</param>
     /// <returns>Serialized delete command</returns>
     public Result<string> Serialize(DeleteCommand command)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(command)
                 .Map(commandDto => JsonSerializer.Serialize(commandDto, _serializerOptions)));
 
@@ -46,7 +46,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, string>
     /// <param name="deleteCommand">Delete command</param>
     /// <returns>Delete commmand DTO</returns>
     internal Result<DeleteCommandDto> ToDto(DeleteCommand deleteCommand)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var deleteDto = new DeleteCommandDto(
                 deleteCommand.OnTableauId,
@@ -63,7 +63,7 @@ public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, string>
     /// <param name="deleteCommandDto">Delete command DTO</param>
     /// <returns>Delete command model</returns>
     internal Result<DeleteCommand> FromDto(DeleteCommandDto deleteCommandDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
 
             var deleteCommand =

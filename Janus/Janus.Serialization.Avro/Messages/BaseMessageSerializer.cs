@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Avro.Messages.DTOs;
 using SolTechnology.Avro;
@@ -18,7 +18,7 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <param name="serialized">Serialized base message</param>
     /// <returns>Deserialized base message</returns>
     public Result<BaseMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => AvroConvert.DeserializeHeadless<BaseMessage>(serialized, _schema)
         );
 
@@ -28,7 +28,7 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <param name="message">Base message to serialize</param>
     /// <returns>Serialized base message</returns>
     public Result<byte[]> Serialize(BaseMessage message)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => AvroConvert.SerializeHeadless(message, _schema)
         );
 }

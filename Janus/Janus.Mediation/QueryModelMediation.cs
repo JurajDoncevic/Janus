@@ -11,7 +11,7 @@ namespace Janus.Mediation;
 public static class QueryModelMediation
 {
     public static Result<QueryMediation> MediateQuery(DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, Query query)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             // determine split queries - for each join set from the same data source - split a colored graph
 
@@ -19,13 +19,13 @@ public static class QueryModelMediation
 
             // if conjunctive selection split selection into separate queries, else put into finalizing selection
 
-            return Result<QueryMediation>.OnException(new NotImplementedException());
+            return Results.OnException<QueryMediation>(new NotImplementedException());
         });
 
     public static Result<TabularData> MediateQueryResults(DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, QueryMediation queryMediation)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
 
-            return Result<TabularData>.OnException(new NotImplementedException());
+            return Results.OnException<TabularData>(new NotImplementedException());
         });
 }

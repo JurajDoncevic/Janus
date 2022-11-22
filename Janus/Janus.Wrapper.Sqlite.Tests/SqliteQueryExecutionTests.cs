@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.QueryModels;
 using Janus.Wrapper.SchemaInferrence;
 using Janus.Wrapper.Sqlite.LocalQuerying;

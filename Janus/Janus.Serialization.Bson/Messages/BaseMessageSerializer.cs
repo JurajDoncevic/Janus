@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using System.Text;
 using System.Text.Json;
@@ -16,7 +16,7 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <param name="serialized">Serialized base message</param>
     /// <returns>Deserialized base message</returns>
     public Result<BaseMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
             JsonSerializer.Deserialize<BaseMessage>(serialized) ?? throw new Exception("Failed to deserialize message DTO"));
 
     /// <summary>
@@ -25,6 +25,6 @@ public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
     /// <param name="message">Base message to serialize</param>
     /// <returns>Serialized base message</returns>
     public Result<byte[]> Serialize(BaseMessage message)
-        => ResultExtensions.AsResult(() => JsonSerializer.Serialize(message))
+        => Results.AsResult(() => JsonSerializer.Serialize(message))
             .Map(Encoding.UTF8.GetBytes);
 }

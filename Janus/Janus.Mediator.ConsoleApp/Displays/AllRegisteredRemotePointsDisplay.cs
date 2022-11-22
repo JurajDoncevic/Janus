@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Logging;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
@@ -26,6 +26,6 @@ public class AllRegisteredRemotePointsDisplay : BaseDisplay
         {
             System.Console.WriteLine("No registered nodes");
         }
-        return await Task.FromResult(Result.OnSuccess());
+        return await Task.FromResult(Results.OnSuccess());
     }
 }

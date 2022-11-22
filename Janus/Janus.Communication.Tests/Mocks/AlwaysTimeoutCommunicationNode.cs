@@ -18,6 +18,6 @@ public class AlwaysTimeoutCommunicationNode : BaseCommunicationNode<IMediatorNet
 
     protected override Result IsRemotePointOkToRegister(RemotePoint remotePoint)
     {
-        return Result.OnSuccess();
+        return Results.OnSuccess();
     }
 }

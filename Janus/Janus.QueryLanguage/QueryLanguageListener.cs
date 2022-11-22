@@ -125,7 +125,7 @@ public class QueryLanguageListener : QueryLanguageBaseListener
     }
 
     public Result<Query> BuildQuery()
-        => _queryBuilder?.Build() ?? Result<Query>.OnFailure();
+        => _queryBuilder?.Build() ?? Results.OnFailure<Query>();
 
     private SelectionExpression ConstructSelectionExpression(QueryLanguageParser.Selection_exprContext context)
         => context switch

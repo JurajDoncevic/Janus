@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Serialization.Json.CommandModels.DTOs;
 using Janus.Serialization.Json.DataModels;
@@ -32,7 +32,7 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, string>
     /// <param name="serialized">Serialized insert command</param>
     /// <returns>Deserialized insert command</returns>
     public Result<InsertCommand> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<InsertCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<InsertCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
             .Bind(FromDto);
 
     /// <summary>
@@ -41,7 +41,7 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, string>
     /// <param name="command">Insert command to serialize</param>
     /// <returns>Serialized insert command</returns>
     public Result<string> Serialize(InsertCommand command)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(command)
                 .Map(commandDto => JsonSerializer.Serialize(commandDto, _serializerOptions)));
 
@@ -51,7 +51,7 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, string>
     /// <param name="insertCommand">Insert command</param>
     /// <returns>Insert command DTO</returns>
     internal Result<InsertCommandDto> ToDto(InsertCommand insertCommand)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularData = insertCommand.Instantiation.TabularData;
             var insertDto = new InsertCommandDto()
@@ -69,7 +69,7 @@ public class InsertCommandSerializer : ICommandSerializer<InsertCommand, string>
     /// <param name="insertCommandDto">Insert command DTO</param>
     /// <returns>Insert command model</returns>
     internal Result<InsertCommand> FromDto(InsertCommandDto insertCommandDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularData = _tabularDataSerializer.FromDto(insertCommandDto.Instantiation).Data!;
 

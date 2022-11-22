@@ -38,7 +38,7 @@ public class UpdateCommand : BaseCommand
     }
 
     public override Result IsValidForDataSource(DataSource dataSource)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             UpdateCommandBuilder.InitOnDataSource(_onTableauId, dataSource)
                 .WithMutation(configuration => configuration.WithValues(_mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value)))

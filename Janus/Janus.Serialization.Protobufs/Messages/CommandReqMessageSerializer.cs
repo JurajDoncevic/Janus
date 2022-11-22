@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.Messages;
 using Janus.Serialization.Protobufs.CommandModels;
@@ -21,7 +21,7 @@ public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage,
     /// <param name="serialized">Serialized COMMAND_REQ</param>
     /// <returns>Deserialized COMMAND_REQ</returns>
     public Result<CommandReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var commandReqMessageDto = Utils.FromProtobufs<CommandReqMessageDto>(serialized);
 
@@ -49,7 +49,7 @@ public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage,
     /// <param name="message">COMMAND_REQ message to serialize</param>
     /// <returns>Serialized COMMAND_REQ</returns>
     public Result<byte[]> Serialize(CommandReqMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var deleteCommand =
                 message.CommandReqType == CommandReqTypes.DELETE

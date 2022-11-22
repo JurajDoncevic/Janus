@@ -43,7 +43,7 @@ public class AlwaysTimeoutTcpNetworkAdapter : NetworkAdapters.Tcp.NetworkAdapter
     }
 
     public new async Task<Result> SendHelloRequest(HelloReqMessage message, RemotePoint remotePoint)
-        => await ResultExtensions.AsResult(
+        => await Results.AsResult(
             () =>
                 Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
                       async tcpClient =>
@@ -57,7 +57,7 @@ public class AlwaysTimeoutTcpNetworkAdapter : NetworkAdapters.Tcp.NetworkAdapter
             );
 
     public new async Task<Result> SendHelloResponse(HelloResMessage message, RemotePoint remotePoint)
-        => await ResultExtensions.AsResult(
+        => await Results.AsResult(
             () =>
                 Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
                       async tcpClient =>

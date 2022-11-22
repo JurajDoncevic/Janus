@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Protobufs.Messages.DTOs;
 using Janus.Serialization.Protobufs.SchemaModels;
@@ -18,7 +18,7 @@ public class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, b
     /// <param name="serialized">Serialized SCHEMA_RES</param>
     /// <returns>Deserialized SCHEMA_RES</returns>
     public Result<SchemaResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => Utils.FromProtobufs<SchemaResMessageDto>(serialized))
+        => Results.AsResult(() => Utils.FromProtobufs<SchemaResMessageDto>(serialized))
             .Bind(schemaResMessageDto =>
                 _dataSourceSerializer.FromDto(schemaResMessageDto.DataSource)
                     .Map(dataSource =>
@@ -33,7 +33,7 @@ public class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, b
     /// <param name="message">SCHEMA_RES message to serialize</param>
     /// <returns>Serialized SCHEMA_RES</returns>
     public Result<byte[]> Serialize(SchemaResMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var dto = new SchemaResMessageDto
             {

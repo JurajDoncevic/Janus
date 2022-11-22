@@ -9,14 +9,14 @@ namespace Janus.Mediation;
 public class DataModelMediation
 {
     public static Result<TabularData> MediateData(DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, TabularData tabularData)
-        => ResultExtensions.AsResult<TabularData>(() =>
+        => Results.AsResult<TabularData>(() =>
         {
-            return Result<TabularData>.OnException(new NotImplementedException());
+            return Results.OnException<TabularData>(new NotImplementedException());
         });
 
     public static Result<TabularData> DemediateData(DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, TabularData tabularData)
-        => ResultExtensions.AsResult<TabularData>(() =>
+        => Results.AsResult<TabularData>(() =>
         {
-            return Result<TabularData>.OnException(new NotImplementedException());
+            return Results.OnException<TabularData>(new NotImplementedException());
         });
 }

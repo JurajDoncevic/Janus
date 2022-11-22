@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Protobufs.Messages.DTOs;
 
@@ -16,7 +16,7 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
     /// <param name="serialized">Serialized HELLO_RES</param>
     /// <returns>Deserialized HELLO_RES</returns>
     public Result<HelloResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var deserializedModel = Utils.FromProtobufs<HelloResMessageDto>(serialized);
 
@@ -35,7 +35,7 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
     /// <param name="message">HELLO_RES message to serialize</param>
     /// <returns>Serialized HELLO_RES</returns>
     public Result<byte[]> Serialize(HelloResMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var helloResMessageDto = new HelloResMessageDto
             {

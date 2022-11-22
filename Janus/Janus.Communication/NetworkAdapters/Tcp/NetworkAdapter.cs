@@ -233,7 +233,7 @@ public abstract class NetworkAdapter : INetworkAdapter
     /// <param name="remotePoint">Destination temote point</param>
     /// <returns>Result</returns>
     protected async Task<Result> SendMessageBytes(byte[] messageBytes, RemotePoint remotePoint)
-        => await ResultExtensions.AsResult(
+        => await Results.AsResult(
             () =>
                 Using(() => new TcpClient(remotePoint.Address.ToString(), (int)remotePoint.Port),
                       async tcpClient =>

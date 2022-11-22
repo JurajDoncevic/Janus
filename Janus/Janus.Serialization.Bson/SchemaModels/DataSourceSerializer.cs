@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SchemaModels.Building;
 using Janus.Serialization.Bson.SchemaModels.DTOs;
@@ -30,7 +30,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="serialized">Serialized data source</param>
     /// <returns>Deserialized data source</returns>
     public Result<DataSource> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<DataSourceDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize DataSourceDTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<DataSourceDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize DataSourceDTO"))
             .Bind(FromDto);
 
     /// <summary>
@@ -39,7 +39,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSource">Data source to serialize</param>
     /// <returns>Serialized data source</returns>
     public Result<byte[]> Serialize(DataSource dataSource)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(dataSource)
                 .Map(dataSourceDto => JsonSerializer.Serialize(dataSourceDto, _serializerOptions))
                 .Map(Encoding.UTF8.GetBytes));
@@ -50,7 +50,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSource">Data source schema model</param>
     /// <returns>Data source DTO</returns>
     internal Result<DataSourceDto> ToDto(DataSource dataSource)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             DataSourceDto dataSourceDto = new DataSourceDto()
             {
@@ -96,7 +96,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSourceDto">Data source DTO</param>
     /// <returns>Schema model data source</returns>
     internal Result<DataSource> FromDto(DataSourceDto dataSourceDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var dataSource =
                 SchemaModelBuilder.InitDataSource(dataSourceDto.Name)

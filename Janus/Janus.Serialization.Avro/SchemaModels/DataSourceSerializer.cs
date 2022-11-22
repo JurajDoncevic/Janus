@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SchemaModels.Building;
 using Janus.Serialization.Avro.SchemaModels.DTOs;
@@ -20,7 +20,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="serialized">Serialized data source</param>
     /// <returns>Deserialized data source</returns>
     public Result<DataSource> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<DataSourceDto>(serialized, _schema))
+        => Results.AsResult(() => AvroConvert.DeserializeHeadless<DataSourceDto>(serialized, _schema))
             .Bind(FromDto);
 
     /// <summary>
@@ -29,7 +29,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSource">Data source to serialize</param>
     /// <returns>Serialized data source</returns>
     public Result<byte[]> Serialize(DataSource dataSource)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(dataSource)
                 .Map(dataSourceDto => AvroConvert.SerializeHeadless(dataSourceDto, _schema))
         );
@@ -40,7 +40,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSourceDto">Data source DTO</param>
     /// <returns>Schema model data source</returns>
     internal Result<DataSource> FromDto(DataSourceDto dataSourceDto)
-    => ResultExtensions.AsResult(() =>
+    => Results.AsResult(() =>
             SchemaModelBuilder.InitDataSource(dataSourceDto.Name)
                 .WithDescription(dataSourceDto.Description)
                 .WithVersion(dataSourceDto.Version)
@@ -73,7 +73,7 @@ public class DataSourceSerializer : IDataSourceSerializer<byte[]>
     /// <param name="dataSource">Data source schema model</param>
     /// <returns>Data source DTO</returns>
     internal Result<DataSourceDto> ToDto(DataSource dataSource)
-    => ResultExtensions.AsResult(() =>
+    => Results.AsResult(() =>
         new DataSourceDto()
         {
             Name = dataSource.Name,

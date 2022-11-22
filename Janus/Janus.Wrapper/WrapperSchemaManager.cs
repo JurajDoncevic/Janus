@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Components;
 using Janus.Wrapper.SchemaInferrence;
@@ -17,8 +17,8 @@ public class WrapperSchemaManager : IComponentSchemaManager
     public Task<Result<DataSource>> GetCurrentOutputSchema()
         => Task.FromResult(
             _currentSchema != null
-                ? Result<DataSource>.OnSuccess(_currentSchema)
-                : Result<DataSource>.OnFailure("No schema loaded currently"));
+                ? Results.OnSuccess(_currentSchema)
+                : Results.OnFailure<DataSource>("No schema loaded currently"));
 
     public Task<Result<DataSource>> ReloadOutputSchema()
         => Task.FromResult(

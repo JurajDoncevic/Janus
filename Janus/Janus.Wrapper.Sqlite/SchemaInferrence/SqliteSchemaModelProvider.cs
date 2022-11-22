@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Wrapper.SchemaInferrence;
 using Janus.Wrapper.SchemaInferrence.Model;
@@ -17,14 +17,14 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
     public Result AttributeExists(string schemaName, string tableauName, string attributeName)
         => GetAttributes(schemaName, tableauName)
             .Bind(attributes => attributes.Where(a => a.Name.Equals(attributeName)).Count() > 0
-                                    ? Result.OnSuccess($"Attribute {attributeName} on tableau {tableauName} exists")
-                                    : Result.OnFailure($"Attribute {attributeName} on tableau {tableauName} doesn't exist"));
+                                    ? Results.OnSuccess($"Attribute {attributeName} on tableau {tableauName} exists")
+                                    : Results.OnFailure($"Attribute {attributeName} on tableau {tableauName} doesn't exist"));
 
     public Result<IEnumerable<AttributeInfo>> GetAttributes(string schemaName, string tableauName)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             if (!TableauExists(schemaName, tableauName))
-                return Result<IEnumerable<AttributeInfo>>.OnFailure($"Tableau {tableauName} doesn't exist");
+                return Results.OnFailure<IEnumerable<AttributeInfo>>($"Tableau {tableauName} doesn't exist");
 
             var attributeInfos = Enumerable.Empty<AttributeInfo>();
 
@@ -52,16 +52,16 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
                         );
             }
 
-            return Result<IEnumerable<AttributeInfo>>.OnSuccess(attributeInfos);
+            return Results.OnSuccess(attributeInfos);
         });
 
     public Result<DataSourceInfo> GetDataSource()
     {
-        return Result<DataSourceInfo>.OnFailure("No data source schemata in Sqlite, use the NodeId");
+        return Results.OnFailure<DataSourceInfo>("No data source schemata in Sqlite, use the NodeId");
     }
 
     public Result<IEnumerable<SchemaInfo>> GetSchemas()
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var schemaInfos = Enumerable.Empty<SchemaInfo>();
 
@@ -85,7 +85,7 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
         });
 
     public Result<IEnumerable<TableauInfo>> GetTableaus(string schemaName)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tableauInfos = Enumerable.Empty<TableauInfo>();
 
@@ -114,11 +114,11 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
     public Result SchemaExists(string schemaName)
         => GetSchemas()
             .Bind(schemas => schemas.Where(s => s.Name.Equals(schemaName)).Count() > 0
-                                ? Result.OnSuccess($"Schema {schemaName} exists")
-                                : Result.OnFailure($"Schema {schemaName} doesn't exist"));
+                                ? Results.OnSuccess($"Schema {schemaName} exists")
+                                : Results.OnFailure($"Schema {schemaName} doesn't exist"));
 
     public Result TableauExists(string schemaName, string tableauName) // ignores the schema name
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             using var connection = new SqliteConnection(_connectionString);
             if (connection.State == System.Data.ConnectionState.Closed)
@@ -136,9 +136,9 @@ public class SqliteSchemaModelProvider : ISchemaModelProvider
 
             return reader.Read()
                 ? reader.GetFieldValue<bool>(0)
-                    ? Result.OnSuccess($"Tableau {tableauName} exists")
-                    : Result.OnFailure($"Tableau {tableauName} doesn't exist")
-                : Result.OnFailure("Failed to get result");
+                    ? Results.OnSuccess($"Tableau {tableauName} exists")
+                    : Results.OnFailure($"Tableau {tableauName} doesn't exist")
+                : Results.OnFailure("Failed to get result");
         });
 
     private DataTypes InferDataType(string sqliteDataTypeName)

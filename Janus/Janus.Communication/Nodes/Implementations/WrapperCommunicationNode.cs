@@ -154,10 +154,10 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
     protected override Result IsRemotePointOkToRegister(RemotePoint remotePoint)
     {
         if (Options.NodeId.Equals(remotePoint.NodeId))
-            return Result.OnFailure($"This node has the same id {Options.NodeId}.");
+            return Results.OnFailure($"This node has the same id {Options.NodeId}.");
         if (remotePoint.RemotePointType == RemotePointTypes.WRAPPER)
-            return Result.OnFailure("This is a WRAPPER. Can't connect a WRAPPER to a WRAPPER.");
+            return Results.OnFailure("This is a WRAPPER. Can't connect a WRAPPER to a WRAPPER.");
 
-        return Result.OnSuccess();
+        return Results.OnSuccess();
     }
 }

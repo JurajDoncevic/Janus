@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Wrapper.LocalQuerying;
 using Janus.Wrapper.Sqlite.LocalDataModel;
 using Microsoft.Data.Sqlite;
@@ -16,7 +16,7 @@ public class SqliteQueryExecutor : IQueryExecutor<string, string, string, Sqlite
     public string SqliteConnectionString => _sqliteConnectionString;
 
     public async Task<Result<SqliteTabularData>> ExecuteQuery(SqliteQuery localQuery)
-        => await ResultExtensions.AsResult(async () =>
+        => await Results.AsResult(async () =>
         {
             using var connection = new SqliteConnection(_sqliteConnectionString);
 

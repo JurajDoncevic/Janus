@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 
 namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public abstract class BaseDisplay

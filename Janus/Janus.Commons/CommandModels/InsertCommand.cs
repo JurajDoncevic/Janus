@@ -26,7 +26,7 @@ public class InsertCommand : BaseCommand
     }
 
     public override Result IsValidForDataSource(DataSource dataSource)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             InsertCommandBuilder.InitOnDataSource(_onTableauId, dataSource)
                 .WithInstantiation(configuration => configuration.WithValues(_instantiation.TabularData))

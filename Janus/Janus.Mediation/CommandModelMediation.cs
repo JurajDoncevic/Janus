@@ -9,8 +9,8 @@ namespace Janus.Mediation;
 public class CommandModelMediation
 {
     public static Result<BaseCommand> DemediateCommand(DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, BaseCommand baseCommand)
-    => ResultExtensions.AsResult<BaseCommand>(() =>
+    => Results.AsResult<BaseCommand>(() =>
     {
-        return Result<BaseCommand>.OnException(new NotImplementedException());
+        return Results.OnException<BaseCommand>(new NotImplementedException());
     });
 }

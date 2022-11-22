@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Avro.Messages.DTOs;
 using SolTechnology.Avro;
@@ -18,7 +18,7 @@ public class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, b
     /// <param name="serialized">Serialized SCHEMA_REQ</param>
     /// <returns>Deserialized SCHEMA_REQ</returns>
     public Result<SchemaReqMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<SchemaReqMessageDto>(serialized, _schema))
+        => Results.AsResult(() => AvroConvert.DeserializeHeadless<SchemaReqMessageDto>(serialized, _schema))
             .Bind<SchemaReqMessageDto, SchemaReqMessage>(schemaReqMessageDto => new SchemaReqMessage(schemaReqMessageDto.ExchangeId, schemaReqMessageDto.NodeId));
 
 
@@ -28,7 +28,7 @@ public class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, b
     /// <param name="message">SCHEMA_REQ message to serialize</param>
     /// <returns>Serialized SCHEMA_REQ</returns>
     public Result<byte[]> Serialize(SchemaReqMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var shemaReqMessageDto = new SchemaReqMessageDto
             {

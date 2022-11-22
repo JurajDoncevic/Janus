@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Serialization.Protobufs.DataModels.DTOs;
 using System.Text;
@@ -18,7 +18,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="serialized">Serialized tabular data</param>
     /// <returns>Deserialized tabular data</returns>
     public Result<TabularData> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => Utils.FromProtobufs<TabularDataDto>(serialized))
+        => Results.AsResult(() => Utils.FromProtobufs<TabularDataDto>(serialized))
             .Bind(FromDto);
 
     /// <summary>
@@ -27,7 +27,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="data">Tabular data to serialize</param>
     /// <returns>Serialized tabular data</returns>
     public Result<byte[]> Serialize(TabularData data)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(data)
                .Map(tabularDataDto => Utils.ToProtobufs(tabularDataDto))
             );
@@ -38,7 +38,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="tabularData">Tabular data model</param>
     /// <returns>tabular data DTO</returns>
     internal Result<TabularDataDto> ToDto(TabularData tabularData)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularDataDto = new TabularDataDto
             { 
@@ -58,7 +58,7 @@ public class TabularDataSerializer : ITabularDataSerializer<byte[]>
     /// <param name="tabularDataDto">Tabular data DTO</param>
     /// <returns>Tabular data model</returns>
     internal Result<TabularData> FromDto(TabularDataDto tabularDataDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularData =
             tabularDataDto.AttributeValues.Fold(

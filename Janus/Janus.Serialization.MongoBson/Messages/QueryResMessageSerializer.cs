@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.MongoBson.DataModels;
 using Janus.Serialization.MongoBson.Messages.DTOs;
@@ -18,7 +18,7 @@ public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byt
     /// <param name="serialized">Serialized QUERY_RES</param>
     /// <returns>Deserialized QUERY_RES</returns>
     public Result<QueryResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => Utils.FromBson<QueryResMessageDto>(serialized))
+        => Results.AsResult(() => Utils.FromBson<QueryResMessageDto>(serialized))
             .Bind(queryResMessageDto => _tabularDataSerializer.FromDto(queryResMessageDto.TabularData)
                 .Map(tabularData =>
                     new QueryResMessage(
@@ -35,7 +35,7 @@ public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byt
     /// <param name="message">QUERY_RES message to serialize</param>
     /// <returns>Serialized QUERY_RES</returns>
     public Result<byte[]> Serialize(QueryResMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var tabularDataDto = _tabularDataSerializer.ToDto(message.TabularData!).Data;
             var queryResMessageDto = new QueryResMessageDto

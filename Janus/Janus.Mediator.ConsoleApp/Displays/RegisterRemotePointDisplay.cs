@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Logging;
 using Sharprompt;
 
@@ -27,6 +27,6 @@ public class RegisterRemotePointDisplay : BaseDisplay
         return result
             .Pass(r => System.Console.WriteLine($"{r.Message}. Got register response on:{r.Data}"),
                   r => System.Console.WriteLine($"{r.Message}."))
-            .Bind(r => Result.OnSuccess("Got response: " + r.ToString()));
+            .Bind(r => Results.OnSuccess("Got response: " + r.ToString()));
     }
 }

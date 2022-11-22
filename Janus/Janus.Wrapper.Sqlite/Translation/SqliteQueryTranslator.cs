@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SelectionExpressions;
@@ -17,7 +17,7 @@ public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, 
                 => new SqliteQuery(query.OnTableauId, result.selection, result.joining, result.projection));
 
     public Result<string> TranslateJoining(Option<Joining> joining, string? startingWith)
-        => ResultExtensions.AsResult(
+        => Results.AsResult(
             () => $"FROM {LocalizeTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
                       j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
@@ -25,7 +25,7 @@ public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, 
                       () => ""));
 
     public Result<string> TranslateProjection(Option<Projection> projection)
-        => ResultExtensions.AsResult(
+        => Results.AsResult(
             () => projection
                     ? $"SELECT {string.Join(", ", projection.Value.IncludedAttributeIds.Map(LocalizeAttributeId))}"
                     : "SELECT *");

@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Json.Messages.DTOs;
 using System.Text.Json;
@@ -16,7 +16,7 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <param name="serialized">Serialized COMMAND_RES</param>
     /// <returns>Deserialized COMMAND_RES</returns>
     public Result<CommandResMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<CommandResMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<CommandResMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
             .Map(commandResMessageDto
                 => new CommandResMessage(
                     commandResMessageDto.ExchangeId,
@@ -30,7 +30,7 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <param name="message">COMMAND_RES message to serialize</param>
     /// <returns>Serialized COMMAND_RES</returns>
     public Result<string> Serialize(CommandResMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var commandResMessageDto = new CommandResMessageDto
             {

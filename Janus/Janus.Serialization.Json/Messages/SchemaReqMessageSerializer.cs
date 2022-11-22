@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Json.Messages.DTOs;
 using System.Text.Json;
@@ -16,7 +16,7 @@ public class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, s
     /// <param name="serialized">Serialized SCHEMA_REQ</param>
     /// <returns>Deserialized SCHEMA_REQ</returns>
     public Result<SchemaReqMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<SchemaReqMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<SchemaReqMessageDto>(serialized) ?? throw new Exception("Failed to deserialize message DTO"))
             .Map(schemaReqMessageDto
                 => new SchemaReqMessage(
                     schemaReqMessageDto.ExchangeId,
@@ -28,7 +28,7 @@ public class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, s
     /// <param name="message">SCHEMA_REQ message to serialize</param>
     /// <returns>Serialized SCHEMA_REQ</returns>
     public Result<string> Serialize(SchemaReqMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var schemaReqMessageDto = new SchemaReqMessageDto
             {

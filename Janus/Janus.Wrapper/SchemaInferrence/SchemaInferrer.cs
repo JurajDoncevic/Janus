@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Wrapper.SchemaInferrence.Model;
 
@@ -14,7 +14,7 @@ public class SchemaInferrer
     }
 
     public Result<DataSource> InferSchemaModel()
-        => ResultExtensions.AsResult<DataSource>(() =>
+        => Results.AsResult<DataSource>(() =>
         {
             var dataSource =
             _provider.GetDataSource()

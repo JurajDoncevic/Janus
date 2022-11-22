@@ -1,4 +1,4 @@
-﻿global using FunctionalExtensions.Base.Results;
+﻿global using FunctionalExtensions.Base.Resulting;
 global using Janus.Communication.Nodes;
 global using System;
 global using System.Collections.Generic;

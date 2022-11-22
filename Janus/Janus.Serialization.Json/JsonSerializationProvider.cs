@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.Messages;
 using Janus.Serialization.Json.CommandModels;
@@ -47,7 +47,7 @@ public class JsonSerializationProvider : IStringSerializationProvider
     public IMessageSerializer<SchemaResMessage, string> SchemaResMessageSerializer => new SchemaResMessageSerializer();
 
     public Result<string> DetermineMessagePreamble(string messageBytes)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var jsonNode = JsonSerializer.Deserialize<JsonNode>(messageBytes);
             return jsonNode["Preamble"].ToString();

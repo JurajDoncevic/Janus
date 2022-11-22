@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Avro.Messages.DTOs;
 using SolTechnology.Avro;
@@ -18,7 +18,7 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
     /// <param name="serialized">Serialized HELLO_RES</param>
     /// <returns>Deserialized HELLO_RES</returns>
     public Result<HelloResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var deserializedModel = AvroConvert.DeserializeHeadless<HelloResMessageDto>(serialized, _schema);
 
@@ -37,7 +37,7 @@ public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byt
     /// <param name="message">HELLO_RES message to serialize</param>
     /// <returns>Serialized HELLO_RES</returns>
     public Result<byte[]> Serialize(HelloResMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var helloResMessageDto = new HelloResMessageDto
             {

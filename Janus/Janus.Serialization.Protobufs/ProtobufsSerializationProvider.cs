@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.Messages;
 using Janus.Serialization.Protobufs.CommandModels;
@@ -46,7 +46,7 @@ public class ProtobufsSerializationProvider : IBytesSerializationProvider
     public IMessageSerializer<SchemaResMessage, byte[]> SchemaResMessageSerializer => new SchemaResMessageSerializer();
 
     public Result<string> DetermineMessagePreamble(byte[] messageBytes)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var baseMessageDto = Utils.FromProtobufs<BaseMessageDto>(messageBytes);
             string preamble = baseMessageDto.Preamble;

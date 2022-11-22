@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Json.Messages.DTOs;
 using System.Text.Json;
@@ -27,7 +27,7 @@ public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, str
     /// <param name="serialized">Serialized HELLO_REQ</param>
     /// <returns>Deserialized HELLO_REQ</returns>
     public Result<HelloReqMessage> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<HelloReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<HelloReqMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
             .Map(helloReqMessageDto
                 => new HelloReqMessage(
                     helloReqMessageDto.ExchangeId,
@@ -42,7 +42,7 @@ public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, str
     /// <param name="message">HELLO_REQ message to serialize</param>
     /// <returns>Serialized HELLO_REQ</returns>
     public Result<string> Serialize(HelloReqMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var helloReqMessageDto = new HelloReqMessageDto
             {

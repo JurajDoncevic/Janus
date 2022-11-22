@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Wrapper.Sqlite.LocalDataModel;
 using Janus.Wrapper.Translation;
@@ -15,7 +15,7 @@ public class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularData>
     }
 
     public Result<TabularData> TranslateToTabularData(SqliteTabularData data)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var attributeDataTypes = data.DataSchema.ToDictionary(kv => $"{_resultSchemaPrefix}.{kv.Key}", kv => TypeMappings.MapToDataType(kv.Value));
 

@@ -29,7 +29,7 @@ public sealed class WrapperNetworkAdapter : NetworkAdapter, IWrapperNetworkAdapt
             Preambles.SCHEMA_REQUEST => _serializationProvider.SchemaReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.QUERY_REQUEST => _serializationProvider.QueryReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.COMMAND_REQUEST => _serializationProvider.CommandReqMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
-            _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
+            _ => Results.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
         };
 
     public override void RaiseSpecializedMessageReceivedEvent(BaseMessage message, string address)

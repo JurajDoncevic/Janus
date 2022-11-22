@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Communication.Remotes;
 using Janus.Logging;
 using Sharprompt;
@@ -15,7 +15,7 @@ public class SchemaInferrenceSelectionDisplay : BaseDisplay
     public override string Title => "REMOTE POINTS FOR SCHEMA INFERRENCE";
 
     protected async override Task<Result> Display()
-        => await ResultExtensions.AsResult(async () =>
+        => await Results.AsResult(async () =>
         {
             var selectedRemotePoints =
                 Prompt.MultiSelect<RemotePoint>(conf =>
@@ -35,9 +35,9 @@ public class SchemaInferrenceSelectionDisplay : BaseDisplay
                 ? selectedRemotePoints.Select(_mediatorController.AddRemotePointToSchemaInferrence)
                     .Aggregate(
                         (result1, result2) => result1.IsSuccess && result2.IsSuccess
-                                                ? Result.OnSuccess(result1.Message + "\n" + result2.Message)
-                                                : Result.OnFailure(result1.Message + "\n" + result2.Message))
-                : Result.OnSuccess();
+                                                ? Results.OnSuccess(result1.Message + "\n" + result2.Message)
+                                                : Results.OnFailure(result1.Message + "\n" + result2.Message))
+                : Results.OnSuccess();
             return await Task.FromResult(overallResult);
         });
 }

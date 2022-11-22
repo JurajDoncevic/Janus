@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
@@ -20,7 +20,7 @@ public class SqliteCommandTranslator
             .Bind<string, SqliteInsert>(instantiation => new SqliteInsert(instantiation, LocalizeTableauId(insert.OnTableauId)));
 
     public Result<string> TranslateMutation(Option<Mutation> mutation)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => mutation
                 ? $"SET {ValueUpdatesToSetExpression(mutation.Value.ValueUpdates)}"
                 : "SET ");
@@ -32,7 +32,7 @@ public class SqliteCommandTranslator
 
 
     public Result<string> TranslateInstantiation(Option<Instantiation> instantiation)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => instantiation
                 ? $"({string.Join(",", instantiation.Value.TabularData.AttributeNames)}) " +
                   $"VALUES {string.Join(",", instantiation.Value.TabularData.RowData.Map(RowToInstantiationString))}"
@@ -42,7 +42,7 @@ public class SqliteCommandTranslator
 
 
     public Result<string> TranslateSelection(Option<CommandSelection> selection)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => selection
                 ? GenerateExpression(selection.Value.Expression)
                 : "WHERE false");

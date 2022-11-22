@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Serialization.Json.CommandModels.DTOs;
 using Janus.Serialization.Json.QueryModels;
@@ -29,7 +29,7 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
     /// <param name="serialized">Serialized update command</param>
     /// <returns>Deserialized update command</returns>
     public Result<UpdateCommand> Deserialize(string serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<UpdateCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<UpdateCommandDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to serialize message DTO"))
             .Bind(FromDto);
 
     /// <summary>
@@ -38,7 +38,7 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
     /// <param name="command">Update command to serialize</param>
     /// <returns>Serialized update command</returns>
     public Result<string> Serialize(UpdateCommand command)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(command)
                 .Map(commandDto => JsonSerializer.Serialize(commandDto, _serializerOptions)));
 
@@ -48,7 +48,7 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
     /// <param name="command">Update command model</param>
     /// <returns>Update command DTO</returns>
     internal Result<UpdateCommandDto> ToDto(UpdateCommand updateCommand)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var updateDto = new UpdateCommandDto(
                 updateCommand.OnTableauId,
@@ -67,7 +67,7 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
     /// <param name="updateCommandDto">Update command DTO</param>
     /// <returns>Update command model</returns>
     internal Result<UpdateCommand> FromDto(UpdateCommandDto updateCommandDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var retypedMutationDict = updateCommandDto.Mutation.ToDictionary(
                 kv => kv.Key,

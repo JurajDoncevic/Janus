@@ -36,7 +36,7 @@ public sealed class MediatorNetworkAdapter : NetworkAdapter, IMediatorNetworkAda
             Preambles.SCHEMA_RESPONSE => _serializationProvider.SchemaResMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.QUERY_RESPONSE => _serializationProvider.QueryResMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
             Preambles.COMMAND_RESPONSE => _serializationProvider.CommandResMessageSerializer.Deserialize(messageBytes).Map(_ => (BaseMessage)_),
-            _ => ResultExtensions.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
+            _ => Results.AsResult<BaseMessage>(BaseMessage () => throw new UnknownMessageTypeException("Unknown message type"))
         };
 
     public override void RaiseSpecializedMessageReceivedEvent(BaseMessage message, string address)

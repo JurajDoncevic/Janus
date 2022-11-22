@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 
 namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class UiGreetingDisplay : BaseDisplay
@@ -15,7 +15,7 @@ public class UiGreetingDisplay : BaseDisplay
         System.Console.WriteLine(_janusAscii);
         System.Console.WriteLine($"This is Wrapper {_wrapperOptions.NodeId} listening on port {_wrapperOptions.ListenPort}");
 
-        return await Task.FromResult(Result.OnSuccess());
+        return await Task.FromResult(Results.OnSuccess());
     }
 
     private readonly string _janusAscii = @"

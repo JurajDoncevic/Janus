@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Logging;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
@@ -26,6 +26,6 @@ public class ShutDownDisplay : BaseDisplay
     {
         _logger?.Info("Exiting application and shutting down component");
         Environment.Exit(0);
-        return await Task.FromResult(Result.OnSuccess("Exiting application"));
+        return await Task.FromResult(Results.OnSuccess("Exiting application"));
     }
 }

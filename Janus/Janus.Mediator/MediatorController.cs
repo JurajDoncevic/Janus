@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
@@ -66,7 +66,7 @@ public sealed class MediatorController : IComponentController
 
 
     public async Task<Result> SaveRegisteredRemotePoints(string filePath)
-        => await ResultExtensions.AsResult(async () =>
+        => await Results.AsResult(async () =>
         {
             await System.IO.File.WriteAllTextAsync(
                 filePath,

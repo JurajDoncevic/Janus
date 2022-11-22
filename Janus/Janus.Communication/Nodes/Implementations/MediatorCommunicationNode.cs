@@ -202,7 +202,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", commandRequest.Preamble, remotePoint, commandRequest.ExchangeId),
                         result => _logger?.Info("Sending {0} to {1} failed with message {2}", commandRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsResult(() =>
+                    .Bind(result => Results.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -245,7 +245,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", queryRequest.Preamble, remotePoint, queryRequest.ExchangeId),
                         result => _logger?.Info("Sending {0} to {1} failed with message {2}", queryRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsResult(() =>
+                    .Bind(result => Results.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -289,7 +289,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         result => _logger?.Info("Sending {0} to {1} successful with exchange {2}", schemaRequest.Preamble, remotePoint, schemaRequest.ExchangeId),
                         result => _logger?.Info("Sending {0} to {1} failed with message {2}", schemaRequest.Preamble, remotePoint, result.Message)
                     )
-                    .Bind(result => ResultExtensions.AsResult(() =>
+                    .Bind(result => Results.AsResult(() =>
                     {
                         // wait for the response to appear
                         while (!_messageStore.AnyResponsesExist(exchangeId))
@@ -370,8 +370,8 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
     protected override Result IsRemotePointOkToRegister(RemotePoint remotePoint)
     {
         if (Options.NodeId.Equals(remotePoint.NodeId))
-            return Result.OnFailure($"This node has the same id {Options.NodeId}.");
+            return Results.OnFailure($"This node has the same id {Options.NodeId}.");
 
-        return Result.OnSuccess();
+        return Results.OnSuccess();
     }
 }

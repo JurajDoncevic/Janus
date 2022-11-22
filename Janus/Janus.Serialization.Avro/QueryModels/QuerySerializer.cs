@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.QueryModels;
 using Janus.Serialization.Avro.QueryModels.DTOs;
 using SolTechnology.Avro;
@@ -20,7 +20,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="serialized">Serialized query</param>
     /// <returns>Deserialized query</returns>
     public Result<Query> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<QueryDto>(serialized, _schema))
+        => Results.AsResult(() => AvroConvert.DeserializeHeadless<QueryDto>(serialized, _schema))
             .Bind(FromDto);
 
     /// <summary>
@@ -29,7 +29,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<byte[]> Serialize(Query query)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(query)
                 .Map(queryDto => AvroConvert.SerializeHeadless(queryDto, _schema))
         );
@@ -40,10 +40,10 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="queryDto">Query DTO</param>
     /// <returns>Query model</returns>
     internal Result<Query> FromDto(QueryDto queryDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             if (queryDto == null)
-                return Result<Query>.OnException(new Exception("Deserialization of QueryDTO failed"));
+                return Results.OnException<Query>(new Exception("Deserialization of QueryDTO failed"));
 
             var query =
                 QueryModelOpenBuilder.InitOpenQuery(queryDto.OnTableauId)
@@ -68,7 +68,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query model</param>
     /// <returns>Query DTO</returns>
     internal Result<QueryDto> ToDto(Query query)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var queryDto = new QueryDto
             {

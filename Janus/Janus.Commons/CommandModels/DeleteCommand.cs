@@ -37,7 +37,7 @@ public class DeleteCommand : BaseCommand
     }
 
     public override Result IsValidForDataSource(DataSource dataSource)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             DeleteCommandBuilder.InitOnDataSource(_onTableauId, dataSource)
                 .WithSelection(conf =>

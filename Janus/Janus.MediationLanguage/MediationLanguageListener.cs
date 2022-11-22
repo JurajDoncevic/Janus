@@ -27,7 +27,7 @@ public class MediationLanguageListener : MediationLanguageBaseListener
 
     public Result<DataSourceMediation> GenerateMediation()
     {
-        return _dataSourceMediationBuilder?.Build() ?? Result<DataSourceMediation>.OnFailure();
+        return _dataSourceMediationBuilder?.Build() ?? Results.OnFailure<DataSourceMediation>();
     }
 
     public override void ExitDatasource_mediation([NotNull] MediationLanguageParser.Datasource_mediationContext context)

@@ -2,7 +2,7 @@
 public static class TabularDataJoining
 {
     public static Result<TabularData> EquiJoinTabularData(TabularData foreignKeyData, TabularData primaryKeyData, string foreignKeyColumn, string primaryKeyColumn)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             // it is expected that all the columns are named differently
             var joinedAttributeTypes = foreignKeyData.AttributeDataTypes.Union(primaryKeyData.AttributeDataTypes).ToDictionary(kv => kv.Key, kv => kv.Value);

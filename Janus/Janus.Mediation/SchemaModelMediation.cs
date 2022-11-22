@@ -15,7 +15,7 @@ public static class SchemaModelMediation
     /// <param name="dataSourceMediation"></param>
     /// <returns>Result of a mediated data source instance</returns>
     public static Result<DataSource> MediateDataSource(DataSourceMediation dataSourceMediation)
-            => ResultExtensions.AsResult<DataSource>(() =>
+            => Results.AsResult<DataSource>(() =>
             {
                 var dataSourceBuilder = SchemaModelBuilder.InitDataSource(dataSourceMediation.DataSourceName)
                     .WithDescription(dataSourceMediation.DataSourceDescription)

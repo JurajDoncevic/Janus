@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
@@ -79,7 +79,7 @@ public class WrapperController
 
     public async Task<Result<DataSource>> GetSchema()
         => await (await _schemaManager.GetCurrentOutputSchema())
-            .Match(async (DataSource dataSource) => await Task.FromResult(Result<DataSource>.OnSuccess(dataSource)),
+            .Match(async (DataSource dataSource) => await Task.FromResult(Results.OnSuccess(dataSource)),
                    async message => await _schemaManager.ReloadOutputSchema());
 
 
@@ -99,7 +99,7 @@ public class WrapperController
             .Bind(async validity => await _queryManager.RunQuery(query));
 
     public async Task<Result> SaveRegisteredRemotePoints(string filePath)
-        => await ResultExtensions.AsResult(async () =>
+        => await Results.AsResult(async () =>
         {
             await System.IO.File.WriteAllTextAsync(
                 filePath,

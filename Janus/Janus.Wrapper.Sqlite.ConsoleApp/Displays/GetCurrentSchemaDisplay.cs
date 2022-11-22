@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Logging;
 
 namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
@@ -18,7 +18,7 @@ public class GetCurrentSchemaDisplay : BaseDisplay
         => (await _wrapperController.GetSchema())
             .Pass(result => Console.WriteLine(result.Data?.ToString()),
                   result => Console.WriteLine(result.Message))
-            .Bind(r => Result.OnSuccess());
+            .Bind(r => Results.OnSuccess());
 
 
 }

@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.QueryModels;
 using Janus.Serialization.Bson.QueryModels.DTOs;
 using System.Text;
@@ -28,7 +28,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="serialized">Serialized query</param>
     /// <returns>Deserialized query</returns>
     public Result<Query> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => JsonSerializer.Deserialize<QueryDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize QueryDTO"))
+        => Results.AsResult(() => JsonSerializer.Deserialize<QueryDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize QueryDTO"))
             .Bind(FromDto);
 
     /// <summary>
@@ -37,7 +37,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query to serialize</param>
     /// <returns>Serialized query</returns>
     public Result<byte[]> Serialize(Query query)
-        => ResultExtensions.AsResult(()
+        => Results.AsResult(()
             => ToDto(query)
                 .Map(queryDto => JsonSerializer.Serialize(queryDto, _serializerOptions))
                 .Map(Encoding.UTF8.GetBytes));
@@ -48,7 +48,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="query">Query model</param>
     /// <returns>Query DTO</returns>
     internal Result<QueryDto> ToDto(Query query)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var queryDto = new QueryDto
             {
@@ -85,7 +85,7 @@ public class QuerySerializer : IQuerySerializer<byte[]>
     /// <param name="queryDto">Query DTO</param>
     /// <returns>Query model</returns>
     internal Result<Query> FromDto(QueryDto queryDto)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var query =
                 QueryModelOpenBuilder.InitOpenQuery(queryDto.OnTableauId)

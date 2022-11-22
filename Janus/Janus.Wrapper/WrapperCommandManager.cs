@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Components;
 using Janus.Wrapper.LocalCommanding;
@@ -31,7 +31,7 @@ public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateComman
                                             .Bind(_commandExecutor.ExecuteInsertCommand),
             UpdateCommand updateCommand => Task.FromResult(_commandTranslator.TranslateUpdate(updateCommand))
                                             .Bind(_commandExecutor.ExecuteUpdateCommand),
-            _ => Task.FromResult(Result.OnFailure("Unknown command type"))
+            _ => Task.FromResult(Results.OnFailure("Unknown command type"))
         });
 
 }

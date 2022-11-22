@@ -1,5 +1,5 @@
 ﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Results;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Logging;
 
 namespace Janus.Mediator.ConsoleApp.Displays;
@@ -14,7 +14,7 @@ public class InputSchemataDisplay : BaseDisplay
     public override string Title => "ALL INPUT SCHEMATA";
 
     protected async override Task<Result> Display()
-        => await ResultExtensions.AsResult(async () =>
+        => await Results.AsResult(async () =>
         {
             return (await _mediatorController.GetInputSchemata())
                 .Map(result => result.Pass(

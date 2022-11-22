@@ -38,11 +38,11 @@ public class CommandLanguageListener : CommandLanguageBaseListener
     }
 
     public Result<DeleteCommand> BuildDeleteCommand()
-        => _deleteBuilder?.Build() ?? Result<DeleteCommand>.OnFailure();
+        => _deleteBuilder?.Build() ?? Results.OnFailure<DeleteCommand>();
     public Result<InsertCommand> BuildInsertCommand()
-        => _insertBuilder?.Build() ?? Result<InsertCommand>.OnFailure();
+        => _insertBuilder?.Build() ?? Results.OnFailure<InsertCommand>();
     public Result<UpdateCommand> BuildUpdateCommand()
-        => _updateBuilder?.Build() ?? Result<UpdateCommand>.OnFailure();
+        => _updateBuilder?.Build() ?? Results.OnFailure<UpdateCommand>();
 
     public override void EnterMutation_expr([NotNull] CommandLanguageParser.Mutation_exprContext context)
     {

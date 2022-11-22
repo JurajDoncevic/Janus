@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Results;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
 using Janus.Serialization.Avro.Messages.DTOs;
 using SolTechnology.Avro;
@@ -19,7 +19,7 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <param name="serialized">Serialized COMMAND_RES</param>
     /// <returns>Deserialized COMMAND_RES</returns>
     public Result<CommandResMessage> Deserialize(byte[] serialized)
-        => ResultExtensions.AsResult(() => AvroConvert.DeserializeHeadless<CommandResMessageDto>(serialized, _schema))
+        => Results.AsResult(() => AvroConvert.DeserializeHeadless<CommandResMessageDto>(serialized, _schema))
             .Map(commandResMessageDto =>
                 new CommandResMessage(
                     commandResMessageDto.ExchangeId,
@@ -34,7 +34,7 @@ public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage,
     /// <param name="message">COMMAND_RES message to serialize</param>
     /// <returns>Serialized COMMAND_RES</returns>
     public Result<byte[]> Serialize(CommandResMessage message)
-        => ResultExtensions.AsResult(() =>
+        => Results.AsResult(() =>
         {
             var commandMessageDto = new CommandResMessageDto
             {
