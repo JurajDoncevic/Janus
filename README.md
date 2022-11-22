@@ -1,7 +1,7 @@
 # Janus
 
 ## What is Janus?
-Janus is a **mask-mediator-wrapper** architecture heterogeneous data source integration system.
+Janus is a **mask-mediator-wrapper** architecture for (not just) heterogeneous data source integration system.
 
 Janus is a prototype of a heterogeneous data source integration system. It is being developed as part
 of my PhD thesis titled *"Extension of the mediator-wrapper architecture for heterogeneous data source
@@ -26,3 +26,7 @@ The MMW architecture extends the mediator-wrapper architecture by the addition o
 ![MMW example](/wiki/figures/mask_mediator_wrapper_layered_arch.png)
 
 Janus' development extensively uses my **[Functional extensions base library](https://github.com/JurajDoncevic/FunctionalExtensions)**. Feel free to take a look at the latest nuget package :-)
+
+## Research papers regarding MMW and its capabilities
+**[Mask-Mediator-Wrapper: A revised mediator-wrapper architecture for heterogeneous data source integration](https://doi.org/10.48550/arXiv.2208.12319)**
+**[Mask-Mediator-Wrapper architecture as a Data Mesh driver](https://doi.org/10.48550/arXiv.2209.04661)**
