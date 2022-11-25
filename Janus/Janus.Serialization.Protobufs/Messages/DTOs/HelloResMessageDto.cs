@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Janus.Serialization.Protobufs.Messages.DTOs;
 
 [ProtoContract]
-internal class HelloResMessageDto
+internal sealed class HelloResMessageDto
 {
     [ProtoMember(1)]
     public string Preamble { get; set; }

@@ -8,7 +8,7 @@ namespace Janus.Serialization.MongoBson.CommandModels;
 /// <summary>
 /// MongoBson format serializer for the delete command
 /// </summary>
-public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
+public sealed class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
 {
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();
 

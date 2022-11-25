@@ -115,7 +115,7 @@ public interface IPostInitBuilder
 /// <summary>
 /// Query model builer class used to create a query
 /// </summary>
-public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSelectionBuilder, IPostProjectionBuilder
+public sealed class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSelectionBuilder, IPostProjectionBuilder
 {
     private Option<Projection> _projection;
     private Option<Selection> _selection;
@@ -245,7 +245,7 @@ public class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, IPostSel
 /// <summary>
 /// Builder class for query selection
 /// </summary>
-public class SelectionBuilder
+public sealed class SelectionBuilder
 {
     private SelectionExpression? _expression;
     private readonly DataSource _dataSource;
@@ -295,7 +295,7 @@ public class SelectionBuilder
 /// <summary>
 /// Builder class for query projection
 /// </summary>
-public class ProjectionBuilder
+public sealed class ProjectionBuilder
 {
     private readonly DataSource _dataSource;
     private HashSet<string> _projectionAttributes;
@@ -352,7 +352,7 @@ public class ProjectionBuilder
 /// <summary>
 /// Builder class for query joins
 /// </summary>
-public class JoiningBuilder
+public sealed class JoiningBuilder
 {
     private readonly string _initialTableauId;
     private readonly DataSource _dataSource;

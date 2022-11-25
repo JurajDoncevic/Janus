@@ -1,6 +1,6 @@
 ﻿namespace Janus.Serialization.Avro.QueryModels.DTOs;
 
-internal class ProjectionDto
+internal sealed class ProjectionDto
 {
     public HashSet<string> AttributeIds { get; set; } = new();
 }

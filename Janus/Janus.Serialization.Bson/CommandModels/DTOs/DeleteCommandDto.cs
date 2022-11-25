@@ -1,6 +1,6 @@
 ﻿namespace Janus.Serialization.Bson.CommandModels.DTOs;
 
-public class DeleteCommandDto
+public sealed class DeleteCommandDto
 {
     public string OnTableauId { get; set; } = String.Empty;
 

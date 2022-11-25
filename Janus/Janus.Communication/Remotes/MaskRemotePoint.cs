@@ -1,6 +1,6 @@
 ﻿namespace Janus.Communication.Remotes;
 
-public class MaskRemotePoint : RemotePoint
+public sealed class MaskRemotePoint : RemotePoint
 {
     public MaskRemotePoint(string address, int listenPort) : base(address, listenPort)
     {

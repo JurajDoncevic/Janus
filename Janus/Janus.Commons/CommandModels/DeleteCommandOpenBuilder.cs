@@ -3,7 +3,7 @@
 /// <summary>
 /// Builder class to internally construct a delete command without validation on a data source
 /// </summary>
-public class DeleteCommandOpenBuilder
+public sealed class DeleteCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<CommandSelection> _selection;

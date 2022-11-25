@@ -9,7 +9,7 @@ namespace Janus.Serialization.Avro.Messages;
 /// <summary>
 /// Avro format COMMAND_RES message serializer
 /// </summary>
-public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage, byte[]>
+public sealed class CommandResMessageSerializer : IMessageSerializer<CommandResMessage, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(CommandResMessageDto));
 

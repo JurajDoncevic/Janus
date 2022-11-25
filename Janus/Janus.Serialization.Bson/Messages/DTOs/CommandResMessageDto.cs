@@ -2,7 +2,7 @@
 
 namespace Janus.Serialization.Bson.Messages.DTOs;
 
-internal class CommandResMessageDto
+internal sealed class CommandResMessageDto
 {
     public string Preamble { get => Preambles.COMMAND_RESPONSE; }
     public string ExchangeId { get; set; }

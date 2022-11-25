@@ -13,7 +13,7 @@ namespace Janus.Serialization.Bson.Messages;
 /// <summary>
 /// BSON format COMMAND_REQ message serializer
 /// </summary>
-public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage, byte[]>
+public sealed class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
     private readonly DeleteCommandSerializer _deleteCommandSerializer = new DeleteCommandSerializer();

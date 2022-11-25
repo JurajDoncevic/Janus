@@ -3,7 +3,7 @@
 /// <summary>
 /// Describes a logical OR
 /// </summary>
-public class OrOperator : LogicalBinaryOperator
+public sealed class OrOperator : LogicalBinaryOperator
 {
     internal OrOperator(SelectionExpression leftOperand, SelectionExpression rightOperand) : base(leftOperand, rightOperand)
     {

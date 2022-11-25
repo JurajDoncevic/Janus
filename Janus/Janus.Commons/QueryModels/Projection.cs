@@ -3,7 +3,7 @@
 /// <summary>
 /// Describes a projection clause
 /// </summary>
-public class Projection
+public sealed class Projection
 {
     private HashSet<string> _includedAttributeIds;
     public IReadOnlyCollection<string> IncludedAttributeIds => _includedAttributeIds;

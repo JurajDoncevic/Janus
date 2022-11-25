@@ -7,7 +7,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Describes a selection clause used in the command model
 /// </summary>
-public class CommandSelection
+public sealed class CommandSelection
 {
     private readonly SelectionExpression _expression;
 

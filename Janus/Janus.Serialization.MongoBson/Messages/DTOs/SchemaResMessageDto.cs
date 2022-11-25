@@ -1,7 +1,7 @@
 ﻿using Janus.Serialization.MongoBson.SchemaModels.DTOs;
 
 namespace Janus.Serialization.MongoBson.Messages.DTOs;
-internal class SchemaResMessageDto : BaseMessageDto
+internal sealed class SchemaResMessageDto : BaseMessageDto
 {
     public DataSourceDto DataSource { get; set; }
 }

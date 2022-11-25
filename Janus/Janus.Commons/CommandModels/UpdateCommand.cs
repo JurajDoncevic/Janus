@@ -5,7 +5,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Describes an update command
 /// </summary>
-public class UpdateCommand : BaseCommand
+public sealed class UpdateCommand : BaseCommand
 {
     private readonly Mutation _mutation;
     private readonly Option<CommandSelection> _selection;

@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Janus.Serialization.Protobufs.SchemaModels.DTOs;
 
 [ProtoContract]
-internal class AttributeDto
+internal sealed class AttributeDto
 {
     [ProtoMember(1)]
     public string Name { get; set; }

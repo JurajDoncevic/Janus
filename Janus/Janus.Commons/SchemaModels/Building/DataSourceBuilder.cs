@@ -4,7 +4,7 @@ namespace Janus.Commons.SchemaModels.Building;
 /// <summary>
 /// Builder for a data source
 /// </summary>
-public class DataSourceBuilder : IDataSourceBuilder
+public sealed class DataSourceBuilder : IDataSourceBuilder
 {
     private DataSource? _dataSource;
     private string _dataSourceName;

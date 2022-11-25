@@ -5,7 +5,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Describes the instantiation clause
 /// </summary>
-public class Instantiation
+public sealed class Instantiation
 {
     private readonly TabularData _tabularData;
 

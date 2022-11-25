@@ -1,7 +1,7 @@
 ﻿using Janus.Commons.Nodes;
 
 namespace Janus.Serialization.MongoBson.Messages.DTOs;
-internal class HelloResMessageDto : BaseMessageDto
+internal sealed class HelloResMessageDto : BaseMessageDto
 {
     public int ListenPort { get; set; }
     public NodeTypes NodeType { get; set; }

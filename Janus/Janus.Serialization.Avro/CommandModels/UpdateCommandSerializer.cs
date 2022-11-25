@@ -10,7 +10,7 @@ namespace Janus.Serialization.Avro.CommandModels;
 /// <summary>
 /// Avro format serializer for the update command
 /// </summary>
-public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
+public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(UpdateCommandDto));
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();

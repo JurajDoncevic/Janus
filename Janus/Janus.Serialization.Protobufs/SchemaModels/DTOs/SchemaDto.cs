@@ -9,7 +9,7 @@ namespace Janus.Serialization.Protobufs.SchemaModels.DTOs;
 /// </summary>
 /// </summary>
 [ProtoContract]
-internal class SchemaDto
+internal sealed class SchemaDto
 {
     [ProtoMember(1)]
     public string Name { get; set; }

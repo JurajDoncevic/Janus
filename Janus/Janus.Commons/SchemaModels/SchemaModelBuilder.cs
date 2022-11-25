@@ -5,7 +5,7 @@ namespace Janus.Commons.SchemaModels;
 /// <summary>
 /// Builder for a schema model
 /// </summary>
-public class SchemaModelBuilder
+public sealed class SchemaModelBuilder
 {
     private DataSourceBuilder _dataSourceBuilder;
 

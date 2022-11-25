@@ -2,7 +2,7 @@
 using Janus.Commons.Nodes;
 
 namespace Janus.Serialization.Bson.Messages.DTOs;
-internal class HelloReqMessageDto : BaseMessageDto
+internal sealed class HelloReqMessageDto : BaseMessageDto
 {
     public new string Preamble { get => Preambles.HELLO_REQUEST; }
     public int ListenPort { get; set; }

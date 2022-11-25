@@ -3,7 +3,7 @@
 /// <summary>
 /// Describes a COMMAND_RES message
 /// </summary>
-public class CommandResMessage : BaseMessage
+public sealed class CommandResMessage : BaseMessage
 {
     private readonly bool _isSuccess;
     private readonly string _outcomeDescription;

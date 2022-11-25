@@ -3,7 +3,7 @@
 /// <summary>
 /// Message used to terminate a logical connection between node. Has no response.
 /// </summary>
-public class ByeReqMessage : BaseMessage
+public sealed class ByeReqMessage : BaseMessage
 {
     /// <summary>
     /// Constructor

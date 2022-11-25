@@ -44,7 +44,7 @@ public interface IPostSelectionUpdateCommandBuilder
 }
 #endregion
 
-public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutationUpdateCommandBuilder, IPostSelectionUpdateCommandBuilder
+public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutationUpdateCommandBuilder, IPostSelectionUpdateCommandBuilder
 {
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
@@ -116,7 +116,7 @@ public class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutation
 /// <summary>
 /// Builder for the mutation clause
 /// </summary>
-public class MutationBuilder
+public sealed class MutationBuilder
 {
     private Dictionary<string, object?>? _valueUpdates;
     private readonly string _onTableauId;
@@ -212,7 +212,7 @@ public class MutationBuilder
 }
 
 
-public class CommandSelectionBuilder
+public sealed class CommandSelectionBuilder
 {
     private Option<SelectionExpression> _expression;
     private readonly DataSource _dataSource;

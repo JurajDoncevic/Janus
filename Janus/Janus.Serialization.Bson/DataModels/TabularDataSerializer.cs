@@ -11,7 +11,7 @@ namespace Janus.Serialization.Bson.DataModels;
 /// <summary>
 /// BSON format serializer for tabular data
 /// </summary>
-public class TabularDataSerializer : ITabularDataSerializer<byte[]>
+public sealed class TabularDataSerializer : ITabularDataSerializer<byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
 

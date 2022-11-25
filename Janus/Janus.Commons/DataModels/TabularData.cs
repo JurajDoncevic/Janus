@@ -5,7 +5,7 @@ namespace Janus.Commons.DataModels;
 /// <summary>
 /// Describes tabular data
 /// </summary>
-public class TabularData
+public sealed class TabularData
 {
     private readonly string _name;
     private readonly List<RowData> _rowData;

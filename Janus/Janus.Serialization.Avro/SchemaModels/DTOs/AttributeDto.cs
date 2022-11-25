@@ -2,7 +2,7 @@
 
 namespace Janus.Serialization.Avro.SchemaModels.DTOs;
 
-internal class AttributeDto
+internal sealed class AttributeDto
 {
     public string Name { get; set; }
     public DataTypes DataType { get; set; }

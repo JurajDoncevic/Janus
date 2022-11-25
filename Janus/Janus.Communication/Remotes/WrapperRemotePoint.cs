@@ -1,6 +1,6 @@
 ﻿namespace Janus.Communication.Remotes;
 
-public class WrapperRemotePoint : RemotePoint
+public sealed class WrapperRemotePoint : RemotePoint
 {
     public WrapperRemotePoint(string address, int listenPort) : base(address, listenPort)
     {

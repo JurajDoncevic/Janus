@@ -9,7 +9,7 @@ namespace Janus.Serialization.MongoBson.Messages;
 /// <summary>
 /// MongoBson format COMMAND_REQ message serializer
 /// </summary>
-public class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage, byte[]>
+public sealed class CommandReqMessageSerializer : IMessageSerializer<CommandReqMessage, byte[]>
 {
     private readonly DeleteCommandSerializer _deleteCommandSerializer = new();
     private readonly InsertCommandSerializer _insertCommandSerializer = new();

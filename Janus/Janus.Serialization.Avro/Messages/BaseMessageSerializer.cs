@@ -8,7 +8,7 @@ namespace Janus.Serialization.Avro.Messages;
 /// <summary>
 /// Avro base message serializer
 /// </summary>
-public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
+public sealed class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(BaseMessageDto));
 

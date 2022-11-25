@@ -1,5 +1,5 @@
 ﻿namespace Janus.Serialization.MongoBson.Messages.DTOs;
 
-internal class ByeReqMessageDto : BaseMessageDto
+internal sealed class ByeReqMessageDto : BaseMessageDto
 {
 }

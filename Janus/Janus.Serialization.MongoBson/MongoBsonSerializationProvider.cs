@@ -14,7 +14,7 @@ namespace Janus.Serialization.MongoBson;
 /// <summary>
 /// MongoBson format serialization provider
 /// </summary>
-public class MongoBsonSerializationProvider : IBytesSerializationProvider
+public sealed class MongoBsonSerializationProvider : IBytesSerializationProvider
 {
     public ITabularDataSerializer<byte[]> TabularDataSerializer => new TabularDataSerializer();
 

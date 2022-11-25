@@ -2,7 +2,7 @@
 /// <summary>
 /// DTO representation of an UpdateSet
 /// </summary>
-internal class UpdateSetDto
+internal sealed class UpdateSetDto
 {
     public HashSet<string> AttributeIds { get; set; } = new HashSet<string>();
 }

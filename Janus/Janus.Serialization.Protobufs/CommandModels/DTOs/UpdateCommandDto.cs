@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Janus.Serialization.Protobufs.CommandModels.DTOs;
 
 [ProtoContract]
-internal class UpdateCommandDto
+internal sealed class UpdateCommandDto
 {
     [ProtoMember(1)]
     public string OnTableauId { get; set; } = String.Empty;

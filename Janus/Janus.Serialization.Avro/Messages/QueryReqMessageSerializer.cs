@@ -10,7 +10,7 @@ namespace Janus.Serialization.Avro.Messages;
 /// <summary>
 /// Avro format QUERY_REQ message serializer
 /// </summary>
-public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byte[]>
+public sealed class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(QueryReqMessageDto));
     private readonly QuerySerializer _querySerializer = new QuerySerializer();

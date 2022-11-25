@@ -5,7 +5,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Describes a delete command
 /// </summary>
-public class DeleteCommand : BaseCommand
+public sealed class DeleteCommand : BaseCommand
 {
     private readonly Option<CommandSelection> _selection;
 

@@ -1,5 +1,5 @@
 ﻿namespace Janus.Serialization.Bson.CommandModels.DTOs;
-public class UpdateCommandDto
+public sealed class UpdateCommandDto
 {
     public string OnTableauId { get; set; } = String.Empty;
     public Dictionary<string, object?> Mutation { get; set; } = new();

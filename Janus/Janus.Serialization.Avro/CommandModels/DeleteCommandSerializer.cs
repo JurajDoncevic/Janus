@@ -8,7 +8,7 @@ namespace Janus.Serialization.Avro.CommandModels;
 /// <summary>
 /// Avro format serializer for the delete command
 /// </summary>
-public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
+public sealed class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(DeleteCommandDto));
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();

@@ -2,7 +2,7 @@
 using Janus.Serialization.Bson.DataModels.DTOs;
 
 namespace Janus.Serialization.Bson.Messages.DTOs;
-internal class QueryResMessageDto
+internal sealed class QueryResMessageDto
 {
     public new string Preamble { get => Preambles.QUERY_RESPONSE; }
     public string ExchangeId { get; set; }

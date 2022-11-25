@@ -2,7 +2,7 @@
 using Janus.Wrapper.Sqlite.Translation;
 
 namespace Janus.Wrapper.Sqlite;
-public class SqliteWrapperCommandManager : WrapperCommandManager<SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string>
+public sealed class SqliteWrapperCommandManager : WrapperCommandManager<SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string>
 {
     public SqliteWrapperCommandManager(SqliteCommandTranslator commandTranslator, SqliteCommandExecutor commandExecutor)
         : base(commandTranslator, commandExecutor)

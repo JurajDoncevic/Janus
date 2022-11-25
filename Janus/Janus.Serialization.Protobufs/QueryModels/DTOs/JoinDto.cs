@@ -3,7 +3,7 @@
 namespace Janus.Serialization.Protobufs.QueryModels.DTOs;
 
 [ProtoContract]
-internal class JoinDto
+internal sealed class JoinDto
 {
     [ProtoMember(1)]
     public string PrimaryKeyAttributeId { get; set; } = string.Empty;

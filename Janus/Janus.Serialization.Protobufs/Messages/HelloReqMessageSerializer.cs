@@ -7,7 +7,7 @@ namespace Janus.Serialization.Protobufs.Messages;
 /// <summary>
 /// Protobufs format HELLO_REQ message serializer
 /// </summary>
-public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byte[]>
+public sealed class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byte[]>
 {
 
     /// <summary>

@@ -8,7 +8,7 @@ namespace Janus.Serialization.Bson.Messages;
 /// <summary>
 /// BSON base message serializer
 /// </summary>
-public class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
+public sealed class BaseMessageSerializer : IMessageSerializer<BaseMessage, byte[]>
 {
     /// <summary>
     /// Deserializes a base message

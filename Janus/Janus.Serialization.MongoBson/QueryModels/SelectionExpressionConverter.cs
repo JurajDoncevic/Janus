@@ -7,7 +7,7 @@ namespace Janus.Serialization.MongoBson.QueryModels;
 /// <summary>
 /// Converter for selection expressions. Selections are turned into parseable strings.
 /// </summary>
-internal class SelectionExpressionConverter
+internal sealed class SelectionExpressionConverter
 {
     /// <summary>
     /// Parses a selection expression from a string

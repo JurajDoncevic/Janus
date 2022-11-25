@@ -8,7 +8,7 @@ namespace Janus.Serialization.MongoBson.Messages;
 /// <summary>
 /// MongoBson format QUERY_RES message serializer
 /// </summary>
-public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byte[]>
+public sealed class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byte[]>
 {
     private readonly TabularDataSerializer _tabularDataSerializer = new TabularDataSerializer();
 

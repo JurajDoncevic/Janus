@@ -7,7 +7,7 @@ namespace Janus.Serialization.Protobufs.SchemaModels.DTOs;
 /// DTO representation of <see cref="Tableau"/>
 /// </summary>
 [ProtoContract]
-internal class TableauDto
+internal sealed class TableauDto
 {
     [ProtoMember(1)]
     public string Name { get; set; }

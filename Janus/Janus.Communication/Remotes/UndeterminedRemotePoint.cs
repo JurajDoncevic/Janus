@@ -1,5 +1,5 @@
 ﻿namespace Janus.Communication.Remotes;
-public class UndeterminedRemotePoint : RemotePoint
+public sealed class UndeterminedRemotePoint : RemotePoint
 {
     public UndeterminedRemotePoint(string address, int listenPort) : base(address, listenPort)
     {

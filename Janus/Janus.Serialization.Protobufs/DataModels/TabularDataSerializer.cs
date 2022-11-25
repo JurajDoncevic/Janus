@@ -9,7 +9,7 @@ namespace Janus.Serialization.Protobufs.DataModels;
 /// <summary>
 /// Protobufs format serializer for tabular data
 /// </summary>
-public class TabularDataSerializer : ITabularDataSerializer<byte[]>
+public sealed class TabularDataSerializer : ITabularDataSerializer<byte[]>
 {
 
     /// <summary>

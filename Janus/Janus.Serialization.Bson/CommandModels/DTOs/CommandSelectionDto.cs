@@ -3,7 +3,7 @@ using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Serialization.Bson.CommandModels.DTOs;
 
-public class CommandSelectionDto
+public sealed class CommandSelectionDto
 {
     public SelectionExpression SelectionExpression { get; set; } = FALSE();
 }

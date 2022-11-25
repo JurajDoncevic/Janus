@@ -7,7 +7,7 @@ namespace Janus.Commons.Messages;
 /// <summary>
 /// Describes a QUERY_RES message
 /// </summary>
-public class QueryResMessage : BaseMessage
+public sealed class QueryResMessage : BaseMessage
 {
     private readonly TabularData? _tabularData;
     private readonly string _errorMessage;

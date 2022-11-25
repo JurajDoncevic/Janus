@@ -3,7 +3,7 @@
 namespace Janus.Serialization.Protobufs.QueryModels.DTOs;
 
 [ProtoContract]
-internal class QueryDto
+internal sealed class QueryDto
 {
     [ProtoMember(1)]
     public string Name { get; set; } 

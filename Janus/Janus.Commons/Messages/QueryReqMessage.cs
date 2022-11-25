@@ -6,7 +6,7 @@ namespace Janus.Commons.Messages;
 /// <summary>
 /// Describes a QUERY_REQ message
 /// </summary>
-public class QueryReqMessage : BaseMessage
+public sealed class QueryReqMessage : BaseMessage
 {
     private readonly Query _query;
 

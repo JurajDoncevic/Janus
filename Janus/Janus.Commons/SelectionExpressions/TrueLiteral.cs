@@ -1,6 +1,6 @@
 ﻿namespace Janus.Commons.SelectionExpressions;
 
-public class TrueLiteral : Literal
+public sealed class TrueLiteral : Literal
 {
     internal TrueLiteral()
     {

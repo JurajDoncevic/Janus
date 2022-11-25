@@ -11,7 +11,7 @@ namespace Janus.Serialization.Bson.CommandModels;
 /// <summary>
 /// BSON format serializer for the update command
 /// </summary>
-public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
+public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
 

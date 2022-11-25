@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Janus.Serialization.Protobufs.DataModels.DTOs;
 
 [ProtoContract]
-internal class TabularDataDto
+internal sealed class TabularDataDto
 {
     [ProtoMember(1)]
     public string Name { get; set; }

@@ -3,7 +3,7 @@
 namespace Janus.Serialization.Protobufs.Messages.DTOs;
 
 [ProtoContract]
-internal class CommandResMessageDto
+internal sealed class CommandResMessageDto
 {
     [ProtoMember(1)]
     public string Preamble { get; set; }

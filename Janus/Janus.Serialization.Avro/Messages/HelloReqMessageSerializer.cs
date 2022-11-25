@@ -8,7 +8,7 @@ namespace Janus.Serialization.Avro.Messages;
 /// <summary>
 /// Avro format HELLO_REQ message serializer
 /// </summary>
-public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byte[]>
+public sealed class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(HelloReqMessageDto));
 

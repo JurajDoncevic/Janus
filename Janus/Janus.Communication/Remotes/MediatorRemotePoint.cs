@@ -1,6 +1,6 @@
 ﻿namespace Janus.Communication.Remotes;
 
-public class MediatorRemotePoint : RemotePoint
+public sealed class MediatorRemotePoint : RemotePoint
 {
     public MediatorRemotePoint(string address, int listenPort) : base(address, listenPort)
     {

@@ -1,6 +1,6 @@
 ﻿namespace Janus.Serialization.Bson.QueryModels.DTOs;
 
-internal class QueryDto
+internal sealed class QueryDto
 {
     public string Name { get; set; }
     public string OnTableauId { get; set; }

@@ -12,7 +12,7 @@ namespace Janus.Serialization.Bson.SchemaModels;
 /// <summary>
 /// BSON format schema model serializer
 /// </summary>
-public class DataSourceSerializer : IDataSourceSerializer<byte[]>
+public sealed class DataSourceSerializer : IDataSourceSerializer<byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
 

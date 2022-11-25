@@ -10,7 +10,7 @@ namespace Janus.Serialization.Bson.Messages;
 /// <summary>
 /// BSON format HELLO_REQ message serializer
 /// </summary>
-public class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byte[]>
+public sealed class HelloReqMessageSerializer : IMessageSerializer<HelloReqMessage, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
 

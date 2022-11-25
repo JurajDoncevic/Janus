@@ -7,7 +7,7 @@ namespace Janus.Serialization.Protobufs.Messages;
 /// <summary>
 /// Protobufs format SCHEMA_REQ message serializer
 /// </summary>
-public class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, byte[]>
+public sealed class SchemaReqMessageSerializer : IMessageSerializer<SchemaReqMessage, byte[]>
 {
     /// <summary>
     /// Deserializes a SCHEMA_REQ message

@@ -5,7 +5,7 @@ using Janus.Wrapper.SchemaInferrence.Model;
 using Microsoft.Data.Sqlite;
 
 namespace Janus.Wrapper.Sqlite.SchemaInferrence;
-public class SqliteSchemaModelProvider : ISchemaModelProvider
+public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
 {
     private readonly string _connectionString;
 

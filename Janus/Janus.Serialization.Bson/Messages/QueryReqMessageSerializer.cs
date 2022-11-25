@@ -11,7 +11,7 @@ namespace Janus.Serialization.Bson.Messages;
 /// <summary>
 /// BSON format QUERY_REQ message serializer
 /// </summary>
-public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byte[]>
+public sealed class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
     private readonly QuerySerializer _querySerializer = new QuerySerializer();

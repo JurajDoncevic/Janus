@@ -6,7 +6,7 @@ namespace Janus.Serialization.Avro.SchemaModels.DTOs;
 /// DTO representation of <see cref="SchemaModels"/>
 /// </summary>
 /// </summary>
-internal class SchemaDto
+internal sealed class SchemaDto
 {
     public string Name { get; set; }
     public List<TableauDto> Tableaus { get; set; }

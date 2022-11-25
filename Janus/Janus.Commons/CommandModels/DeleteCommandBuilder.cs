@@ -26,7 +26,7 @@ public interface IPostInitDeleteCommandBuilder
 /// <summary>
 /// Builder for the delete command
 /// </summary>
-public class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
+public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
 {
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;

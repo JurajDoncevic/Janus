@@ -7,7 +7,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Builder class to internally construct an update command without validation on a data source
 /// </summary>
-public class UpdateCommandOpenBuilder
+public sealed class UpdateCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<Mutation> _mutation;
@@ -78,7 +78,7 @@ public class UpdateCommandOpenBuilder
 /// <summary>
 /// Mutation clause open builder
 /// </summary>
-public class MutationOpenBuilder
+public sealed class MutationOpenBuilder
 {
     private Option<Dictionary<string, object?>> _valueUpdates;
 
@@ -118,7 +118,7 @@ public class MutationOpenBuilder
 /// <summary>
 /// Selection clause open builder
 /// </summary>
-public class CommandSelectionOpenBuilder
+public sealed class CommandSelectionOpenBuilder
 {
     private Option<SelectionExpression> _expression;
 

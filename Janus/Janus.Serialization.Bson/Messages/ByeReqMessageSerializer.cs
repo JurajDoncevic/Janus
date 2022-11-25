@@ -9,7 +9,7 @@ namespace Janus.Serialization.Bson.Messages;
 /// <summary>
 /// BSON format BYE_REQ message serializer
 /// </summary>
-public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
+public sealed class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
 

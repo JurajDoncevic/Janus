@@ -8,7 +8,7 @@ namespace Janus.Serialization.MongoBson.QueryModels;
 /// <summary>
 /// MongoBson format query serializer
 /// </summary>
-public class QuerySerializer : IQuerySerializer<byte[]>
+public sealed class QuerySerializer : IQuerySerializer<byte[]>
 {
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();
 

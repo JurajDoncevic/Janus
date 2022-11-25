@@ -2,7 +2,7 @@
 using Janus.Serialization.Avro.CommandModels.DTOs;
 
 namespace Janus.Serialization.Avro.Messages.DTOs;
-internal class CommandReqMessageDto
+internal sealed class CommandReqMessageDto
 {
     public string Preamble { get; set; }
     public string ExchangeId { get; set; }

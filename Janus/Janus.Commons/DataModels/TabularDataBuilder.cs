@@ -29,7 +29,7 @@ public interface IPostInitTabularDataBuilder
 /// <summary>
 /// Builder for tabular data
 /// </summary>
-public class TabularDataBuilder : IPostInitTabularDataBuilder
+public sealed class TabularDataBuilder : IPostInitTabularDataBuilder
 {
     private readonly Dictionary<string, DataTypes> _attributeDataTypes;
     private readonly List<RowData> _rows;

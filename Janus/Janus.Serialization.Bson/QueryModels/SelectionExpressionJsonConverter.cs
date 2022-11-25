@@ -9,7 +9,7 @@ namespace Janus.Serialization.Bson.QueryModels;
 /// <summary>
 /// JsonConverter for selection expressions. Selections are turned into parseable strings.
 /// </summary>
-public class SelectionExpressionJsonConverter : JsonConverter<SelectionExpression>
+public sealed class SelectionExpressionJsonConverter : JsonConverter<SelectionExpression>
 {
     public override SelectionExpression? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

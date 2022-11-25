@@ -7,7 +7,7 @@ namespace Janus.Serialization.MongoBson.Messages;
 /// <summary>
 /// MongoBson format HELLO_RES message serializer
 /// </summary>
-public class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byte[]>
+public sealed class HelloResMessageSerializer : IMessageSerializer<HelloResMessage, byte[]>
 {
 
     /// <summary>

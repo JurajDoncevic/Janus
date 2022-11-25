@@ -5,7 +5,7 @@ namespace Janus.Commons.QueryModels;
 /// <summary>
 /// Describes a query selection clause
 /// </summary>
-public class Selection
+public sealed class Selection
 {
     private readonly SelectionExpression _expression;
 

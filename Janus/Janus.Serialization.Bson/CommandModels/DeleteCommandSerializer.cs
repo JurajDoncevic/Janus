@@ -10,7 +10,7 @@ namespace Janus.Serialization.Bson.CommandModels;
 /// <summary>
 /// BSON format serializer for the delete command
 /// </summary>
-public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
+public sealed class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
 

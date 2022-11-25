@@ -46,7 +46,7 @@ public interface IPostInitOpenBuilder
 }
 #endregion
 
-public class QueryModelOpenBuilder : IPostInitOpenBuilder
+public sealed class QueryModelOpenBuilder : IPostInitOpenBuilder
 {
     private Option<Projection> _projection;
     private Option<Selection> _selection;

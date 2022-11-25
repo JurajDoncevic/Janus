@@ -8,7 +8,7 @@ namespace Janus.Serialization.MongoBson.CommandModels;
 /// <summary>
 /// MongoBson format serializer for the insert command
 /// </summary>
-public class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
+public sealed class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
 {
     private readonly TabularDataSerializer _tabularDataSerializer = new TabularDataSerializer();
 

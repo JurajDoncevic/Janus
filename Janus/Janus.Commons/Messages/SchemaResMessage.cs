@@ -5,7 +5,7 @@ namespace Janus.Commons.Messages;
 /// <summary>
 /// Describes a SCHEMA_RES message
 /// </summary>
-public class SchemaResMessage : BaseMessage
+public sealed class SchemaResMessage : BaseMessage
 {
     private readonly DataSource _dataSource;
     /// <summary>

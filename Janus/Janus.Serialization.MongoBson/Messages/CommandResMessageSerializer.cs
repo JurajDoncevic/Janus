@@ -8,7 +8,7 @@ namespace Janus.Serialization.MongoBson.Messages;
 /// <summary>
 /// MongoBson format COMMAND_RES message serializer
 /// </summary>
-public class CommandResMessageSerializer : IMessageSerializer<CommandResMessage, byte[]>
+public sealed class CommandResMessageSerializer : IMessageSerializer<CommandResMessage, byte[]>
 {
     /// <summary>
     /// Deserializes a COMMAND_RES message

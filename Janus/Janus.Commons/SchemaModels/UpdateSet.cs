@@ -5,7 +5,7 @@ namespace Janus.Commons.SchemaModels;
 /// <summary>
 /// Signifies a group of attributes that can be update together
 /// </summary>
-public class UpdateSet
+public sealed class UpdateSet
 {
     private readonly HashSet<string> _attributeNames;
     private readonly Tableau _parentTableau;

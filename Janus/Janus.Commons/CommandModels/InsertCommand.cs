@@ -1,7 +1,7 @@
 ﻿using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.CommandModels;
-public class InsertCommand : BaseCommand
+public sealed class InsertCommand : BaseCommand
 {
     private readonly Instantiation _instantiation;
 

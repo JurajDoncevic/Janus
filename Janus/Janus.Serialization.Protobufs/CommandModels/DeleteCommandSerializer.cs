@@ -8,7 +8,7 @@ namespace Janus.Serialization.Protobufs.CommandModels;
 /// <summary>
 /// Protobufs format serializer for the delete command
 /// </summary>
-public class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
+public sealed class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, byte[]>
 {
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();
 

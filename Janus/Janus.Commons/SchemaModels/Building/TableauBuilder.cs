@@ -5,7 +5,7 @@ namespace Janus.Commons.SchemaModels.Building;
 /// <summary>
 /// Builder for a tableau
 /// </summary>
-public class TableauBuilder : ITableauBuilder
+public sealed class TableauBuilder : ITableauBuilder
 {
     private Tableau? _tableau;
     private string _tableauName;

@@ -3,7 +3,7 @@
 namespace Janus.Serialization.Protobufs.CommandModels.DTOs;
 
 [ProtoContract]
-internal class DeleteCommandDto
+internal sealed class DeleteCommandDto
 {
     [ProtoMember(1)]
     public string OnTableauId { get; set; } = String.Empty;

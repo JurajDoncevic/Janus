@@ -5,7 +5,7 @@ namespace Janus.Commons.Messages;
 /// <summary>
 /// Describes a COMMAND_REQ message
 /// </summary>
-public class CommandReqMessage : BaseMessage
+public sealed class CommandReqMessage : BaseMessage
 {
     private readonly BaseCommand _command;
     private readonly CommandReqTypes _commandReqType;

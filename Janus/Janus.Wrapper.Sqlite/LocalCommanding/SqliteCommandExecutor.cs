@@ -3,7 +3,7 @@ using Janus.Wrapper.LocalCommanding;
 using Microsoft.Data.Sqlite;
 
 namespace Janus.Wrapper.Sqlite.LocalCommanding;
-public class SqliteCommandExecutor : ICommandExecutor<SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string>
+public sealed class SqliteCommandExecutor : ICommandExecutor<SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string>
 {
     private readonly string _sqliteConnectionString;
 

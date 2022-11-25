@@ -12,7 +12,7 @@ namespace Janus.Serialization.Bson.CommandModels;
 /// <summary>
 /// BSON format serializer for the insert command
 /// </summary>
-public class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
+public sealed class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
     private readonly TabularDataSerializer _tabularDataSerializer = new TabularDataSerializer();

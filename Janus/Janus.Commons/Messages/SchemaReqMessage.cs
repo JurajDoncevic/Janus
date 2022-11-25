@@ -2,7 +2,7 @@
 /// <summary>
 /// Describes a SCHEMA_REQ message
 /// </summary>
-public class SchemaReqMessage : BaseMessage
+public sealed class SchemaReqMessage : BaseMessage
 {
     /// <summary>
     /// Constructor

@@ -6,7 +6,7 @@ namespace Janus.Commons.CommandModels;
 /// <summary>
 /// Builder class to internally construct an insert command without validation on a data source
 /// </summary>
-public class InsertCommandOpenBuilder
+public sealed class InsertCommandOpenBuilder
 {
     private readonly string _onTableauId;
     private Option<Instantiation> _instantiation;
@@ -58,7 +58,7 @@ public class InsertCommandOpenBuilder
 /// <summary>
 /// Open builder for the instatiation clause
 /// </summary>
-public class InstantiationOpenBuilder
+public sealed class InstantiationOpenBuilder
 {
     private readonly string _onTableauId;
     private TabularData? _tabularDataToInsert;

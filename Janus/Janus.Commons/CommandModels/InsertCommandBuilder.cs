@@ -29,7 +29,7 @@ public interface IPostInstatiationBuilder
 /// <summary>
 /// Builder for the insert command
 /// </summary>
-public class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostInstatiationBuilder
+public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostInstatiationBuilder
 {
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;
@@ -86,7 +86,7 @@ public class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostInstatia
 /// <summary>
 /// Builder for the instantiation clause
 /// </summary>
-public class InstantiationBuilder
+public sealed class InstantiationBuilder
 {
     private readonly string _onTableauId;
     private readonly DataSource _dataSource;

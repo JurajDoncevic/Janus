@@ -8,7 +8,7 @@ namespace Janus.Serialization.Protobufs.Messages;
 /// <summary>
 /// Protobufs format SCHEMA_RES message serializer
 /// </summary>
-public class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, byte[]>
+public sealed class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, byte[]>
 {
     private readonly DataSourceSerializer _dataSourceSerializer = new DataSourceSerializer();
 

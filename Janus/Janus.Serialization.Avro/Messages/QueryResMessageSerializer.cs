@@ -9,7 +9,7 @@ namespace Janus.Serialization.Avro.Messages;
 /// <summary>
 /// Avro format QUERY_RES message serializer
 /// </summary>
-public class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byte[]>
+public sealed class QueryResMessageSerializer : IMessageSerializer<QueryResMessage, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(QueryResMessageDto));
     private readonly TabularDataSerializer _tabularDataSerializer = new TabularDataSerializer();

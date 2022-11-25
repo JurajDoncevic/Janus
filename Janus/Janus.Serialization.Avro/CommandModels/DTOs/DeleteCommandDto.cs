@@ -1,6 +1,6 @@
 ﻿namespace Janus.Serialization.Avro.CommandModels.DTOs;
 
-internal class DeleteCommandDto
+internal sealed class DeleteCommandDto
 {
     public string OnTableauId { get; set; } = String.Empty;
 

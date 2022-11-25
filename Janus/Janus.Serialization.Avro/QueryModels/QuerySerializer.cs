@@ -9,7 +9,7 @@ namespace Janus.Serialization.Avro.QueryModels;
 /// <summary>
 /// Avro format query serializer
 /// </summary>
-public class QuerySerializer : IQuerySerializer<byte[]>
+public sealed class QuerySerializer : IQuerySerializer<byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(QueryDto));
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();

@@ -1,6 +1,6 @@
 ﻿namespace Janus.Serialization.MongoBson.CommandModels.DTOs;
 
-internal class UpdateCommandDto
+internal sealed class UpdateCommandDto
 {
     public string OnTableauId { get; set; } = String.Empty;
     public Dictionary<string, byte[]?> Mutation { get; set; } = new();

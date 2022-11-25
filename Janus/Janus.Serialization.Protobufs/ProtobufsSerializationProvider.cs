@@ -13,7 +13,7 @@ namespace Janus.Serialization.Protobufs;
 /// <summary>
 /// Protobufs format serialization provider
 /// </summary>
-public class ProtobufsSerializationProvider : IBytesSerializationProvider
+public sealed class ProtobufsSerializationProvider : IBytesSerializationProvider
 {
     public ITabularDataSerializer<byte[]> TabularDataSerializer => new TabularDataSerializer();
 

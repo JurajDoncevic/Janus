@@ -5,7 +5,7 @@ namespace Janus.Commons.SchemaModels.Building;
 /// <summary>
 /// Builder for an attribute
 /// </summary>
-public class AttributeBuilder : IAttributeBuilder
+public sealed class AttributeBuilder : IAttributeBuilder
 {
     private string _attributeName;
     private DataTypes _attributeDataType;

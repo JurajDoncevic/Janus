@@ -9,7 +9,7 @@ namespace Janus.Serialization.Avro.CommandModels;
 /// <summary>
 /// Avro format serializer for the insert command
 /// </summary>
-public class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
+public sealed class InsertCommandSerializer : ICommandSerializer<InsertCommand, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(InsertCommandDto));
     private readonly TabularDataSerializer _tabularDataSerializer = new TabularDataSerializer();

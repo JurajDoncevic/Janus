@@ -9,7 +9,7 @@ namespace Janus.Serialization.Protobufs.SchemaModels;
 /// <summary>
 /// Protobufs format schema model serializer
 /// </summary>
-public class DataSourceSerializer : IDataSourceSerializer<byte[]>
+public sealed class DataSourceSerializer : IDataSourceSerializer<byte[]>
 {
     /// <summary>
     /// Deserializes a data source

@@ -7,7 +7,7 @@ using Janus.Wrapper.Sqlite.LocalQuerying;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper.Sqlite.Translation;
-public class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, string, string>
+public sealed class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, string, string, string>
 {
     public Result<SqliteQuery> Translate(Query query)
         => TranslateSelection(query.Selection)

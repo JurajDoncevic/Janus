@@ -5,7 +5,7 @@ namespace Janus.Commons.QueryModels;
 /// <summary>
 /// Describes a query
 /// </summary>
-public class Query
+public sealed class Query
 {
     private readonly string _name;
     private Option<Projection> _projection;

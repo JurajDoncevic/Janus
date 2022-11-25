@@ -3,7 +3,7 @@
 /// <summary>
 /// Describes a row of tableau data
 /// </summary>
-public class RowData
+public sealed class RowData
 {
     private readonly Dictionary<string, object?> _attributeValues;
 

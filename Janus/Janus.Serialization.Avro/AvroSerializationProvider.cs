@@ -14,7 +14,7 @@ namespace Janus.Serialization.Avro;
 /// <summary>
 /// Avro format serialization provider
 /// </summary>
-public class AvroSerializationProvider : IBytesSerializationProvider
+public sealed class AvroSerializationProvider : IBytesSerializationProvider
 {
     public ITabularDataSerializer<byte[]> TabularDataSerializer => new TabularDataSerializer();
 

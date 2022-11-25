@@ -1,7 +1,7 @@
 ﻿using Janus.Wrapper.LocalCommanding;
 
 namespace Janus.Wrapper.Sqlite.LocalCommanding;
-public class SqliteDelete : LocalDelete<string>
+public sealed class SqliteDelete : LocalDelete<string>
 {
     public SqliteDelete(string target, string selection) : base(target, selection)
     {

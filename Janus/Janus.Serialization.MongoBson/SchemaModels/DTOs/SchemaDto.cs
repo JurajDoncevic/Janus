@@ -6,7 +6,7 @@ namespace Janus.Serialization.MongoBson.SchemaModels.DTOs;
 /// DTO representation of <see cref="SchemaModels"/>
 /// </summary>
 /// </summary>
-internal class SchemaDto
+internal sealed class SchemaDto
 {
     public string Name { get; set; }
     public string Description { get; set; }

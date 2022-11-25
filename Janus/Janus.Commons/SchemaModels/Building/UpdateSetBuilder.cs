@@ -1,7 +1,7 @@
 ﻿using Janus.Commons.SchemaModels.Exceptions;
 
 namespace Janus.Commons.SchemaModels.Building;
-public class UpdateSetBuilder : IUpdateSetBuilder
+public sealed class UpdateSetBuilder : IUpdateSetBuilder
 {
     private HashSet<string> _attributeNames;
     private readonly Tableau _parentTableau;

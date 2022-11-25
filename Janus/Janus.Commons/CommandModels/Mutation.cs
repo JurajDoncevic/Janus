@@ -3,7 +3,7 @@
 /// <summary>
 /// Describes a mutation clause
 /// </summary>
-public class Mutation
+public sealed class Mutation
 {
     private readonly Dictionary<string, object?> _valueUpdates;
 

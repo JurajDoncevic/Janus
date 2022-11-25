@@ -5,7 +5,7 @@ using Janus.Wrapper.Sqlite.LocalDataModel;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper.Sqlite.Translation;
-public class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularData>
+public sealed class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularData>
 {
     private readonly string _resultSchemaPrefix;
 

@@ -8,7 +8,7 @@ namespace Janus.Serialization.Protobufs.QueryModels;
 /// <summary>
 /// Protobufs format query serializer
 /// </summary>
-public class QuerySerializer : IQuerySerializer<byte[]>
+public sealed class QuerySerializer : IQuerySerializer<byte[]>
 {
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();
 

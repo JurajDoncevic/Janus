@@ -1,7 +1,7 @@
 ﻿using Janus.Serialization.Avro.DataModels.DTOs;
 
 namespace Janus.Serialization.Avro.Messages.DTOs;
-internal class QueryResMessageDto
+internal sealed class QueryResMessageDto
 {
     public string Preamble { get; set; }
     public string ExchangeId { get; set; }

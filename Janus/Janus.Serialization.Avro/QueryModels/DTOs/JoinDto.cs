@@ -1,6 +1,6 @@
 ﻿namespace Janus.Serialization.Avro.QueryModels.DTOs;
 
-internal class JoinDto
+internal sealed class JoinDto
 {
     public string PrimaryKeyAttributeId { get; set; } = string.Empty;
     public string PrimaryKeyTableauId { get; set; } = string.Empty;

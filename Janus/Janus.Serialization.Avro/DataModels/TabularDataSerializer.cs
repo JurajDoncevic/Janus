@@ -10,7 +10,7 @@ namespace Janus.Serialization.Avro.DataModels;
 /// <summary>
 /// Avro format serializer for tabular data
 /// </summary>
-public class TabularDataSerializer : ITabularDataSerializer<byte[]>
+public sealed class TabularDataSerializer : ITabularDataSerializer<byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(TabularDataDto));
 

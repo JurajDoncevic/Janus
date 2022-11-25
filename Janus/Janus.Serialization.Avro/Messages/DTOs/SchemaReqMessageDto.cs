@@ -1,6 +1,6 @@
 ﻿namespace Janus.Serialization.Avro.Messages.DTOs;
 
-internal class SchemaReqMessageDto
+internal sealed class SchemaReqMessageDto
 {
     public string Preamble { get; set; }
     public string ExchangeId { get; set; }

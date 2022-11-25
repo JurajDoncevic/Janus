@@ -7,7 +7,7 @@ namespace Janus.Serialization.MongoBson.Messages;
 /// <summary>
 /// MongoBson format BYE_REQ message serializer
 /// </summary>
-public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
+public sealed class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
 {
     /// <summary>
     /// Deserializes a BYE_REQ message

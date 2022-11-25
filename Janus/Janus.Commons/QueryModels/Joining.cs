@@ -3,7 +3,7 @@
 /// <summary>
 /// Describes a query joining clause
 /// </summary>
-public class Joining
+public sealed class Joining
 {
     private List<Join> _joins;
 

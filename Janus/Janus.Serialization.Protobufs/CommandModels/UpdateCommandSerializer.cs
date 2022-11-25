@@ -9,7 +9,7 @@ namespace Janus.Serialization.Protobufs.CommandModels;
 /// <summary>
 /// Protobufs format serializer for the update command
 /// </summary>
-public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
+public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, byte[]>
 {
     private readonly SelectionExpressionConverter _selectionExpressionConverter = new SelectionExpressionConverter();
 

@@ -5,7 +5,7 @@ namespace Janus.Serialization.Protobufs.SchemaModels.DTOs;
 /// DTO representation of an UpdateSet
 /// </summary>
 [ProtoContract]
-internal class UpdateSetDto
+internal sealed class UpdateSetDto
 {
     [ProtoMember(1)]
     public HashSet<string> AttributeIds { get; set; } = new HashSet<string>();

@@ -10,7 +10,7 @@ namespace Janus.Serialization.Avro.SchemaModels;
 /// <summary>
 /// Avro format schema model serializer
 /// </summary>
-public class DataSourceSerializer : IDataSourceSerializer<byte[]>
+public sealed class DataSourceSerializer : IDataSourceSerializer<byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(DataSourceDto));
 

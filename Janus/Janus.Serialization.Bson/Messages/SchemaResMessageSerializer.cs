@@ -11,7 +11,7 @@ namespace Janus.Serialization.Bson.Messages;
 /// <summary>
 /// BSON format SCHEMA_RES message serializer
 /// </summary>
-public class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, byte[]>
+public sealed class SchemaResMessageSerializer : IMessageSerializer<SchemaResMessage, byte[]>
 {
     private readonly JsonSerializerOptions _serializerOptions;
     private readonly DataSourceSerializer _dataSourceSerializer = new DataSourceSerializer();

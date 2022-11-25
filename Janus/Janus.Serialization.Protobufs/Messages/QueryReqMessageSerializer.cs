@@ -9,7 +9,7 @@ namespace Janus.Serialization.Protobufs.Messages;
 /// <summary>
 /// Protobufs format QUERY_REQ message serializer
 /// </summary>
-public class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byte[]>
+public sealed class QueryReqMessageSerializer : IMessageSerializer<QueryReqMessage, byte[]>
 {
     private readonly QuerySerializer _querySerializer = new QuerySerializer();
 

@@ -5,7 +5,7 @@ namespace Janus.Commons.Messages;
 /// <summary>
 /// Describes a HELLO_RES message
 /// </summary>
-public class HelloResMessage : BaseMessage
+public sealed class HelloResMessage : BaseMessage
 {
     private readonly int _listenPort;
     private readonly NodeTypes _nodeType;

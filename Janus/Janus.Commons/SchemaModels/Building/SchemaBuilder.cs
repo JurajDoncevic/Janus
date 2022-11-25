@@ -5,7 +5,7 @@ namespace Janus.Commons.SchemaModels.Building;
 /// <summary>
 /// Builder for a schema
 /// </summary>
-public class SchemaBuilder : ISchemaBuilder
+public sealed class SchemaBuilder : ISchemaBuilder
 {
     private Schema? _schema;
     private string _schemaName;

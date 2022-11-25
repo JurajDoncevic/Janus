@@ -14,7 +14,7 @@ namespace Janus.Serialization.Bson;
 /// <summary>
 /// BSON format serialization provider
 /// </summary>
-public class BsonSerializationProvider : IBytesSerializationProvider
+public sealed class BsonSerializationProvider : IBytesSerializationProvider
 {
     public ITabularDataSerializer<byte[]> TabularDataSerializer => new TabularDataSerializer();
 

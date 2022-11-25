@@ -8,7 +8,7 @@ namespace Janus.Serialization.Avro.Messages;
 /// <summary>
 /// Avro format BYE_REQ message serializer
 /// </summary>
-public class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
+public sealed class ByeReqMessageSerializer : IMessageSerializer<ByeReqMessage, byte[]>
 {
     private readonly string _schema = AvroConvert.GenerateSchema(typeof(ByeReqMessageDto));
 

@@ -7,7 +7,7 @@ namespace Janus.Serialization.Protobufs.SchemaModels.DTOs;
 /// DTO representation of <see cref="DataSource"/>
 /// </summary>
 [ProtoContract]
-internal class DataSourceDto
+internal sealed class DataSourceDto
 {
     [ProtoMember(1)]
     public string Name { get; set; }

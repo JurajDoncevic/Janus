@@ -1,7 +1,7 @@
 ﻿using Janus.Commons.Nodes;
 
 namespace Janus.Serialization.Avro.Messages.DTOs;
-internal class HelloResMessageDto
+internal sealed class HelloResMessageDto
 {
     public string Preamble { get; set; }
     public string ExchangeId { get; set; }
