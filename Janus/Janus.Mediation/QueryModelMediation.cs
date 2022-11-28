@@ -15,7 +15,7 @@ public static class QueryModelMediation
         {
             // determine split queries - for each join set from the same data source - split a colored graph
 
-            // split projection into separate queries
+            // split projection into separate queries - keep the joining attributes
 
             // if conjunctive selection split selection into separate queries, else put into finalizing selection
 
