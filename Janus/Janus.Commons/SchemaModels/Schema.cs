@@ -5,6 +5,7 @@
 /// </summary>
 public sealed class Schema
 {
+    private readonly SchemaId _id;
     private readonly string _name;
     private readonly string _description;
     private readonly DataSource _dataSource;
@@ -13,7 +14,7 @@ public sealed class Schema
     /// <summary>
     /// Schema ID
     /// </summary>
-    public string Id => _dataSource.Id + "." + _name;
+    public SchemaId Id => _id;
     /// <summary>
     /// Schema name
     /// </summary>
@@ -52,7 +53,7 @@ public sealed class Schema
         {
             throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
         }
-
+        _id = SchemaId.From(dataSource.Name, name);
         _name = name;
         _description = description ?? string.Empty;
         _tableaus = new();
@@ -76,7 +77,7 @@ public sealed class Schema
         {
             throw new ArgumentNullException(nameof(tableaus));
         }
-
+        _id = SchemaId.From(dataSource.Name, name);
         _name = name;
         _description = description;
         _tableaus = tableaus.ToDictionary(tableau => tableau.Name, tableau => tableau);
@@ -122,6 +123,7 @@ public sealed class Schema
     public override bool Equals(object? obj)
     {
         return obj is Schema schema &&
+               _id.Equals(schema._id) &&
                _name.Equals(schema._name) &&
                _dataSource.Id.Equals(schema._dataSource.Id) &&
                _description.Equals(schema._description) &&
@@ -130,7 +132,7 @@ public sealed class Schema
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_name, _dataSource, _tableaus);
+        return HashCode.Combine(_id, _name, _dataSource, _tableaus);
     }
 
     public static bool operator ==(Schema? left, Schema? right)

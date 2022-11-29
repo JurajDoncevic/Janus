@@ -6,7 +6,7 @@ namespace Janus.Commons.QueryModels.Exceptions;
 public class IncompatibleDataTypeComparisonException : Exception
 {
 
-    public IncompatibleDataTypeComparisonException(string attributeId, DataTypes dataType, ComparisonOperator compareOp)
+    public IncompatibleDataTypeComparisonException(AttributeId attributeId, DataTypes dataType, ComparisonOperator compareOp)
         : base($"Comparison '{compareOp.ToString()}' is incompatible on attribute {attributeId} with type {dataType}")
     {
 

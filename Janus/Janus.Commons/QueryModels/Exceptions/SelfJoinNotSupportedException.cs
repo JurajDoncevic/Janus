@@ -1,8 +1,10 @@
-﻿namespace Janus.Commons.QueryModels.Exceptions;
+﻿using Janus.Commons.SchemaModels;
+
+namespace Janus.Commons.QueryModels.Exceptions;
 
 public class SelfJoinNotSupportedException : Exception
 {
-    internal SelfJoinNotSupportedException(string tableauId)
+    internal SelfJoinNotSupportedException(TableauId tableauId)
         : base($"Self join on tableau {tableauId} not supported.")
     {
     }

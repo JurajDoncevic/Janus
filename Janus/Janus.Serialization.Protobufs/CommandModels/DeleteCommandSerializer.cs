@@ -41,7 +41,7 @@ public sealed class DeleteCommandSerializer : ICommandSerializer<DeleteCommand, 
         => Results.AsResult(() =>
         {
             var deleteCommandDto = new DeleteCommandDto(
-                deleteCommand.OnTableauId,
+                deleteCommand.OnTableauId.ToString(),
                 deleteCommand.Selection
                     ? new CommandSelectionDto() { SelectionExpression = _selectionExpressionConverter.ToStringExpression(deleteCommand.Selection.Value.Expression) }
                     : null

@@ -7,7 +7,7 @@ namespace Janus.Commons.SelectionExpressions;
 /// </summary>
 public sealed class EqualAs : ComparisonOperator
 {
-    internal EqualAs(string attributeId, object value) : base(attributeId, value)
+    internal EqualAs(AttributeId attributeId, object value) : base(attributeId, value)
     {
     }
 

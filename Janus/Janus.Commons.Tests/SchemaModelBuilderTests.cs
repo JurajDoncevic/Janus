@@ -266,26 +266,26 @@ public class SchemaModelBuilderTests
                                             .AddAttribute("attr3", attributeBuilder => attributeBuilder)))
                             .Build();
 
-        Assert.Equal("testDataSource.schema1", dataSource["schema1"].Id);
-        Assert.Equal("testDataSource.schema2", dataSource["schema2"].Id);
+        Assert.Equal(SchemaId.From("testDataSource.schema1"), dataSource["schema1"].Id);
+        Assert.Equal(SchemaId.From("testDataSource.schema2"), dataSource["schema2"].Id);
 
-        Assert.Equal("testDataSource.schema1.tableau1", dataSource["schema1"]["tableau1"].Id);
-        Assert.Equal("testDataSource.schema1.tableau2", dataSource["schema1"]["tableau2"].Id);
-        Assert.Equal("testDataSource.schema2.tableau1", dataSource["schema2"]["tableau1"].Id);
-        Assert.Equal("testDataSource.schema2.tableau2", dataSource["schema2"]["tableau2"].Id);
+        Assert.Equal(TableauId.From("testDataSource.schema1.tableau1"), dataSource["schema1"]["tableau1"].Id);
+        Assert.Equal(TableauId.From("testDataSource.schema1.tableau2"), dataSource["schema1"]["tableau2"].Id);
+        Assert.Equal(TableauId.From("testDataSource.schema2.tableau1"), dataSource["schema2"]["tableau1"].Id);
+        Assert.Equal(TableauId.From("testDataSource.schema2.tableau2"), dataSource["schema2"]["tableau2"].Id);
 
-        Assert.Equal("testDataSource.schema1.tableau1.attr1", dataSource["schema1"]["tableau1"]["attr1"].Id);
-        Assert.Equal("testDataSource.schema1.tableau1.attr2", dataSource["schema1"]["tableau1"]["attr2"].Id);
-        Assert.Equal("testDataSource.schema1.tableau1.attr3", dataSource["schema1"]["tableau1"]["attr3"].Id);
-        Assert.Equal("testDataSource.schema1.tableau2.attr1", dataSource["schema1"]["tableau2"]["attr1"].Id);
-        Assert.Equal("testDataSource.schema1.tableau2.attr2", dataSource["schema1"]["tableau2"]["attr2"].Id);
-        Assert.Equal("testDataSource.schema1.tableau2.attr3", dataSource["schema1"]["tableau2"]["attr3"].Id);
-        Assert.Equal("testDataSource.schema2.tableau1.attr1", dataSource["schema2"]["tableau1"]["attr1"].Id);
-        Assert.Equal("testDataSource.schema2.tableau1.attr2", dataSource["schema2"]["tableau1"]["attr2"].Id);
-        Assert.Equal("testDataSource.schema2.tableau1.attr3", dataSource["schema2"]["tableau1"]["attr3"].Id);
-        Assert.Equal("testDataSource.schema2.tableau2.attr1", dataSource["schema2"]["tableau2"]["attr1"].Id);
-        Assert.Equal("testDataSource.schema2.tableau2.attr2", dataSource["schema2"]["tableau2"]["attr2"].Id);
-        Assert.Equal("testDataSource.schema2.tableau2.attr3", dataSource["schema2"]["tableau2"]["attr3"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema1.tableau1.attr1"), dataSource["schema1"]["tableau1"]["attr1"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema1.tableau1.attr2"), dataSource["schema1"]["tableau1"]["attr2"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema1.tableau1.attr3"), dataSource["schema1"]["tableau1"]["attr3"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema1.tableau2.attr1"), dataSource["schema1"]["tableau2"]["attr1"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema1.tableau2.attr2"), dataSource["schema1"]["tableau2"]["attr2"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema1.tableau2.attr3"), dataSource["schema1"]["tableau2"]["attr3"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema2.tableau1.attr1"), dataSource["schema2"]["tableau1"]["attr1"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema2.tableau1.attr2"), dataSource["schema2"]["tableau1"]["attr2"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema2.tableau1.attr3"), dataSource["schema2"]["tableau1"]["attr3"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema2.tableau2.attr1"), dataSource["schema2"]["tableau2"]["attr1"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema2.tableau2.attr2"), dataSource["schema2"]["tableau2"]["attr2"].Id);
+        Assert.Equal(AttributeId.From("testDataSource.schema2.tableau2.attr3"), dataSource["schema2"]["tableau2"]["attr3"].Id);
 
 
     }

@@ -1,4 +1,6 @@
-﻿namespace Janus.Mediation.SchemaMediationModels.Building;
+﻿using Janus.Commons.SchemaModels;
+
+namespace Janus.Mediation.SchemaMediationModels.Building;
 /// <summary>
 /// Attribute mediation builder interface
 /// </summary>
@@ -33,9 +35,9 @@ internal class AttributeMediationBuilder : IAttributeMediationBuilder
 {
     private string _attributeName;
     private string? _attributeDescription;
-    private string _sourceAttributeId;
+    private AttributeId _sourceAttributeId;
 
-    internal AttributeMediationBuilder(string attributeName, string sourceAttributeId, string attributeDescription = "")
+    internal AttributeMediationBuilder(string attributeName, AttributeId sourceAttributeId, string attributeDescription = "")
     {
         _attributeName = attributeName;
         _attributeDescription = attributeDescription ?? string.Empty;
@@ -68,7 +70,9 @@ internal class AttributeMediationBuilder : IAttributeMediationBuilder
 
     public IAttributeMediationBuilder WithSourceAttributeId(string sourceAttributeId)
     {
-        _sourceAttributeId = sourceAttributeId ?? _attributeName;
+        _sourceAttributeId = sourceAttributeId is not null 
+            ? AttributeId.From(sourceAttributeId)
+            : _sourceAttributeId;
 
         return this;
     }

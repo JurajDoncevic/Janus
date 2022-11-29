@@ -7,15 +7,15 @@ namespace Janus.Commons.CommandModels;
 /// </summary>
 public abstract class BaseCommand
 {
-    protected readonly string _onTableauId;
+    protected readonly TableauId _onTableauId;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="onTableauId">The command's starting tableau</param>
-    protected BaseCommand(string onTableauId)
+    protected BaseCommand(TableauId onTableauId)
     {
-        if (string.IsNullOrEmpty(onTableauId))
+        if (onTableauId is null)
         {
             throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
         }
@@ -26,7 +26,7 @@ public abstract class BaseCommand
     /// <summary>
     /// The command's starting tableau
     /// </summary>
-    public string OnTableauId => _onTableauId;
+    public TableauId OnTableauId => _onTableauId;
 
     /// <summary>
     /// Checks if the command can be run on the given data source

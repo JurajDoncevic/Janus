@@ -1,4 +1,5 @@
-﻿using Janus.Commons.SelectionExpressions;
+﻿using Janus.Commons.SchemaModels;
+using Janus.Commons.SelectionExpressions;
 using System;
 using Xunit;
 using static Janus.Commons.SelectionExpressions.Expressions;
@@ -10,7 +11,7 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using EQ")]
     public void CreateEQExpression()
     {
-        string attribute = "dataSource.schema.tableau.attribute";
+        var attribute = AttributeId.From("dataSource.schema.tableau.attribute");
         int value = 2;
         SelectionExpression expression = EQ(attribute, value);
 
@@ -20,7 +21,7 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using NEQ")]
     public void CreateNEQExpression()
     {
-        string attribute = "dataSource.schema.tableau.attribute";
+        var attribute = AttributeId.From("dataSource.schema.tableau.attribute");
         int value = 2;
         SelectionExpression expression = NEQ(attribute, value);
 
@@ -30,7 +31,7 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using GE")]
     public void CreateGEExpression()
     {
-        string attribute = "dataSource.schema.tableau.attribute";
+        var attribute = AttributeId.From("dataSource.schema.tableau.attribute");
         int value = 2;
         SelectionExpression expression = GE(attribute, value);
 
@@ -40,7 +41,7 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using GT")]
     public void CreateGTExpression()
     {
-        string attribute = "dataSource.schema.tableau.attribute";
+        var attribute = AttributeId.From("dataSource.schema.tableau.attribute");
         int value = 2;
         SelectionExpression expression = GT(attribute, value);
 
@@ -50,7 +51,7 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using LT")]
     public void CreateLTExpression()
     {
-        string attribute = "dataSource.schema.tableau.attribute";
+        var attribute = AttributeId.From("dataSource.schema.tableau.attribute");
         int value = 2;
         SelectionExpression expression = LT(attribute, value);
 
@@ -60,7 +61,7 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using LE")]
     public void CreateLEExpression()
     {
-        string attribute = "dataSource.schema.tableau.attribute";
+        var attribute = AttributeId.From("dataSource.schema.tableau.attribute");
         int value = 2;
         SelectionExpression expression = LE(attribute, value);
 
@@ -70,9 +71,9 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using OR")]
     public void CreateORExpression()
     {
-        string attribute1 = "attr1";
+        var attribute1 = AttributeId.From("ds.sc.tbl.attr1");
         int value1 = 1;
-        string attribute2 = "attr2";
+        var attribute2 = AttributeId.From("ds.sc.tbl.attr2");
         int value2 = 2;
 
         SelectionExpression expression =
@@ -84,9 +85,9 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using AND")]
     public void CreateANDExpression()
     {
-        string attribute1 = "attr1";
+        string attribute1 = "ds.sc.tbl.attr1";
         int value1 = 1;
-        string attribute2 = "attr2";
+        string attribute2 = "ds.sc.tbl.attr2";
         int value2 = 2;
 
         SelectionExpression expression =
@@ -98,7 +99,7 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a selection expression using NOT")]
     public void CreateNOTExpression()
     {
-        string attribute1 = "attr1";
+        string attribute1 = "ds.sc.tbl.attr1";
         int value1 = 1;
 
         SelectionExpression expression =
@@ -110,17 +111,17 @@ public class SelectionExpressionTests
     [Fact(DisplayName = "Create a complex expression")]
     public void CreateComplexExpression()
     {
-        string attribute1 = "attr1";
+        string attribute1 = "ds.sc.tbl.attr1";
         int value1 = 1;
-        string attribute2 = "attr2";
+        string attribute2 = "ds.sc.tbl.attr2";
         string value2 = "STRING_VAL";
-        string attribute3 = "attr3";
+        string attribute3 = "ds.sc.tbl.attr3";
         decimal value3 = 3.14m;
-        string attribute4 = "attr4";
+        string attribute4 = "ds.sc.tbl.attr4";
         DateTime value4 = new DateTime(2022, 5, 20);
-        string attribute5 = "attr5";
+        string attribute5 = "ds.sc.tbl.attr5";
         bool value5 = false;
-        string attribute6 = "attr6";
+        string attribute6 = "ds.sc.tbl.attr6";
         int value6 = 6;
 
         SelectionExpression expression =
@@ -136,6 +137,6 @@ public class SelectionExpressionTests
                 );
 
 
-        Assert.Equal($"AND(OR(AND(OR(LT(attr1,{value1}),EQ(attr2,{value2})),OR(GE(attr3,{value3}),EQ(attr4,{value4}))),EQ(attr6,{value6})),EQ(attr5,{value5}))", expression.ToString());
+        Assert.Equal($"AND(OR(AND(OR(LT(ds.sc.tbl.attr1,{value1}),EQ(ds.sc.tbl.attr2,{value2})),OR(GE(ds.sc.tbl.attr3,{value3}),EQ(ds.sc.tbl.attr4,{value4}))),EQ(ds.sc.tbl.attr6,{value6})),EQ(ds.sc.tbl.attr5,{value5}))", expression.ToString());
     }
 }

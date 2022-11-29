@@ -84,7 +84,7 @@ public class QueryModelBuilderTests
     public void CreateQueryOnOneTableau()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
         QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
@@ -106,7 +106,7 @@ public class QueryModelBuilderTests
     public void CreateQueryOnMultipleTableaus()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
         QueryModelBuilder.InitQueryOnDataSource(tableauId, dataSource)
@@ -137,7 +137,7 @@ public class QueryModelBuilderTests
     public void CreateSelfJoinQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<SelfJoinNotSupportedException>(() =>
         {
@@ -154,7 +154,7 @@ public class QueryModelBuilderTests
     public void CreateCycleJoinQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<CyclicJoinNotSupportedException>(() =>
         {
@@ -173,7 +173,7 @@ public class QueryModelBuilderTests
     public void CreateDisconnectedJoinQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<JoinsNotConnectedException>(() =>
         {
@@ -192,7 +192,7 @@ public class QueryModelBuilderTests
     public void CreateDuplicatePkTableauJoinQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<TableauPrimaryKeyReferenceNotUniqueException>(() =>
         {
@@ -210,7 +210,7 @@ public class QueryModelBuilderTests
     public void CreateDuplicateJoinQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<DuplicateJoinNotSupportedException>(() =>
         {
@@ -227,7 +227,7 @@ public class QueryModelBuilderTests
     public void CreateProjectionWithNonExistingAttribute()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<AttributeDoesNotExistException>(() =>
         {
@@ -244,7 +244,7 @@ public class QueryModelBuilderTests
     public void CreateProjectionWitDuplicateAttribute()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<DuplicateAttributeAssignedToProjectionException>(() =>
         {
@@ -260,7 +260,7 @@ public class QueryModelBuilderTests
     public void CreateProjectionWithAttributeFromNonReferencedTableau()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<AttributeNotInReferencedTableausException>(() =>
         {
@@ -276,7 +276,7 @@ public class QueryModelBuilderTests
     public void CreateJoinWithIncompatibleTypesInJoin()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<JoinedAttributesNotOfSameTypeException>(() =>
         {
@@ -291,7 +291,7 @@ public class QueryModelBuilderTests
     public void CreateJoinWithPrimaryKeyNullableInJoin()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         Assert.Throws<PrimaryKeyAttributeNullableException>(() =>
         {
@@ -335,7 +335,7 @@ public class QueryModelBuilderTests
     public void CreateValidOpenQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
         QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -367,7 +367,7 @@ public class QueryModelBuilderTests
     public void CreateOneTableauOpenQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
         QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -391,7 +391,7 @@ public class QueryModelBuilderTests
     public void CreateSelfJoinOpenQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
                 .WithJoining(conf => conf.AddJoin("testDataSource.schema1.tableau1.attr1", "testDataSource.schema1.tableau1.attr1")
@@ -408,7 +408,7 @@ public class QueryModelBuilderTests
     public void CreateCycleJoinOpenQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -426,7 +426,7 @@ public class QueryModelBuilderTests
     public void CreateDisconnectedJoinOpenQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -447,7 +447,7 @@ public class QueryModelBuilderTests
     public void CreateDuplicatePkTableauJoinOpenQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -466,7 +466,7 @@ public class QueryModelBuilderTests
     public void CreateDuplicateJoinOpenQuery()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -484,7 +484,7 @@ public class QueryModelBuilderTests
     public void CreateOpenQueryProjectionWithNonExistingAttribute()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -502,7 +502,7 @@ public class QueryModelBuilderTests
     public void CreateOpenQueryProjectionWitDuplicateAttribute()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
 
         var query =
@@ -521,7 +521,7 @@ public class QueryModelBuilderTests
     public void CreateOpenQueryProjectionWithAttributeFromNonReferencedTableau()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
         QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -539,7 +539,7 @@ public class QueryModelBuilderTests
     public void CreateOpenQueryJoinWithIncompatibleTypesInJoin()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)
@@ -556,7 +556,7 @@ public class QueryModelBuilderTests
     public void CreateOpenQueryJoinWithPrimaryKeyNullableInJoin()
     {
         var dataSource = GetExampleSchema();
-        string tableauId = dataSource["schema1"]["tableau1"].Id;
+        var tableauId = dataSource["schema1"]["tableau1"].Id;
 
         var query =
             QueryModelOpenBuilder.InitOpenQuery(tableauId)

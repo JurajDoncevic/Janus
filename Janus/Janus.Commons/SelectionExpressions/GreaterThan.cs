@@ -8,7 +8,7 @@ namespace Janus.Commons.SelectionExpressions;
 public sealed class GreaterThan : ComparisonOperator
 {
     protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.DATETIME };
-    internal GreaterThan(string attributeId, object value) : base(attributeId, value)
+    internal GreaterThan(AttributeId attributeId, object value) : base(attributeId, value)
     {
     }
 

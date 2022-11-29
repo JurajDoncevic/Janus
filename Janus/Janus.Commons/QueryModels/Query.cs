@@ -11,7 +11,7 @@ public sealed class Query
     private Option<Projection> _projection;
     private Option<Selection> _selection;
     private Option<Joining> _joining;
-    private string _onTableauId;
+    private TableauId _onTableauId;
 
     /// <summary>
     /// Constructor
@@ -20,7 +20,7 @@ public sealed class Query
     /// <param name="projection">Projection clause</param>
     /// <param name="selection">Selection clause</param>
     /// <param name="joining">Joining clause</param>
-    internal Query(string onTableuId, Option<Projection> projection, Option<Selection> selection, Option<Joining> joining, string? name = null)
+    internal Query(TableauId onTableuId, Option<Projection> projection, Option<Selection> selection, Option<Joining> joining, string? name = null)
     {
         _onTableauId = onTableuId;
         _projection = projection;
@@ -47,7 +47,7 @@ public sealed class Query
     /// <summary>
     /// Tableau on which the query is initialized
     /// </summary>
-    public string OnTableauId { get => _onTableauId; set => _onTableauId = value; }
+    public TableauId OnTableauId { get => _onTableauId; set => _onTableauId = value; }
 
     /// <summary>
     /// Identifier for this query and its possible results
@@ -57,14 +57,14 @@ public sealed class Query
     /// <summary>
     /// Set of referenced tableaus in this query
     /// </summary>
-    public HashSet<string> ReferencedTableauIds =>
+    public HashSet<TableauId> ReferencedTableauIds =>
         _joining.Match(
             joining => joining.Joins
-                              .Map(j => new List<string> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
+                              .Map(j => new List<TableauId> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
                               .SelectMany(tblIds => tblIds),
-            () => Enumerable.Empty<string>()
+            () => Enumerable.Empty<TableauId>()
             ).Fold(
-                Enumerable.Empty<string>().Append(OnTableauId),
+                Enumerable.Empty<TableauId>().Append(OnTableauId),
                 (tableauId, referencedTableauIds) => referencedTableauIds.Append(tableauId)
             ).ToHashSet();
 
@@ -76,7 +76,7 @@ public sealed class Query
                EqualityComparer<Option<Projection>>.Default.Equals(_projection, query._projection) &&
                EqualityComparer<Option<Selection>>.Default.Equals(_selection, query._selection) &&
                EqualityComparer<Option<Joining>>.Default.Equals(_joining, query._joining) &&
-               _onTableauId == query._onTableauId;
+               _onTableauId.Equals(query._onTableauId);
     }
 
     public override int GetHashCode()

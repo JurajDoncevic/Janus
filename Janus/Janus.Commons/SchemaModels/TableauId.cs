@@ -4,7 +4,7 @@ namespace Janus.Commons.SchemaModels;
 /// <summary>
 /// Tableau identifier made from schema models' names
 /// </summary>
-public class TableauId
+public sealed class TableauId
 {
     private readonly string _tableauName;
     private readonly string _schemaName;
@@ -130,6 +130,15 @@ public class TableauId
     /// <returns>Tableau identifier object</returns>
     public static TableauId From(string dataSourceName, string schemaName, string tableauName)
         => new TableauId(dataSourceName, schemaName, tableauName);
+
+    /// <summary>
+    /// Creates a tableau identifier from a parent schema id and tableau name
+    /// </summary>
+    /// <param name="parentSchemaId"></param>
+    /// <param name="tableauName"></param>
+    /// <returns></returns>
+    public static TableauId From(SchemaId parentSchemaId, string tableauName)
+        => new TableauId(parentSchemaId.DataSourceName, parentSchemaId.SchemaName, tableauName);
 
     /// <summary>
     /// Creates a tableau identifier from a dot-delimited string representation

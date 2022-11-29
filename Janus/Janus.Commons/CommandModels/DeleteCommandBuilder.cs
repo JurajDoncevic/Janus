@@ -28,7 +28,7 @@ public interface IPostInitDeleteCommandBuilder
 /// </summary>
 public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private readonly DataSource _dataSource;
     private Option<CommandSelection> _selection;
 
@@ -37,9 +37,9 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
     /// </summary>
     /// <param name="onTableauId">Command's starting tableau</param>
     /// <param name="dataSource">Target data source for the command</param>
-    private DeleteCommandBuilder(string onTableauId, DataSource dataSource)
+    private DeleteCommandBuilder(TableauId onTableauId, DataSource dataSource)
     {
-        if (string.IsNullOrEmpty(onTableauId))
+        if (onTableauId is null)
         {
             throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
         }
@@ -56,9 +56,9 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
     /// <param name="dataSource"></param>
     /// <returns></returns>
     /// <exception cref="TableauDoesNotExistException"></exception>
-    public static IPostInitDeleteCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
+    public static IPostInitDeleteCommandBuilder InitOnDataSource(TableauId onTableauId, DataSource dataSource)
     {
-        if (string.IsNullOrEmpty(onTableauId))
+        if (onTableauId is null)
         {
             throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
         }
@@ -71,7 +71,7 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
         if (!dataSource.ContainsTableau(onTableauId))
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
 
-        (string _, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(onTableauId);
+        (string _, string schemaName, string tableauName) = onTableauId.NameTuple;
 
         if (!dataSource[schemaName][tableauName].UpdateSets.Any(us => us.AttributeNames.SequenceEqual(dataSource[schemaName][tableauName].AttributeNames)))
             throw new CommandAllowedOnTableauWideUpdateSetException();
@@ -79,6 +79,15 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
         return new DeleteCommandBuilder(onTableauId, dataSource);
     }
 
+    /// <summary>
+    /// Initializes a delete command builder on a tableau from a data source
+    /// </summary>
+    /// <param name="onTableauId"></param>
+    /// <param name="dataSource"></param>
+    /// <returns></returns>
+    /// <exception cref="TableauDoesNotExistException"></exception>
+    public static IPostInitDeleteCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
+        => InitOnDataSource(TableauId.From(onTableauId), dataSource);
 
     public IPostInitDeleteCommandBuilder WithSelection(Func<CommandSelectionBuilder, CommandSelectionBuilder> configuration)
     {

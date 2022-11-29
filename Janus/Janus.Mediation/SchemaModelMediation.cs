@@ -37,7 +37,7 @@ public static class SchemaModelMediation
                                 {
                                     tableauBuilder.AddAttribute(attributeMediation.DeclaredAttributeName, attributeBuilder =>
                                     {
-                                        var (dsName, scName, tblName, attrName) = Utils.GetNamesFromAttributeId(attributeMediation.SourceAttributeId);
+                                        var (dsName, scName, tblName, attrName) = attributeMediation.SourceAttributeId.NameTuple;
 
                                         var sourceAttribute = dataSourceMediation.AvailableDataSources[dsName][scName][tblName][attrName];
 
@@ -58,7 +58,7 @@ public static class SchemaModelMediation
                                     foreach (var referencedTableauId in tableauMediation.SourceQuery.ReferencedTableauIds)
                                     {
 
-                                        var (dsName, scName, tblName) = Utils.GetNamesFromTableauId(referencedTableauId);
+                                        var (dsName, scName, tblName) = referencedTableauId.NameTuple;
 
                                         var updateSetsOnReferencedTableau = dataSourceMediation.AvailableDataSources[dsName][scName][tblName].UpdateSets.ToHashSet();
 

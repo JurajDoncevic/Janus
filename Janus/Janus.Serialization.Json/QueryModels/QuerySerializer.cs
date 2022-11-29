@@ -52,21 +52,19 @@ public class QuerySerializer : IQuerySerializer<string>
             var queryDto = new QueryDto
             {
                 Name = query.Name,
-                OnTableauId = query.OnTableauId,
+                OnTableauId = query.OnTableauId.ToString(),
                 Joining =
                     query.Joining
                          .Map(joining => joining.Joins)
                          .Map(joins => joins.Map(join =>
                               new JoinDto()
                               {
-                                  ForeignKeyAttributeId = join.ForeignKeyAttributeId,
-                                  PrimaryKeyAttributeId = join.PrimaryKeyAttributeId,
-                                  ForeignKeyTableauId = join.ForeignKeyTableauId,
-                                  PrimaryKeyTableauId = join.PrimaryKeyTableauId
+                                  ForeignKeyAttributeId = join.ForeignKeyAttributeId.ToString(),
+                                  PrimaryKeyAttributeId = join.PrimaryKeyAttributeId.ToString(),
                               }).ToList()).Value, // can be null, but don't care for DTO
                 Projection =
                     query.Projection
-                         .Map(p => new ProjectionDto { AttributeIds = p.IncludedAttributeIds.ToHashSet() })
+                         .Map(p => new ProjectionDto { AttributeIds = p.IncludedAttributeIds.Map(attrId => attrId.ToString()).ToHashSet() })
                          .Value, // can be null, but don't care for DTO
                 Selection =
                     query.Selection

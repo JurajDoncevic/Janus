@@ -15,9 +15,9 @@ public sealed class InsertCommand : BaseCommand
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="instantiation">Instantiation clause</param>
-    internal InsertCommand(string onTableauId, Instantiation instantiation) : base(onTableauId)
+    internal InsertCommand(TableauId onTableauId, Instantiation instantiation) : base(onTableauId)
     {
-        if (string.IsNullOrEmpty(onTableauId))
+        if (onTableauId is null)
         {
             throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
         }

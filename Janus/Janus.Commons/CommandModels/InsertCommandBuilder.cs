@@ -31,7 +31,7 @@ public interface IPostInstatiationBuilder
 /// </summary>
 public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostInstatiationBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private readonly DataSource _dataSource;
     private Option<Instantiation> _instantiation;
 
@@ -40,7 +40,7 @@ public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostI
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="dataSource">Command's Target data source</param>
-    internal InsertCommandBuilder(string onTableauId, DataSource dataSource)
+    internal InsertCommandBuilder(TableauId onTableauId, DataSource dataSource)
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
@@ -59,20 +59,30 @@ public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostI
     /// <param name="dataSource">Command's target data source</param>
     /// <returns></returns>
     /// <exception cref="TableauDoesNotExistException"></exception>
-    public static IPostInitInsertCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
+    public static IPostInitInsertCommandBuilder InitOnDataSource(TableauId onTableauId, DataSource dataSource)
     {
         if (!dataSource.ContainsTableau(onTableauId))
         {
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
         }
 
-        (string _, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(onTableauId);
+        (string _, string schemaName, string tableauName) = onTableauId.NameTuple;
 
         if (!dataSource[schemaName][tableauName].UpdateSets.Any(us => us.AttributeNames.SequenceEqual(dataSource[schemaName][tableauName].AttributeNames)))
             throw new CommandAllowedOnTableauWideUpdateSetException();
 
         return new InsertCommandBuilder(onTableauId, dataSource);
     }
+
+    /// <summary>
+    /// Initializes a insert command builder on a tableau from a data source
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="dataSource">Command's target data source</param>
+    /// <returns></returns>
+    /// <exception cref="TableauDoesNotExistException"></exception>
+    public static IPostInitInsertCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
+        => InitOnDataSource(TableauId.From(onTableauId), dataSource);
 
     public IPostInstatiationBuilder WithInstantiation(Func<InstantiationBuilder, InstantiationBuilder> configuration)
     {
@@ -88,7 +98,7 @@ public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostI
 /// </summary>
 public sealed class InstantiationBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private readonly DataSource _dataSource;
     private TabularData? _tableauDataToInsert;
 
@@ -97,7 +107,7 @@ public sealed class InstantiationBuilder
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="dataSource">Target data source</param>
-    internal InstantiationBuilder(string onTableauId, DataSource dataSource)
+    internal InstantiationBuilder(TableauId onTableauId, DataSource dataSource)
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
@@ -115,10 +125,10 @@ public sealed class InstantiationBuilder
     /// <exception cref="NullGivenForNonNullableAttributeException"></exception>
     public InstantiationBuilder WithValues(TabularData tabularData)
     {
-        (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
+        (_, string schemaName, string tableauName) = _onTableauId.NameTuple;
 
         var referencableAttributes = _dataSource[schemaName][tableauName].Attributes.Select(attr => attr.Name).ToHashSet();
-        var referencedAttributeNames = tabularData.AttributeNames;
+        var referencedAttributeNames = tabularData.ColumnNames;
 
         if (!referencedAttributeNames.All(referencableAttributes.Contains))
         {
@@ -134,7 +144,7 @@ public sealed class InstantiationBuilder
         foreach (var referencedAttr in referencedAttributeNames)
         {
             var referencedDataType = _dataSource[schemaName][tableauName][referencedAttr].DataType;
-            var referencingDataType = tabularData.AttributeDataTypes[referencedAttr];
+            var referencingDataType = tabularData.ColumnDataTypes[referencedAttr];
             if (referencedDataType != referencingDataType)
             {
                 throw new IncompatibleInstantiationDataTypesException(_onTableauId, referencedAttr, referencedDataType, referencingDataType);
@@ -173,7 +183,7 @@ public sealed class InstantiationBuilder
     /// <exception cref="MissingInstantiationAttributesException"></exception>
     internal Instantiation Build()
     {
-        (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
+        (_, string schemaName, string tableauName) = _onTableauId.NameTuple;
         return _tableauDataToInsert == null
                 ? throw new MissingInstantiationAttributesException(_dataSource[schemaName][tableauName].AttributeNames, _onTableauId)
                 : new Instantiation(_tableauDataToInsert);

@@ -9,7 +9,7 @@ public sealed class LesserThan : ComparisonOperator
 {
 
     protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.DATETIME };
-    internal LesserThan(string attributeId, object value) : base(attributeId, value)
+    internal LesserThan(AttributeId attributeId, object value) : base(attributeId, value)
     {
     }
 

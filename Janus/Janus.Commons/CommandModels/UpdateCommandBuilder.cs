@@ -46,7 +46,7 @@ public interface IPostSelectionUpdateCommandBuilder
 
 public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostMutationUpdateCommandBuilder, IPostSelectionUpdateCommandBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private readonly DataSource _dataSource;
     private Option<Mutation> _mutation;
     private Option<CommandSelection> _selection;
@@ -55,9 +55,9 @@ public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostM
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="onTableauId">Starting tableau id</param>
     /// <param name="dataSource">Target data source</param>
-    internal UpdateCommandBuilder(string onTableauId, DataSource dataSource)
+    internal UpdateCommandBuilder(TableauId onTableauId, DataSource dataSource)
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
@@ -70,13 +70,23 @@ public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostM
     /// <param name="dataSource">Target data source</param>
     /// <returns></returns>
     /// <exception cref="TableauDoesNotExistException"></exception>
-    public static IPostInitUpdateCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
+    public static IPostInitUpdateCommandBuilder InitOnDataSource(TableauId onTableauId, DataSource dataSource)
     {
         if (!dataSource.ContainsTableau(onTableauId))
             throw new TableauDoesNotExistException(onTableauId, dataSource.Name);
 
         return new UpdateCommandBuilder(onTableauId, dataSource);
     }
+
+    /// <summary>
+    /// Initializes the update command builder with starting tableau from the given data source
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <param name="dataSource">Target data source</param>
+    /// <returns></returns>
+    /// <exception cref="TableauDoesNotExistException"></exception>
+    public static IPostInitUpdateCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
+        => InitOnDataSource(TableauId.From(onTableauId), dataSource);
 
     public IPostMutationUpdateCommandBuilder WithMutation(Func<MutationBuilder, MutationBuilder> configuration)
     {
@@ -119,7 +129,7 @@ public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostM
 public sealed class MutationBuilder
 {
     private Dictionary<string, object?>? _valueUpdates;
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private readonly DataSource _dataSource;
     private UpdateSet? _referencedUpdateSet;
 
@@ -130,7 +140,7 @@ public sealed class MutationBuilder
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="dataSource">Target data source</param>
-    internal MutationBuilder(string onTableauId, DataSource dataSource)
+    internal MutationBuilder(TableauId onTableauId, DataSource dataSource)
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
@@ -148,7 +158,7 @@ public sealed class MutationBuilder
     {
         _valueUpdates = valueUpdates ?? throw new ArgumentNullException(nameof(valueUpdates));
 
-        (_, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_onTableauId);
+        (_, string schemaName, string tableauName) = _onTableauId.NameTuple;
 
         var referencedAttrNames = valueUpdates.Keys.ToHashSet();
         var referencableAttrNames = _dataSource[schemaName][tableauName].AttributeNames.ToHashSet();
@@ -216,7 +226,7 @@ public sealed class CommandSelectionBuilder
 {
     private Option<SelectionExpression> _expression;
     private readonly DataSource _dataSource;
-    private readonly string _referencedTableauId;
+    private readonly TableauId _referencedTableauId;
     private UpdateSet? _referencedUpdateSet;
     internal bool IsConfigured => _expression.IsSome;
     internal UpdateSet? ReferencedUpdateSet => _referencedUpdateSet;
@@ -226,9 +236,9 @@ public sealed class CommandSelectionBuilder
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <param name="referencedTableauId">Id of the tableau referenced in the command</param>
-    internal CommandSelectionBuilder(DataSource dataSource, string referencedTableauId)
+    internal CommandSelectionBuilder(DataSource dataSource, TableauId referencedTableauId)
     {
-        if (string.IsNullOrEmpty(referencedTableauId))
+        if (referencedTableauId is null)
         {
             throw new ArgumentException($"'{nameof(referencedTableauId)}' cannot be null or empty.", nameof(referencedTableauId));
         }
@@ -250,11 +260,11 @@ public sealed class CommandSelectionBuilder
             throw new ArgumentNullException(nameof(expression));
         }
 
-        (string _, string schemaName, string tableauName) = Utils.GetNamesFromTableauId(_referencedTableauId);
+        (string _, string schemaName, string tableauName) = _referencedTableauId.NameTuple;
 
         var referencedTableau = _dataSource[schemaName][tableauName];
 
-        var referencableAttrNames = referencedTableau.Attributes.ToDictionary(attr => attr.Name, attr => attr.DataType);
+        var referencableAttrNames = referencedTableau.Attributes.ToDictionary(attr => attr.Id, attr => attr.DataType);
 
         CommandSelectionUtils.CheckAttributeReferences(expression, referencableAttrNames.Keys.ToHashSet());
         CommandSelectionUtils.CheckAttributeTypesOnComparison(expression, referencableAttrNames ?? new());
@@ -263,7 +273,7 @@ public sealed class CommandSelectionBuilder
         if (_referencedUpdateSet is null)
         {
             throw new NoUpdateSetFoundForExpressionAttributesException(
-                CommandSelectionUtils.GetReferencedAttributeNames(expression),
+                CommandSelectionUtils.GetReferencedAttributeIds(expression),
                 referencedTableau
                 );
         }

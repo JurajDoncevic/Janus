@@ -5,6 +5,7 @@
 /// </summary>
 public sealed class Tableau
 {
+    private readonly TableauId _id;
     private readonly string _name;
     private readonly Schema _schema;
     private readonly string _description;
@@ -14,7 +15,7 @@ public sealed class Tableau
     /// <summary>
     /// Tableau ID
     /// </summary>
-    public string Id => _schema.Id + "." + _name;
+    public TableauId Id => _id;
     /// <summary>
     /// Tableau name
     /// </summary>
@@ -64,7 +65,7 @@ public sealed class Tableau
         {
             throw new ArgumentNullException(nameof(attributes));
         }
-
+        _id = TableauId.From(schema.DataSource.Name, schema.Name, name);
         _name = name;
         _description = description;
         _schema = schema ?? throw new ArgumentNullException(nameof(schema));
@@ -82,7 +83,7 @@ public sealed class Tableau
         {
             throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
         }
-
+        _id = TableauId.From(schema.DataSource.Name, schema.Name, name);
         _name = name;
         _description = description ?? string.Empty;
         _schema = schema ?? throw new ArgumentNullException(nameof(schema));
@@ -159,17 +160,17 @@ public sealed class Tableau
     public override bool Equals(object? obj)
     {
         return obj is Tableau tableau &&
+               _id.Equals(tableau._id) &&
                _name.Equals(tableau._name) &&
                _attributes.SequenceEqual(tableau._attributes) &&
                _schema.Id.Equals(tableau.Schema.Id) &&
                _description.Equals(tableau._description) &&
-               _updateSets.SetEquals(tableau._updateSets) &&
-               Id.Equals(Id);
+               _updateSets.SetEquals(tableau._updateSets);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_name, _schema, _attributes, Id);
+        return HashCode.Combine(_id, _name, _schema, _attributes, Id);
     }
 
     public override string ToString()

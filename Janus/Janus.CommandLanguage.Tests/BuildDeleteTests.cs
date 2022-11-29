@@ -38,6 +38,6 @@ public class BuildDeleteTests
         Assert.Empty(errorListener.Errors);
         Assert.True(builtCommandResult);
         Assert.True(deleteCommand!.Selection);
-        Assert.True(!string.IsNullOrEmpty(deleteCommand.OnTableauId.Trim()));
+        Assert.NotNull(deleteCommand.OnTableauId);
     }
 }

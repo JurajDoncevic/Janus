@@ -1,11 +1,13 @@
-﻿namespace Janus.Mediation.SchemaMediationModels;
+﻿using Janus.Commons.SchemaModels;
+
+namespace Janus.Mediation.SchemaMediationModels;
 /// <summary>
 /// Describes an attribute mediation
 /// </summary>
 public class AttributeMediation
 {
     private readonly Option<string> _attributeDescription;
-    private readonly string _sourceAttributeId;
+    private readonly AttributeId _sourceAttributeId;
     private readonly string _declaredAttributeName;
 
     /*
@@ -21,7 +23,7 @@ public class AttributeMediation
     /// <param name="sourceAttributeId">Attribute id of the source attribute</param>
     /// <param name="declaredAttributeName">Declared name of the mediated attribute</param>
     /// <param name="attributeDescription">Optional description of the mediated attribute</param>
-    public AttributeMediation(string sourceAttributeId, string declaredAttributeName, Option<string> attributeDescription)
+    public AttributeMediation(AttributeId sourceAttributeId, string declaredAttributeName, Option<string> attributeDescription)
     {
         _sourceAttributeId = sourceAttributeId;
         _declaredAttributeName = declaredAttributeName;
@@ -31,7 +33,7 @@ public class AttributeMediation
     /// <summary>
     /// Attribute id of the source attribute
     /// </summary>
-    public string SourceAttributeId => _sourceAttributeId;
+    public AttributeId SourceAttributeId => _sourceAttributeId;
     /// <summary>
     /// Declared name of the mediated attribute
     /// </summary>

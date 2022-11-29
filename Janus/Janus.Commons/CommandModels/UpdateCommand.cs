@@ -26,9 +26,9 @@ public sealed class UpdateCommand : BaseCommand
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="mutation">Mutation clause</param>
     /// <param name="selection">Selection clause</param>
-    internal UpdateCommand(string onTableauId, Mutation mutation, Option<CommandSelection> selection) : base(onTableauId)
+    internal UpdateCommand(TableauId onTableauId, Mutation mutation, Option<CommandSelection> selection) : base(onTableauId)
     {
-        if (string.IsNullOrEmpty(onTableauId))
+        if (onTableauId is null)
         {
             throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
         }
@@ -55,7 +55,7 @@ public sealed class UpdateCommand : BaseCommand
     public override bool Equals(object? obj)
     {
         return obj is UpdateCommand command &&
-               _onTableauId == command._onTableauId &&
+               _onTableauId.Equals(command._onTableauId) &&
                EqualityComparer<Mutation>.Default.Equals(_mutation, command._mutation) &&
                EqualityComparer<Option<CommandSelection>>.Default.Equals(_selection, command._selection);
     }

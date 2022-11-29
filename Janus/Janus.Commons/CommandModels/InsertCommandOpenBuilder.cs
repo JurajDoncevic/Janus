@@ -1,5 +1,6 @@
 ﻿using Janus.Commons.CommandModels.Exceptions;
 using Janus.Commons.DataModels;
+using Janus.Commons.SchemaModels;
 
 namespace Janus.Commons.CommandModels;
 
@@ -8,14 +9,14 @@ namespace Janus.Commons.CommandModels;
 /// </summary>
 public sealed class InsertCommandOpenBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private Option<Instantiation> _instantiation;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
-    private InsertCommandOpenBuilder(string onTableauId)
+    private InsertCommandOpenBuilder(TableauId onTableauId)
     {
         _onTableauId = onTableauId;
         _instantiation = Option<Instantiation>.None;
@@ -36,10 +37,18 @@ public sealed class InsertCommandOpenBuilder
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <returns></returns>
-    public static InsertCommandOpenBuilder InitOpenInsert(string onTableauId)
+    public static InsertCommandOpenBuilder InitOpenInsert(TableauId onTableauId)
     {
         return new InsertCommandOpenBuilder(onTableauId);
     }
+
+    /// <summary>
+    /// Initializes the open builder on the starting tableau
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <returns></returns>
+    public static InsertCommandOpenBuilder InitOpenInsert(string onTableauId)
+        => InitOpenInsert(TableauId.From(onTableauId));
 
     /// <summary>
     /// Sets the instantiation clause
@@ -60,14 +69,14 @@ public sealed class InsertCommandOpenBuilder
 /// </summary>
 public sealed class InstantiationOpenBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private TabularData? _tabularDataToInsert;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
-    internal InstantiationOpenBuilder(string onTableauId)
+    internal InstantiationOpenBuilder(TableauId onTableauId)
     {
         _onTableauId = onTableauId;
         _tabularDataToInsert = null;

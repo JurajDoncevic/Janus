@@ -59,8 +59,8 @@ public class SourceQueryBuilder : ISourceQueryBuilder, IPostJoiningQueryBuilder,
 {
     private readonly Dictionary<string, DataSource> _availableDataSources;
     private Option<Joining> _joining;
-    private string _initialTableauId;
-    private HashSet<string> _referencedTableauIds;
+    private TableauId _initialTableauId;
+    private HashSet<TableauId> _referencedTableauIds;
     private Projection? _projection;
 
     /// <summary>
@@ -69,9 +69,9 @@ public class SourceQueryBuilder : ISourceQueryBuilder, IPostJoiningQueryBuilder,
     /// <param name="initialTableauId">Initial source query tableau id</param>
     /// <param name="availableDataSources">Available data sources for the query</param>
     /// <exception cref="ArgumentException"></exception>
-    private SourceQueryBuilder(string initialTableauId, IEnumerable<DataSource> availableDataSources)
+    private SourceQueryBuilder(TableauId initialTableauId, IEnumerable<DataSource> availableDataSources)
     {
-        if (string.IsNullOrWhiteSpace(initialTableauId))
+        if (initialTableauId is null)
         {
             throw new ArgumentException($"'{nameof(initialTableauId)}' cannot be null or whitespace.", nameof(initialTableauId));
         }
@@ -79,7 +79,7 @@ public class SourceQueryBuilder : ISourceQueryBuilder, IPostJoiningQueryBuilder,
         _initialTableauId = initialTableauId;
         _availableDataSources = availableDataSources?.ToDictionary(ds => ds.Name, ds => ds) ?? new Dictionary<string, DataSource>();
 
-        _referencedTableauIds = new HashSet<string>();
+        _referencedTableauIds = new HashSet<TableauId>();
         _referencedTableauIds.Add(initialTableauId);
     }
     /// <summary>
@@ -88,10 +88,19 @@ public class SourceQueryBuilder : ISourceQueryBuilder, IPostJoiningQueryBuilder,
     /// <param name="initialTableauId"></param>
     /// <param name="availableDataSources"></param>
     /// <returns></returns>
-    public static ISourceQueryBuilder InitQueryOn(string initialTableauId, IEnumerable<DataSource> availableDataSources)
+    public static ISourceQueryBuilder InitQueryOn(TableauId initialTableauId, IEnumerable<DataSource> availableDataSources)
     {
         return new SourceQueryBuilder(initialTableauId, availableDataSources);
     }
+
+    /// <summary>
+    /// Initializes the source query on a tableau with the given id, having the available data sources to query
+    /// </summary>
+    /// <param name="initialTableauId"></param>
+    /// <param name="availableDataSources"></param>
+    /// <returns></returns>
+    public static ISourceQueryBuilder InitQueryOn(string initialTableauId, IEnumerable<DataSource> availableDataSources)
+        => InitQueryOn(TableauId.From(initialTableauId), availableDataSources);
 
     public IPostJoiningQueryBuilder WithJoining(Func<JoiningBuilder, JoiningBuilder> configuration)
     {
@@ -138,8 +147,8 @@ public class SourceQueryBuilder : ISourceQueryBuilder, IPostJoiningQueryBuilder,
 public class ProjectionBuilder
 {
     private readonly Dictionary<string, DataSource> _dataSources;
-    private HashSet<string> _projectionAttributes;
-    private readonly HashSet<string> _referencedTableauIds;
+    private HashSet<AttributeId> _projectionAttributes;
+    private readonly HashSet<TableauId> _referencedTableauIds;
     internal bool IsConfigured => _projectionAttributes.Count > 0;
 
     /// <summary>
@@ -147,10 +156,10 @@ public class ProjectionBuilder
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
-    internal ProjectionBuilder(IEnumerable<DataSource> dataSources, HashSet<string> referencedTableauIds)
+    internal ProjectionBuilder(IEnumerable<DataSource> dataSources, HashSet<TableauId> referencedTableauIds)
     {
         _dataSources = dataSources?.ToDictionary(ds => ds.Name, ds => ds) ?? throw new ArgumentNullException(nameof(dataSources));
-        _projectionAttributes = new HashSet<string>();
+        _projectionAttributes = new HashSet<AttributeId>();
         _referencedTableauIds = referencedTableauIds ?? throw new ArgumentNullException(nameof(referencedTableauIds));
     }
 
@@ -162,7 +171,7 @@ public class ProjectionBuilder
     /// <exception cref="AttributeDoesNotExistException"></exception>
     /// <exception cref="AttributeNotInReferencedTableausException"></exception>
     /// <exception cref="DuplicateAttributeAssignedToProjectionException"></exception>
-    public ProjectionBuilder AddAttribute(string attributeId)
+    public ProjectionBuilder AddAttribute(AttributeId attributeId)
     {
         if (!_dataSources.Any(ds => ds.Value.ContainsAttribute(attributeId)))
             throw new AttributeDoesNotExistException(attributeId, _dataSources.Select(ds => ds.Value.Name));
@@ -180,6 +189,17 @@ public class ProjectionBuilder
     }
 
     /// <summary>
+    /// Adds an attribute to the projection
+    /// </summary>
+    /// <param name="attributeId">Attribute id</param>
+    /// <returns>ProjectionBuilder</returns>
+    /// <exception cref="AttributeDoesNotExistException"></exception>
+    /// <exception cref="AttributeNotInReferencedTableausException"></exception>
+    /// <exception cref="DuplicateAttributeAssignedToProjectionException"></exception>
+    public ProjectionBuilder AddAttribute(string attributeId)
+        => AddAttribute(AttributeId.From(attributeId));
+
+    /// <summary>
     /// Builds the specified projection
     /// </summary>
     /// <returns>Projection</returns>
@@ -194,7 +214,7 @@ public class ProjectionBuilder
 /// </summary>
 public class JoiningBuilder
 {
-    private readonly string _initialTableauId;
+    private readonly TableauId _initialTableauId;
     private readonly Dictionary<string, DataSource> _dataSources;
     private Joining _joining;
 
@@ -204,9 +224,9 @@ public class JoiningBuilder
     /// Constructor
     /// </summary>
     /// <param name="dataSource">Data source on which the query will be executed</param>
-    internal JoiningBuilder(string initialTableauId, IEnumerable<DataSource> dataSources)
+    internal JoiningBuilder(TableauId initialTableauId, IEnumerable<DataSource> dataSources)
     {
-        if (string.IsNullOrEmpty(initialTableauId))
+        if (initialTableauId is null)
         {
             throw new ArgumentException($"'{nameof(initialTableauId)}' cannot be null or empty.", nameof(initialTableauId));
         }
@@ -228,17 +248,11 @@ public class JoiningBuilder
     /// <exception cref="CyclicJoinNotSupportedException"></exception>
     /// <exception cref="TableauPrimaryKeyReferenceNotUniqueException"></exception>
     /// <exception cref="DuplicateJoinNotSupportedException"></exception>
-    public JoiningBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
+    public JoiningBuilder AddJoin(AttributeId foreignKeyAttributeId, AttributeId primaryKeyAttributeId)
     {
-        // check if given ids are ok
-        if (!foreignKeyAttributeId.Contains('.'))
-            throw new InvalidAttributeIdException(foreignKeyAttributeId);
-        if (!primaryKeyAttributeId.Contains('.'))
-            throw new InvalidAttributeIdException(primaryKeyAttributeId);
-
         // get tableau ids from the supposed attribute ids
-        var foreignKeyTableauId = foreignKeyAttributeId.Remove(foreignKeyAttributeId.LastIndexOf('.'));
-        var primaryKeyTableauId = primaryKeyAttributeId.Remove(primaryKeyAttributeId.LastIndexOf('.'));
+        var foreignKeyTableauId = foreignKeyAttributeId.ParentTableauId;
+        var primaryKeyTableauId = primaryKeyAttributeId.ParentTableauId;
 
         // check attribute (and tableau) existence
         if (!_dataSources.Any(ds => ds.Value.ContainsAttribute(foreignKeyAttributeId)))
@@ -247,8 +261,8 @@ public class JoiningBuilder
             throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSources.Values.Select(ds => ds.Name));
 
         // check attribute types - must be the same
-        var fkNames = Utils.GetNamesFromAttributeId(foreignKeyAttributeId);
-        var pkNames = Utils.GetNamesFromAttributeId(primaryKeyAttributeId);
+        var fkNames = foreignKeyAttributeId.NameTuple;
+        var pkNames = primaryKeyAttributeId.NameTuple;
         var fkAttribute = _dataSources[fkNames.dataSourceName][fkNames.schemaName][fkNames.tableauName][fkNames.attributeName];
         var pkAttribute = _dataSources[pkNames.dataSourceName][pkNames.schemaName][pkNames.tableauName][pkNames.attributeName];
         if (fkAttribute.DataType != pkAttribute.DataType)
@@ -262,7 +276,7 @@ public class JoiningBuilder
         if (foreignKeyTableauId.Equals(primaryKeyTableauId))
             throw new SelfJoinNotSupportedException(primaryKeyTableauId);
 
-        Join join = new Join(primaryKeyTableauId, primaryKeyAttributeId, foreignKeyTableauId, foreignKeyAttributeId);
+        Join join = new Join(foreignKeyAttributeId, primaryKeyAttributeId);
 
         // check for cycle joins, pk tableaus multiple references, duplicate joins
         if (_joining.Joins.Contains(join))
@@ -275,6 +289,21 @@ public class JoiningBuilder
 
         return this;
     }
+
+    /// <summary>
+    /// Adds a join to the joining clause
+    /// </summary>
+    /// <param name="foreignKeyAttributeId">Attribute id of the foreign key</param>
+    /// <param name="primaryKeyAttributeId">Attribute id of the primary key</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidAttributeIdException"></exception>
+    /// <exception cref="AttributeDoesNotExistException"></exception>
+    /// <exception cref="SelfJoinNotSupportedException"></exception>
+    /// <exception cref="CyclicJoinNotSupportedException"></exception>
+    /// <exception cref="TableauPrimaryKeyReferenceNotUniqueException"></exception>
+    /// <exception cref="DuplicateJoinNotSupportedException"></exception>
+    public JoiningBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
+        => AddJoin(AttributeId.From(foreignKeyAttributeId), AttributeId.From(primaryKeyAttributeId));
 
     /// <summary>
     /// Builds the joining clause

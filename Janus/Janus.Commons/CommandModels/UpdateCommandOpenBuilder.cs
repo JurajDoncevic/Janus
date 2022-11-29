@@ -1,4 +1,5 @@
 ﻿using Janus.Commons.CommandModels.Exceptions;
+using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
@@ -9,7 +10,7 @@ namespace Janus.Commons.CommandModels;
 /// </summary>
 public sealed class UpdateCommandOpenBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private Option<Mutation> _mutation;
     private Option<CommandSelection> _selection;
 
@@ -17,7 +18,7 @@ public sealed class UpdateCommandOpenBuilder
     /// Constructor
     /// </summary>
     /// <param name="onTableauId"></param>
-    private UpdateCommandOpenBuilder(string onTableauId)
+    private UpdateCommandOpenBuilder(TableauId onTableauId)
     {
         _onTableauId = onTableauId;
     }
@@ -27,10 +28,18 @@ public sealed class UpdateCommandOpenBuilder
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <returns></returns>
-    public static UpdateCommandOpenBuilder InitOpenUpdate(string onTableauId)
+    public static UpdateCommandOpenBuilder InitOpenUpdate(TableauId onTableauId)
     {
         return new UpdateCommandOpenBuilder(onTableauId);
     }
+
+    /// <summary>
+    /// Initializes an update command open builder
+    /// </summary>
+    /// <param name="onTableauId">Starting tableau</param>
+    /// <returns></returns>
+    public static UpdateCommandOpenBuilder InitOpenUpdate(string onTableauId)
+        => InitOpenUpdate(TableauId.From(onTableauId));
 
     /// <summary>
     /// Sets the mutation clause. <b>Mutation attributes are set by their name.</b> Don't use attribute ids.

@@ -143,7 +143,7 @@ public class MessageSerializationTests
 
 
         var deleteCommand = DeleteCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource1.schema1.tableau1.attr1_FK", 1)))
                                 .Build();
 
 
@@ -168,7 +168,7 @@ public class MessageSerializationTests
 
         var updateCommand = UpdateCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
                                 .WithMutation(conf => conf.WithValues(new() { { "attr2", null }, { "attr3", 2.0 } }))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource1.schema1.tableau1.attr1_FK", 1)))
                                 .Build();
 
 
@@ -397,7 +397,7 @@ public class MessageSerializationTests
 
         var updateCommand = UpdateCommandBuilder.InitOnDataSource("datasource1.schema1.tableau1", dataSource)
                                 .WithMutation(conf => conf.WithValues(new() { { "attr2", null }, { "attr3", 2.0 } }))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1_FK", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource1.schema1.tableau1.attr1_FK", 1)))
                                 .Build();
 
 

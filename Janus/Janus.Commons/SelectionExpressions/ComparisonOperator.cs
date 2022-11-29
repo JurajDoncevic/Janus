@@ -5,11 +5,11 @@ namespace Janus.Commons.SelectionExpressions;
 public abstract class ComparisonOperator : SelectionExpression
 {
     private readonly object _value;
-    private readonly string _attributeId;
+    private readonly AttributeId _attributeId;
 
     protected abstract HashSet<DataTypes> _compatibleDataTypes { get; }
 
-    protected ComparisonOperator(string attributeId, object value)
+    protected ComparisonOperator(AttributeId attributeId, object value)
     {
         _value = value;
         _attributeId = attributeId;
@@ -31,7 +31,7 @@ public abstract class ComparisonOperator : SelectionExpression
     /// <summary>
     /// Compared attribute id
     /// </summary>
-    public string AttributeId => _attributeId;
+    public AttributeId AttributeId => _attributeId;
 
     /// <summary>
     /// String representation of the comparison operator

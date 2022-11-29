@@ -31,24 +31,24 @@ public interface IPostInitTabularDataBuilder
 /// </summary>
 public sealed class TabularDataBuilder : IPostInitTabularDataBuilder
 {
-    private readonly Dictionary<string, DataTypes> _attributeDataTypes;
+    private readonly Dictionary<string, DataTypes> _columnDataTypes;
     private readonly List<RowData> _rows;
     private string? _name = null;
 
-    private TabularDataBuilder(Dictionary<string, DataTypes> attributeDataTypes)
+    private TabularDataBuilder(Dictionary<string, DataTypes> columnDataTypes)
     {
-        _attributeDataTypes = attributeDataTypes ?? throw new ArgumentNullException(nameof(attributeDataTypes));
+        _columnDataTypes = columnDataTypes ?? throw new ArgumentNullException(nameof(columnDataTypes));
         _rows = new List<RowData>();
     }
 
-    public static IPostInitTabularDataBuilder InitTabularData(Dictionary<string, DataTypes> attributeDataTypes)
+    public static IPostInitTabularDataBuilder InitTabularData(Dictionary<string, DataTypes> columnDataTypes)
     {
-        if (attributeDataTypes is null)
+        if (columnDataTypes is null)
         {
-            throw new ArgumentNullException(nameof(attributeDataTypes));
+            throw new ArgumentNullException(nameof(columnDataTypes));
         }
 
-        return new TabularDataBuilder(attributeDataTypes);
+        return new TabularDataBuilder(columnDataTypes);
     }
 
     public IPostInitTabularDataBuilder WithName(string tabularDataName)
@@ -59,14 +59,14 @@ public sealed class TabularDataBuilder : IPostInitTabularDataBuilder
 
     public IPostInitTabularDataBuilder AddRow(Func<RowDataBuilder, RowDataBuilder> configuration)
     {
-        var rowDataBuilder = RowDataBuilder.InitRowWithDataTypes(_attributeDataTypes);
+        var rowDataBuilder = RowDataBuilder.InitRowWithDataTypes(_columnDataTypes);
         var row = configuration(rowDataBuilder).Build();
         _rows.Add(row);
 
         return this;
     }
 
-    public TabularData Build() => new TabularData(_rows, _attributeDataTypes, _name);
+    public TabularData Build() => new TabularData(_rows, _columnDataTypes, _name);
 }
 
 public class RowDataBuilder

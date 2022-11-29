@@ -19,7 +19,7 @@ public sealed class DeleteCommand : BaseCommand
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="selection">Selection clause</param>
-    internal DeleteCommand(string onTableauId, Option<CommandSelection> selection) : base(onTableauId)
+    internal DeleteCommand(TableauId onTableauId, Option<CommandSelection> selection) : base(onTableauId)
     {
         _selection = selection;
     }

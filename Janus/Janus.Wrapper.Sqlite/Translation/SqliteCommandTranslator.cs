@@ -3,6 +3,7 @@ using FunctionalExtensions.Base.Resulting;
 using Janus.Commons;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
+using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
 using Janus.Wrapper.Sqlite.LocalCommanding;
 using Janus.Wrapper.Translation;
@@ -34,7 +35,7 @@ public sealed class SqliteCommandTranslator
     public Result<string> TranslateInstantiation(Option<Instantiation> instantiation)
         => Results.AsResult(()
             => instantiation
-                ? $"({string.Join(",", instantiation.Value.TabularData.AttributeNames)}) " +
+                ? $"({string.Join(",", instantiation.Value.TabularData.ColumnNames)}) " +
                   $"VALUES {string.Join(",", instantiation.Value.TabularData.RowData.Map(RowToInstantiationString))}"
                 : "DEFAULT VALUES");
     private string RowToInstantiationString(RowData row)
@@ -97,15 +98,15 @@ public sealed class SqliteCommandTranslator
             _ => throw new Exception($"Unknown logical binary operator {unaryOp.OperatorString}")
         };
 
-    private string LocalizeTableauId(string tableauId)
+    private string LocalizeTableauId(TableauId tableauId)
     {
-        (_, _, string tableauName) = Utils.GetNamesFromTableauId(tableauId);
+        (_, _, string tableauName) = tableauId.NameTuple;
         return tableauName;
     }
 
-    private string LocalizeAttributeId(string attributeId)
+    private string LocalizeAttributeId(AttributeId attributeId)
     {
-        (_, _, string tableauName, string attributeName) = Utils.GetNamesFromAttributeId(attributeId);
+        (_, _, string tableauName, string attributeName) = attributeId.NameTuple;
         return $"{tableauName}.{attributeName}";
     }
 

@@ -46,7 +46,7 @@ internal static class CommandSelectionUtils
     /// <param name="referencableAttributes"></param>
     /// <returns></returns>
     /// <exception cref="AttributeNotInReferencedTableausException"></exception>
-    internal static bool CheckAttributeReferences(SelectionExpression selectionExpression, HashSet<string> referencableAttributes)
+    internal static bool CheckAttributeReferences(SelectionExpression selectionExpression, HashSet<AttributeId> referencableAttributes)
         => selectionExpression switch
         {
             LogicalUnaryOperator unaryOp => CheckAttributeReferences(unaryOp.Operand, referencableAttributes),
@@ -63,7 +63,7 @@ internal static class CommandSelectionUtils
     /// <param name="referencableAttrsTypes"></param>
     /// <returns></returns>
     /// <exception cref="IncompatibleDataTypeComparisonException"></exception>
-    internal static bool CheckAttributeTypesOnComparison(SelectionExpression selectionExpression, Dictionary<string, DataTypes> referencableAttrsTypes)
+    internal static bool CheckAttributeTypesOnComparison(SelectionExpression selectionExpression, Dictionary<AttributeId, DataTypes> referencableAttrsTypes)
         => selectionExpression switch
         {
             LogicalUnaryOperator unaryOp => CheckAttributeTypesOnComparison(unaryOp.Operand, referencableAttrsTypes),
@@ -73,22 +73,22 @@ internal static class CommandSelectionUtils
             _ => throw new Exception($"Unkown operation or expression type {selectionExpression}")
         };
 
-    internal static HashSet<string> GetReferencedAttributeNames(SelectionExpression selectionExpression)
+    internal static HashSet<AttributeId> GetReferencedAttributeIds(SelectionExpression selectionExpression)
         => selectionExpression switch
         {
-            LogicalUnaryOperator unaryOp => GetReferencedAttributeNames(unaryOp.Operand),
-            LogicalBinaryOperator binaryOp => GetReferencedAttributeNames(binaryOp.LeftOperand).Union(GetReferencedAttributeNames(binaryOp.RightOperand)).ToHashSet(),
-            ComparisonOperator compareOp => new HashSet<string> { compareOp.AttributeId },
-            Literal literal => new HashSet<string>(),
+            LogicalUnaryOperator unaryOp => GetReferencedAttributeIds(unaryOp.Operand),
+            LogicalBinaryOperator binaryOp => GetReferencedAttributeIds(binaryOp.LeftOperand).Union(GetReferencedAttributeIds(binaryOp.RightOperand)).ToHashSet(),
+            ComparisonOperator compareOp => new HashSet<AttributeId> { compareOp.AttributeId },
+            Literal literal => new HashSet<AttributeId>(),
             _ => throw new Exception($"Unkown operation or expression type {selectionExpression}")
         };
 
     internal static UpdateSet? UpdateSetForExpressionAttributes(SelectionExpression selectionExpression, Tableau referencedTableau)
     {
-        var referencedAttributeNames = GetReferencedAttributeNames(selectionExpression);
+        var referencedAttributeNames = GetReferencedAttributeIds(selectionExpression);
 
         return referencedTableau
             .UpdateSets
-            .FirstOrDefault(us => referencedAttributeNames.IsSubsetOf(us.AttributeNames));
+            .FirstOrDefault(us => referencedAttributeNames.IsSubsetOf(us.AttributeIds));
     }
 }

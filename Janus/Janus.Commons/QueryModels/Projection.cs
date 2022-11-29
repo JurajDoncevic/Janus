@@ -1,18 +1,20 @@
-﻿namespace Janus.Commons.QueryModels;
+﻿using Janus.Commons.SchemaModels;
+
+namespace Janus.Commons.QueryModels;
 
 /// <summary>
 /// Describes a projection clause
 /// </summary>
 public sealed class Projection
 {
-    private HashSet<string> _includedAttributeIds;
-    public IReadOnlyCollection<string> IncludedAttributeIds => _includedAttributeIds;
+    private HashSet<AttributeId> _includedAttributeIds;
+    public IReadOnlyCollection<AttributeId> IncludedAttributeIds => _includedAttributeIds;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="includedAttributeIds">Attribute ids to be included in the projection</param>
-    internal Projection(HashSet<string> includedAttributeIds)
+    internal Projection(HashSet<AttributeId> includedAttributeIds)
     {
         _includedAttributeIds = includedAttributeIds ?? throw new ArgumentNullException(nameof(includedAttributeIds));
     }
@@ -22,7 +24,7 @@ public sealed class Projection
     /// </summary>
     internal Projection()
     {
-        _includedAttributeIds = new HashSet<string>();
+        _includedAttributeIds = new HashSet<AttributeId>();
     }
 
     /// <summary>
@@ -30,7 +32,7 @@ public sealed class Projection
     /// </summary>
     /// <param name="attributeId">Attribute id</param>
     /// <returns></returns>
-    internal bool AddAttribute(string attributeId)
+    internal bool AddAttribute(AttributeId attributeId)
     {
         return _includedAttributeIds.Add(attributeId);
     }
@@ -40,7 +42,7 @@ public sealed class Projection
     /// </summary>
     /// <param name="attributeId">Attribute id</param>
     /// <returns></returns>
-    internal bool RemoveAttribute(string attributeId)
+    internal bool RemoveAttribute(AttributeId attributeId)
     {
         return _includedAttributeIds.Remove(attributeId);
     }

@@ -1,7 +1,6 @@
-﻿using Janus.Commons.QueryModels.Exceptions;
-using Janus.Commons.QueryModels.Validation;
+﻿using Janus.Commons.QueryModels.Building;
+using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;
-using Janus.Commons.SelectionExpressions;
 
 namespace Janus.Commons.QueryModels;
 
@@ -120,9 +119,9 @@ public sealed class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, I
     private Option<Projection> _projection;
     private Option<Selection> _selection;
     private Option<Joining> _joining;
-    private readonly string _queryOnTableauId;
+    private readonly TableauId _queryOnTableauId;
     private readonly DataSource _dataSource;
-    private HashSet<string> _referencedTableauIds;
+    private HashSet<TableauId> _referencedTableauIds;
     private string? _queryName;
 
     /// <summary>
@@ -130,9 +129,9 @@ public sealed class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, I
     /// </summary>
     /// <param name="queryOnTableauId">Id of tableau on which the query is initialized</param>
     /// <param name="dataSource">Data source on which the query will be executed</param>
-    private QueryModelBuilder(string queryOnTableauId, DataSource dataSource)
+    private QueryModelBuilder(TableauId queryOnTableauId, DataSource dataSource)
     {
-        if (string.IsNullOrEmpty(queryOnTableauId))
+        if (queryOnTableauId is null)
         {
             throw new ArgumentException($"'{nameof(queryOnTableauId)}' cannot be null or empty.", nameof(queryOnTableauId));
         }
@@ -142,7 +141,7 @@ public sealed class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, I
         _joining = Option<Joining>.None;
         _queryOnTableauId = queryOnTableauId;
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        _referencedTableauIds = new HashSet<string>();
+        _referencedTableauIds = new HashSet<TableauId>();
         _referencedTableauIds.Add(queryOnTableauId);
     }
 
@@ -154,9 +153,9 @@ public sealed class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, I
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <returns>QueryModelBuilder</returns>
     /// <exception cref="TableauDoesNotExistException"></exception>
-    public static IPostInitBuilder InitQueryOnDataSource(string onTableauId, DataSource dataSource)
+    public static IPostInitBuilder InitQueryOnDataSource(TableauId onTableauId, DataSource dataSource)
     {
-        if (string.IsNullOrEmpty(onTableauId))
+        if (onTableauId is null)
         {
             throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
         }
@@ -171,6 +170,16 @@ public sealed class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, I
 
         return new QueryModelBuilder(onTableauId, dataSource);
     }
+
+    /// <summary>
+    /// Initializes the query on a tableau found in the given data source. Generated query is valid on the data source.
+    /// </summary>
+    /// <param name="onTableauId">Id of tableau on which the query is initialized</param>
+    /// <param name="dataSource">Data source on which the query will be executed</param>
+    /// <returns>QueryModelBuilder</returns>
+    /// <exception cref="TableauDoesNotExistException"></exception>
+    public static IPostInitBuilder InitQueryOnDataSource(string onTableauId, DataSource dataSource)
+        => InitQueryOnDataSource(TableauId.From(onTableauId), dataSource);
 
     /// <summary>
     /// Specifies a selection clause of the query
@@ -239,213 +248,6 @@ public sealed class QueryModelBuilder : IPostInitBuilder, IPostJoiningBuilder, I
         _queryName = queryName;
 
         return this;
-    }
-}
-
-/// <summary>
-/// Builder class for query selection
-/// </summary>
-public sealed class SelectionBuilder
-{
-    private SelectionExpression? _expression;
-    private readonly DataSource _dataSource;
-    private readonly HashSet<string> _referencedTableauIds;
-    internal bool IsConfigured => _expression != null;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="dataSource">Data source on which the query will be executed</param>
-    /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
-    internal SelectionBuilder(DataSource dataSource, HashSet<string> referencedTableauIds)
-    {
-        _expression = null;
-        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        _referencedTableauIds = referencedTableauIds ?? throw new ArgumentNullException(nameof(referencedTableauIds));
-    }
-
-    /// <summary>
-    /// Creates the selection expression
-    /// </summary>
-    /// <param name="expression"></param>
-    /// <returns>SelectionBuilder</returns>
-    public SelectionBuilder WithExpression(SelectionExpression expression)
-    {
-        var referencableAttrs = _referencedTableauIds.Select(tId => Utils.GetNamesFromTableauId(tId))
-                                                     .SelectMany(names => _dataSource[names.schemaName][names.tableauName].Attributes.Map(a => (a.Id, a.DataType)))
-                                                     .ToDictionary(x => x.Id, x => x.DataType);
-        SelectionValidationMethods.CheckSelectionAttributeReferences(expression, referencableAttrs.Keys.ToHashSet());
-        SelectionValidationMethods.CheckSelectionAttributeTypesOnComparison(expression, referencableAttrs);
-
-
-        _expression = expression;
-        return this;
-    }
-
-    /// <summary>
-    /// Builds the specified selection
-    /// </summary>
-    /// <returns></returns>
-    internal Selection Build()
-    {
-        return new Selection(_expression ?? new TrueLiteral());
-    }
-}
-
-/// <summary>
-/// Builder class for query projection
-/// </summary>
-public sealed class ProjectionBuilder
-{
-    private readonly DataSource _dataSource;
-    private HashSet<string> _projectionAttributes;
-    private readonly HashSet<string> _referencedTableauIds;
-    internal bool IsConfigured => _projectionAttributes.Count > 0;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="dataSource">Data source on which the query will be executed</param>
-    /// <param name="referencedTableauIds">Ids of tableaus referenced in the query</param>
-    internal ProjectionBuilder(DataSource dataSource, HashSet<string> referencedTableauIds)
-    {
-        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        _projectionAttributes = new HashSet<string>();
-        _referencedTableauIds = referencedTableauIds ?? throw new ArgumentNullException(nameof(referencedTableauIds));
-    }
-
-    /// <summary>
-    /// Adds an attribute to the projection
-    /// </summary>
-    /// <param name="attributeId">Attribute id</param>
-    /// <returns>ProjectionBuilder</returns>
-    /// <exception cref="AttributeDoesNotExistException"></exception>
-    /// <exception cref="AttributeNotInReferencedTableausException"></exception>
-    /// <exception cref="DuplicateAttributeAssignedToProjectionException"></exception>
-    public ProjectionBuilder AddAttribute(string attributeId)
-    {
-        if (!_dataSource.ContainsAttribute(attributeId))
-            throw new AttributeDoesNotExistException(attributeId, _dataSource.Name);
-        if (!_dataSource.Schemas
-                       .SelectMany(schema => schema.Tableaus)
-                       .Where(tableau => _referencedTableauIds.Contains(tableau.Id))
-                       .Any(tableau => tableau.Attributes.Any(attribute => attribute.Id.Equals(attributeId))))
-            throw new AttributeNotInReferencedTableausException(attributeId);
-        if (_projectionAttributes.Contains(attributeId))
-            throw new DuplicateAttributeAssignedToProjectionException(attributeId);
-
-        _projectionAttributes.Add(attributeId);
-
-        return this;
-    }
-
-    /// <summary>
-    /// Builds the specified projection
-    /// </summary>
-    /// <returns>Projection</returns>
-    internal Projection Build()
-    {
-        return new Projection(_projectionAttributes);
-    }
-}
-
-/// <summary>
-/// Builder class for query joins
-/// </summary>
-public sealed class JoiningBuilder
-{
-    private readonly string _initialTableauId;
-    private readonly DataSource _dataSource;
-    private Joining _joining;
-
-    internal bool IsConfigured => _joining.Joins.Count > 0;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="dataSource">Data source on which the query will be executed</param>
-    internal JoiningBuilder(string initialTableauId, DataSource dataSource)
-    {
-        if (string.IsNullOrEmpty(initialTableauId))
-        {
-            throw new ArgumentException($"'{nameof(initialTableauId)}' cannot be null or empty.", nameof(initialTableauId));
-        }
-
-        _initialTableauId = initialTableauId;
-        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        _joining = new Joining();
-    }
-
-    /// <summary>
-    /// Adds a join to the joining clause
-    /// </summary>
-    /// <param name="foreignKeyAttributeId">Attribute id of the foreign key</param>
-    /// <param name="primaryKeyAttributeId">Attribute id of the primary key</param>
-    /// <returns></returns>
-    /// <exception cref="InvalidAttributeIdException"></exception>
-    /// <exception cref="AttributeDoesNotExistException"></exception>
-    /// <exception cref="SelfJoinNotSupportedException"></exception>
-    /// <exception cref="CyclicJoinNotSupportedException"></exception>
-    /// <exception cref="TableauPrimaryKeyReferenceNotUniqueException"></exception>
-    /// <exception cref="DuplicateJoinNotSupportedException"></exception>
-    public JoiningBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
-    {
-        // check if given ids are ok
-        if (!foreignKeyAttributeId.Contains('.'))
-            throw new InvalidAttributeIdException(foreignKeyAttributeId);
-        if (!primaryKeyAttributeId.Contains('.'))
-            throw new InvalidAttributeIdException(primaryKeyAttributeId);
-
-        // get tableau ids from the supposed attribute ids
-        var foreignKeyTableauId = foreignKeyAttributeId.Remove(foreignKeyAttributeId.LastIndexOf('.'));
-        var primaryKeyTableauId = primaryKeyAttributeId.Remove(primaryKeyAttributeId.LastIndexOf('.'));
-
-        // check attribute (and tableau) existence
-        if (!_dataSource.ContainsAttribute(foreignKeyAttributeId))
-            throw new AttributeDoesNotExistException(foreignKeyAttributeId, _dataSource.Name);
-        if (!_dataSource.ContainsAttribute(primaryKeyAttributeId))
-            throw new AttributeDoesNotExistException(primaryKeyAttributeId, _dataSource.Name);
-
-        // check attribute types - must be the same
-        var fkNames = Utils.GetNamesFromAttributeId(foreignKeyAttributeId);
-        var pkNames = Utils.GetNamesFromAttributeId(primaryKeyAttributeId);
-        var fkAttribute = _dataSource[fkNames.schemaName][fkNames.tableauName][fkNames.attributeName];
-        var pkAttribute = _dataSource[pkNames.schemaName][pkNames.tableauName][pkNames.attributeName];
-        if (fkAttribute.DataType != pkAttribute.DataType)
-            throw new JoinedAttributesNotOfSameTypeException(foreignKeyAttributeId, fkAttribute.DataType, primaryKeyAttributeId, pkAttribute.DataType);
-
-        // check pk nullability
-        if (pkAttribute.IsNullable)
-            throw new PrimaryKeyAttributeNullableException(primaryKeyAttributeId);
-
-        // check for self-join
-        if (foreignKeyTableauId.Equals(primaryKeyTableauId))
-            throw new SelfJoinNotSupportedException(primaryKeyTableauId);
-
-        Join join = new Join(primaryKeyTableauId, primaryKeyAttributeId, foreignKeyTableauId, foreignKeyAttributeId);
-
-        // check for cycle joins, pk tableaus multiple references, duplicate joins
-        if (_joining.Joins.Contains(join))
-            throw new DuplicateJoinNotSupportedException(join);
-        if (!JoiningUtils.ArePrimaryKeyReferencesUnique(_joining, join))
-            throw new TableauPrimaryKeyReferenceNotUniqueException(join);
-        if (JoiningUtils.IsJoiningCyclic(_initialTableauId, _joining, join))
-            throw new CyclicJoinNotSupportedException(join);
-        _joining.AddJoin(join);
-
-        return this;
-    }
-
-    /// <summary>
-    /// Builds the joining clause
-    /// </summary>
-    /// <returns>Joining</returns>
-    /// <exception cref="JoinsNotConnectedException"></exception>
-    public Joining Build()
-    {
-        if (!JoiningUtils.IsJoiningConnectedGraph(_initialTableauId, _joining))
-            throw new JoinsNotConnectedException();
-        return _joining;
     }
 }
 

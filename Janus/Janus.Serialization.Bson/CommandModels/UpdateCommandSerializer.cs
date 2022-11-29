@@ -53,7 +53,7 @@ public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, 
         => Results.AsResult(() =>
         {
             var updateDto = new UpdateCommandDto(
-                updateCommand.OnTableauId,
+                updateCommand.OnTableauId.ToString(),
                 updateCommand.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value),
                 updateCommand.Selection.IsSome
                             ? new CommandSelectionDto() { SelectionExpression = updateCommand.Selection.Value.Expression }

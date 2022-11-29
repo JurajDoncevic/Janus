@@ -5,6 +5,7 @@
 /// </summary>
 public sealed class DataSource
 {
+    private readonly DataSourceId _id;
     private readonly string _name;
     private readonly Dictionary<string, Schema> _schemas;
     private readonly string _description;
@@ -13,7 +14,7 @@ public sealed class DataSource
     /// <summary>
     /// Data source ID
     /// </summary>
-    public string Id => _name;
+    public DataSourceId Id => _id;
     /// <summary>
     /// Data source name
     /// </summary>
@@ -52,7 +53,7 @@ public sealed class DataSource
         {
             throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
         }
-
+        _id = DataSourceId.From(name);
         _name = name;
         _schemas = new();
         _description = description;
@@ -76,7 +77,7 @@ public sealed class DataSource
         {
             throw new ArgumentNullException(nameof(schemas));
         }
-
+        _id = DataSourceId.From(name);
         _name = name;
         _description = description ?? string.Empty;
         _version = String.IsNullOrEmpty(version) ? Guid.NewGuid().ToString() : version;
@@ -120,19 +121,27 @@ public sealed class DataSource
     }
 
     /// <summary>
-    /// Checks if the data source contains a schema with given ID  
+    /// Checks if the data source contains a schema with given name  
     /// </summary>
-    /// <param name="schemaId">Schema ID</param>
+    /// <param name="schemaName">Schema name</param>
     /// <returns></returns>
-    public bool ContainsSchema(string schemaId)
-        => _schemas.ContainsKey(schemaId);
+    public bool ContainsSchema(string schemaName)
+        => _schemas.ContainsKey(schemaName);
+
+    /// <summary>
+    /// Checks if the data source contains a schema with given id  
+    /// </summary>
+    /// <param name="schemaId">Schema id</param>
+    /// <returns></returns>
+    public bool ContainsSchema(SchemaId schemaId)
+        => _schemas.Values.Any(schema => schema.Id.Equals(schemaId));
 
     /// <summary>
     /// Checks if the data source contains a tableau with given ID  
     /// </summary>
     /// <param name="tableuId">Tableau ID</param>
     /// <returns></returns>
-    public bool ContainsTableau(string tableuId)
+    public bool ContainsTableau(TableauId tableuId)
         => _schemas.Values.SelectMany(schema => schema.Tableaus)
                           .Select(tableau => tableau.Id)
                           .Contains(tableuId);
@@ -142,7 +151,7 @@ public sealed class DataSource
     /// </summary>
     /// <param name="attributeId">Attribute ID</param>
     /// <returns></returns>
-    public bool ContainsAttribute(string attributeId)
+    public bool ContainsAttribute(AttributeId attributeId)
         => _schemas.Values.SelectMany(schema => schema.Tableaus)
                           .SelectMany(tableau => tableau.Attributes)
                           .Select(attribute => attribute.Id)
@@ -151,6 +160,7 @@ public sealed class DataSource
     public override bool Equals(object? obj)
     {
         return obj is DataSource source &&
+               _id.Equals(source._id) &&
                _name.Equals(source._name) &&
                _version.Equals(source._version) &&
                _description.Equals(source._description) &&
@@ -159,7 +169,7 @@ public sealed class DataSource
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_name, _schemas, _version, _description);
+        return HashCode.Combine(_id, _name, _schemas, _version, _description);
     }
 
     public static bool operator ==(DataSource? left, DataSource? right)

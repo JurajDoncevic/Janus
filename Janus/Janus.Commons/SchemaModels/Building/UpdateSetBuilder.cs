@@ -6,7 +6,8 @@ public sealed class UpdateSetBuilder : IUpdateSetBuilder
     private HashSet<string> _attributeNames;
     private readonly Tableau _parentTableau;
 
-    private IReadOnlySet<string> AttributeIds => _attributeNames.Map(attrName => $"{_parentTableau.Id}.{attrName}").ToHashSet();
+    private IReadOnlySet<AttributeId> AttributeIds 
+        => _attributeNames.Map(attrName => AttributeId.From(_parentTableau.Schema.DataSource.Name, _parentTableau.Schema.Name, _parentTableau.Name, attrName)).ToHashSet();
 
     public UpdateSetBuilder(Tableau parentTableau)
     {
@@ -43,8 +44,8 @@ public sealed class UpdateSetBuilder : IUpdateSetBuilder
         var attrIdsInTableau = _parentTableau.Attributes.Map(attr => attr.Id);
         if (!AttributeIds.All(attrIdsInTableau.Contains))
         {
-            var unknownAttrId = _attributeNames.FirstOrDefault(attrId => !attrIdsInTableau.Contains(attrId));
-            throw new UpdateSetAttributeDoesNotExist(unknownAttrId ?? string.Empty, _parentTableau.Name);
+            var unknownAttrId = _attributeNames.Map(attrName => AttributeId.From(_parentTableau.Id, attrName)).FirstOrDefault(attrId => !attrIdsInTableau.Contains(attrId));
+            throw new UpdateSetAttributeDoesNotExist(unknownAttrId.AttributeName ?? string.Empty, _parentTableau.Name);
         }
         _attributeNames = new HashSet<string>(attributeNames);
         return this;

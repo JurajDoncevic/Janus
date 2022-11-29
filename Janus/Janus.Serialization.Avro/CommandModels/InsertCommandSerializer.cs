@@ -45,7 +45,7 @@ public sealed class InsertCommandSerializer : ICommandSerializer<InsertCommand, 
             var tabularDataDto = _tabularDataSerializer.ToDto(insertCommand.Instantiation.TabularData).Data!;
             var insertCommandDto = new InsertCommandDto
             {
-                OnTableauId = insertCommand.OnTableauId,
+                OnTableauId = insertCommand.OnTableauId.ToString(),
                 Instantiation = tabularDataDto
             };
 

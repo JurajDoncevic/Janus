@@ -36,6 +36,6 @@ public class BuildUpdateTests
         Assert.True(builtCommandResult);
         Assert.True(updateCommand?.Selection);
         Assert.NotNull(updateCommand?.Mutation);
-        Assert.True(!string.IsNullOrEmpty(updateCommand?.OnTableauId.Trim()));
+        Assert.NotNull(updateCommand?.OnTableauId);
     }
 }

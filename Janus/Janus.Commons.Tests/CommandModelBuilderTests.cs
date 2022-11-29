@@ -13,7 +13,7 @@ public class CommandModelBuilderTests
 {
 
     private DataSource GetSchemaModel() =>
-        SchemaModelBuilder.InitDataSource("dataSource")
+        SchemaModelBuilder.InitDataSource("datasource")
             .AddSchema("schema1",
                 schemaConf => schemaConf.AddTableau("tableau1",
                     tableauConf => tableauConf.AddAttribute("attr1", attrConf => attrConf.WithDataType(DataTypes.INT)
@@ -244,7 +244,7 @@ public class CommandModelBuilderTests
         var updateCommand =
             UpdateCommandBuilder.InitOnDataSource(tableauId, dataSource)
                                 .WithMutation(conf => conf.WithValues(valueUpdates))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attr1", 1)))
                                 .Build();
 
         Assert.NotNull(updateCommand);
@@ -283,7 +283,7 @@ public class CommandModelBuilderTests
             var updateCommand =
             UpdateCommandBuilder.InitOnDataSource(tableauId, dataSource)
                                 .WithMutation(conf => conf.WithValues(valueUpdates))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr3", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau3.attr3", 1)))
                                 .Build();
         });
     }
@@ -350,7 +350,7 @@ public class CommandModelBuilderTests
         var updateCommand =
             UpdateCommandOpenBuilder.InitOpenUpdate(tableauId)
                                 .WithMutation(conf => conf.WithValues(valueUpdates))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attr1", 1)))
                                 .Build();
 
         Assert.NotNull(updateCommand);
@@ -371,7 +371,7 @@ public class CommandModelBuilderTests
         var updateCommand =
             UpdateCommandOpenBuilder.InitOpenUpdate(tableauId)
                                 .WithMutation(conf => conf.WithValues(valueUpdates))
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attr1", 1)))
                                 .Build();
         var result = updateCommand.IsValidForDataSource(dataSource);
         Assert.False(result);
@@ -388,7 +388,7 @@ public class CommandModelBuilderTests
             UpdateCommandOpenBuilder
                 .InitOpenUpdate(tableauId)
                 .WithMutation(conf => conf.WithValues(valueUpdates))
-                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attr1", 1)))
                 .Build();
 
         var result = updateCommand.IsValidForDataSource(dataSource);
@@ -405,7 +405,7 @@ public class CommandModelBuilderTests
 
         var deleteCommand =
             DeleteCommandBuilder.InitOnDataSource(tableauId, dataSource)
-                                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attr1", 1)))
                                 .Build();
 
         Assert.NotNull(deleteCommand);
@@ -438,7 +438,7 @@ public class CommandModelBuilderTests
         {
             var deleteCommand =
                 DeleteCommandBuilder.InitOnDataSource(tableauId, dataSource)
-                                    .WithSelection(conf => conf.WithExpression(EQ("attrX", 1)))
+                                    .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attrX", 1)))
                                     .Build();
         });
     }
@@ -452,7 +452,7 @@ public class CommandModelBuilderTests
         var deleteCommand =
             DeleteCommandOpenBuilder
                 .InitOpenDelete(tableauId)
-                .WithSelection(conf => conf.WithExpression(EQ("attrX", 1)))
+                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attrX", 1)))
                 .Build();
 
         Assert.False(deleteCommand.IsValidForDataSource(dataSource));
@@ -467,7 +467,7 @@ public class CommandModelBuilderTests
         var deleteCommand =
             DeleteCommandOpenBuilder
                 .InitOpenDelete(tableauId)
-                .WithSelection(conf => conf.WithExpression(EQ("attr1", 1)))
+                .WithSelection(conf => conf.WithExpression(EQ("datasource.schema1.tableau1.attr1", 1)))
                 .Build();
 
         Assert.NotNull(deleteCommand);

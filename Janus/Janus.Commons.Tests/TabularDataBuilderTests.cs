@@ -48,7 +48,7 @@ public class TabularDataBuilderTests
                 { "attrSTRING", "test_string3" }
             }))
             .Build();
-        Type targetType = TypeMappings.MapToType(tabularData.AttributeDataTypes["attrDATETIME"]);
+        Type targetType = TypeMappings.MapToType(tabularData.ColumnDataTypes["attrDATETIME"]);
 
         Assert.NotNull(tabularData);
         Assert.Equal(3, tabularData.RowData.Count);

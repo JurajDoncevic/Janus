@@ -1,4 +1,6 @@
-﻿namespace Janus.Commons.SelectionExpressions;
+﻿using Janus.Commons.SchemaModels;
+
+namespace Janus.Commons.SelectionExpressions;
 
 public class Expressions
 {
@@ -34,8 +36,26 @@ public class Expressions
     /// <param name="attributeId"></param>
     /// <param name="value"></param>
     /// <returns></returns>
+    public static NotEqualAs NEQ(AttributeId attributeId, object value)
+        => new NotEqualAs(attributeId, value);
+
+    /// <summary>
+    /// NEQ (not equal) comparison operator
+    /// </summary>
+    /// <param name="attributeId"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
     public static NotEqualAs NEQ(string attributeId, object value)
-    => new NotEqualAs(attributeId, value);
+        => new NotEqualAs(AttributeId.From(attributeId), value);
+
+    /// <summary>
+    /// EQ (equal) comparison operator
+    /// </summary>
+    /// <param name="attributeId"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static EqualAs EQ(AttributeId attributeId, object value)
+        => new EqualAs(attributeId, value);
 
     /// <summary>
     /// EQ (equal) comparison operator
@@ -44,7 +64,16 @@ public class Expressions
     /// <param name="value"></param>
     /// <returns></returns>
     public static EqualAs EQ(string attributeId, object value)
-        => new EqualAs(attributeId, value);
+        => new EqualAs(AttributeId.From(attributeId), value);
+
+    /// <summary>
+    /// GE (greater or equal) comparison operator
+    /// </summary>
+    /// <param name="attributeId"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static GreaterOrEqualThan GE(AttributeId attributeId, object value)
+        => new GreaterOrEqualThan(attributeId, value);
 
     /// <summary>
     /// GE (greater or equal) comparison operator
@@ -53,7 +82,16 @@ public class Expressions
     /// <param name="value"></param>
     /// <returns></returns>
     public static GreaterOrEqualThan GE(string attributeId, object value)
-        => new GreaterOrEqualThan(attributeId, value);
+        => new GreaterOrEqualThan(AttributeId.From(attributeId), value);
+
+    /// <summary>
+    /// GT (greater than) comparison operator
+    /// </summary>
+    /// <param name="attributeId"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static GreaterThan GT(AttributeId attributeId, object value)
+        => new GreaterThan(attributeId, value);
 
     /// <summary>
     /// GT (greater than) comparison operator
@@ -62,7 +100,16 @@ public class Expressions
     /// <param name="value"></param>
     /// <returns></returns>
     public static GreaterThan GT(string attributeId, object value)
-        => new GreaterThan(attributeId, value);
+        => new GreaterThan(AttributeId.From(attributeId), value);
+
+    /// <summary>
+    /// LE (lesser or equal) comparison operator
+    /// </summary>
+    /// <param name="attributeId"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static LesserOrEqualThan LE(AttributeId attributeId, object value)
+        => new LesserOrEqualThan(attributeId, value);
 
     /// <summary>
     /// LE (lesser or equal) comparison operator
@@ -71,7 +118,16 @@ public class Expressions
     /// <param name="value"></param>
     /// <returns></returns>
     public static LesserOrEqualThan LE(string attributeId, object value)
-        => new LesserOrEqualThan(attributeId, value);
+        => new LesserOrEqualThan(AttributeId.From(attributeId), value);
+
+    /// <summary>
+    /// LT (lesser than) comparison operator
+    /// </summary>
+    /// <param name="attributeId"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static LesserThan LT(AttributeId attributeId, object value)
+        => new LesserThan(attributeId, value);
 
     /// <summary>
     /// LT (lesser than) comparison operator
@@ -80,7 +136,7 @@ public class Expressions
     /// <param name="value"></param>
     /// <returns></returns>
     public static LesserThan LT(string attributeId, object value)
-        => new LesserThan(attributeId, value);
+        => new LesserThan(AttributeId.From(attributeId), value);
 
     /// <summary>
     /// TRUE literal

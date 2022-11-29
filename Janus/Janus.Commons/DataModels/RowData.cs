@@ -5,35 +5,35 @@
 /// </summary>
 public sealed class RowData
 {
-    private readonly Dictionary<string, object?> _attributeValues;
+    private readonly Dictionary<string, object?> _columnValues;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="attributeValues">Values of attributes in the row</param>
-    internal RowData(Dictionary<string, object?> attributeValues)
+    internal RowData(Dictionary<string, object?> columnValues)
     {
-        _attributeValues = attributeValues ?? throw new ArgumentNullException(nameof(attributeValues));
+        _columnValues = columnValues ?? throw new ArgumentNullException(nameof(columnValues));
     }
 
     /// <summary>
     /// Values of attributes in the row
     /// </summary>
-    public IReadOnlyDictionary<string, object?> AttributeValues => _attributeValues;
+    public IReadOnlyDictionary<string, object?> AttributeValues => _columnValues;
 
-    public object this[string attributeId] => _attributeValues[attributeId];
+    public object this[string columnName] => _columnValues[columnName];
 
     public override string ToString()
-        => "(" + string.Join(";", _attributeValues.Values) + ")";
+        => "(" + string.Join(";", _columnValues.Values) + ")";
 
     public override bool Equals(object? obj)
     {
         return obj is RowData data &&
-               _attributeValues.SequenceEqual(data._attributeValues);
+               _columnValues.SequenceEqual(data._columnValues);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_attributeValues);
+        return HashCode.Combine(_columnValues);
     }
 }

@@ -42,7 +42,7 @@ public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, 
         => Results.AsResult(() =>
         {
             var updateCommandDto = new UpdateCommandDto(
-                command.OnTableauId,
+                command.OnTableauId.ToString(),
                 command.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => ConvertToBytes(kv.Value, kv.Value?.GetType() ?? typeof(object))),
                 command.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value?.GetType().ToString() ?? typeof(byte[]).ToString()),
                 command.Selection.IsSome

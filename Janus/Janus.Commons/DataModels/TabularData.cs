@@ -9,16 +9,16 @@ public sealed class TabularData
 {
     private readonly string _name;
     private readonly List<RowData> _rowData;
-    private readonly Dictionary<string, DataTypes> _attributeDataTypes;
+    private readonly Dictionary<string, DataTypes> _columnDataTypes;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="attributeDataTypes">Data types for attributes</param>
-    internal TabularData(Dictionary<string, DataTypes> attributeDataTypes, string? name = null)
+    /// <param name="columnDataTypes">Data types for columns</param>
+    internal TabularData(Dictionary<string, DataTypes> columnDataTypes, string? name = null)
     {
         _name = string.IsNullOrEmpty(name) ? Guid.NewGuid().ToString() : name;
-        _attributeDataTypes = attributeDataTypes;
+        _columnDataTypes = columnDataTypes;
         _rowData = new List<RowData>();
     }
 
@@ -26,12 +26,12 @@ public sealed class TabularData
     /// Constructor
     /// </summary>
     /// <param name="rowData">Rows of data to be placed into tabular data</param>
-    /// <param name="attributeDataTypes">Data types for attributes</param>
-    internal TabularData(IEnumerable<RowData> rowData, Dictionary<string, DataTypes> attributeDataTypes, string? name = null)
+    /// <param name="columnDataTypes">Data types for attributes</param>
+    internal TabularData(IEnumerable<RowData> rowData, Dictionary<string, DataTypes> columnDataTypes, string? name = null)
     {
         _name = string.IsNullOrEmpty(name) ? Guid.NewGuid().ToString() : name;
         _rowData = rowData.ToList();
-        _attributeDataTypes = attributeDataTypes;
+        _columnDataTypes = columnDataTypes;
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public sealed class TabularData
     /// <summary>
     /// Data types of attributes in the tabular data
     /// </summary>
-    public IReadOnlyDictionary<string, DataTypes> AttributeDataTypes => _attributeDataTypes;
+    public IReadOnlyDictionary<string, DataTypes> ColumnDataTypes => _columnDataTypes;
 
     /// <summary>
     /// Row data by number index
@@ -63,7 +63,7 @@ public sealed class TabularData
     /// <summary>
     /// Attribute names in the tabular
     /// </summary>
-    public HashSet<string> AttributeNames => _attributeDataTypes.Keys.ToHashSet();
+    public HashSet<string> ColumnNames => _columnDataTypes.Keys.ToHashSet();
 
     /// <summary>
     /// Identifier for this instance of tabular data
@@ -77,13 +77,13 @@ public sealed class TabularData
     {
         return obj is TabularData data &&
             _name == data._name &&
-            _attributeDataTypes.SequenceEqual(data._attributeDataTypes) &&
+            _columnDataTypes.SequenceEqual(data._columnDataTypes) &&
             _rowData.SequenceEqual(data._rowData);
 
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_rowData, _attributeDataTypes, _name);
+        return HashCode.Combine(_rowData, _columnDataTypes, _name);
     }
 }

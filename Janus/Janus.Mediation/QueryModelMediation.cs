@@ -17,7 +17,7 @@ public static class QueryModelMediation
         {
             // initial source tableau id
             var initialSourceTableauId =
-                Utils.GetNamesFromTableauId(query.OnTableauId).Identity()
+                query.OnTableauId.NameTuple.Identity()
                 .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]!.SourceQuery.InitialTableauId)
                 .Data;
 
@@ -25,7 +25,7 @@ public static class QueryModelMediation
             var projectedSourceAttributeIds = query.Projection.Match(
                 projection => projection.IncludedAttributeIds
                                         .Map(declaredAttrId => dataSourceMediation.GetSourceAttributeId(declaredAttrId)),
-                () => new List<string>()
+                () => new List<AttributeId>()
                 );
 
             // translate explicit joins between mediated tableaus; expand joins inside mediated tableaus
@@ -33,21 +33,21 @@ public static class QueryModelMediation
                 joining => joining.Joins
                                   .Map(join => (fkAttrId: dataSourceMediation.GetSourceAttributeId(join.ForeignKeyAttributeId),
                                                 pkAttrId: dataSourceMediation.GetSourceAttributeId(join.PrimaryKeyAttributeId))),
-                () => new List<(string? fkAttrId, string? pkAttrId)>()
+                () => new List<(AttributeId? fkAttrId, AttributeId? pkAttrId)>()
                 )
                 .Map(j => Join.CreateJoin(j.fkAttrId!, j.pkAttrId!));
 
             var joinsInsideMediatedTableau =
                 query.Joining.Match(
                     joining => joining.Joins
-                                      .Map(j => new List<string> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
+                                      .Map(j => new List<TableauId> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
                                       .SelectMany(tableauIds => tableauIds)
-                                      .Map(tableauId => Utils.GetNamesFromTableauId(tableauId))
+                                      .Map(tableauId => tableauId.NameTuple)
                                       .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]!.SourceQuery.Joining)
                                       .Map(joining => joining.Value.Joins)
                                       .Map(joins => joins.Map(join => (fkAttrId: join.ForeignKeyAttributeId, pkAttrId: join.PrimaryKeyAttributeId)))
                                       .SelectMany(t => t),
-                    () => Enumerable.Empty<(string fkAttrId, string pkAttrId)>()
+                    () => Enumerable.Empty<(AttributeId fkAttrId, AttributeId pkAttrId)>()
                     )
                 .Map(j => Join.CreateJoin(j.fkAttrId, j.pkAttrId));
 
@@ -66,7 +66,7 @@ public static class QueryModelMediation
                     {
                         queryPartition.ProjectionAttributeIds = 
                             projectedSourceAttributeIds
-                                .Where(attrId => queryPartition.ReferencedTableauIds.Any(refTblId => attrId.StartsWith(refTblId)))
+                                .Where(attrId => queryPartition.ReferencedTableauIds.Any(refTblId => attrId.IsChildOf(refTblId)))
                                 .ToHashSet();
                         
 
@@ -116,15 +116,15 @@ public static class QueryModelMediation
 
     private class QueryPartition
     {
-        public string InitialTableauId { get; set; }
+        public TableauId InitialTableauId { get; set; }
         public List<Join> Joins { get; set; }
-        public HashSet<string> ProjectionAttributeIds { get; set; }
+        public HashSet<AttributeId> ProjectionAttributeIds { get; set; }
         public SelectionExpression SelectionExpression { get; set; }
 
 
-        public bool ContainsTableau(string tableauId)
+        public bool ContainsTableau(TableauId tableauId)
         {
-            return Joins.Any(j => j.ForeignKeyTableauId == tableauId || j.PrimaryKeyTableauId == tableauId);
+            return Joins.Any(j => j.ForeignKeyTableauId.Equals(tableauId) || j.PrimaryKeyTableauId.Equals(tableauId));
         }
 
         public override bool Equals(object? obj)
@@ -139,22 +139,21 @@ public static class QueryModelMediation
             return HashCode.Combine(InitialTableauId, Joins);
         }
 
-        public HashSet<string> ReferencedTableauIds =>
-            Joins.Map(j => new List<string> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
+        public HashSet<TableauId> ReferencedTableauIds =>
+            Joins.Map(j => new List<TableauId> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
                  .SelectMany(tblIds => tblIds)
                 .Fold(
-                    Enumerable.Empty<string>().Append(InitialTableauId),
+                    Enumerable.Empty<TableauId>().Append(InitialTableauId),
                     (tableauId, referencedTableauIds) => referencedTableauIds.Append(tableauId)
                 ).ToHashSet();
     }
 
-    private static bool AreFromSameDataSource(string tableauId1, string tableauId2)
+    private static bool AreFromSameDataSource(TableauId tableauId1, TableauId tableauId2)
     {
-        return Utils.GetNamesFromTableauId(tableauId1).dataSourceName
-                .Equals(Utils.GetNamesFromTableauId(tableauId2).dataSourceName);
+        return tableauId1.DataSourceName.Equals(tableauId2.DataSourceName);
     }
 
-    private static (IEnumerable<QueryPartition> queryPartitions, IEnumerable<Join> globalJoins) DetermineQueryPartitions(string initialTableauId, IEnumerable<Join> joins)
+    private static (IEnumerable<QueryPartition> queryPartitions, IEnumerable<Join> globalJoins) DetermineQueryPartitions(TableauId initialTableauId, IEnumerable<Join> joins)
     {
         var queryPartitions = new List<QueryPartition>
         {

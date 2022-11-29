@@ -2,6 +2,7 @@
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons;
 using Janus.Commons.QueryModels;
+using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
 using Janus.Wrapper.Sqlite.LocalQuerying;
 using Janus.Wrapper.Translation;
@@ -14,9 +15,9 @@ public sealed class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, s
             .Bind(selection => TranslateJoining(query.Joining, query.OnTableauId).Map(joining => (selection, joining)))
             .Bind(result => TranslateProjection(query.Projection).Map(projection => (result.selection, result.joining, projection)))
             .Map(((string selection, string joining, string projection) result)
-                => new SqliteQuery(query.OnTableauId, result.selection, result.joining, result.projection));
+                => new SqliteQuery(query.OnTableauId.ToString(), result.selection, result.joining, result.projection));
 
-    public Result<string> TranslateJoining(Option<Joining> joining, string? startingWith)
+    public Result<string> TranslateJoining(Option<Joining> joining, TableauId? startingWith)
         => Results.AsResult(
             () => $"FROM {LocalizeTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
@@ -80,15 +81,15 @@ public sealed class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, s
             _ => throw new Exception($"Unknown logical binary operator {unaryOp.OperatorString}")
         };
 
-    private string LocalizeTableauId(string tableauId)
+    private string LocalizeTableauId(TableauId tableauId)
     {
-        (_, _, string tableauName) = Utils.GetNamesFromTableauId(tableauId);
+        (_, _, string tableauName) = tableauId.NameTuple;
         return tableauName;
     }
 
-    private string LocalizeAttributeId(string attributeId)
+    private string LocalizeAttributeId(AttributeId attributeId)
     {
-        (_, _, string tableauName, string attributeName) = Utils.GetNamesFromAttributeId(attributeId);
+        (_, _, string tableauName, string attributeName) = attributeId.NameTuple;
         return $"{tableauName}.{attributeName}";
     }
 

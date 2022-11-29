@@ -1,4 +1,5 @@
-﻿using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
+﻿using Janus.Commons.SchemaModels;
+using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 
 namespace Janus.Mediation.SchemaMediationModels;
 /// <summary>
@@ -53,7 +54,7 @@ public class TableauMediation
     /// </summary>
     /// <param name="sourceAttributeId">Source attribute id. Attribute declared in the SELECT clause</param>
     /// <returns>String with name of declared mediated attribute</returns>
-    public string? GetDeclaredAttributeName(string sourceAttributeId) =>
+    public string? GetDeclaredAttributeName(AttributeId sourceAttributeId) =>
         _attributeMediations.FirstOrDefault(mediation => mediation.SourceAttributeId.Equals(sourceAttributeId))?.DeclaredAttributeName;
 
     /// <summary>
@@ -61,6 +62,6 @@ public class TableauMediation
     /// </summary>
     /// <param name="declaredAttributeName">Declared mediated attribute name</param>
     /// <returns>String with id of the source attribute</returns>
-    public string? GetSourceAttributeId(string declaredAttributeName) =>
+    public AttributeId? GetSourceAttributeId(string declaredAttributeName) =>
         _attributeMediations.FirstOrDefault(mediation => mediation.DeclaredAttributeName.Equals(declaredAttributeName))?.SourceAttributeId;
 }

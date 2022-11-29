@@ -83,8 +83,8 @@ public class DataSourceMediation
     /// </summary>
     /// <param name="declaredAttributeId"></param>
     /// <returns></returns>
-    public string? GetSourceAttributeId(string declaredAttributeId)
-        => Utils.GetNamesFromAttributeId(declaredAttributeId).Identity()
+    public AttributeId? GetSourceAttributeId(AttributeId declaredAttributeId)
+        => declaredAttributeId.NameTuple.Identity()
                 .Map(names => this[names.schemaName]![names.tableauName]![names.attributeName]!.SourceAttributeId)
                 .Data;
 

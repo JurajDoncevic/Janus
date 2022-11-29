@@ -169,10 +169,10 @@ public class SourceQueryModelsTests
             .Build();
 
         Assert.NotNull(sourceQuery);
-        Assert.Contains("ds1.sc1.tbl1.attr1", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds1.sc1.tbl1.attr3", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.DoesNotContain("ds1.sc1.tbl1.attr2", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Equal("ds1.sc1.tbl1", sourceQuery.InitialTableauId);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr1"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr3"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.DoesNotContain(AttributeId.From("ds1.sc1.tbl1.attr2"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Equal(TableauId.From("ds1.sc1.tbl1"), sourceQuery.InitialTableauId);
     }
 
     [Fact(DisplayName = "Build source query with joins from the same data source")]
@@ -189,14 +189,14 @@ public class SourceQueryModelsTests
             .Build();
 
         Assert.NotNull(sourceQuery);
-        Assert.Contains("ds1.sc1.tbl1.attr1", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds1.sc1.tbl1.attr2", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds1.sc1.tbl1.attr3", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds1.sc1.tbl2.attr1", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds1.sc1.tbl2.attr2", sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr1"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr2"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr3"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl2.attr1"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl2.attr2"), sourceQuery.Projection.IncludedAttributeIds);
         Assert.True(sourceQuery.Joining);
         Assert.Equal(1, sourceQuery.Joining.Value.Joins.Count);
-        Assert.Equal("ds1.sc1.tbl1", sourceQuery.InitialTableauId);
+        Assert.Equal(TableauId.From("ds1.sc1.tbl1"), sourceQuery.InitialTableauId);
     }
 
     [Fact(DisplayName = "Build source query with joins from different data sources")]
@@ -216,16 +216,16 @@ public class SourceQueryModelsTests
             .Build();
 
         Assert.NotNull(sourceQuery);
-        Assert.Contains("ds1.sc1.tbl1.attr1", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds1.sc1.tbl1.attr2", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds1.sc1.tbl1.attr3", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds2.sc1.tbl1.attr1", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds2.sc1.tbl1.attr2", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds3.sc1.tbl1.attr1", sourceQuery.Projection.IncludedAttributeIds);
-        Assert.Contains("ds3.sc1.tbl1.attr2", sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr1"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr2"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds1.sc1.tbl1.attr3"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds2.sc1.tbl1.attr1"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds2.sc1.tbl1.attr2"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds3.sc1.tbl1.attr1"), sourceQuery.Projection.IncludedAttributeIds);
+        Assert.Contains(AttributeId.From("ds3.sc1.tbl1.attr2"), sourceQuery.Projection.IncludedAttributeIds);
         Assert.True(sourceQuery.Joining);
         Assert.Equal(2, sourceQuery.Joining.Value.Joins.Count);
-        Assert.Equal("ds1.sc1.tbl1", sourceQuery.InitialTableauId);
+        Assert.Equal(TableauId.From("ds1.sc1.tbl1"), sourceQuery.InitialTableauId);
     }
 
     [Fact(DisplayName = "Fail to build source query with unknown attribute")]

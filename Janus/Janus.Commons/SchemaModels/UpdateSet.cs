@@ -18,12 +18,13 @@ public sealed class UpdateSet
     /// <summary>
     /// Attribute IDs of attributes belonging to this update group
     /// </summary>
-    public IReadOnlySet<string> AttributeIds => _attributeNames.Map(attrName => $"{_parentTableau.Id}.{attrName}").ToHashSet();
+    public IReadOnlySet<AttributeId> AttributeIds 
+        => _attributeNames.Map(attrName => AttributeId.From(_parentTableau.Id, attrName)).ToHashSet();
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="attributeNames">Attribute IDs in the update group</param>
+    /// <param name="attributeNames">Attribute names in the update group</param>
     internal UpdateSet(HashSet<string> attributeNames, Tableau parentTableau)
     {
         if (parentTableau is null)

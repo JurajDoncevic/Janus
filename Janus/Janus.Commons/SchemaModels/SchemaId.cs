@@ -5,7 +5,7 @@ namespace Janus.Commons.SchemaModels;
 /// <summary>
 /// Schema identifier made from schema models' names
 /// </summary>
-public class SchemaId
+public sealed class SchemaId
 {
     private readonly string _schemaName;
     private readonly string _dataSourceName;
@@ -111,6 +111,15 @@ public class SchemaId
     /// <returns>Schema identifier object</returns>
     public static SchemaId From(string dataSourceName, string schemaName)
         => new SchemaId(dataSourceName, schemaName);
+
+    /// <summary>
+    /// Creates a schema identifier from a given data source id and schema name
+    /// </summary>
+    /// <param name="parentDataSourceId"></param>
+    /// <param name="schemaName"></param>
+    /// <returns></returns>
+    public static SchemaId From(DataSourceId parentDataSourceId, string schemaName)
+        => new SchemaId(parentDataSourceId.DataSourceName, schemaName);
 
     /// <summary>
     /// Creates a schema identifier from given dot-delimited string representation

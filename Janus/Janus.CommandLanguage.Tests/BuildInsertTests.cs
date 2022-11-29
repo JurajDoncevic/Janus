@@ -35,6 +35,6 @@ public class BuildInsertTests
         Assert.Empty(errorListener.Errors);
         Assert.True(builtCommandResult);
         Assert.NotNull(insertCommand?.Instantiation);
-        Assert.True(!string.IsNullOrEmpty(insertCommand?.OnTableauId.Trim()));
+        Assert.NotNull(insertCommand?.OnTableauId);
     }
 }

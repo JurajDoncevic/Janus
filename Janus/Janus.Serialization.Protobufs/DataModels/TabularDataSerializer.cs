@@ -43,7 +43,7 @@ public sealed class TabularDataSerializer : ITabularDataSerializer<byte[]>
             var tabularDataDto = new TabularDataDto
             { 
                 Name = tabularData.Name,
-                AttributeDataTypes = tabularData.AttributeDataTypes.ToDictionary(kv => kv.Key, kv => kv.Value),
+                AttributeDataTypes = tabularData.ColumnDataTypes.ToDictionary(kv => kv.Key, kv => kv.Value),
                 AttributeValues = tabularData.RowData
                                              .Select(rowData => new RowValuesDto { RowValues = rowData.AttributeValues.ToDictionary(av => av.Key, av => new DataBytesDto { Data = ConvertToBytes(av.Value, av.Value?.GetType() ?? typeof(object)) }) })
                                              .ToList()

@@ -3,7 +3,7 @@
 /// <summary>
 /// data source identifier made from schema models' names
 /// </summary>
-public class DataSourceId
+public sealed class DataSourceId
 {
     private readonly string _dataSourceName;
 

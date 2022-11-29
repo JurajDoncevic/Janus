@@ -1,18 +1,20 @@
-﻿namespace Janus.Commons.CommandModels;
+﻿using Janus.Commons.SchemaModels;
+
+namespace Janus.Commons.CommandModels;
 
 /// <summary>
 /// Builder class to internally construct a delete command without validation on a data source
 /// </summary>
 public sealed class DeleteCommandOpenBuilder
 {
-    private readonly string _onTableauId;
+    private readonly TableauId _onTableauId;
     private Option<CommandSelection> _selection;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="onTableauId">Command's starting tableau</param>
-    private DeleteCommandOpenBuilder(string onTableauId)
+    private DeleteCommandOpenBuilder(TableauId onTableauId)
     {
         _onTableauId = onTableauId;
         _selection = Option<CommandSelection>.None;
@@ -30,10 +32,18 @@ public sealed class DeleteCommandOpenBuilder
     /// </summary>
     /// <param name="onTableauId">Command's starting tableau</param>
     /// <returns></returns>
-    public static DeleteCommandOpenBuilder InitOpenDelete(string onTableauId)
+    public static DeleteCommandOpenBuilder InitOpenDelete(TableauId onTableauId)
     {
         return new DeleteCommandOpenBuilder(onTableauId);
     }
+
+    /// <summary>
+    /// Initializes the delete command open builder
+    /// </summary>
+    /// <param name="onTableauId">Command's starting tableau</param>
+    /// <returns></returns>
+    public static DeleteCommandOpenBuilder InitOpenDelete(string onTableauId)
+        => InitOpenDelete(TableauId.From(onTableauId));
 
     /// <summary>
     /// Sets the delete command's selection clause

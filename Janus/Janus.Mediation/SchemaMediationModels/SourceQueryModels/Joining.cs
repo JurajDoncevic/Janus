@@ -1,4 +1,5 @@
 ﻿using FunctionalExtensions.Base;
+using Janus.Commons.SchemaModels;
 
 namespace Janus.Mediation.SchemaMediationModels.MediationQueryModels;
 
@@ -59,79 +60,60 @@ public class Joining
 /// </summary>
 public class Join
 {
-    private readonly string _primaryKeyTableauId;
-    private readonly string _primaryKeyAttributeId;
-    private readonly string _foreignKeyTableauId;
-    private readonly string _foreignKeyAttributeId;
+    private readonly AttributeId _primaryKeyAttributeId;
+    private readonly AttributeId _foreignKeyAttributeId;
 
     /// <summary>
     /// Referenced tableau id
     /// </summary>
-    public string PrimaryKeyTableauId => _primaryKeyTableauId;
+    public TableauId PrimaryKeyTableauId => _primaryKeyAttributeId.ParentTableauId;
 
     /// <summary>
     /// Referenced attribute id
     /// </summary>
-    public string PrimaryKeyAttributeId => _primaryKeyAttributeId;
+    public AttributeId PrimaryKeyAttributeId => _primaryKeyAttributeId;
 
     /// <summary>
     /// Referencing tableau id
     /// </summary>
-    public string ForeignKeyTableauId => _foreignKeyTableauId;
+    public TableauId ForeignKeyTableauId => _foreignKeyAttributeId.ParentTableauId;
 
     /// <summary>
     /// Referencing attribute id
     /// </summary>
-    public string ForeignKeyAttributeId => _foreignKeyAttributeId;
+    public AttributeId ForeignKeyAttributeId => _foreignKeyAttributeId;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="primaryKeyTableauId">Referenced tableau id</param>
     /// <param name="primaryKeyAttributeId">Referencing attribute id</param>
-    /// <param name="foreignKeyTableauId">Referenced tableau id</param>
     /// <param name="foreignKeyAttributeId">Referenced attribute id</param>
-    internal Join(string primaryKeyTableauId, string primaryKeyAttributeId,
-                  string foreignKeyTableauId, string foreignKeyAttributeId)
+    internal Join(AttributeId foreignKeyAttributeId, AttributeId primaryKeyAttributeId)
     {
-        if (string.IsNullOrEmpty(primaryKeyTableauId))
-        {
-            throw new ArgumentException($"'{nameof(primaryKeyTableauId)}' cannot be null or empty.", nameof(primaryKeyTableauId));
-        }
-
-        if (string.IsNullOrEmpty(primaryKeyAttributeId))
+        if (primaryKeyAttributeId is null)
         {
             throw new ArgumentException($"'{nameof(primaryKeyAttributeId)}' cannot be null or empty.", nameof(primaryKeyAttributeId));
         }
 
-        if (string.IsNullOrEmpty(foreignKeyTableauId))
-        {
-            throw new ArgumentException($"'{nameof(foreignKeyTableauId)}' cannot be null or empty.", nameof(foreignKeyTableauId));
-        }
-
-        if (string.IsNullOrEmpty(foreignKeyAttributeId))
+        if (foreignKeyAttributeId is null)
         {
             throw new ArgumentException($"'{nameof(foreignKeyAttributeId)}' cannot be null or empty.", nameof(foreignKeyAttributeId));
         }
 
-        _primaryKeyTableauId = primaryKeyTableauId;
         _primaryKeyAttributeId = primaryKeyAttributeId;
-        _foreignKeyTableauId = foreignKeyTableauId;
         _foreignKeyAttributeId = foreignKeyAttributeId;
     }
 
     public override bool Equals(object? obj)
     {
         return obj is Join join &&
-               _primaryKeyTableauId == join._primaryKeyTableauId &&
-               _primaryKeyAttributeId == join._primaryKeyAttributeId &&
-               _foreignKeyTableauId == join._foreignKeyTableauId &&
-               _foreignKeyAttributeId == join._foreignKeyAttributeId;
+               _primaryKeyAttributeId.Equals(join._primaryKeyAttributeId) &&
+               _foreignKeyAttributeId.Equals(join._foreignKeyAttributeId);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_primaryKeyTableauId, _primaryKeyAttributeId, _foreignKeyTableauId, _foreignKeyAttributeId);
+        return HashCode.Combine(_primaryKeyAttributeId, _foreignKeyAttributeId);
     }
 }
 
@@ -171,20 +153,20 @@ internal static class JoiningUtils
     /// <param name="initialTableauId">Query's initial tableau id</param>
     /// <param name="joining">Current joining clause</param>
     /// <returns><c>true</c> or <c>false</c></returns>
-    internal static bool IsJoiningConnectedGraph(string initialTableauId, Joining joining)
+    internal static bool IsJoiningConnectedGraph(TableauId initialTableauId, Joining joining)
     {
         // vertices are tableaus
         // joins on tableaus are edges
-        List<(string, string)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
-        edges = edges.OrderBy(e => e.Item1).ToList();
+        List<(TableauId, TableauId)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
+        edges = edges.OrderBy(e => e.Item1.ToString()).ToList();
 
         var getNeighbouringVertices =
-            (string edge) => edges.Where(e => e.Item1.Equals(edge))
+            (TableauId vertex) => edges.Where(e => e.Item1.Equals(vertex))
                                   .Select(e => e.Item2)
                                   .ToList();
 
-        Stack<string> verticesToVisit = new Stack<string>();
-        HashSet<string> visitedVertices = new HashSet<string>();
+        Stack<TableauId> verticesToVisit = new Stack<TableauId>();
+        HashSet<TableauId> visitedVertices = new HashSet<TableauId>();
 
         visitedVertices.Add(edges.First().Item1);
 
@@ -221,11 +203,11 @@ internal static class JoiningUtils
     /// <param name="joining">Current joining clause</param>
     /// <param name="join">New join</param>
     /// <returns><c>true</c> or <c>false</c></returns>
-    internal static bool IsJoiningCyclic(string initialTableauId, Joining joining, Join join)
+    internal static bool IsJoiningCyclic(TableauId initialTableauId, Joining joining, Join join)
     {
         // vertices are tableaus
         // joins on tableaus are edges
-        List<(string fk, string pk)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
+        List<(TableauId fk, TableauId pk)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
         edges.Add((join.ForeignKeyTableauId, join.PrimaryKeyTableauId));
 
         // set the initial tableau vertex first
@@ -233,12 +215,12 @@ internal static class JoiningUtils
         //edges = edges.OrderBy(e => edges.Count(e_ => e_.Item1.Equals(e.Item1)) == 1).ToList();
 
         var getNeighbouringVertices =
-            (string vertex) => edges.Where(e => e.fk.Equals(vertex))
+            (TableauId vertex) => edges.Where(e => e.fk.Equals(vertex))
                                   .Select(e => e.pk)
                                   .ToList();
 
-        Stack<string> verticesToVisit = new Stack<string>();
-        HashSet<string> visitedVertices = new HashSet<string>();
+        Stack<TableauId> verticesToVisit = new Stack<TableauId>();
+        HashSet<TableauId> visitedVertices = new HashSet<TableauId>();
 
         // visit the initial tableau vertex
         visitedVertices.Add(initialTableauId);
@@ -274,16 +256,16 @@ internal static class JoiningUtils
     {
         // vertices are tableaus
         // joins on tableaus are edges
-        List<(string, string)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
+        List<(TableauId, TableauId)> edges = new(joining.Joins.Map(j => (j.ForeignKeyTableauId, j.PrimaryKeyTableauId)));
         edges = edges.OrderBy(e => e.Item1).ToList();
 
         var getNeighbouringVertices =
-            (string edge) => edges.Where(e => e.Item1.Equals(edge))
+            (TableauId vertex) => edges.Where(e => e.Item1.Equals(vertex))
                                   .Select(e => e.Item2)
                                   .ToList();
 
-        Stack<string> verticesToVisit = new Stack<string>();
-        HashSet<string> visitedVertices = new HashSet<string>();
+        Stack<TableauId> verticesToVisit = new Stack<TableauId>();
+        HashSet<TableauId> visitedVertices = new HashSet<TableauId>();
 
         visitedVertices.Add(edges.First().Item1);
 

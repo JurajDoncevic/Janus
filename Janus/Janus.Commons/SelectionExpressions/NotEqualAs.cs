@@ -10,7 +10,7 @@ public sealed class NotEqualAs : ComparisonOperator
 
     protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.BINARY, DataTypes.DATETIME, DataTypes.BOOLEAN, DataTypes.STRING };
 
-    internal NotEqualAs(string attributeId, object value) : base(attributeId, value)
+    internal NotEqualAs(AttributeId attributeId, object value) : base(attributeId, value)
     {
     }
 

@@ -55,7 +55,7 @@ public class SqliteDataTranslationTests
         var tabularData = translationResult.Data!;
 
         Assert.True(translationResult);
-        Assert.Equal(sqliteTabularData.DataSchema.ToDictionary(kv => $"{_dataSourceName}.{kv.Key}", kv => kv.Value), tabularData.AttributeDataTypes.ToDictionary(kv => kv.Key, kv => TypeMappings.MapToType(kv.Value)));
+        Assert.Equal(sqliteTabularData.DataSchema.ToDictionary(kv => $"{_dataSourceName}.{kv.Key}", kv => kv.Value), tabularData.ColumnDataTypes.ToDictionary(kv => kv.Key, kv => TypeMappings.MapToType(kv.Value)));
         Assert.Equal(3503, tabularData.RowData.Count);
     }
 }

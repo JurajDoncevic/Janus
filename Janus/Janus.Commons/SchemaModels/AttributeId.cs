@@ -5,7 +5,7 @@ namespace Janus.Commons.SchemaModels;
 /// <summary>
 /// Attribute identifier made from schema models' names
 /// </summary>
-public class AttributeId
+public sealed class AttributeId
 {
     private readonly string _attributeName;
     private readonly string _tableauName;
@@ -149,6 +149,15 @@ public class AttributeId
     /// <returns>Attribute identifier object</returns>
     public static AttributeId From(string dataSourceName, string schemaName, string tableauName, string attributeName)
         => new AttributeId(dataSourceName, schemaName, tableauName, attributeName);
+
+    /// <summary>
+    /// Creates an attribute identifier from a parent tableau id and an attribute name
+    /// </summary>
+    /// <param name="parentTableauId">Parent tableau identifier</param>
+    /// <param name="attributeName">Attribute name</param>
+    /// <returns>Attribute identifier object</returns>
+    public static AttributeId From(TableauId parentTableauId, string attributeName)
+        => new AttributeId(parentTableauId.DataSourceName, parentTableauId.SchemaName, parentTableauId.TableauName, attributeName);
 
     /// <summary>
     /// Creates an attribute identifier from the given dot-delimited string representation

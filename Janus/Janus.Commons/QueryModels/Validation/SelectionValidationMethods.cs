@@ -13,7 +13,7 @@ internal static class SelectionValidationMethods
     /// <param name="referencableAttributes"></param>
     /// <returns></returns>
     /// <exception cref="AttributeNotInReferencedTableausException"></exception>
-    internal static bool CheckSelectionAttributeReferences(SelectionExpression selectionExpression, HashSet<string> referencableAttributes)
+    internal static bool CheckSelectionAttributeReferences(SelectionExpression selectionExpression, HashSet<AttributeId> referencableAttributes)
         => selectionExpression switch
         {
             LogicalUnaryOperator unaryOp => CheckSelectionAttributeReferences(unaryOp.Operand, referencableAttributes),
@@ -29,7 +29,7 @@ internal static class SelectionValidationMethods
     /// <param name="referencableAttrsTypes"></param>
     /// <returns></returns>
     /// <exception cref="IncompatibleDataTypeComparisonException"></exception>
-    internal static bool CheckSelectionAttributeTypesOnComparison(SelectionExpression selectionExpression, Dictionary<string, DataTypes> referencableAttrsTypes)
+    internal static bool CheckSelectionAttributeTypesOnComparison(SelectionExpression selectionExpression, Dictionary<AttributeId, DataTypes> referencableAttrsTypes)
         => selectionExpression switch
         {
             LogicalUnaryOperator unaryOp => CheckSelectionAttributeTypesOnComparison(unaryOp.Operand, referencableAttrsTypes),

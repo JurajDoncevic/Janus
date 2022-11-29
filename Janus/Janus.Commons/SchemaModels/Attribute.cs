@@ -5,6 +5,7 @@
 /// </summary>
 public sealed class Attribute
 {
+    private readonly AttributeId _id;
     private readonly string _name;
     private readonly DataTypes _dataType;
     private readonly bool _isIdentity;
@@ -16,7 +17,7 @@ public sealed class Attribute
     /// <summary>
     /// Attribute ID
     /// </summary>
-    public string Id => _tableau.Id + "." + _name;
+    public AttributeId Id => _id;
     /// <summary>
     /// Attribute name
     /// </summary>
@@ -62,7 +63,7 @@ public sealed class Attribute
         {
             throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
         }
-
+        _id = AttributeId.From(tableau.Schema.DataSource.Name, tableau.Schema.Name, tableau.Name, name);
         _name = name;
         _dataType = dataType;
         _isIdentity = isIdentity;
@@ -75,18 +76,19 @@ public sealed class Attribute
     public override bool Equals(object? obj)
     {
         return obj is Attribute attribute &&
-               _name == attribute._name &&
-               _dataType == attribute._dataType &&
-               _isIdentity == attribute._isIdentity &&
-               _isNullable == attribute._isNullable &&
-               _ordinal == attribute._ordinal &&
-               _tableau.Id == attribute._tableau.Id &&
+               _id.Equals(attribute._id) &&
+               _name.Equals(attribute._name) &&
+               _dataType.Equals(attribute._dataType) &&
+               _isIdentity.Equals(attribute._isIdentity) &&
+               _isNullable.Equals(attribute._isNullable) &&
+               _ordinal.Equals(attribute._ordinal) &&
+               _tableau.Id.Equals(attribute._tableau.Id) &&
                _description.Equals(attribute._description);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_name, _dataType, _isIdentity, _isNullable, _ordinal, _tableau, _description);
+        return HashCode.Combine(_id, _name, _dataType, _isIdentity, _isNullable, _ordinal, _tableau, _description);
     }
 
     public static bool operator ==(Attribute? left, Attribute? right)

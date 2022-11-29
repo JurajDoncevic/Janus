@@ -1,4 +1,6 @@
-﻿using Janus.Commons.QueryModels.Exceptions;
+﻿using Janus.Commons.QueryModels.Building;
+using Janus.Commons.QueryModels.Exceptions;
+using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
 
 namespace Janus.Commons.QueryModels;
@@ -51,16 +53,16 @@ public sealed class QueryModelOpenBuilder : IPostInitOpenBuilder
     private Option<Projection> _projection;
     private Option<Selection> _selection;
     private Option<Joining> _joining;
-    private readonly string _queryOnTableauId;
-    private HashSet<string> _referencedTableaus;
+    private readonly TableauId _queryOnTableauId;
+    private HashSet<TableauId> _referencedTableaus;
     private string? _queryName;
 
     /// <summary>
     /// Constructor. Used when build-time validation is NOT required.
     /// </summary>
-    private QueryModelOpenBuilder(string queryOnTableauId)
+    private QueryModelOpenBuilder(TableauId queryOnTableauId)
     {
-        if (string.IsNullOrEmpty(queryOnTableauId))
+        if (queryOnTableauId is null)
         {
             throw new ArgumentException($"'{nameof(queryOnTableauId)}' cannot be null or empty.", nameof(queryOnTableauId));
         }
@@ -69,7 +71,7 @@ public sealed class QueryModelOpenBuilder : IPostInitOpenBuilder
         _selection = Option<Selection>.None;
         _joining = Option<Joining>.None;
         _queryOnTableauId = queryOnTableauId;
-        _referencedTableaus = new HashSet<string>();
+        _referencedTableaus = new HashSet<TableauId>();
         _referencedTableaus.Add(queryOnTableauId);
     }
 
@@ -79,15 +81,24 @@ public sealed class QueryModelOpenBuilder : IPostInitOpenBuilder
     /// <param name="onTableauId">Id of tableau on which the query is initialized</param>
     /// <param name="dataSource">Data source on which the query will be executed</param>
     /// <returns>QueryOpenModelBuilder</returns>
-    public static QueryModelOpenBuilder InitOpenQuery(string onTableauId)
+    public static QueryModelOpenBuilder InitOpenQuery(TableauId onTableauId)
     {
-        if (string.IsNullOrEmpty(onTableauId))
+        if (onTableauId is null)
         {
             throw new ArgumentException($"'{nameof(onTableauId)}' cannot be null or empty.", nameof(onTableauId));
         }
 
         return new QueryModelOpenBuilder(onTableauId);
     }
+
+    /// <summary>
+    /// Initializes the query on a tableau found in the given data source. Generated query is valid on the data source.
+    /// </summary>
+    /// <param name="onTableauId">Id of tableau on which the query is initialized</param>
+    /// <param name="dataSource">Data source on which the query will be executed</param>
+    /// <returns>QueryOpenModelBuilder</returns>
+    public static QueryModelOpenBuilder InitOpenQuery(string onTableauId)
+        => InitOpenQuery(TableauId.From(onTableauId));
 
     /// <summary>
     /// Specifies a joining clause of the query
@@ -196,7 +207,7 @@ public class SelectionOpenBuilder
 /// </summary>
 public class ProjectionOpenBuilder
 {
-    private HashSet<string> _projectionAttributes;
+    private HashSet<AttributeId> _projectionAttributes;
 
     internal bool IsConfigured => _projectionAttributes.Count > 0;
 
@@ -205,7 +216,7 @@ public class ProjectionOpenBuilder
     /// </summary>
     internal ProjectionOpenBuilder()
     {
-        _projectionAttributes = new HashSet<string>();
+        _projectionAttributes = new HashSet<AttributeId>();
     }
 
     /// <summary>
@@ -213,12 +224,19 @@ public class ProjectionOpenBuilder
     /// </summary>
     /// <param name="attributeId">Attribute id</param>
     /// <returns>ProjectionBuilder</returns>
-    public ProjectionOpenBuilder AddAttribute(string attributeId)
+    public ProjectionOpenBuilder AddAttribute(AttributeId attributeId)
     {
         _projectionAttributes.Add(attributeId);
 
         return this;
     }
+    /// <summary>
+    /// Adds an attribute to the projection
+    /// </summary>
+    /// <param name="attributeId">Attribute id</param>
+    /// <returns>ProjectionBuilder</returns>
+    public ProjectionOpenBuilder AddAttribute(string attributeId)
+        => AddAttribute(AttributeId.From(attributeId));
 
     /// <summary>
     /// Builds the specified projection
@@ -251,24 +269,25 @@ public class JoiningOpenBuilder
     /// Adds a join to the joining clause
     /// </summary>
     /// <returns></returns>
-    public JoiningOpenBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
+    public JoiningOpenBuilder AddJoin(AttributeId foreignKeyAttributeId, AttributeId primaryKeyAttributeId)
     {
-        // check if given ids are ok
-        if (!foreignKeyAttributeId.Contains('.'))
-            throw new InvalidAttributeIdException(foreignKeyAttributeId);
-        if (!primaryKeyAttributeId.Contains('.'))
-            throw new InvalidAttributeIdException(primaryKeyAttributeId);
 
         // get tableau ids from the supposed attribute ids
-        var foreignKeyTableauId = foreignKeyAttributeId.Remove(foreignKeyAttributeId.LastIndexOf('.'));
-        var primaryKeyTableauId = primaryKeyAttributeId.Remove(primaryKeyAttributeId.LastIndexOf('.'));
+        var foreignKeyTableauId = foreignKeyAttributeId.ParentTableauId;
+        var primaryKeyTableauId = primaryKeyAttributeId.ParentTableauId;
 
-        Join join = new Join(primaryKeyTableauId, primaryKeyAttributeId, foreignKeyTableauId, foreignKeyAttributeId);
+        Join join = new Join(foreignKeyAttributeId, primaryKeyAttributeId);
 
         _joining.AddJoin(join);
 
         return this;
     }
+    /// <summary>
+    /// Adds a join to the joining clause
+    /// </summary>
+    /// <returns></returns>
+    public JoiningOpenBuilder AddJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
+        => AddJoin(AttributeId.From(foreignKeyAttributeId), AttributeId.From(primaryKeyAttributeId));
 
     /// <summary>
     /// Builds the joining clause
