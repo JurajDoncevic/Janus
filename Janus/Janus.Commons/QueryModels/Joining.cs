@@ -131,6 +131,13 @@ public class Join
     {
         return HashCode.Combine(_primaryKeyTableauId, _primaryKeyAttributeId, _foreignKeyTableauId, _foreignKeyAttributeId);
     }
+
+    public static Join CreateJoin(string foreignKeyAttributeId, string primaryKeyAttributeId)
+        => (fk: Utils.GetNamesFromAttributeId(foreignKeyAttributeId), pk: Utils.GetNamesFromAttributeId(primaryKeyAttributeId)).Identity()
+            .Map(j => new Join(
+                    $"{j.pk.dataSourceName}.{j.pk.schemaName}.{j.pk.tableauName}", primaryKeyAttributeId,
+                    $"{j.fk.dataSourceName}.{j.fk.schemaName}.{j.fk.tableauName}", foreignKeyAttributeId)
+            ).Data;
 }
 
 internal static class JoiningUtils

@@ -54,6 +54,21 @@ public sealed class Query
     /// </summary>
     public string Name => _name;
 
+    /// <summary>
+    /// Set of referenced tableaus in this query
+    /// </summary>
+    public HashSet<string> ReferencedTableauIds =>
+        _joining.Match(
+            joining => joining.Joins
+                              .Map(j => new List<string> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
+                              .SelectMany(tblIds => tblIds),
+            () => Enumerable.Empty<string>()
+            ).Fold(
+                Enumerable.Empty<string>().Append(OnTableauId),
+                (tableauId, referencedTableauIds) => referencedTableauIds.Append(tableauId)
+            ).ToHashSet();
+
+
     public override bool Equals(object? obj)
     {
         return obj is Query query &&
