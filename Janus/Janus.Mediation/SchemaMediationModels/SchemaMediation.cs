@@ -36,4 +36,10 @@ public class SchemaMediation
     /// Tableau mediations within this schema mediation
     /// </summary>
     public IReadOnlyList<TableauMediation> TableauMediations => _tableauMediations;
+    /// <summary>
+    /// Gets the tableau mediation for the tableau declared with given name
+    /// </summary>
+    /// <param name="tableauName"></param>
+    /// <returns>Tableau mediation</returns>
+    public TableauMediation? this[string tableauName] => _tableauMediations.SingleOrDefault(tm => tm.TableauName.Equals(tableauName));
 }

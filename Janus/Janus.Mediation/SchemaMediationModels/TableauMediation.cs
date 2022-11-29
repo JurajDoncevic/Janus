@@ -41,7 +41,13 @@ public class TableauMediation
     /// Attribute mediations within this mediation
     /// </summary>
     public IReadOnlyList<AttributeMediation> AttributeMediations => _attributeMediations;
-
+    /// <summary>
+    /// Gets the attribute mediation for the attribute declared with given name
+    /// </summary>
+    /// <param name="attributeName"></param>
+    /// <returns>Attribute mediation</returns>
+    public AttributeMediation? this[string attributeName] => _attributeMediations.SingleOrDefault(am => am.DeclaredAttributeName.Equals(attributeName));
+    
     /// <summary>
     /// Gets the attribute name that was mapped to the given source query attribute id. This attribute id appears in the source query projection clause.
     /// </summary>

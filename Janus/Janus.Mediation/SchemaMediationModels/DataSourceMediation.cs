@@ -1,4 +1,5 @@
-﻿using Janus.Commons.SchemaModels;
+﻿using Janus.Commons;
+using Janus.Commons.SchemaModels;
 
 namespace Janus.Mediation.SchemaMediationModels;
 
@@ -70,4 +71,21 @@ public class DataSourceMediation
     /// Does this mediation propagate attribute descriptions from sources?
     /// </summary>
     public bool PropagateAttributeDescriptions => _propagateAttributeDescriptions;
+    /// <summary>
+    /// Gets the schema mediation for the schema declared with given name
+    /// </summary>
+    /// <param name="schemaName"></param>
+    /// <returns>Schema mediation</returns>
+    public SchemaMediation? this[string schemaName] => _schemaMediations.SingleOrDefault(sm => sm.SchemaName.Equals(schemaName));
+
+    /// <summary>
+    /// Gets the source attribute id for a declared attributeId
+    /// </summary>
+    /// <param name="declaredAttributeId"></param>
+    /// <returns></returns>
+    public string? GetSourceAttributeId(string declaredAttributeId)
+        => Utils.GetNamesFromAttributeId(declaredAttributeId).Identity()
+                .Map(names => this[names.schemaName]![names.tableauName]![names.attributeName]!.SourceAttributeId)
+                .Data;
+
 }
