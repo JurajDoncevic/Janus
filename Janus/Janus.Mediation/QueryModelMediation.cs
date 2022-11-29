@@ -35,7 +35,7 @@ public static class QueryModelMediation
                                                 pkAttrId: dataSourceMediation.GetSourceAttributeId(join.PrimaryKeyAttributeId))),
                 () => new List<(string? fkAttrId, string? pkAttrId)>()
                 )
-                .Map(j => Join.CreateJoin(j.fkAttrId, j.pkAttrId));
+                .Map(j => Join.CreateJoin(j.fkAttrId!, j.pkAttrId!));
 
             var joinsInsideMediatedTableau =
                 query.Joining.Match(
@@ -56,9 +56,22 @@ public static class QueryModelMediation
                 () => FALSE()
                 );
 
-            // determine split queries - for each join set from the same data source - split a colored graph
+            // determine query partitions - for each join set from the same data source - split a colored graph
+            var (queryPartitions, globalJoins) = DetermineQueryPartitions(initialSourceTableauId, joinsFromQuery.Union(joinsInsideMediatedTableau));
 
-            // split projection into separate queries - keep the joining attributes
+            // split projection into separate queries - keep the joining pk and fk attributes
+            queryPartitions =
+                queryPartitions
+                    .Map(queryPartition =>
+                    {
+                        queryPartition.ProjectionAttributeIds = 
+                            projectedSourceAttributeIds
+                                .Where(attrId => queryPartition.ReferencedTableauIds.Any(refTblId => attrId.StartsWith(refTblId)))
+                                .ToHashSet();
+                        
+
+                        return queryPartition;
+                    });
 
             // if conjunctive selection split selection into separate queries, else put into finalizing selection
 
@@ -103,8 +116,11 @@ public static class QueryModelMediation
 
     private class QueryPartition
     {
-        public string InitialTableau { get; set; }
-        public IList<Join> Joins { get; set; }
+        public string InitialTableauId { get; set; }
+        public List<Join> Joins { get; set; }
+        public HashSet<string> ProjectionAttributeIds { get; set; }
+        public SelectionExpression SelectionExpression { get; set; }
+
 
         public bool ContainsTableau(string tableauId)
         {
@@ -114,14 +130,22 @@ public static class QueryModelMediation
         public override bool Equals(object? obj)
         {
             return obj is QueryPartition other &&
-                   InitialTableau == other.InitialTableau &&
+                   InitialTableauId == other.InitialTableauId &&
                    Joins.SequenceEqual(other.Joins);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(InitialTableau, Joins);
+            return HashCode.Combine(InitialTableauId, Joins);
         }
+
+        public HashSet<string> ReferencedTableauIds =>
+            Joins.Map(j => new List<string> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
+                 .SelectMany(tblIds => tblIds)
+                .Fold(
+                    Enumerable.Empty<string>().Append(InitialTableauId),
+                    (tableauId, referencedTableauIds) => referencedTableauIds.Append(tableauId)
+                ).ToHashSet();
     }
 
     private static bool AreFromSameDataSource(string tableauId1, string tableauId2)
@@ -130,13 +154,13 @@ public static class QueryModelMediation
                 .Equals(Utils.GetNamesFromTableauId(tableauId2).dataSourceName);
     }
 
-    private static (IEnumerable<QueryPartition> queryPartitions, IEnumerable<Join> globalJoins) DetermineQueryPartitions(string initialTableauId, List<Join> joins)
+    private static (IEnumerable<QueryPartition> queryPartitions, IEnumerable<Join> globalJoins) DetermineQueryPartitions(string initialTableauId, IEnumerable<Join> joins)
     {
         var queryPartitions = new List<QueryPartition>
         {
             new QueryPartition()
             {
-                InitialTableau = initialTableauId,
+                InitialTableauId = initialTableauId,
                 Joins = new List<Join>()
             }
         };
@@ -154,7 +178,7 @@ public static class QueryModelMediation
                     ?? queryPartitions.SingleOrDefault(qj => qj.ContainsTableau(join.ForeignKeyTableauId))
                     ?? new QueryPartition()
                     {
-                        InitialTableau = join.ForeignKeyTableauId,
+                        InitialTableauId = join.ForeignKeyTableauId,
                         Joins = new List<Join>()
                     };
                 // whatever the case, add the query join to the selected query partition
@@ -166,6 +190,6 @@ public static class QueryModelMediation
             }
         }
 
-        return(queryPartitions, globalJoins);
+        return (queryPartitions, globalJoins);
     }
 }
