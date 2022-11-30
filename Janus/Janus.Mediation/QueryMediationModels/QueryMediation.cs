@@ -1,27 +1,44 @@
 ﻿using Janus.Commons.QueryModels;
+using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
+using Janus.Mediation.SchemaMediationModels;
 
 namespace Janus.Mediation.QueryMediationModels;
 public class QueryMediation
 {
-    private readonly Dictionary<string, Query> _queriesForDataSources;
-    private readonly List<MediationJoin> _finalizingJoins;
+    private readonly Dictionary<TableauId, Query> _partitionedQueries;
+    private readonly List<Join> _finalizingJoins;
     private readonly SelectionExpression _finalizingSelection;
-    private readonly MediationProjection _finalizingProjection;
+    private readonly HashSet<AttributeId> _finalizingProjection;
+    private readonly Query _originalQuery;
+    private readonly DataSourceMediation _dataSourceMediation;
 
-    public QueryMediation(Dictionary<string, Query> queriesForDataSources, List<MediationJoin> finalizingJoins, SelectionExpression finalizingSelection, MediationProjection finalizingProjection)
+    public QueryMediation(Query originalQuery,
+                          IEnumerable<Query> partitionedQueries,
+                          IEnumerable<Join> finalizingJoins,
+                          SelectionExpression finalizingSelection,
+                          IEnumerable<AttributeId> finalizingProjection,
+                          DataSourceMediation dataSourceMediation)
     {
-        _queriesForDataSources = queriesForDataSources;
-        _finalizingJoins = finalizingJoins;
+        _originalQuery = originalQuery;
+        _partitionedQueries = partitionedQueries.ToDictionary(pq => pq.OnTableauId, pq => pq);
+        _finalizingJoins = finalizingJoins.ToList();
         _finalizingSelection = finalizingSelection;
-        _finalizingProjection = finalizingProjection;
+        _finalizingProjection = finalizingProjection.ToHashSet();
+        _dataSourceMediation = dataSourceMediation;
     }
 
-    public IReadOnlyDictionary<string, Query> QueriesForDataSources => _queriesForDataSources;
+    public IReadOnlyDictionary<TableauId, Query> PartitionedQueries => _partitionedQueries;
 
-    public IReadOnlyList<MediationJoin> FinalizingJoins => _finalizingJoins;
+    public IReadOnlyList<Query> PartitionedQueryList => _partitionedQueries.Values.ToList();
+
+    public IReadOnlyList<Join> FinalizingJoins => _finalizingJoins;
 
     public SelectionExpression FinalizingSelection => _finalizingSelection;
 
-    public MediationProjection FinalizingProjection => _finalizingProjection;
+    public IReadOnlySet<AttributeId> FinalizingProjection => _finalizingProjection;
+
+    public Query OriginalQuery => _originalQuery;
+
+    public DataSourceMediation DataSourceMediation => _dataSourceMediation;
 }
