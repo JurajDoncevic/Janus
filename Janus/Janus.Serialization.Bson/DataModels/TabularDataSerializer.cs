@@ -55,7 +55,7 @@ public sealed class TabularDataSerializer : ITabularDataSerializer<byte[]>
             {
                 Name = tabularData!.Name,
                 AttributeDataTypes = tabularData.ColumnDataTypes.ToDictionary(kv => kv.Key, kv => kv.Value),
-                AttributeValues = tabularData.RowData.Select(rd => rd.AttributeValues.ToDictionary(kv => kv.Key, kv => kv.Value)).ToList()
+                AttributeValues = tabularData.RowData.Select(rd => rd.ColumnValues.ToDictionary(kv => kv.Key, kv => kv.Value)).ToList()
             };
 
             return tabularDataDto;

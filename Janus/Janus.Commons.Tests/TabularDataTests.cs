@@ -108,6 +108,6 @@ public class TabularDataTests
         var projectionResult = TabularDataOperations.ProjectTabularDataColumns(_tabularData[0], columnsToProject);
         Assert.True(projectionResult);
         Assert.Equal(projectionResult.Data.ColumnNames, columnsToProject);
-        Assert.Equal(projectionResult.Data.RowData.First().AttributeValues.Keys.ToHashSet(), columnsToProject);
+        Assert.Equal(projectionResult.Data.RowData.First().ColumnValues.Keys.ToHashSet(), columnsToProject);
     }
 }

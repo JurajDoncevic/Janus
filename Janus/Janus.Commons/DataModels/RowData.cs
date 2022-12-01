@@ -19,7 +19,7 @@ public sealed class RowData
     /// <summary>
     /// Values of attributes in the row
     /// </summary>
-    public IReadOnlyDictionary<string, object?> AttributeValues => _columnValues;
+    public IReadOnlyDictionary<string, object?> ColumnValues => _columnValues;
 
     public object this[string columnName] => _columnValues[columnName];
 

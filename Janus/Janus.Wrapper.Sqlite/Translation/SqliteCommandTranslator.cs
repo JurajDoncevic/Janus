@@ -39,7 +39,7 @@ public sealed class SqliteCommandTranslator
                   $"VALUES {string.Join(",", instantiation.Value.TabularData.RowData.Map(RowToInstantiationString))}"
                 : "DEFAULT VALUES");
     private string RowToInstantiationString(RowData row)
-        => $"({string.Join(",", row.AttributeValues.Values.Map(MaybeWrapInQuot))})";
+        => $"({string.Join(",", row.ColumnValues.Values.Map(MaybeWrapInQuot))})";
 
 
     public Result<string> TranslateSelection(Option<CommandSelection> selection)
