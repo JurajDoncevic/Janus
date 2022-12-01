@@ -1,6 +1,8 @@
-﻿using Janus.Commons.DataModels;
+﻿using FunctionalExtensions.Base.Resulting;
+using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
+using Janus.Commons.SchemaModels.Building;
 using Janus.Commons.SelectionExpressions;
 using Janus.Mediation.QueryMediationModels;
 using Janus.Mediation.SchemaMediationModels;
@@ -114,9 +116,9 @@ public static partial class QueryModelMediation
 
                             // construct a conjunctive partitioned selection expression - literals remain, let the sources handle them :)
                             queryPartition.SelectionExpression =
-                                literals.Fold((SelectionExpression)TRUE(), 
-                                    (lit, selExpr) => 
-                                        AND(lit, 
+                                literals.Fold((SelectionExpression)TRUE(),
+                                    (lit, selExpr) =>
+                                        AND(lit,
                                             comparisons.Fold(selExpr,
                                                 (comp, exp) => AND(comp, exp))
                                             )
@@ -153,11 +155,60 @@ public static partial class QueryModelMediation
             return Results.OnSuccess(queryMediation);
         });
 
-    public static Result<TabularData> MediateQueryResults(DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, QueryMediation queryMediation)
+    public static Result<TabularData> MediateQueryResults(QueryMediation queryMediation, IEnumerable<TabularData> queryResults)
         => Results.AsResult(() =>
         {
+            if (queryResults.Count() < 1)
+            {
+                return Results.OnFailure<TabularData>("No query results given");
+            }
 
-            return Results.OnException<TabularData>(new NotImplementedException());
+            // execute global joins
+            var joinResult =
+                queryMediation.FinalizingJoins.Fold(Results.OnSuccess(queryResults),
+                    (join, currentResult) =>
+                        currentResult.Bind(currTabs =>
+                        {
+                            var fkResult = currTabs.First(r => r.ContainsColumn(join.ForeignKeyAttributeId.ToString()));
+                            var pkResult = currTabs.First(r => r.ContainsColumn(join.PrimaryKeyAttributeId.ToString()));
+
+                            var currentJoinResult =
+                                TabularDataOperations.EquiJoinTabularData(fkResult, pkResult, join.ForeignKeyAttributeId.ToString(), join.PrimaryKeyAttributeId.ToString())
+                                .Map(r => currTabs.Except(new[] { fkResult, pkResult }).Append(r));
+
+                            return currentJoinResult;
+                        })).Map(rs => rs.Single()); // throws exception if there is no single tabular result of joins
+
+            // execute finalizing selection
+            var selectionResult = joinResult.Bind(joinedTabular => TabularDataOperations.SelectData(joinedTabular, queryMediation.FinalizingSelection));
+
+            // execute finalizing projection
+            var projectionResult = selectionResult.Bind(selectedTabular => TabularDataOperations.ProjectTabularDataColumns(selectedTabular, queryMediation.FinalizingProjection.Map(attrId => attrId.ToString()).ToHashSet()));
+
+            // globalize column names
+            var globalizedNamesResult = projectionResult.Bind(projectedData =>
+            {
+                var nameMappingDict = projectedData.ColumnNames.ToDictionary(cn => cn, cn => queryMediation.DataSourceMediation.GetDeclaredAttributeId(AttributeId.From(cn)));
+                if (nameMappingDict.Values.Contains(null))
+                {
+                    return Results.OnFailure<TabularData>($"Couldn't globalize column names: {string.Join(", ", nameMappingDict.Where(_ => _.Value is null).Map(kv => kv.Key))}");
+                }
+
+                var columnDataTypes = projectedData.ColumnDataTypes.ToDictionary(kv => nameMappingDict[kv.Key]!.ToString(), kv => kv.Value!);
+
+                var tabularDataBuilder = TabularDataBuilder.InitTabularData(columnDataTypes!)
+                                                           .WithName(projectedData.Name);
+
+                foreach (var rowData in projectedData.RowData)
+                {
+                    var columnValues = rowData.ColumnValues.ToDictionary(kv => nameMappingDict[kv.Key]!.ToString(), kv => kv.Value);
+                    tabularDataBuilder.AddRow(conf => conf.WithRowData(columnValues));
+                }
+
+                return Results.OnSuccess(tabularDataBuilder.Build());
+            });
+
+            return globalizedNamesResult;
         });
 
 

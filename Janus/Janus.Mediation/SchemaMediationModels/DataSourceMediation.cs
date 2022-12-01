@@ -88,4 +88,17 @@ public class DataSourceMediation
                 .Map(names => this[names.schemaName]![names.tableauName]![names.attributeName]!.SourceAttributeId)
                 .Data;
 
+    /// <summary>
+    /// Gets the declared attribute id  for a source attributeId
+    /// </summary>
+    /// <param name="declaredAttributeId"></param>
+    /// <returns></returns>
+    public AttributeId? GetDeclaredAttributeId(AttributeId sourceAttributeId)
+        => _schemaMediations.Map(sm => (sm.SchemaName, sm.TableauMediations))
+                            .SelectMany(t => t.TableauMediations.Map(tm => (t.SchemaName, tm.TableauName, tm.AttributeMediations)))
+                            .SelectMany(t => t.AttributeMediations.Map(am => (t.SchemaName, t.TableauName, am.DeclaredAttributeName, am.SourceAttributeId)))
+                            .Map(t => (declaredAttributeId: AttributeId.From(_dataSourceName, t.SchemaName, t.TableauName, t.DeclaredAttributeName), t.SourceAttributeId))
+                            .FirstOrDefault(t => t.SourceAttributeId.Equals(sourceAttributeId))
+                            .declaredAttributeId;
+
 }
