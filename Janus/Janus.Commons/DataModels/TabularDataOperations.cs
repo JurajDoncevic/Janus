@@ -19,7 +19,7 @@ public static class TabularDataOperations
 
                 var joinedRowValues = fkRow.ColumnValues.Union(pkRow).ToDictionary(kv => kv.Key, kv => kv.Value);
 
-                tabularDataBuilder.AddRow(conf => conf.WithRowData(joinedRowValues));
+                tabularDataBuilder = tabularDataBuilder.AddRow(conf => conf.WithRowData(joinedRowValues));
 
             }
 
@@ -51,7 +51,7 @@ public static class TabularDataOperations
                            .Where(kv => projectionColumnNames.Contains(kv.Key))
                            .ToDictionary(kv => kv.Key, kv => kv.Value);
                 // ... place the projected row in the builder
-                tabularDataBuilder.AddRow(conf => conf.WithRowData(projectedRow));
+                tabularDataBuilder = tabularDataBuilder.AddRow(conf => conf.WithRowData(projectedRow));
             }
 
             return tabularDataBuilder.Build();
@@ -72,7 +72,7 @@ public static class TabularDataOperations
 
                 if (selectionFunc(columnValues))
                 {
-                    tabularDataBuilder.AddRow(conf => conf.WithRowData(columnValues));
+                    tabularDataBuilder = tabularDataBuilder.AddRow(conf => conf.WithRowData(columnValues));
                 }
             }
 

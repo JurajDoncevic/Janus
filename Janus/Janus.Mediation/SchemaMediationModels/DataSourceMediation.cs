@@ -89,6 +89,17 @@ public class DataSourceMediation
                 .Data;
 
     /// <summary>
+    /// Gets the initial tableau id for a declared tableau in a mediated schema
+    /// </summary>
+    /// <param name="declaredTableauId"></param>
+    /// <returns></returns>
+    public TableauId? GetSourceInitialTableauId(TableauId declaredTableauId)
+        => declaredTableauId.NameTuple.Identity()
+                .Map(names => this[names.schemaName]![names.tableauName]!.SourceQuery.InitialTableauId)
+                .Data;
+
+
+    /// <summary>
     /// Gets the declared attribute id  for a source attributeId
     /// </summary>
     /// <param name="declaredAttributeId"></param>

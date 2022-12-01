@@ -202,7 +202,7 @@ public static partial class QueryModelMediation
                 foreach (var rowData in projectedData.RowData)
                 {
                     var columnValues = rowData.ColumnValues.ToDictionary(kv => nameMappingDict[kv.Key]!.ToString(), kv => kv.Value);
-                    tabularDataBuilder.AddRow(conf => conf.WithRowData(columnValues));
+                    tabularDataBuilder = tabularDataBuilder.AddRow(conf => conf.WithRowData(columnValues));
                 }
 
                 return Results.OnSuccess(tabularDataBuilder.Build());
