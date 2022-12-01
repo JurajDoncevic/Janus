@@ -70,6 +70,14 @@ public sealed class TabularData
     /// </summary>
     public string Name => _name;
 
+    /// <summary>
+    /// Checks whether a column name with given name exists in the tabular data 
+    /// </summary>
+    /// <param name="columnName"></param>
+    /// <returns></returns>
+    public bool ContainsColumn(string columnName)
+        => _columnDataTypes.Keys.Contains(columnName);
+
     public override string ToString()
         => string.Join("\n", _rowData);
 
