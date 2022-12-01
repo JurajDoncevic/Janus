@@ -2,6 +2,7 @@
 using Janus.Commons.SchemaModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Janus.Commons.Tests;
@@ -93,9 +94,20 @@ public class TabularDataTests
     [Fact(DisplayName = "Create a joined tabular data")]
     public void EquiJoinTabularDataTest()
     {
-        var joiningResult = TabularDataJoining.EquiJoinTabularData(_tabularData[0], _tabularData[1], "ds1.fkINT", "ds2.attrINT");
+        var joiningResult = TabularDataOperations.EquiJoinTabularData(_tabularData[0], _tabularData[1], "ds1.fkINT", "ds2.attrINT");
 
 
         Assert.True(joiningResult);
+    }
+
+    [Fact(DisplayName = "Project columns of a tabular data")]
+    public void ProjectColumnsOfTabularDataTest()
+    {
+        var columnsToProject = new HashSet<string> { "ds1.attrINT", "ds1.attrDECIMAL", "ds1.attrDATETIME" };
+
+        var projectionResult = TabularDataOperations.ProjectTabularDataColumns(_tabularData[0], columnsToProject);
+        Assert.True(projectionResult);
+        Assert.Equal(projectionResult.Data.ColumnNames, columnsToProject);
+        Assert.Equal(projectionResult.Data.RowData.First().AttributeValues.Keys.ToHashSet(), columnsToProject);
     }
 }
