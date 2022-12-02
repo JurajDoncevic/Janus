@@ -22,7 +22,7 @@ public class CommandModelMediation
             var initialSourceTableauId =
                 dataSourceMediation.GetSourceInitialTableauId(deleteOnMediatedDataSource.OnTableauId);
 
-            if(initialSourceTableauId is null)
+            if (initialSourceTableauId is null)
             {
                 return Results.OnFailure<DeleteCommandMediation>("Couldn't find the initial tableau from the tableau mediation source query");
             }
@@ -40,31 +40,43 @@ public class CommandModelMediation
 
             var deleteCommand = deleteCommandBuilder.Build();
 
+            // prevalidate command before sending?
+
             return Results.OnSuccess(new DeleteCommandMediation(deleteCommand, initialSourceTableauId.ParentDataSourceId));
         });
 
     public static Result<UpdateCommandMediation> MediateCommand(UpdateCommand updateOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation)
         => Results.AsResult(() =>
         {
-            // localize ids...
+            //localize id of initial tableau - find the tableau from the mutation value updates
+            var mutationAttrNames = updateOnMediatedDataSource.Mutation.ValueUpdates.Keys;
+            var mutationAttrMapping = mutationAttrNames.ToDictionary(attrName => attrName, attrName => dataSourceMediation.GetSourceAttributeId(AttributeId.From(updateOnMediatedDataSource.OnTableauId, attrName))); // dict of declared attr name and source attr id
+            var initialSourceTableauId = dataSourceMediation.GetSourceAttributeId(mutationAttrMapping.Values.First()!)!.ParentTableauId;
 
-            //... of initial tableau - find the tableau from the mutation value updates
-            var initialDeclaredTableau = dataSourceMediation.GetSourceAttributeId(updateOnMediatedDataSource.Mutation.ValueUpdates.Keys.First()).ParentTableauId;
-            //... of selection expression
+            //localize ids of value updates
+            var localizedValueUpdates =
+                updateOnMediatedDataSource
+                    .Mutation
+                    .ValueUpdates
+                    .ToDictionary(vu => mutationAttrMapping[vu.Key]!.AttributeName, vu => vu.Value);
 
-            //... of value updates
-            var selectionExpression =
+            //localize ids of selection expression
+            var localizedSelectionExpression =
                 updateOnMediatedDataSource.Selection
                     .Match(
                             selection => LocalizeSelectionExpression(selection.Expression, dataSourceMediation),
                             () => FALSE()
                         );
 
-            updateCommandBuilder = updateCommandBuilder.WithSelection(conf => conf.WithExpression(selectionExpression));
+            var updateCommand =
+                UpdateCommandOpenBuilder.InitOpenUpdate(initialSourceTableauId)
+                    .WithMutation(conf => conf.WithValues(localizedValueUpdates))
+                    .WithSelection(conf => conf.WithExpression(localizedSelectionExpression))
+                    .Build();
 
-            var updateCommand = updateCommandBuilder.Build();
+            // Prevalidate command before sending?
 
-            return Results.OnSuccess(new DeleteCommandMediation(deleteCommand, initialSourceTableauId.ParentDataSourceId));
+            return Results.OnSuccess(new UpdateCommandMediation(updateCommand, initialSourceTableauId.ParentDataSourceId));
         });
 
     public static Result<InsertCommandMediation> MediateCommand(InsertCommand insertOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, BaseCommand baseCommand)
@@ -75,6 +87,8 @@ public class CommandModelMediation
             //... of initial tableau
 
             //... of tabular data
+
+            // prevalidate command before sending?
 
             return Results.OnException<InsertCommandMediation>(new NotImplementedException());
         });

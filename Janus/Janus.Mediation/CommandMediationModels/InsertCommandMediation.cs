@@ -1,5 +1,5 @@
 ﻿namespace Janus.Mediation.CommandMediationModels;
 
-public class InsertCommandMediation
+public sealed class InsertCommandMediation
 {
 }

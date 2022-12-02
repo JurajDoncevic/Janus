@@ -3,7 +3,7 @@ using Janus.Commons.SchemaModels;
 
 namespace Janus.Mediation.CommandMediationModels;
 
-public class DeleteCommandMediation
+public sealed class DeleteCommandMediation
 {
     private readonly DeleteCommand _localizedDeleteCommand;
     private readonly DataSourceId _targetDataSourceId;
