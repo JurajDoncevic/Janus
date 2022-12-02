@@ -57,7 +57,8 @@ public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, 
                 updateCommand.Mutation.ValueUpdates.ToDictionary(kv => kv.Key, kv => kv.Value),
                 updateCommand.Selection.IsSome
                             ? new CommandSelectionDto() { SelectionExpression = updateCommand.Selection.Value.Expression }
-                            : null
+                            : null,
+                updateCommand.Name
                 );
 
             return updateDto;
@@ -78,6 +79,7 @@ public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, 
 
             var updateCommand =
             UpdateCommandOpenBuilder.InitOpenUpdate(updateCommandDto.OnTableauId)
+                .WithName(updateCommandDto.Name)
                 .WithMutation(conf => conf.WithValues(retypedMutationDict))
                 .WithSelection(conf => updateCommandDto.Selection != null
                                         ? conf.WithExpression(updateCommandDto.Selection.SelectionExpression)

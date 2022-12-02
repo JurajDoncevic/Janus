@@ -1,6 +1,7 @@
 ﻿namespace Janus.Serialization.Bson.CommandModels.DTOs;
-public sealed class UpdateCommandDto
+internal sealed class UpdateCommandDto
 {
+    public string Name { get; set; }
     public string OnTableauId { get; set; } = String.Empty;
     public Dictionary<string, object?> Mutation { get; set; } = new();
 
@@ -8,12 +9,13 @@ public sealed class UpdateCommandDto
 
     public CommandSelectionDto? Selection { get; set; } = null;
 
-    public UpdateCommandDto(string onTableauId, Dictionary<string, object?> mutation, CommandSelectionDto? selection)
+    public UpdateCommandDto(string onTableauId, Dictionary<string, object?> mutation, CommandSelectionDto? selection, string name)
     {
         OnTableauId = onTableauId;
         Mutation = mutation;
         MutationTypes = mutation.ToDictionary(m => m.Key, m => m.Value?.GetType().FullName ?? typeof(object).FullName);
         Selection = selection;
+        Name = name;
     }
 
 }

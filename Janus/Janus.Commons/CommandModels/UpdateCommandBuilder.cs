@@ -16,6 +16,13 @@ public interface IPostInitUpdateCommandBuilder
     /// <param name="configuration">Mutation configuration</param>
     /// <returns></returns>
     IPostMutationUpdateCommandBuilder WithMutation(Func<MutationBuilder, MutationBuilder> configuration);
+
+    /// <summary>
+    /// Sets the update command name
+    /// </summary>
+    /// <param name="name">Command name</param>
+    /// <returns></returns>
+    IPostInitUpdateCommandBuilder WithName(string name);
 }
 
 public interface IPostMutationUpdateCommandBuilder
@@ -51,6 +58,7 @@ public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostM
     private Option<Mutation> _mutation;
     private Option<CommandSelection> _selection;
     private UpdateSet? _targetUpdateSet;
+    private string _commandName;
 
     /// <summary>
     /// Constructor
@@ -61,6 +69,7 @@ public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostM
     {
         _onTableauId = onTableauId;
         _dataSource = dataSource;
+        _commandName = Guid.NewGuid().ToString();
     }
 
     /// <summary>
@@ -112,13 +121,20 @@ public sealed class UpdateCommandBuilder : IPostInitUpdateCommandBuilder, IPostM
         return this;
     }
 
+    public IPostInitUpdateCommandBuilder WithName(string name)
+    {
+        _commandName = name ?? _commandName;
+        return this;
+    }
+
     public UpdateCommand Build()
     {
         if (!_mutation)
             throw new MutationNotSetException();
         return new UpdateCommand(_onTableauId,
                                  _mutation.Value,
-                                 _selection);
+                                 _selection,
+                                 _commandName);
 
     }
 }

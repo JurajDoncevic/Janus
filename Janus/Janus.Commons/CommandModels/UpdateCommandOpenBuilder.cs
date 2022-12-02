@@ -13,6 +13,7 @@ public sealed class UpdateCommandOpenBuilder
     private readonly TableauId _onTableauId;
     private Option<Mutation> _mutation;
     private Option<CommandSelection> _selection;
+    private string _commandName;
 
     /// <summary>
     /// Constructor
@@ -21,6 +22,7 @@ public sealed class UpdateCommandOpenBuilder
     private UpdateCommandOpenBuilder(TableauId onTableauId)
     {
         _onTableauId = onTableauId;
+        _commandName = Guid.NewGuid().ToString();
     }
 
     /// <summary>
@@ -69,6 +71,17 @@ public sealed class UpdateCommandOpenBuilder
     }
 
     /// <summary>
+    /// Sets the update command name
+    /// </summary>
+    /// <param name="name">Command name</param>
+    /// <returns></returns>
+    public UpdateCommandOpenBuilder WithName(string name)
+    {
+        _commandName = name ?? _commandName;
+        return this;
+    }
+
+    /// <summary>
     /// Builds the update command
     /// </summary>
     /// <returns></returns>
@@ -79,7 +92,8 @@ public sealed class UpdateCommandOpenBuilder
             throw new MutationNotSetException();
         return new UpdateCommand(_onTableauId,
                                  _mutation.Value,
-                                 _selection);
+                                 _selection, 
+                                 _commandName);
 
     }
 }

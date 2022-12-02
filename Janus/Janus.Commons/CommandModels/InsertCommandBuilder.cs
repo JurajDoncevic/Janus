@@ -14,6 +14,12 @@ public interface IPostInitInsertCommandBuilder
     /// <param name="configuration">Instantiation configuration</param>
     /// <returns></returns>
     IPostInstatiationBuilder WithInstantiation(Func<InstantiationBuilder, InstantiationBuilder> configuration);
+    /// <summary>
+    /// Sets the insert command name
+    /// </summary>
+    /// <param name="name">Command name</param>
+    /// <returns></returns>
+    IPostInitInsertCommandBuilder WithName(string name);
 }
 
 public interface IPostInstatiationBuilder
@@ -34,6 +40,7 @@ public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostI
     private readonly TableauId _onTableauId;
     private readonly DataSource _dataSource;
     private Option<Instantiation> _instantiation;
+    private string _commandName;
 
     /// <summary>
     /// Constructor
@@ -45,11 +52,12 @@ public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostI
         _onTableauId = onTableauId;
         _dataSource = dataSource;
         _instantiation = Option<Instantiation>.None;
+        _commandName = Guid.NewGuid().ToString(); // pre-empt null
     }
 
     public InsertCommand Build()
         => _instantiation.IsSome
-           ? new InsertCommand(_onTableauId, _instantiation.Value)
+           ? new InsertCommand(_onTableauId, _instantiation.Value, _commandName)
            : throw new InstantiationNotSetException();
 
     /// <summary>
@@ -88,6 +96,13 @@ public sealed class InsertCommandBuilder : IPostInitInsertCommandBuilder, IPostI
     {
         var instantiationBuilder = new InstantiationBuilder(_onTableauId, _dataSource);
         _instantiation = Option<Instantiation>.Some(configuration(instantiationBuilder).Build());
+
+        return this;
+    }
+
+    public IPostInitInsertCommandBuilder WithName(string name)
+    {
+        _commandName = name ?? _commandName;
 
         return this;
     }

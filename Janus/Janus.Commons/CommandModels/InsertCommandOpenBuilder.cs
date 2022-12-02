@@ -11,6 +11,7 @@ public sealed class InsertCommandOpenBuilder
 {
     private readonly TableauId _onTableauId;
     private Option<Instantiation> _instantiation;
+    private string _commandName;
 
     /// <summary>
     /// Constructor
@@ -20,6 +21,7 @@ public sealed class InsertCommandOpenBuilder
     {
         _onTableauId = onTableauId;
         _instantiation = Option<Instantiation>.None;
+        _commandName = Guid.NewGuid().ToString();
     }
 
     /// <summary>
@@ -29,7 +31,7 @@ public sealed class InsertCommandOpenBuilder
     /// <exception cref="InstantiationNotSetException"></exception>
     public InsertCommand Build()
         => _instantiation
-           ? new InsertCommand(_onTableauId, _instantiation.Value)
+           ? new InsertCommand(_onTableauId, _instantiation.Value, _commandName)
            : throw new InstantiationNotSetException();
 
     /// <summary>
@@ -60,6 +62,17 @@ public sealed class InsertCommandOpenBuilder
         var instantiationBuilder = new InstantiationOpenBuilder(_onTableauId);
         _instantiation = Option<Instantiation>.Some(configuration(instantiationBuilder).Build());
 
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the insert command name
+    /// </summary>
+    /// <param name="name">Command name</param>
+    /// <returns></returns>
+    public InsertCommandOpenBuilder WithName(string name)
+    {
+        _commandName = name ?? _commandName;
         return this;
     }
 }

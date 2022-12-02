@@ -19,7 +19,7 @@ public sealed class DeleteCommand : BaseCommand
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="selection">Selection clause</param>
-    internal DeleteCommand(TableauId onTableauId, Option<CommandSelection> selection) : base(onTableauId)
+    internal DeleteCommand(TableauId onTableauId, Option<CommandSelection> selection, string? name = null) : base(onTableauId, name)
     {
         _selection = selection;
     }
@@ -27,6 +27,7 @@ public sealed class DeleteCommand : BaseCommand
     public override bool Equals(object? obj)
     {
         return obj is DeleteCommand command &&
+               _name.Equals(command.Name) &&
                _onTableauId.Equals(command._onTableauId) &&
                _selection.Equals(command._selection);
     }

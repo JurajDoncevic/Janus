@@ -41,11 +41,11 @@ public sealed class InsertCommandSerializer : ICommandSerializer<InsertCommand, 
         => Results.AsResult(() =>
         {
             var tabularDataDto = _tabularDataSerializer.ToDto(insertCommand.Instantiation.TabularData).Data!;
-            var insertCommandDto = new InsertCommandDto
-            {
-                OnTableauId = insertCommand.OnTableauId.ToString(),
-                Instantiation = tabularDataDto
-            };
+            var insertCommandDto = new InsertCommandDto(
+                insertCommand.OnTableauId.ToString(),
+                tabularDataDto,
+                insertCommand.Name
+            );
 
             return insertCommandDto;
         });
@@ -62,6 +62,7 @@ public sealed class InsertCommandSerializer : ICommandSerializer<InsertCommand, 
 
             var insertCommand =
             InsertCommandOpenBuilder.InitOpenInsert(insertCommandDto.OnTableauId)
+                .WithName(insertCommandDto.Name)
                 .WithInstantiation(conf => conf.WithValues(tabularData))
                 .Build();
 

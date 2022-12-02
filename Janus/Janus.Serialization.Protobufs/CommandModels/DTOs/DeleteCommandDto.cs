@@ -6,9 +6,12 @@ namespace Janus.Serialization.Protobufs.CommandModels.DTOs;
 internal sealed class DeleteCommandDto
 {
     [ProtoMember(1)]
+    public string Name { get; set; }
+    
+    [ProtoMember(2)]
     public string OnTableauId { get; set; } = String.Empty;
 
-    [ProtoMember(2)]
+    [ProtoMember(3)]
     public CommandSelectionDto? Selection { get; set; } = new CommandSelectionDto();
 
     public DeleteCommandDto()
@@ -16,9 +19,10 @@ internal sealed class DeleteCommandDto
 
     }
 
-    public DeleteCommandDto(string onTableauId, CommandSelectionDto? selection)
+    public DeleteCommandDto(string onTableauId, CommandSelectionDto? selection, string name)
     {
         OnTableauId = onTableauId;
         Selection = selection;
+        Name = name;
     }
 }

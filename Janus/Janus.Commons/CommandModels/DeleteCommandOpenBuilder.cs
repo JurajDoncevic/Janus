@@ -9,6 +9,7 @@ public sealed class DeleteCommandOpenBuilder
 {
     private readonly TableauId _onTableauId;
     private Option<CommandSelection> _selection;
+    private string _commandName;
 
     /// <summary>
     /// Constructor
@@ -18,6 +19,7 @@ public sealed class DeleteCommandOpenBuilder
     {
         _onTableauId = onTableauId;
         _selection = Option<CommandSelection>.None;
+        _commandName = Guid.NewGuid().ToString(); // pre-empt null
     }
 
     /// <summary>
@@ -25,7 +27,7 @@ public sealed class DeleteCommandOpenBuilder
     /// </summary>
     /// <returns></returns>
     public DeleteCommand Build()
-        => new DeleteCommand(_onTableauId, _selection);
+        => new DeleteCommand(_onTableauId, _selection, _commandName);
 
     /// <summary>
     /// Initializes the delete command open builder
@@ -58,4 +60,14 @@ public sealed class DeleteCommandOpenBuilder
         return this;
     }
 
+    /// <summary>
+    /// Sets the delete command name
+    /// </summary>
+    /// <param name="name">Command name</param>
+    /// <returns></returns>
+    public DeleteCommandOpenBuilder WithName(string name)
+    {
+        _commandName = name ?? _commandName;
+        return this;
+    }
 }

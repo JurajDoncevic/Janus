@@ -16,6 +16,12 @@ public interface IPostInitDeleteCommandBuilder
     /// <returns></returns>
     IPostInitDeleteCommandBuilder WithSelection(Func<CommandSelectionBuilder, CommandSelectionBuilder> configuration);
     /// <summary>
+    /// Sets the delete command name
+    /// </summary>
+    /// <param name="name">Command name</param>
+    /// <returns></returns>
+    IPostInitDeleteCommandBuilder WithName(string name);
+    /// <summary>
     /// Builds the specified delete command
     /// </summary>
     /// <returns>Delete command</returns>
@@ -31,6 +37,7 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
     private readonly TableauId _onTableauId;
     private readonly DataSource _dataSource;
     private Option<CommandSelection> _selection;
+    private string _commandName;
 
     /// <summary>
     /// Constructor
@@ -47,6 +54,7 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
         _onTableauId = onTableauId;
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _selection = Option<CommandSelection>.None;
+        _commandName = Guid.NewGuid().ToString(); // pre-empt null
     }
 
     /// <summary>
@@ -89,6 +97,12 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
     public static IPostInitDeleteCommandBuilder InitOnDataSource(string onTableauId, DataSource dataSource)
         => InitOnDataSource(TableauId.From(onTableauId), dataSource);
 
+    public IPostInitDeleteCommandBuilder WithName(string name)
+    {
+        _commandName = name ?? _commandName;
+        return this;
+    }
+
     public IPostInitDeleteCommandBuilder WithSelection(Func<CommandSelectionBuilder, CommandSelectionBuilder> configuration)
     {
         var selectionBuilder = new CommandSelectionBuilder(_dataSource, _onTableauId);
@@ -99,6 +113,6 @@ public sealed class DeleteCommandBuilder : IPostInitDeleteCommandBuilder
 
     public DeleteCommand Build()
     {
-        return new DeleteCommand(_onTableauId, _selection);
+        return new DeleteCommand(_onTableauId, _selection, _commandName);
     }
 }

@@ -15,7 +15,7 @@ public sealed class InsertCommand : BaseCommand
     /// </summary>
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="instantiation">Instantiation clause</param>
-    internal InsertCommand(TableauId onTableauId, Instantiation instantiation) : base(onTableauId)
+    internal InsertCommand(TableauId onTableauId, Instantiation instantiation, string? name = null) : base(onTableauId, name)
     {
         if (onTableauId is null)
         {
@@ -38,6 +38,7 @@ public sealed class InsertCommand : BaseCommand
     public override bool Equals(object? obj)
     {
         return obj is InsertCommand command &&
+               _name.Equals(command.Name) &&
                _onTableauId.Equals(command._onTableauId) &&
                _instantiation.Equals(command._instantiation);
     }

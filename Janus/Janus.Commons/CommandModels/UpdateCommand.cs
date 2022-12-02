@@ -26,7 +26,7 @@ public sealed class UpdateCommand : BaseCommand
     /// <param name="onTableauId">Starting tableau</param>
     /// <param name="mutation">Mutation clause</param>
     /// <param name="selection">Selection clause</param>
-    internal UpdateCommand(TableauId onTableauId, Mutation mutation, Option<CommandSelection> selection) : base(onTableauId)
+    internal UpdateCommand(TableauId onTableauId, Mutation mutation, Option<CommandSelection> selection, string? name = null) : base(onTableauId, name)
     {
         if (onTableauId is null)
         {
@@ -55,6 +55,7 @@ public sealed class UpdateCommand : BaseCommand
     public override bool Equals(object? obj)
     {
         return obj is UpdateCommand command &&
+               _name.Equals(command.Name) &&
                _onTableauId.Equals(command._onTableauId) &&
                EqualityComparer<Mutation>.Default.Equals(_mutation, command._mutation) &&
                EqualityComparer<Option<CommandSelection>>.Default.Equals(_selection, command._selection);
