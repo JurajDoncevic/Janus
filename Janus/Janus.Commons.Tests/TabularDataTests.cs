@@ -105,7 +105,7 @@ public class TabularDataTests
     {
         var columnsToProject = new HashSet<string> { "ds1.attrINT", "ds1.attrDECIMAL", "ds1.attrDATETIME" };
 
-        var projectionResult = TabularDataOperations.ProjectTabularDataColumns(_tabularData[0], columnsToProject);
+        var projectionResult = TabularDataOperations.ProjectColumns(_tabularData[0], columnsToProject);
         Assert.True(projectionResult);
         Assert.Equal(projectionResult.Data.ColumnNames, columnsToProject);
         Assert.Equal(projectionResult.Data.RowData.First().ColumnValues.Keys.ToHashSet(), columnsToProject);
