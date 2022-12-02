@@ -5,6 +5,7 @@ using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Mediation.CommandMediationModels;
 using Janus.Mediation.SchemaMediationModels;
 using Janus.Commons.QueryModels;
+using Janus.Commons.DataModels;
 
 namespace Janus.Mediation;
 /// <summary>
@@ -15,10 +16,7 @@ public class CommandModelMediation
     public static Result<DeleteCommandMediation> MediateCommand(DeleteCommand deleteOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation)
         => Results.AsResult(() =>
         {
-
-            // localize ids...
-
-            //... of initial tableau
+            //localize ids of initial tableau
             var initialSourceTableauId =
                 dataSourceMediation.GetSourceInitialTableauId(deleteOnMediatedDataSource.OnTableauId);
 
@@ -27,40 +25,43 @@ public class CommandModelMediation
                 return Results.OnFailure<DeleteCommandMediation>("Couldn't find the initial tableau from the tableau mediation source query");
             }
 
-            var deleteCommandBuilder = DeleteCommandOpenBuilder.InitOpenDelete(initialSourceTableauId);
 
-            //... of selection expression
+            //localize ids of selection expression
             var selectionExpression =
                 deleteOnMediatedDataSource.Selection
                     .Match(
                             selection => LocalizeSelectionExpression(selection.Expression, dataSourceMediation),
                             () => FALSE()
                         );
-            deleteCommandBuilder = deleteCommandBuilder.WithSelection(conf => conf.WithExpression(selectionExpression));
 
-            var deleteCommand = deleteCommandBuilder.Build();
+            // build the command
+            var deleteCommand = 
+                DeleteCommandOpenBuilder.InitOpenDelete(initialSourceTableauId)
+                    .WithSelection(conf => conf.WithExpression(selectionExpression))
+                    .Build();
 
             // prevalidate command before sending?
 
-            return Results.OnSuccess(new DeleteCommandMediation(deleteCommand, initialSourceTableauId.ParentDataSourceId));
+            return Results.OnSuccess(new DeleteCommandMediation(deleteCommand, initialSourceTableauId.ParentDataSourceId, deleteOnMediatedDataSource, dataSourceMediation));
         });
 
     public static Result<UpdateCommandMediation> MediateCommand(UpdateCommand updateOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation)
         => Results.AsResult(() =>
         {
             //localize id of initial tableau - find the tableau from the mutation value updates
+            // this is because only an update set can be updated
             var mutationAttrNames = updateOnMediatedDataSource.Mutation.ValueUpdates.Keys;
             var mutationAttrMapping = mutationAttrNames.ToDictionary(attrName => attrName, attrName => dataSourceMediation.GetSourceAttributeId(AttributeId.From(updateOnMediatedDataSource.OnTableauId, attrName))); // dict of declared attr name and source attr id
             var initialSourceTableauId = dataSourceMediation.GetSourceAttributeId(mutationAttrMapping.Values.First()!)!.ParentTableauId;
 
-            //localize ids of value updates
+            //localize attribute names in value updates
             var localizedValueUpdates =
                 updateOnMediatedDataSource
                     .Mutation
                     .ValueUpdates
                     .ToDictionary(vu => mutationAttrMapping[vu.Key]!.AttributeName, vu => vu.Value);
 
-            //localize ids of selection expression
+            //localize attribute ids of selection expression
             var localizedSelectionExpression =
                 updateOnMediatedDataSource.Selection
                     .Match(
@@ -68,6 +69,7 @@ public class CommandModelMediation
                             () => FALSE()
                         );
 
+            // build the command
             var updateCommand =
                 UpdateCommandOpenBuilder.InitOpenUpdate(initialSourceTableauId)
                     .WithMutation(conf => conf.WithValues(localizedValueUpdates))
@@ -76,21 +78,42 @@ public class CommandModelMediation
 
             // Prevalidate command before sending?
 
-            return Results.OnSuccess(new UpdateCommandMediation(updateCommand, initialSourceTableauId.ParentDataSourceId));
+            return Results.OnSuccess(new UpdateCommandMediation(updateCommand, initialSourceTableauId.ParentDataSourceId, updateOnMediatedDataSource, dataSourceMediation));
         });
 
     public static Result<InsertCommandMediation> MediateCommand(InsertCommand insertOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, BaseCommand baseCommand)
         => Results.AsResult(() =>
         {
-            // localize ids...
+            //localize attribute id of initial tableau
+            var initialSourceTableauId =
+                dataSourceMediation.GetSourceInitialTableauId(insertOnMediatedDataSource.OnTableauId)!;
 
-            //... of initial tableau
+            //localize column names of tabular data
+            var columnNameMapping = // declared column name, source attr id
+                insertOnMediatedDataSource.Instantiation.TabularData.ColumnNames
+                .ToDictionary(declAttrName => declAttrName, declAttrName => dataSourceMediation.GetDeclaredAttributeId(AttributeId.From(insertOnMediatedDataSource.OnTableauId, declAttrName)));
 
-            //... of tabular data
+            var localizedColumnDataTypes = // localize attribute names and their data types
+                insertOnMediatedDataSource.Instantiation.TabularData.ColumnDataTypes
+                .ToDictionary(cdt => columnNameMapping[cdt.Key]!.AttributeName, cdt => cdt.Value);
+
+            var localizedTabularData =  // build the tabular data with localized column names
+                insertOnMediatedDataSource.Instantiation.TabularData.RowData.Fold(
+                    TabularDataBuilder.InitTabularData(localizedColumnDataTypes),
+                    (rowData, builder) => builder.AddRow(
+                        conf => conf.WithRowData(rowData.ColumnValues.ToDictionary(cv => columnNameMapping[cv.Key]!.AttributeName, cv => cv.Value))
+                        )
+                    ).Build();
+
+            // build command
+            var insertCommand =
+                InsertCommandOpenBuilder.InitOpenInsert(initialSourceTableauId)
+                    .WithInstantiation(conf => conf.WithValues(localizedTabularData))
+                    .Build();
 
             // prevalidate command before sending?
 
-            return Results.OnException<InsertCommandMediation>(new NotImplementedException());
+            return Results.OnSuccess(new InsertCommandMediation(insertCommand, initialSourceTableauId.ParentDataSourceId, insertOnMediatedDataSource, dataSourceMediation));
         });
 
 

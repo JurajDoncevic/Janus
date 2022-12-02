@@ -180,10 +180,10 @@ public static partial class QueryModelMediation
                         })).Map(rs => rs.Single()); // throws exception if there is no single tabular result of joins
 
             // execute finalizing selection
-            var selectionResult = joinResult.Bind(joinedTabular => TabularDataOperations.SelectData(joinedTabular, queryMediation.FinalizingSelection));
+            var selectionResult = joinResult.Bind(joinedTabular => TabularDataOperations.SelectRowData(joinedTabular, queryMediation.FinalizingSelection));
 
             // execute finalizing projection
-            var projectionResult = selectionResult.Bind(selectedTabular => TabularDataOperations.ProjectTabularDataColumns(selectedTabular, queryMediation.FinalizingProjection.Map(attrId => attrId.ToString()).ToHashSet()));
+            var projectionResult = selectionResult.Bind(selectedTabular => TabularDataOperations.ProjectColumns(selectedTabular, queryMediation.FinalizingProjection.Map(attrId => attrId.ToString()).ToHashSet()));
 
             // globalize column names
             var globalizedNamesResult = projectionResult.Bind(projectedData =>

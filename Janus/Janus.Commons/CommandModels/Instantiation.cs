@@ -10,14 +10,14 @@ public sealed class Instantiation
     private readonly TabularData _tabularData;
 
     /// <summary>
-    /// Tabular data used in the instantiation
+    /// Tabular data used in the instantiation. Only attribute names are used for column names
     /// </summary>
     public TabularData TabularData => _tabularData;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="tabularData">Tabular data to use</param>
+    /// <param name="tabularData">Tabular data to use for instantiation. Use attribute names for column names</param>
     internal Instantiation(TabularData tabularData)
     {
         _tabularData = tabularData ?? throw new ArgumentNullException(nameof(tabularData));

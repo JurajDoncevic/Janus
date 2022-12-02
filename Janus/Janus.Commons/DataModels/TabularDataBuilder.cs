@@ -71,45 +71,45 @@ public sealed class TabularDataBuilder : IPostInitTabularDataBuilder
 
 public class RowDataBuilder
 {
-    private readonly Dictionary<string, DataTypes> _attributeDataTypes;
-    private Dictionary<string, object?>? _attributeValues;
+    private readonly Dictionary<string, DataTypes> _columnDataTypes;
+    private Dictionary<string, object?>? _columnValues;
 
-    internal RowDataBuilder(Dictionary<string, DataTypes> attributeDataTypes)
+    internal RowDataBuilder(Dictionary<string, DataTypes> columnDataTypes)
     {
-        _attributeDataTypes = attributeDataTypes ?? throw new ArgumentNullException(nameof(attributeDataTypes));
-        _attributeValues = null;
+        _columnDataTypes = columnDataTypes ?? throw new ArgumentNullException(nameof(columnDataTypes));
+        _columnValues = null;
     }
 
-    public static RowDataBuilder InitRowWithDataTypes(Dictionary<string, DataTypes> attributeDataTypes)
+    public static RowDataBuilder InitRowWithDataTypes(Dictionary<string, DataTypes> columnDataTypes)
     {
-        if (attributeDataTypes is null)
+        if (columnDataTypes is null)
         {
-            throw new ArgumentNullException(nameof(attributeDataTypes));
+            throw new ArgumentNullException(nameof(columnDataTypes));
         }
 
-        return new RowDataBuilder(attributeDataTypes);
+        return new RowDataBuilder(columnDataTypes);
     }
 
-    public RowDataBuilder WithRowData(Dictionary<string, object?> attributeValues)
+    public RowDataBuilder WithRowData(Dictionary<string, object?> columnValues)
     {
-        if (_attributeDataTypes.Count != attributeValues.Count
-            || !attributeValues.Keys.All(_attributeDataTypes.ContainsKey))
-            throw new IncompatibleRowDataTypeException(attributeValues.Keys.ToList(), _attributeDataTypes.Keys.ToList());
+        if (_columnDataTypes.Count != columnValues.Count
+            || !columnValues.Keys.All(_columnDataTypes.ContainsKey))
+            throw new IncompatibleRowDataTypeException(columnValues.Keys.ToList(), _columnDataTypes.Keys.ToList());
 
-        var attrValue = attributeValues.Where(kvp =>
+        var colValue = columnValues.Where(kvp =>
                                             kvp.Value != null &&
-                                            !kvp.Value.GetType().IsEquivalentTo(TypeMappings.MapToType(_attributeDataTypes[kvp.Key])))
+                                            !kvp.Value.GetType().IsEquivalentTo(TypeMappings.MapToType(_columnDataTypes[kvp.Key])))
                                        .Select(kvp => (attrId: kvp.Key, attrValue: kvp.Value))
                                        .FirstOrDefault();
-        if (attrValue != default)
-            throw new IncompatibleDotNetTypeException(attrValue.attrId, attrValue.GetType());
-        _attributeValues = attributeValues;
+        if (colValue != default)
+            throw new IncompatibleDotNetTypeException(colValue.attrId, colValue.GetType());
+        _columnValues = columnValues;
 
         return this;
     }
 
     internal RowData Build()
-        => _attributeValues == null && _attributeDataTypes.Count != 0
-           ? throw new IncompatibleRowDataTypeException(new List<string>(), _attributeDataTypes.Keys.ToList())
-           : new RowData(_attributeValues ?? new Dictionary<string, object?>());
+        => _columnValues == null && _columnDataTypes.Count != 0
+           ? throw new IncompatibleRowDataTypeException(new List<string>(), _columnDataTypes.Keys.ToList())
+           : new RowData(_columnValues ?? new Dictionary<string, object?>());
 }
