@@ -111,7 +111,7 @@ public static class TabularDataOperations
     /// <returns>Tabular data with renamed columns</returns>
     public static Result<TabularData> RenameColumns(TabularData tabularData, Dictionary<string, string> renameMapping)
     {
-        if (renameMapping.Keys.SequenceEqual(tabularData.ColumnNames))
+        if (!renameMapping.Keys.SequenceEqual(tabularData.ColumnNames))
         {
             return Results.OnFailure<TabularData>($"Incorrect column rename mapping given. Tabular data has {string.Join(", ", tabularData.ColumnNames)}, but rename mapping has: {string.Join(", ", renameMapping.Keys)}");
         }
