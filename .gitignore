@@ -369,3 +369,7 @@ FodyWeavers.xsd
 
 # ignore class diagram files
 *.cd
+
+
+**/wwwroot/lib
+**/appsettings.*.json
