@@ -57,17 +57,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediation", "Janus.Me
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediation.Tests", "Janus.Mediation.Tests\Janus.Mediation.Tests.csproj", "{97928F81-735E-4450-846F-1857BEFDA742}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.QueryLanguage", "Janus.QueryLanguage\Janus.QueryLanguage.csproj", "{120568E0-2FEF-422B-91B3-F1C8257307EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.QueryLanguage", "Janus.QueryLanguage\Janus.QueryLanguage.csproj", "{120568E0-2FEF-422B-91B3-F1C8257307EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.QueryLanguage.Tests", "Janus.QueryLanguage.Tests\Janus.QueryLanguage.Tests.csproj", "{B9EFFB25-884A-4A42-91B7-E25E974C021F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.QueryLanguage.Tests", "Janus.QueryLanguage.Tests\Janus.QueryLanguage.Tests.csproj", "{B9EFFB25-884A-4A42-91B7-E25E974C021F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.CommandLanguage", "Janus.CommandLanguage\Janus.CommandLanguage.csproj", "{C6693B6B-F0B4-45F3-BF56-50F63258E291}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.CommandLanguage", "Janus.CommandLanguage\Janus.CommandLanguage.csproj", "{C6693B6B-F0B4-45F3-BF56-50F63258E291}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.CommandLanguage.Tests", "Janus.CommandLanguage.Tests\Janus.CommandLanguage.Tests.csproj", "{27F83AA0-DA1D-4C5C-8921-4E8493620F1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.CommandLanguage.Tests", "Janus.CommandLanguage.Tests\Janus.CommandLanguage.Tests.csproj", "{27F83AA0-DA1D-4C5C-8921-4E8493620F1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.MediationLanguage", "Janus.MediationLanguage\Janus.MediationLanguage.csproj", "{FED63134-DDC7-409B-93A4-FB71449FA25E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.MediationLanguage", "Janus.MediationLanguage\Janus.MediationLanguage.csproj", "{FED63134-DDC7-409B-93A4-FB71449FA25E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.MediationLanguage.Tests", "Janus.MediationLanguage.Tests\Janus.MediationLanguage.Tests.csproj", "{563B5750-DBF0-46D1-82BB-EB8E75963CA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.MediationLanguage.Tests", "Janus.MediationLanguage.Tests\Janus.MediationLanguage.Tests.csproj", "{563B5750-DBF0-46D1-82BB-EB8E75963CA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Wrapper.Sqlite.WebApp", "Janus.Wrapper.Sqlite.WebApp\Janus.Wrapper.Sqlite.WebApp.csproj", "{F5C40E6A-6816-4D57-84E4-495984B4E9A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mediator.WebApp", "Janus.Mediator.WebApp\Janus.Mediator.WebApp.csproj", "{5D5571B9-FCB5-4A28-97BE-A3E4266FFDC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -207,6 +211,14 @@ Global
 		{563B5750-DBF0-46D1-82BB-EB8E75963CA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{563B5750-DBF0-46D1-82BB-EB8E75963CA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{563B5750-DBF0-46D1-82BB-EB8E75963CA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C40E6A-6816-4D57-84E4-495984B4E9A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C40E6A-6816-4D57-84E4-495984B4E9A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C40E6A-6816-4D57-84E4-495984B4E9A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C40E6A-6816-4D57-84E4-495984B4E9A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D5571B9-FCB5-4A28-97BE-A3E4266FFDC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D5571B9-FCB5-4A28-97BE-A3E4266FFDC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D5571B9-FCB5-4A28-97BE-A3E4266FFDC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D5571B9-FCB5-4A28-97BE-A3E4266FFDC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
