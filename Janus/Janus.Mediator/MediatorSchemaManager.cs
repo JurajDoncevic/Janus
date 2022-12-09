@@ -1,66 +1,90 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
-using Janus.Logging;
-using Janus.Mediation.SchemaMediationModels;
 
 namespace Janus.Mediator;
-public sealed class MediatorSchemaManager : IComponentSchemaManager, IMediatingSchemaManager, IDelegatingSchemaManager
+public sealed class MediatorSchemaManager : IComponentSchemaManager, ITransformingSchemaManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
 
-    private Option<DataSource> _currentSchema;
-    private readonly ILogger<MediatorSchemaManager>? _logger;
-    private Option<DataSourceMediation> _currentMediation;
-    private readonly Dictionary<RemotePoint, DataSource> _currentDataSourcesOnRemotePoints;
+    private HashSet<RemotePoint> _schemaInferredRemotePoints;
 
-    public IReadOnlyDictionary<string, DataSource> CurrentDataSourcesSchemas => _currentDataSourcesOnRemotePoints.ToDictionary(kv => kv.Value.Name, kv => kv.Value);
+    private DataSource? _currentOutputSchema;
 
-    public MediatorSchemaManager(MediatorCommunicationNode communicationNode, ILogger? logger = null)
+    public IReadOnlyList<RemotePoint> SchemaInferredRemotePoints => _schemaInferredRemotePoints.ToList();
+
+    public MediatorSchemaManager(MediatorCommunicationNode communicationNode, IEnumerable<RemotePoint>? schemaIncludedRemotePoints = null)
     {
         _communicationNode = communicationNode;
-        _currentSchema = Option<DataSource>.None;
-        _currentMediation= Option<DataSourceMediation>.None;
-        _currentDataSourcesOnRemotePoints= new Dictionary<RemotePoint, DataSource>();
-
-        _logger = logger?.ResolveLogger<MediatorSchemaManager>();
+        _schemaInferredRemotePoints = schemaIncludedRemotePoints?.ToHashSet() ?? new HashSet<RemotePoint>();
     }
 
-    public Option<DataSource> GetCurrentOutputSchema()
-        => _currentSchema;
+    public Result AddRemotePointToSchemaInferrence(RemotePoint remotePoint)
+    {
+        // get the remote point from the communication node via node id
+        // cannot be a MASK or UNKNOWN
+        var registeredRemotePoint = _communicationNode.RemotePoints
+                            .FirstOrDefault(rp => rp.Equals(remotePoint) &&
+                                                  rp.RemotePointType != RemotePointTypes.MASK &&
+                                                  rp.RemotePointType != RemotePointTypes.UNDETERMINED);
+        if (registeredRemotePoint == null)
+        {
+            return Results.OnFailure($"Remote point {remotePoint} isn't registered or is of incorrect type");
+        }
 
-    public async Task<Result<DataSource>> ReloadOutputSchema()
-        => _currentMediation
-            ? await GenerateMediatedSchema(_currentMediation.Value)
-            : await Task.FromResult(Results.OnFailure<DataSource>("No mediation set to reload a mediator schema"));
+        return _schemaInferredRemotePoints.Add(registeredRemotePoint)
+            ? Results.OnSuccess($"Added {registeredRemotePoint} to schema inferrence")
+            : Results.OnFailure($"Remote point {registeredRemotePoint} already in schema inferrence");
+    }
 
-    public async Task<IEnumerable<Result<DataSource>>> GetSchemasFromComponents()
-        => await Task.WhenAll(
-            _communicationNode.RemotePoints
-                              .Map(rp => _communicationNode.SendSchemaRequest(rp))
-            );
+    public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint)
+    {
+        var inferredRemotePoint = _schemaInferredRemotePoints.FirstOrDefault(rp => rp.Equals(remotePoint));
+        if (inferredRemotePoint == null)
+        {
+            return Results.OnFailure($"Remote point {remotePoint} not in schema inferrence");
+        }
 
-    public async Task<Result<DataSource>> GetDataSourceSchemaFrom(RemotePoint remotePoint)
-        => remotePoint.RemotePointType != RemotePointTypes.MASK || remotePoint.RemotePointType != RemotePointTypes.UNDETERMINED
-            ? await _communicationNode.SendSchemaRequest(remotePoint)
-            : await Task.FromResult(Results.OnFailure<DataSource>($"Given remote point {remotePoint} is not of valid type for mediator schema requests."));
+        return _schemaInferredRemotePoints.Remove(inferredRemotePoint)
+            ? Results.OnSuccess($"Removed {inferredRemotePoint} from schema inferrence")
+            : Results.OnFailure($"Failed to remove {inferredRemotePoint} from schema inferrence");
+    }
 
-    public async Task<Result<DataSource>> GenerateMediatedSchema(DataSourceMediation mediation)
-        => !_currentDataSourcesOnRemotePoints.Values.SequenceEqual(mediation.AvailableDataSources.Values)
-            ? await Task.FromResult(Results.OnFailure<DataSource>("Current data sources don't align with the ones in the mediation"))
-            : (await Task.FromResult(Mediation.SchemaModelMediation.MediateDataSource(mediation)))
-                .Pass(
-                    r => { _currentSchema = Option<DataSource>.Some(r.Data); _currentMediation = Option<DataSourceMediation>.Some(mediation); }
-                );
+    public async Task<Result<DataSource>> GetCurrentOutputSchema()
+        => await (_currentOutputSchema != null
+            ? Task.FromResult(Results.OnSuccess(_currentOutputSchema))
+            : Task.FromResult(Results.OnFailure<DataSource>("No schema loaded")));
 
-    public async Task<IEnumerable<Result<DataSource>>> ReloadSchemasFromComponents()
-        => (await Task.WhenAll(
-            _communicationNode.RemotePoints
-                              .Map(async rp => (remotePoint: rp, result: await _communicationNode.SendSchemaRequest(rp)))
-            ))
-            .Pass(_ => _currentDataSourcesOnRemotePoints.Clear())
-            .Map(tuple => tuple.result.Pass(r => _currentDataSourcesOnRemotePoints.Add(tuple.remotePoint, r.Data)));
+    public async Task<Result<DataSource>> GetSchemaFromRemotePoint(RemotePoint remotePoint)
+    {
+        var inferredRemotePoint = _schemaInferredRemotePoints.FirstOrDefault(rp => rp.Equals(remotePoint));
+        if (remotePoint == null)
+        {
+            return Results.OnFailure<DataSource>($"Remote point {remotePoint} not in schema inferrence");
+        }
+
+        return await _communicationNode.SendSchemaRequest(remotePoint);
+    }
+
+    public async Task<IEnumerable<Result<DataSource>>> GetInputSchemata()
+    {
+        var schemaRequestTasks =
+        _schemaInferredRemotePoints
+            .Select(_communicationNode.SendSchemaRequest);
+
+
+        return await Task.WhenAll(schemaRequestTasks);
+    }
+
+    public Task<Result<DataSource>> ReloadSchema(object? transformations = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<DataSource>> ReloadOutputSchema()
+    {
+        throw new NotImplementedException();
+    }
 }
