@@ -94,7 +94,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<MediatorQueryManager>();
         services.AddSingleton<MediatorCommandManager>();
         services.AddSingleton<MediatorSchemaManager>();
-        services.AddSingleton<MediatorController>();
+        services.AddSingleton<MediatorManager>();
         services.AddSingleton<MediatorOptions>(mediatorOptions);
         services.AddSingleton<ApplicationOptions>(applicationOptions);
         services.AddSingleton<Application>();

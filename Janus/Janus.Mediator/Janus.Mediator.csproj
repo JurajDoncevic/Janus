@@ -9,6 +9,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Components\Janus.Components.csproj" />
+		<ProjectReference Include="..\Janus.Mediation\Janus.Mediation.csproj" />
 	</ItemGroup>
 
 </Project>

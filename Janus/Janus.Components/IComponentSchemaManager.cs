@@ -1,15 +1,16 @@
 ﻿using Janus.Commons.SchemaModels;
 using Janus.Communication.Remotes;
+using Janus.Mediation.SchemaMediationModels;
 
 namespace Janus.Components;
 
 public interface IComponentSchemaManager
 {
     /// <summary>
-    /// Gets the currently loaded schema
+    /// Gets the current output schema
     /// </summary>
     /// <returns></returns>
-    public Task<Result<DataSource>> GetCurrentOutputSchema();
+    public Option<DataSource> GetCurrentOutputSchema();
     /// <summary>
     /// Reloads the schema from the current data sources
     /// </summary>
@@ -25,35 +26,41 @@ public interface IDelegatingSchemaManager
     /// </summary>
     /// <param name="nodeId"></param>
     /// <returns></returns>
-    public Task<Result<DataSource>> GetInputSchemaFromComponent(string nodeId);
+    public Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint);
 
     /// <summary>
     /// Gets all schemata from remote points assigned for schema inferrence
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<Result<DataSource>>> GetInputSchemataFromComponents();
+    public Task<IEnumerable<Result<DataSource>>> GetSchemasFromComponents();
 
     /// <summary>
-    /// Adds a remote point to schema inferrence
+    /// Include a data source schema from a remote point in the loaded schemas. Data sources with same names can't be loaded at the same time
     /// </summary>
     /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public Result AddRemotePointToSchemaInferrence(RemotePoint remotePoint);
+    public Task<Result<DataSource>> IncludeInLoadedSchemas(RemotePoint remotePoint);
 
     /// <summary>
     /// Removes a remote point from schema inferrence
     /// </summary>
     /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint);
+    public Result ExcludeFromLoadedSchemas(RemotePoint remotePoint);
+
+    /// <summary>
+    /// Reloads all loaded schemas
+    /// </summary>
+    /// <returns></returns>
+    public Task<IEnumerable<Result<DataSource>>> ReloadSchemas();
 }
 
-public interface ITransformingSchemaManager
+public interface IMediatingSchemaManager
 {
     /// <summary>
-    /// Reloads the schema from the current data sources with transformations applied
+    /// Applies the mediation to the loaded schemas
     /// </summary>
-    /// <param name="transformations"></param>
+    /// <param name="mediation"></param>
     /// <returns></returns>
-    public Task<Result<DataSource>> ReloadSchema(object? transformations = null);
+    public Task<Result<DataSource>> MediateLoadedSchemas(DataSourceMediation mediation);
 }

@@ -47,22 +47,20 @@ public sealed class MediatorManager : IComponentManager
         => _communicationNode.RemotePoints;
 
     public async Task<Result<DataSource>> GetSchema()
-        => await _schemaManager.GetCurrentOutputSchema();
+        => await Task.FromResult(
+            _schemaManager.GetCurrentOutputSchema().Match(
+                dataSource => Results.OnSuccess(dataSource),
+                () => Results.OnFailure<DataSource>("No mediated schema generated")
+            ));
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
         => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));
 
     public async Task<Result> RunCommand(BaseCommand command)
-        => await _schemaManager
-            .GetCurrentOutputSchema()
-            .Bind(dataSource => Task.FromResult(command.IsValidForDataSource(dataSource)))
-            .Bind(async validity => await _commandManager.RunCommand(command));
+        => Results.OnException(new NotImplementedException());
 
     public async Task<Result<TabularData>> RunQuery(Query query)
-        => await _schemaManager
-            .GetCurrentOutputSchema()
-            .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
-            .Bind(async validity => await _queryManager.RunQuery(query));
+        => Results.OnException<TabularData>(new NotImplementedException());
 
 
     public async Task<Result> SaveRegisteredRemotePoints(string filePath)
@@ -84,20 +82,20 @@ public sealed class MediatorManager : IComponentManager
     public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
         => await _communicationNode.SendBye(remotePoint);
 
-    public IReadOnlyList<RemotePoint> SchemaInferredRemotePoints
-        => _schemaManager.SchemaInferredRemotePoints;
+    public IReadOnlyList<RemotePoint> LoadedSchemaRemotePoints
+        => _schemaManager.DataSourceFromRemotePoint.Keys.ToList();
 
-    public Result AddRemotePointToSchemaInferrence(RemotePoint remotePoint)
-        => _schemaManager.AddRemotePointToSchemaInferrence(remotePoint);
+    public async Task<Result<DataSource>> IncludeInLoadedSchemas(RemotePoint remotePoint)
+        => await _schemaManager.IncludeInLoadedSchemas(remotePoint);
 
-    public Result RemoveRemotePointFromSchemaInferrence(RemotePoint remotePoint)
-        => _schemaManager.RemoveRemotePointFromSchemaInferrence(remotePoint);
+    public Result ExcludeFromLoadedSchemas(RemotePoint remotePoint)
+        => _schemaManager.ExcludeFromLoadedSchemas(remotePoint);
 
     public Result ClearRemotePointsFromSchemaInferrence()
-        => _schemaManager.SchemaInferredRemotePoints
-            .Map(_schemaManager.RemoveRemotePointFromSchemaInferrence)
+        => _schemaManager.DataSourceFromRemotePoint.Keys.ToList()
+            .Map(_schemaManager.ExcludeFromLoadedSchemas)
             .All(result => result);
 
-    public async Task<IEnumerable<Result<DataSource>>> GetInputSchemata()
-        => await _schemaManager.GetInputSchemata();
+    public async Task<IEnumerable<Result<DataSource>>> GetAvailableSchemas()
+        => await _schemaManager.GetSchemasFromComponents();
 }
