@@ -11,7 +11,7 @@ using Janus.Wrapper.LocalQuerying;
 using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
-public class WrapperController
+public class WrapperManager
     <TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
     : IComponentController
     where TLocalQuery : LocalQuery<TLocalSelection, TLocalJoining, TLocalProjection>
@@ -24,7 +24,7 @@ public class WrapperController
     private readonly WrapperSchemaManager _schemaManager;
     private readonly WrapperCommunicationNode _communicationNode;
 
-    public WrapperController(
+    public WrapperManager(
         WrapperCommunicationNode communicationNode,
         WrapperQueryManager<TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> queryManager,
         WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
