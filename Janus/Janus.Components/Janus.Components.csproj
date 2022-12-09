@@ -14,6 +14,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
 	  <ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
+	  <ProjectReference Include="..\Janus.Mediation\Janus.Mediation.csproj" />
 	  <ProjectReference Include="..\Janus.Utils\Janus.Utils.csproj" />
 	</ItemGroup>
 
