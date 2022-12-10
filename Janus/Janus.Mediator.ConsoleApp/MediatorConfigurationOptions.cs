@@ -42,7 +42,8 @@ public static partial class ConfigurationOptionsExtensions
                             { NodeType: NodeTypes.MEDIATOR } rm => new MediatorRemotePoint(rm.Address, rm.ListenPort),
                             { NodeType: NodeTypes.WRAPPER } rm => new WrapperRemotePoint(rm.Address, rm.ListenPort)
                         }))
-                   .ToList()
+                   .ToList(),
+            "./mediator_database.db"
             );
 
 }

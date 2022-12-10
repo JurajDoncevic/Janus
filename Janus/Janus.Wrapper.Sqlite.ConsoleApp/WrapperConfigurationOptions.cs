@@ -48,7 +48,8 @@ public static partial class ConfigurationOptionsExtensions
                         }))
                    .ToList(),
             options.SourceConnectionString,
-            options.AllowsCommands
+            options.AllowsCommands,
+            "wrapper_database.db"
             );
 
 }
