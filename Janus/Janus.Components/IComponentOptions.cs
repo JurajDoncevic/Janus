@@ -29,4 +29,8 @@ public interface IComponentOptions
     /// Remote points to register on startup
     /// </summary>
     public IReadOnlyList<RemotePoint> StartupRemotePoints { get; }
+    /// <summary>
+    /// Connection string to the persistence database
+    /// </summary>
+    public string PersistenceConnectionString { get; }
 }

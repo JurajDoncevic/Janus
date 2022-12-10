@@ -11,6 +11,7 @@ public sealed class MediatorOptions : IComponentOptions
     private readonly CommunicationFormats _dataFormat;
     private readonly NetworkAdapterTypes _networkAdapterType;
     private readonly IEnumerable<RemotePoint> _startupRemotePoints;
+    private readonly string _persistenceConnectionString;
 
     public string NodeId => _nodeId;
 
@@ -24,6 +25,7 @@ public sealed class MediatorOptions : IComponentOptions
 
     public IReadOnlyList<RemotePoint> StartupRemotePoints => _startupRemotePoints.ToList();
 
+    public string PersistenceConnectionString => _persistenceConnectionString;
 
     public MediatorOptions(
         string nodeId,
@@ -31,7 +33,8 @@ public sealed class MediatorOptions : IComponentOptions
         int timeoutMs,
         CommunicationFormats dataFormat,
         NetworkAdapterTypes networkAdapterType,
-        IEnumerable<RemotePoint> startupRemotePoints)
+        IEnumerable<RemotePoint> startupRemotePoints,
+        string persistenceConnectionString)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;
@@ -39,6 +42,7 @@ public sealed class MediatorOptions : IComponentOptions
         _dataFormat = dataFormat;
         _networkAdapterType = networkAdapterType;
         _startupRemotePoints = startupRemotePoints;
+        _persistenceConnectionString = persistenceConnectionString;
     }
 
 }

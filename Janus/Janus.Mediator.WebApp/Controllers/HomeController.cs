@@ -1,15 +1,16 @@
 ﻿using Janus.Mediator.WebApp.Models;
+using Janus.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Janus.Mediator.WebApp.Controllers;
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly Logging.ILogger<HomeController>? _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(Logging.ILogger? logger = null)
     {
-        _logger = logger;
+        _logger = logger?.ResolveLogger<HomeController>();
     }
 
     public IActionResult Index()
