@@ -26,9 +26,26 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
         _logger = logger?.ResolveLogger<MediatorSchemaManager>();
     }
 
+    /// <summary>
+    /// Currently loaded data source schemas by their name
+    /// </summary>
     public IReadOnlyDictionary<string, DataSource> LoadedDataSourceWithName => _loadedDataSources.ToDictionary(kv => kv.Key, kv => kv.Value.dataSource);
+    /// <summary>
+    /// Remote points of the currently loaded data source schemas by data source name
+    /// </summary>
     public IReadOnlyDictionary<string, RemotePoint> RemotePointWithLoadedDataSourceName => _loadedDataSources.ToDictionary(kv => kv.Key, kv => kv.Value.remotePoint);
+    /// <summary>
+    /// Currently loaded data source schemas by their remote point
+    /// </summary>
     public IReadOnlyDictionary<RemotePoint, DataSource> DataSourceFromRemotePoint => _loadedDataSources.Values.ToDictionary(kv => kv.remotePoint, kv => kv.dataSource);
+    /// <summary>
+    /// Currently used mediation
+    /// </summary>
+    public Option<DataSourceMediation> CurrentMediation => _currentMediation;
+    /// <summary>
+    /// Current mediated schema
+    /// </summary>
+    public Option<DataSource> CurrentMediatedSchema => _currentMediatedSchema;
 
     public Result ExcludeFromLoadedSchemas(RemotePoint remotePoint)
         => Results.AsResult(() =>

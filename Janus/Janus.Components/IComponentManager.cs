@@ -64,11 +64,4 @@ public interface IComponentManager
     /// <returns></returns>
     public Task<Result<DataSource>> GetSchema();
 
-    /// <summary>
-    /// Save currently registered remote points to file (json)
-    /// </summary>
-    /// <param name="filePath">Output file path</param>
-    /// <returns></returns>
-    public Task<Result> SaveRegisteredRemotePoints(string filePath);
-
 }
