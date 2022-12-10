@@ -62,7 +62,6 @@ public sealed class MediatorManager : IComponentManager
     public async Task<Result<TabularData>> RunQuery(Query query)
         => Results.OnException<TabularData>(new NotImplementedException());
 
-
     public async Task<Result> SaveRegisteredRemotePoints(string filePath)
         => await Results.AsResult(async () =>
         {
