@@ -7,7 +7,7 @@ using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
 public class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection, TLocalData>
-    : IComponentQueryManager
+    : IExecutingQueryManager
     where TLocalQuery : LocalQuery<TSelection, TJoining, TProjection>
 {
     private readonly ILocalQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> _queryTranslator;
@@ -24,7 +24,7 @@ public class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection,
         _queryExecutor = queryExecutor;
     }
 
-    public async Task<Result<TabularData>> RunQuery(Query query)
+    public async Task<Result<TabularData>> ExecuteQuery(Query query)
         => (await Task.FromResult(_queryTranslator.Translate(query))
             .Bind(_queryExecutor.ExecuteQuery))
             .Bind(_dataTranslator.TranslateToTabularData);

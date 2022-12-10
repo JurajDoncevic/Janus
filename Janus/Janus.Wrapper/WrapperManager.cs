@@ -55,7 +55,7 @@ public class WrapperManager
         _schemaManager.GetCurrentOutputSchema()
                       .Match(
                         async dataSource => await Task.FromResult(query.IsValidForDataSource(dataSource))
-                                                      .Bind(result => _queryManager.RunQuery(query))
+                                                      .Bind(result => _queryManager.ExecuteQuery(query))
                                                       .Match(
                                                             queryResult => _communicationNode.SendQueryResponse(exchangeId, queryResult, fromPoint),
                                                             message => _communicationNode.SendQueryResponse(exchangeId, null, fromPoint, $"Query execution error on {_communicationNode.Options.NodeId}:" + message)
@@ -108,7 +108,7 @@ public class WrapperManager
             .GetCurrentOutputSchema()
             .Match(
                 async dataSource => await Task.FromResult(query.IsValidForDataSource(dataSource))
-                                              .Bind(async validity => await _queryManager.RunQuery(query)),
+                                              .Bind(async validity => await _queryManager.ExecuteQuery(query)),
                 async () => Results.OnFailure<TabularData>("No schema generated")
             );
 

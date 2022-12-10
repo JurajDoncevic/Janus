@@ -6,7 +6,7 @@ using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
 public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>
-    : IComponentCommandManager
+    : IExecutingCommandManager
     where TDeleteCommand : LocalDelete<TSelection>
     where TInsertCommand : LocalInsert<TInstantiation>
     where TUpdateCommand : LocalUpdate<TSelection, TMutation>

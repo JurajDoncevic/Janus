@@ -81,7 +81,7 @@ public class CommandModelMediation
             return Results.OnSuccess(new UpdateCommandMediation(updateCommand, initialSourceTableauId.ParentDataSourceId, updateOnMediatedDataSource, dataSourceMediation));
         });
 
-    public static Result<InsertCommandMediation> MediateCommand(InsertCommand insertOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation, BaseCommand baseCommand)
+    public static Result<InsertCommandMediation> MediateCommand(InsertCommand insertOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation)
         => Results.AsResult(() =>
         {
             //localize attribute id of initial tableau

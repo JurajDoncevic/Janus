@@ -1,8 +1,9 @@
 ﻿using Janus.Commons.CommandModels;
+using Janus.Communication.Remotes;
 
 namespace Janus.Components;
 
-public interface IComponentCommandManager
+public interface IExecutingCommandManager
 {
     /// <summary>
     /// Executes a command on the component's schema
@@ -18,7 +19,7 @@ public interface IDelegatingCommandManager
     /// Executes a command on a remote component
     /// </summary>
     /// <param name="command"></param>
-    /// <param name="nodeId"></param>
+    /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public Task<Result> RunCommandOnComponent(BaseCommand command, string nodeId);
+    public Task<Result> RunCommandOnComponent(BaseCommand command, RemotePoint remotePoint);
 }
