@@ -36,9 +36,21 @@ public abstract class BaseCommand
     public string Name => _name;
 
     /// <summary>
+    /// Type of command
+    /// </summary>
+    public abstract CommandTypes CommandType { get; }
+
+    /// <summary>
     /// Checks if the command can be run on the given data source
     /// </summary>
     /// <param name="dataSource"></param>
     /// <returns></returns>
     public abstract Result IsValidForDataSource(DataSource dataSource);
+}
+
+public enum CommandTypes
+{
+    DELETE,
+    INSERT,
+    UPDATE
 }

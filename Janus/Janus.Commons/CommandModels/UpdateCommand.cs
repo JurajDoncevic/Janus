@@ -20,6 +20,8 @@ public sealed class UpdateCommand : BaseCommand
     /// </summary>
     public Option<CommandSelection> Selection => _selection;
 
+    public override CommandTypes CommandType => CommandTypes.UPDATE;
+
     /// <summary>
     /// Constructor
     /// </summary>

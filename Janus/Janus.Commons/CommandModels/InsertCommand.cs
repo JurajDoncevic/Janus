@@ -10,6 +10,8 @@ public sealed class InsertCommand : BaseCommand
     /// </summary>
     public Instantiation Instantiation => _instantiation;
 
+    public override CommandTypes CommandType => CommandTypes.INSERT;
+
     /// <summary>
     /// Constructor
     /// </summary>
