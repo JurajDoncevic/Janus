@@ -8,7 +8,7 @@ public class UnregisterNodeDisplay : BaseDisplay
 {
     private readonly ILogger<UnregisterNodeDisplay>? _logger;
 
-    public UnregisterNodeDisplay(MediatorController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public UnregisterNodeDisplay(MediatorManager MediatorManager, ILogger? logger = null) : base(MediatorManager)
     {
         _logger = logger?.ResolveLogger<UnregisterNodeDisplay>();
     }

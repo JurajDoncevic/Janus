@@ -15,22 +15,22 @@ public class MainMenuDisplay : BaseDisplay
     private readonly InputSchemataDisplay _inputSchemataDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
-    public MainMenuDisplay(MediatorController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public MainMenuDisplay(MediatorManager MediatorManager, ILogger? logger = null) : base(MediatorManager)
     {
-        if (mediatorController is null)
+        if (MediatorManager is null)
         {
-            throw new ArgumentNullException(nameof(mediatorController));
+            throw new ArgumentNullException(nameof(MediatorManager));
         }
 
         _logger = logger?.ResolveLogger<MainMenuDisplay>();
 
-        _sendHelloPingDisplay = new SendHelloPingDisplay(mediatorController, logger);
-        _allRegisteredRemotePointsDisplay = new AllRegisteredRemotePointsDisplay(mediatorController, logger);
-        _unregisterNodeDisplay = new UnregisterNodeDisplay(mediatorController, logger);
-        _registerRemotePointDisplay = new RegisterRemotePointDisplay(mediatorController, logger);
-        _schemaInferrenceSelectionDisplay = new SchemaInferrenceSelectionDisplay(mediatorController, logger);
-        _inputSchemataDisplay = new InputSchemataDisplay(mediatorController, logger);
-        _shutDownDisplay = new ShutDownDisplay(mediatorController, logger);
+        _sendHelloPingDisplay = new SendHelloPingDisplay(MediatorManager, logger);
+        _allRegisteredRemotePointsDisplay = new AllRegisteredRemotePointsDisplay(MediatorManager, logger);
+        _unregisterNodeDisplay = new UnregisterNodeDisplay(MediatorManager, logger);
+        _registerRemotePointDisplay = new RegisterRemotePointDisplay(MediatorManager, logger);
+        _schemaInferrenceSelectionDisplay = new SchemaInferrenceSelectionDisplay(MediatorManager, logger);
+        _inputSchemataDisplay = new InputSchemataDisplay(MediatorManager, logger);
+        _shutDownDisplay = new ShutDownDisplay(MediatorManager, logger);
 
     }
 

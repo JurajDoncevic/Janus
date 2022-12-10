@@ -5,7 +5,7 @@ namespace Janus.Mediator.ConsoleApp.Displays;
 public class AllRegisteredRemotePointsDisplay : BaseDisplay
 {
     ILogger<AllRegisteredRemotePointsDisplay>? _logger;
-    public AllRegisteredRemotePointsDisplay(MediatorController mediatorController, ILogger? logger) : base(mediatorController)
+    public AllRegisteredRemotePointsDisplay(MediatorManager MediatorManager, ILogger? logger) : base(MediatorManager)
     {
         _logger = logger?.ResolveLogger<AllRegisteredRemotePointsDisplay>();
     }

@@ -1,15 +1,12 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
 using Janus.Logging;
-using Janus.Mediator.Persistence.LiteDB.DbModels;
-using Janus.Mediator.Persistence.Models;
 using Janus.Serialization.Json;
 using Janus.Serialization.Json.SchemaModels;
 using LiteDB;
-using System;
 
 namespace Janus.Mediator.Persistence.LiteDB;
-public sealed class DataSourcePersistence : IDataSourcePersistence
+public sealed class DataSourcePersistence : IDataSourceInfoPersistence
 {
     private readonly ILiteDatabase _database;
     private readonly DataSourceSerializer _dataSourceSerializer;

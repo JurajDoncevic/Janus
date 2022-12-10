@@ -5,7 +5,7 @@ namespace Janus.Mediator.ConsoleApp.Displays;
 public class ShutDownDisplay : BaseDisplay
 {
     private readonly ILogger<ShutDownDisplay>? _logger;
-    public ShutDownDisplay(MediatorController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public ShutDownDisplay(MediatorManager MediatorManager, ILogger? logger = null) : base(MediatorManager)
     {
         _logger = logger?.ResolveLogger<ShutDownDisplay>();
     }

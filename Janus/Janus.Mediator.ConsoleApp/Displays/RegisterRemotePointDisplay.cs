@@ -9,7 +9,7 @@ public class RegisterRemotePointDisplay : BaseDisplay
 
     private readonly ILogger<RegisterRemotePointDisplay>? _logger;
 
-    public RegisterRemotePointDisplay(MediatorController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public RegisterRemotePointDisplay(MediatorManager MediatorManager, ILogger? logger = null) : base(MediatorManager)
     {
         _logger = logger?.ResolveLogger<RegisterRemotePointDisplay>();
     }

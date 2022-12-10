@@ -4,16 +4,16 @@ using Janus.Mediator.ConsoleApp.Displays;
 namespace Janus.Mediator.ConsoleApp;
 internal class Application
 {
-    private readonly MediatorController _mediatorController;
+    private readonly MediatorManager _mediatorController;
     private readonly MediatorOptions _mediatorOptions;
     private readonly ApplicationOptions _applicationOptions;
     private readonly ILogger<Application>? _logger;
     private readonly MainMenuDisplay? _mainMenuDisplay;
     private readonly UiGreetingDisplay? _cliGreetingDisplay;
 
-    public Application(MediatorController mediatorController, MediatorOptions mediatorOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
+    public Application(MediatorManager MediatorManager, MediatorOptions mediatorOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
     {
-        _mediatorController = mediatorController;
+        _mediatorController = MediatorManager;
         _mediatorOptions = mediatorOptions;
         _applicationOptions = applicationOptions;
         _logger = logger?.ResolveLogger<Application>();

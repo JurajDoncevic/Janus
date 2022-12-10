@@ -23,15 +23,15 @@ public sealed class RemotePointPersistence : IRemotePointPersistence
         _logger = logger?.ResolveLogger<RemotePointPersistence>();
     }
 
-    public Result Delete(string id)
-        => Results.AsResult(() => _database.GetCollection<DbModels.RemotePointInfo>().Delete(id))
-            .Pass(r => _logger?.Info($"Deleted remote point {id} from persistence"),
-                  r => _logger?.Info($"Failed to deleted remote point {id} from persistence"));
+    public Result Delete(string nodeId)
+        => Results.AsResult(() => _database.GetCollection<DbModels.RemotePointInfo>().Delete(nodeId))
+            .Pass(r => _logger?.Info($"Deleted remote point with node id {nodeId} from persistence"),
+                  r => _logger?.Info($"Failed to deleted remote point with node id {nodeId} from persistence"));
 
-    public Result<RemotePoint> Get(string id)
+    public Result<RemotePoint> Get(string nodeId)
         => Results.AsResult(() =>
             _database.GetCollection<DbModels.RemotePointInfo>()
-                     .FindById(id)
+                     .FindById(nodeId)
                      .Identity()
                      .Map(dbModel => (RemotePoint)(dbModel switch
                      {
@@ -41,8 +41,8 @@ public sealed class RemotePointPersistence : IRemotePointPersistence
                          { RemotePointType: RemotePointTypes.UNDETERMINED } => new UndeterminedRemotePoint(dbModel.Address, dbModel.ListenPort),
                          _ => new UndeterminedRemotePoint(dbModel.Address, dbModel.ListenPort)
                      })).Data
-        ).Pass(r => _logger?.Info($"Got remote point {id} from persistence"),
-               r => _logger?.Info($"Failed to get remote point {id} from persistence"));
+        ).Pass(r => _logger?.Info($"Got remote point with node id {nodeId} from persistence"),
+               r => _logger?.Info($"Failed to get remote point with node id {nodeId} from persistence"));
 
     public Result<IEnumerable<RemotePoint>> GetAll()
         => Results.AsResult(() =>

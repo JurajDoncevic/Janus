@@ -3,7 +3,7 @@
 namespace Janus.Mediator.ConsoleApp.Displays;
 public abstract class BaseDisplay
 {
-    protected MediatorController _mediatorController;
+    protected MediatorManager _mediatorController;
     public abstract string Title { get; }
     protected abstract Task<Result> Display();
 
@@ -26,8 +26,8 @@ public abstract class BaseDisplay
         return result;
     }
 
-    protected BaseDisplay(MediatorController mediatorController)
+    protected BaseDisplay(MediatorManager MediatorManager)
     {
-        _mediatorController = mediatorController ?? throw new ArgumentNullException(nameof(mediatorController));
+        _mediatorController = MediatorManager ?? throw new ArgumentNullException(nameof(MediatorManager));
     }
 }

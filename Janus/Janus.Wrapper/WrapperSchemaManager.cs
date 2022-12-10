@@ -8,21 +8,17 @@ namespace Janus.Wrapper;
 public class WrapperSchemaManager : IComponentSchemaManager
 {
     private readonly SchemaInferrer _schemaInferrer;
-    private DataSource? _currentSchema;
+    private Option<DataSource> _currentSchema;
     public WrapperSchemaManager(SchemaInferrer schemaInferrer)
     {
         _schemaInferrer = schemaInferrer;
     }
 
-    public Task<Result<DataSource>> GetCurrentOutputSchema()
-        => Task.FromResult(
-            _currentSchema != null
-                ? Results.OnSuccess(_currentSchema)
-                : Results.OnFailure<DataSource>("No schema loaded currently"));
+    public Option<DataSource> GetCurrentOutputSchema()
+        => _currentSchema;
 
     public Task<Result<DataSource>> ReloadOutputSchema()
         => Task.FromResult(
             _schemaInferrer.InferSchemaModel()
-                .Pass(result => _currentSchema = result.Data));
-
+                .Pass(result => _currentSchema = Option<DataSource>.Some(result.Data)));
 }

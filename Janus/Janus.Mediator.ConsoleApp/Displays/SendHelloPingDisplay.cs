@@ -7,11 +7,11 @@ namespace Janus.Mediator.ConsoleApp.Displays;
 public class SendHelloPingDisplay : BaseDisplay
 {
     private readonly ILogger<SendHelloPingDisplay>? _logger;
-    public SendHelloPingDisplay(MediatorController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public SendHelloPingDisplay(MediatorManager MediatorManager, ILogger? logger = null) : base(MediatorManager)
     {
-        if (mediatorController is null)
+        if (MediatorManager is null)
         {
-            throw new ArgumentNullException(nameof(mediatorController));
+            throw new ArgumentNullException(nameof(MediatorManager));
         }
 
         _logger = logger?.ResolveLogger<SendHelloPingDisplay>();

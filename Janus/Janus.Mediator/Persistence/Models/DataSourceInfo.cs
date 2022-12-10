@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Janus.Mediator.Persistence.Models;
-public class DataSourceInfo
+public sealed class DataSourceInfo
 {
     private readonly DataSource _mediatedDataSource;
     private readonly string _mediationScript;

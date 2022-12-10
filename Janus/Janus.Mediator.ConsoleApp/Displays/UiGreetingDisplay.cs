@@ -4,7 +4,7 @@ namespace Janus.Mediator.ConsoleApp.Displays;
 public class UiGreetingDisplay : BaseDisplay
 {
     private readonly MediatorOptions _mediatorOptions;
-    public UiGreetingDisplay(MediatorController mediatorController, MediatorOptions mediatorOptions) : base(mediatorController)
+    public UiGreetingDisplay(MediatorManager MediatorManager, MediatorOptions mediatorOptions) : base(MediatorManager)
     {
         _mediatorOptions = mediatorOptions;
     }

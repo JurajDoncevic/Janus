@@ -1,4 +1,5 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Communication.Remotes;
 using Janus.Logging;
 using Sharprompt;
@@ -7,7 +8,7 @@ namespace Janus.Mediator.ConsoleApp.Displays;
 public class SchemaInferrenceSelectionDisplay : BaseDisplay
 {
     private readonly ILogger<SchemaInferrenceSelectionDisplay>? _logger;
-    public SchemaInferrenceSelectionDisplay(MediatorController mediatorController, ILogger? logger) : base(mediatorController)
+    public SchemaInferrenceSelectionDisplay(MediatorManager MediatorManager, ILogger? logger) : base(MediatorManager)
     {
         _logger = logger?.ResolveLogger<SchemaInferrenceSelectionDisplay>();
     }
@@ -24,7 +25,7 @@ public class SchemaInferrenceSelectionDisplay : BaseDisplay
                     conf.Items = _mediatorController.GetRegisteredRemotePoints();
                     conf.Minimum = 0;
                     conf.TextSelector = rp => rp.ToString();
-                    conf.DefaultValues = _mediatorController.SchemaInferredRemotePoints;
+                    conf.DefaultValues = _mediatorController.LoadedSchemaRemotePoints;
                 });
 
 
@@ -32,11 +33,12 @@ public class SchemaInferrenceSelectionDisplay : BaseDisplay
 
             var overallResult =
                 selectedRemotePoints.Count() > 0
-                ? selectedRemotePoints.Select(_mediatorController.AddRemotePointToSchemaInferrence)
-                    .Aggregate(
-                        (result1, result2) => result1.IsSuccess && result2.IsSuccess
-                                                ? Results.OnSuccess(result1.Message + "\n" + result2.Message)
-                                                : Results.OnFailure(result1.Message + "\n" + result2.Message))
+                ? (await Task.WhenAll(selectedRemotePoints.Select(_mediatorController.IncludeInLoadedSchemas)))
+                    .Fold(Results.OnSuccess(), 
+                        (res1, res2) => 
+                            res1.IsSuccess && res2.IsSuccess
+                                ? Results.OnSuccess(res1.Message + "\n" + res2.Message)
+                                : Results.OnFailure(res1.Message + "\n" + res2.Message))
                 : Results.OnSuccess();
             return await Task.FromResult(overallResult);
         });

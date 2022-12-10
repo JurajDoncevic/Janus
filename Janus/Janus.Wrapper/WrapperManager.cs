@@ -1,8 +1,10 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
+using Janus.Commons.SchemaModels.Building;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
@@ -13,7 +15,7 @@ using static FunctionalExtensions.Base.OptionExtensions;
 namespace Janus.Wrapper;
 public class WrapperManager
     <TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
-    : IComponentController
+    : IComponentManager
     where TLocalQuery : LocalQuery<TLocalSelection, TLocalJoining, TLocalProjection>
     where TDeleteCommand : LocalDelete<TLocalSelection>
     where TInsertCommand : LocalInsert<TLocalInstantiation>
@@ -51,12 +53,15 @@ public class WrapperManager
         var query = e.ReceivedMessage.Query;
 
         _schemaManager.GetCurrentOutputSchema()
-            .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
-            .Bind(result => _queryManager.RunQuery(query))
-            .Match(
-                queryResult => _communicationNode.SendQueryResponse(exchangeId, queryResult, fromPoint),
-                message => _communicationNode.SendQueryResponse(exchangeId, null, fromPoint, $"Query execution error on {_communicationNode.Options.NodeId}:" + message)
-            );
+                      .Match(
+                        async dataSource => await Task.FromResult(query.IsValidForDataSource(dataSource))
+                                                      .Bind(result => _queryManager.RunQuery(query))
+                                                      .Match(
+                                                            queryResult => _communicationNode.SendQueryResponse(exchangeId, queryResult, fromPoint),
+                                                            message => _communicationNode.SendQueryResponse(exchangeId, null, fromPoint, $"Query execution error on {_communicationNode.Options.NodeId}:" + message)
+                                                       ),
+                        async () => Task.FromResult(Results.OnFailure("No schema generated"))
+                        );
     }
 
     private void CommunicationNode_CommandRequestReceived(object? sender, Communication.Nodes.Events.CommandReqEventArgs e)
@@ -66,21 +71,24 @@ public class WrapperManager
         var command = e.ReceivedMessage.Command;
 
         _schemaManager.GetCurrentOutputSchema()
-            .Bind(dataSource => Task.FromResult(command.IsValidForDataSource(dataSource)))
-            .Bind(result => _commandManager.RunCommand(command))
-            .Match(
-                message => _communicationNode.SendCommandResponse(exchangeId, true, fromPoint, message),
-                message => _communicationNode.SendCommandResponse(exchangeId, false, fromPoint, $"Command execution error on {_communicationNode.Options.NodeId}:" + message)
-            );
+                      .Match(
+                            async dataSource => await Task.FromResult(command.IsValidForDataSource(dataSource))
+                                                          .Bind(result => _commandManager.RunCommand(command))
+                                                          .Match(
+                                                              message => _communicationNode.SendCommandResponse(exchangeId, true, fromPoint, message),
+                                                              message => _communicationNode.SendCommandResponse(exchangeId, false, fromPoint, $"Command execution error on {_communicationNode.Options.NodeId}:" + message)
+                                                          ),
+                            async () => Task.FromResult(Results.OnFailure("No schema generated"))
+                          );
     }
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;
 
     public async Task<Result<DataSource>> GetSchema()
-        => await (await _schemaManager.GetCurrentOutputSchema())
-            .Match(async (DataSource dataSource) => await Task.FromResult(Results.OnSuccess(dataSource)),
-                   async message => await _schemaManager.ReloadOutputSchema());
+        => await (_schemaManager.GetCurrentOutputSchema()
+                                .Match(async (DataSource dataSource) => await Task.FromResult(Results.OnSuccess(dataSource)),
+                                       async () => await _schemaManager.ReloadOutputSchema()));
 
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
@@ -89,14 +97,20 @@ public class WrapperManager
     public async Task<Result> RunCommand(BaseCommand command)
         => await _schemaManager
             .GetCurrentOutputSchema()
-            .Bind(dataSource => Task.FromResult(command.IsValidForDataSource(dataSource)))
-            .Bind(async validity => await _commandManager.RunCommand(command));
+            .Match(
+                async dataSource => await Task.FromResult(command.IsValidForDataSource(dataSource))
+                                              .Bind(async validity => await _commandManager.RunCommand(command)),
+                async () => Results.OnFailure("No schema generated")
+            );
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _schemaManager
             .GetCurrentOutputSchema()
-            .Bind(dataSource => Task.FromResult(query.IsValidForDataSource(dataSource)))
-            .Bind(async validity => await _queryManager.RunQuery(query));
+            .Match(
+                async dataSource => await Task.FromResult(query.IsValidForDataSource(dataSource))
+                                              .Bind(async validity => await _queryManager.RunQuery(query)),
+                async () => Results.OnFailure<TabularData>("No schema generated")
+            );
 
     public async Task<Result> SaveRegisteredRemotePoints(string filePath)
         => await Results.AsResult(async () =>
