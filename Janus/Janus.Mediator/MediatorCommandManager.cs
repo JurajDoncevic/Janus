@@ -2,6 +2,7 @@
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
+using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
@@ -38,11 +39,17 @@ public sealed class MediatorCommandManager : IDelegatingCommandManager
                 return Results.OnFailure<TabularData>($"No mediation created");
             }
 
+            var commandValidation = command.IsValidForDataSource(currentMediatedSchema.Value);
+            if (!commandValidation)
+            {
+                return Results.OnFailure<TabularData>($"Command {command.Name} is not valid on mediated schema {currentMediatedSchema.Value.Name}: {commandValidation.Message}");
+            }
+
             return await (command switch
             {
-                { CommandType: CommandTypes.DELETE } => RunDeleteCommand((DeleteCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithLoadedDataSourceName),
-                { CommandType: CommandTypes.INSERT } => RunInsertCommand((InsertCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithLoadedDataSourceName),
-                { CommandType: CommandTypes.UPDATE } => RunUpdateCommand((UpdateCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithLoadedDataSourceName),
+                { CommandType: CommandTypes.DELETE } => RunDeleteCommand((DeleteCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithDataSourceName),
+                { CommandType: CommandTypes.INSERT } => RunInsertCommand((InsertCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithDataSourceName),
+                { CommandType: CommandTypes.UPDATE } => RunUpdateCommand((UpdateCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithDataSourceName),
                 _ => Task.FromResult(Results.OnFailure($"Unknown command {command.Name} type given for running."))
             });
         })).Pass(

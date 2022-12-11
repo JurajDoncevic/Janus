@@ -41,6 +41,12 @@ public sealed class MediatorQueryManager : IDelegatingQueryManager
                 return Results.OnFailure<TabularData>($"No mediation created");
             }
 
+            var queryValidation = query.IsValidForDataSource(currentMediatedSchema.Value);
+            if (!queryValidation)
+            {
+                return Results.OnFailure<TabularData>($"Query {query.Name} is not valid on mediated schema {currentMediatedSchema.Value.Name}: {queryValidation.Message}");
+            }
+
             // mediate the query into query partitions
             var queryMediationResult = QueryModelMediation.MediateQuery(currentMediatedSchema.Value, currentMediation.Value, query);
             if (!queryMediationResult)
@@ -53,7 +59,7 @@ public sealed class MediatorQueryManager : IDelegatingQueryManager
             var remoteQueryTasks = new List<Task<Result<TabularData>>>();
             foreach (var partitionedQuery in queryMediation.PartitionedQueries)
             {
-                var targetRemotePoint = schemaManager.RemotePointWithLoadedDataSourceName[partitionedQuery.Key.DataSourceName];
+                var targetRemotePoint = schemaManager.RemotePointWithDataSourceName[partitionedQuery.Key.DataSourceName];
 
                 var remoteQueryTask = _communicationNode.SendQueryRequest(query, targetRemotePoint);
 

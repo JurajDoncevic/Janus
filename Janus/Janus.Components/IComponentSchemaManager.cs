@@ -29,24 +29,24 @@ public interface IDelegatingSchemaManager
     public Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint);
 
     /// <summary>
-    /// Gets all schemata from remote points assigned for schema inferrence
+    /// Gets all schemas from all remote points
     /// </summary>
     /// <returns></returns>
-    public Task<IEnumerable<Result<DataSource>>> GetSchemasFromComponents();
+    public Task<Dictionary<RemotePoint, Result<DataSource>>> GetSchemasFromComponents();
 
     /// <summary>
     /// Include a data source schema from a remote point in the loaded schemas. Data sources with same names can't be loaded at the same time
     /// </summary>
     /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public Task<Result<DataSource>> IncludeInLoadedSchemas(RemotePoint remotePoint);
+    public Task<Result<DataSource>> LoadSchema(RemotePoint remotePoint);
 
     /// <summary>
     /// Removes a remote point from schema inferrence
     /// </summary>
     /// <param name="remotePoint"></param>
     /// <returns></returns>
-    public Result ExcludeFromLoadedSchemas(RemotePoint remotePoint);
+    public Result UnloadSchema(RemotePoint remotePoint);
 
     /// <summary>
     /// Reloads all loaded schemas

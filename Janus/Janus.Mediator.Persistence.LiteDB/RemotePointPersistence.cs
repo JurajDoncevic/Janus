@@ -3,10 +3,11 @@ using FunctionalExtensions.Base.Resulting;
 using Janus.Communication.Remotes;
 using Janus.Components.Persistence;
 using Janus.Logging;
+using Janus.Mediator.Persistence.LiteDB.DbModels;
 using LiteDB;
 
 namespace Janus.Mediator.Persistence.LiteDB;
-public sealed class RemotePointPersistence : IRemotePointPersistence
+public sealed class RemotePointPersistence : IRemotePointPersistence, IDisposable
 {
     private readonly ILiteDatabase _database;
     private readonly ILogger<RemotePointPersistence>? _logger;
@@ -72,4 +73,16 @@ public sealed class RemotePointPersistence : IRemotePointPersistence
             ).Pass(r => _logger?.Info($"Inserted remote point {model} into persistence"),
                    r => _logger?.Info($"Failed insert remote point {model} into persistence"));
 
+    public void Dispose()
+    {
+        _database?.Dispose();
+    }
+
+    public bool Exists(string id)
+        => Results.AsResult(() => _database.GetCollection<RemotePointInfo>().Exists(id))
+                  .Match(
+                    r => true,
+                    r => false,
+                    r => false
+                    );
 }

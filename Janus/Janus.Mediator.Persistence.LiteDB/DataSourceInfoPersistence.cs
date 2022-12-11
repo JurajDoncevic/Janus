@@ -1,18 +1,21 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
+using Janus.Commons.SchemaModels;
+using Janus.Communication.Remotes;
 using Janus.Logging;
+using Janus.Mediator.Persistence.LiteDB.DbModels;
 using Janus.Serialization.Json;
 using Janus.Serialization.Json.SchemaModels;
 using LiteDB;
 
 namespace Janus.Mediator.Persistence.LiteDB;
-public sealed class DataSourcePersistence : IDataSourceInfoPersistence
+public sealed class DataSourceInfoPersistence : IDataSourceInfoPersistence, IDisposable
 {
     private readonly ILiteDatabase _database;
     private readonly DataSourceSerializer _dataSourceSerializer;
-    private readonly ILogger<DataSourcePersistence>? _logger;
+    private readonly ILogger<DataSourceInfoPersistence>? _logger;
 
-    public DataSourcePersistence(ILiteDatabase liteDatabase, JsonSerializationProvider jsonSerializationProvider, ILogger? logger = null)
+    public DataSourceInfoPersistence(ILiteDatabase liteDatabase, JsonSerializationProvider jsonSerializationProvider, ILogger? logger = null)
     {
         if (jsonSerializationProvider is null)
         {
@@ -21,10 +24,10 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
 
         _database = liteDatabase ?? throw new ArgumentNullException(nameof(liteDatabase));
         _dataSourceSerializer = (DataSourceSerializer)jsonSerializationProvider.DataSourceSerializer;
-        _logger = logger?.ResolveLogger<DataSourcePersistence>();
+        _logger = logger?.ResolveLogger<DataSourceInfoPersistence>();
     }
 
-    public DataSourcePersistence(string databaseFilePath, JsonSerializationProvider jsonSerializationProvider, ILogger? logger = null)
+    public DataSourceInfoPersistence(string databaseFilePath, JsonSerializationProvider jsonSerializationProvider, ILogger? logger = null)
     {
         if (string.IsNullOrWhiteSpace(databaseFilePath))
         {
@@ -38,7 +41,7 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
 
         _database = new LiteDatabase(databaseFilePath);
         _dataSourceSerializer = (DataSourceSerializer)jsonSerializationProvider.DataSourceSerializer;
-        _logger = logger?.ResolveLogger<DataSourcePersistence>();
+        _logger = logger?.ResolveLogger<DataSourceInfoPersistence>();
     }
 
     public Result Delete(string version)
@@ -63,10 +66,10 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
                 return mediatedDataSourceDeserialization.Map(_ => (Models.DataSourceInfo)null!);
             }
 
-            var loadedDataSourcesDeserializations = 
-                dbModel.LoadedDataSourcesJsons.Map(json => _dataSourceSerializer.Deserialize(json))
-                       .Fold(Results.OnSuccess(Enumerable.Empty<Commons.SchemaModels.DataSource>()),
-                        (deserialization, results) => deserialization.Bind(dataSource => results.Map(_ => _.Append(dataSource)))
+            var loadedDataSourcesDeserializations =
+                dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Key.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value))
+                       .Fold(Results.OnSuccess<Dictionary<RemotePoint, DataSource>>(new()),
+                        (deserialization, results) => results.Bind(dict => deserialization.Value.Map(deserRes => dict.Append(KeyValuePair.Create(deserialization.Key, deserRes)).ToDictionary(_ => _.Key, _ => _.Value)))
                        );
 
             if (!loadedDataSourcesDeserializations)
@@ -99,9 +102,9 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
                 }
 
                 var loadedDataSourcesDeserializations =
-                    dbModel.LoadedDataSourcesJsons.Map(json => _dataSourceSerializer.Deserialize(json))
-                           .Fold(Results.OnSuccess(Enumerable.Empty<Commons.SchemaModels.DataSource>()),
-                            (deserialization, results) => deserialization.Bind(dataSource => results.Map(_ => _.Append(dataSource)))
+                    dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Key.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value))
+                           .Fold(Results.OnSuccess<Dictionary<RemotePoint, DataSource>>(new()),
+                            (deserialization, results) => results.Bind(dict => deserialization.Value.Map(deserRes => dict.Append(KeyValuePair.Create(deserialization.Key, deserRes)).ToDictionary(_ => _.Key, _ => _.Value)))
                            );
 
                 if (!loadedDataSourcesDeserializations)
@@ -136,9 +139,9 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
             }
 
             var loadedDataSourcesDeserializations =
-                dbModel.LoadedDataSourcesJsons.Map(json => _dataSourceSerializer.Deserialize(json))
-                       .Fold(Results.OnSuccess(Enumerable.Empty<Commons.SchemaModels.DataSource>()),
-                        (deserialization, results) => deserialization.Bind(dataSource => results.Map(_ => _.Append(dataSource)))
+                dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Key.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value))
+                       .Fold(Results.OnSuccess<Dictionary<RemotePoint, DataSource>>(new()),
+                        (deserialization, results) => results.Bind(dict => deserialization.Value.Map(deserRes => dict.Append(KeyValuePair.Create(deserialization.Key, deserRes)).ToDictionary(_ => _.Key, _ => _.Value)))
                        );
 
             if (!loadedDataSourcesDeserializations)
@@ -147,7 +150,7 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
             }
 
             return new Models.DataSourceInfo(mediatedDataSourceDeserialization.Data, dbModel.MediationScript, loadedDataSourcesDeserializations.Data);
-        }).Pass(r => _logger?.Info($"Got latest data source info persisted on {r.Data.CreatedOn } with version {r.Data.MediatedDataSource.Version} from persistence"),
+        }).Pass(r => _logger?.Info($"Got latest data source info persisted on {r.Data.CreatedOn} with version {r.Data.MediatedDataSource.Version} from persistence"),
                 r => _logger?.Info($"Failed to get latest data source info from persistence"));
 
     public Result Insert(Models.DataSourceInfo model)
@@ -158,8 +161,10 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
                 .Bind(_ =>
                 {
                     return model.LoadedDataSources
-                                .Map(_dataSourceSerializer.Serialize)
-                                .Fold(Results.OnSuccess(Enumerable.Empty<string>()), (serialization, resultJsons) => serialization.Bind(s => resultJsons.Map(r => r.Append(s))))
+                                .ToDictionary(kv => kv.Key, kv => _dataSourceSerializer.Serialize(kv.Value))
+                                .Fold(
+                                    Results.OnSuccess<Dictionary<RemotePoint, string>>(new()),
+                                    (serialization, resultJsons) => resultJsons.Bind(resJson => serialization.Value.Map(serRes => resJson.Append(KeyValuePair.Create(serialization.Key, serRes)).ToDictionary(_ => _.Key, _ => _.Value))))
                                 .Map(jsons => (mediatedDataSourceJson: _, loadedDataSourcesJsons: jsons));
                 });
 
@@ -168,7 +173,20 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
                 return Results.OnFailure($"Failed to serialize mediated data source: {serializations.Message}");
             }
 
-            var dbModel = new DbModels.DataSourceInfo(model.MediatedDataSource.Version, serializations.Data.mediatedDataSourceJson, model.MediationScript, serializations.Data.loadedDataSourcesJsons);
+            var loadedDataSources =
+                serializations.Data.loadedDataSourcesJsons
+                .ToDictionary(
+                    _ => new RemotePointInfo()
+                    {
+                        NodeId = _.Key.NodeId,
+                        Address = _.Key.Address,
+                        ListenPort = _.Key.Port,
+                        RemotePointType = _.Key.RemotePointType
+                    },
+                    _ => _.Value
+                    );
+
+            var dbModel = new DbModels.DataSourceInfo(model.MediatedDataSource.Version, serializations.Data.mediatedDataSourceJson, model.MediationScript, loadedDataSources);
 
             return Results.AsResult(
                 () => !_database.GetCollection<DbModels.DataSourceInfo>()
@@ -177,4 +195,17 @@ public sealed class DataSourcePersistence : IDataSourceInfoPersistence
 
         }).Pass(r => _logger?.Info($"Inserted data source info with version {model.MediatedDataSource.Version} into persistence"),
                 r => _logger?.Info($"Failed to insert data source info into persistence: {r.Message}"));
+
+    public bool Exists(string id)
+        => Results.AsResult(() => _database.GetCollection<DataSourceInfo>().Exists(id))
+                  .Match(
+                    r => true,
+                    r => false,
+                    r => false
+                    );
+
+    public void Dispose()
+    {
+        _database?.Dispose();
+    }
 }

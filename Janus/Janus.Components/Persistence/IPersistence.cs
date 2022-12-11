@@ -30,4 +30,10 @@ public interface IPersistence<TId, TModel>
     /// <param name="id"></param>
     /// <returns></returns>
     Result Delete(TId id);
+    /// <summary>
+    /// Checks if a model with given id exists in persistence
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    bool Exists(TId id);
 }

@@ -29,11 +29,11 @@ public class SchemaInferrenceSelectionDisplay : BaseDisplay
                 });
 
 
-            _mediatorController.ClearRemotePointsFromSchemaInferrence();
+            _mediatorController.UnloadAllSchemas();
 
             var overallResult =
                 selectedRemotePoints.Count() > 0
-                ? (await Task.WhenAll(selectedRemotePoints.Select(_mediatorController.IncludeInLoadedSchemas)))
+                ? (await Task.WhenAll(selectedRemotePoints.Select(_mediatorController.LoadSchemaFrom)))
                     .Fold(Results.OnSuccess(), 
                         (res1, res2) => 
                             res1.IsSuccess && res2.IsSuccess

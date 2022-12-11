@@ -7,6 +7,7 @@ using Janus.Components;
 using Janus.Logging;
 using Janus.Mediation;
 using Janus.Mediation.SchemaMediationModels;
+using System.Runtime.InteropServices;
 
 namespace Janus.Mediator;
 public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegatingSchemaManager, IMediatingSchemaManager
@@ -33,7 +34,7 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
     /// <summary>
     /// Remote points of the currently loaded data source schemas by data source name
     /// </summary>
-    public IReadOnlyDictionary<string, RemotePoint> RemotePointWithLoadedDataSourceName => _loadedDataSources.ToDictionary(kv => kv.Key, kv => kv.Value.remotePoint);
+    public IReadOnlyDictionary<string, RemotePoint> RemotePointWithDataSourceName => _loadedDataSources.ToDictionary(kv => kv.Key, kv => kv.Value.remotePoint);
     /// <summary>
     /// Currently loaded data source schemas by their remote point
     /// </summary>
@@ -46,8 +47,19 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
     /// Current mediated schema
     /// </summary>
     public Option<DataSource> CurrentMediatedSchema => _currentMediatedSchema;
+    /// <summary>
+    /// List of currently loaded data sources
+    /// </summary>
+    public IReadOnlyList<DataSource> LoadedDataSources => _loadedDataSources.Values.Map(v => v.dataSource).ToList();
 
-    public Result ExcludeFromLoadedSchemas(RemotePoint remotePoint)
+
+    public Result UnloadSchema(string dataSourceName)
+        => Option<RemotePoint>.Some(RemotePointWithDataSourceName[dataSourceName])
+            .Match(
+            rp => UnloadSchema(rp),
+            () => Results.OnFailure($"Data source schema with name {dataSourceName} not loaded.")
+            );
+    public Result UnloadSchema(RemotePoint remotePoint)
         => Results.AsResult(() =>
         {
             if (!DataSourceFromRemotePoint.ContainsKey(remotePoint))
@@ -62,7 +74,10 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
                 : Results.OnFailure($"Failed to remove {remotePoint} from loaded data sources.");
         });
 
-    public async Task<Result<DataSource>> IncludeInLoadedSchemas(RemotePoint remotePoint)
+    public Result UnloadSchemas()
+        => Results.AsResult(() => { _loadedDataSources.Clear(); return true; });
+
+    public async Task<Result<DataSource>> LoadSchema(RemotePoint remotePoint)
         => await Results.AsResult(async () =>
         {
             if (remotePoint.RemotePointType == RemotePointTypes.UNDETERMINED || remotePoint.RemotePointType == RemotePointTypes.MASK)
@@ -71,17 +86,23 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
                 return Results.OnFailure<DataSource>("Can't load schema from MASK or UNDETERMINED component type.");
             }
 
-            return await _communicationNode.SendSchemaRequest(remotePoint);
+            var schemaReqResult = await _communicationNode.SendSchemaRequest(remotePoint);
+            if (schemaReqResult)
+            {
+                _loadedDataSources.Add(schemaReqResult.Data.Name, (remotePoint, schemaReqResult.Data));
+            }
+
+            return schemaReqResult;
         });
 
     public async Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint)
         => await _communicationNode.SendSchemaRequest(remotePoint);
 
-    public async Task<IEnumerable<Result<DataSource>>> GetSchemasFromComponents()
-        => await Task.WhenAll(
+    public async Task<Dictionary<RemotePoint, Result<DataSource>>> GetSchemasFromComponents()
+        => (await Task.WhenAll(
             _communicationNode.RemotePoints
-                .Map(rp => _communicationNode.SendSchemaRequest(rp))
-            );
+                .Map(async rp => (remotePoint: rp, schemaResult: await _communicationNode.SendSchemaRequest(rp)))  
+            )).ToDictionary(kv => kv.remotePoint, kv => kv.schemaResult);
 
     public async Task<IEnumerable<Result<DataSource>>> ReloadSchemas()
         => await Task.WhenAll(

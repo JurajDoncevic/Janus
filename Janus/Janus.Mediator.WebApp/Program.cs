@@ -11,6 +11,11 @@ using Janus.Serialization.Avro;
 using Janus.Serialization.MongoBson;
 using Janus.Serialization.Bson;
 using Janus.Serialization.Protobufs;
+using Janus.Mediator.Persistence;
+using Janus.Mediator.Persistence.LiteDB;
+using Janus.Components.Persistence;
+using Janus.Serialization.Json;
+using LiteDB;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +95,13 @@ mediatorConfiguration.NetworkAdapterType switch
 builder.Services.AddSingleton<MediatorQueryManager>();
 builder.Services.AddSingleton<MediatorCommandManager>();
 builder.Services.AddSingleton<MediatorSchemaManager>();
+
+builder.Services.AddSingleton<ILiteDatabase, LiteDatabase>(services => new LiteDatabase(mediatorConfiguration.PersistenceConnectionString));
+builder.Services.AddSingleton<JsonSerializationProvider>();
+builder.Services.AddSingleton<IDataSourceInfoPersistence, DataSourceInfoPersistence>();
+builder.Services.AddSingleton<IRemotePointPersistence, RemotePointPersistence>();
+builder.Services.AddSingleton<MediatorPersistenceProvider>();
+
 builder.Services.AddSingleton<MediatorManager>();
 builder.Services.AddSingleton<MediatorOptions>(mediatorConfiguration.ToMediatorOptions());
 

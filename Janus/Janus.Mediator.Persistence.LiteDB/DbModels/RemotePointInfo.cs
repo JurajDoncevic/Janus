@@ -3,6 +3,7 @@ using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,4 +29,13 @@ internal sealed class RemotePointInfo
     {
         return HashCode.Combine(NodeId, Address, ListenPort, RemotePointType);
     }
+
+    public RemotePoint ToRemotePoint()
+        => RemotePointType switch
+        {
+            RemotePointTypes.MASK => new MaskRemotePoint(NodeId, Address, ListenPort),
+            RemotePointTypes.MEDIATOR => new MediatorRemotePoint(NodeId, Address, ListenPort),
+            RemotePointTypes.WRAPPER => new WrapperRemotePoint(NodeId, Address, ListenPort),
+            _ => new UndeterminedRemotePoint(Address, ListenPort)
+        };
 }
