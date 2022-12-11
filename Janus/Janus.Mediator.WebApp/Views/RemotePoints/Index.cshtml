@@ -1,13 +1,14 @@
 ﻿@model IEnumerable<Janus.Communication.Remotes.RemotePoint>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Remote points";
 }
 
-<h1>Index</h1>
+<h2>Registered remote points</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="RegisterRemotePoint" class="btn btn-primary">Register a new remote point</a>
+    <a asp-action="PingRemotePoint" class="btn btn-primary">Send HELLO to a remote point</a>
 </p>
 <table class="table">
     <thead>
