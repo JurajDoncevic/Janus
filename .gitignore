@@ -373,3 +373,4 @@ FodyWeavers.xsd
 
 **/wwwroot/lib
 **/appsettings.*.json
+/Janus/Janus.Mediator.WebApp/mediator_database.db
