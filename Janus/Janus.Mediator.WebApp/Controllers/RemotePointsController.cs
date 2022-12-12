@@ -16,7 +16,7 @@ public class RemotePointsController : Controller
         _logger = logger?.ResolveLogger<RemotePointsController>();
     }
 
-    public IActionResult Index(OperationOutcomeViewModel? operationOutcome = null)
+    public IActionResult Index()
     {
         var remotePoints = _mediatorManager.GetRegisteredRemotePoints()
                                            .Map(rp => new RemotePointViewModel()
@@ -27,6 +27,7 @@ public class RemotePointsController : Controller
                                                RemotePointType = rp.RemotePointType
                                            });
 
+        var operationOutcome = JsonSerializer.Deserialize<OperationOutcomeViewModel>(TempData["OperationOutcome"]?.ToString() ?? "null");
         var viewModel = new RemotePointsListViewModel()
         {
             RemotePoints = remotePoints.ToList(),
@@ -47,7 +48,9 @@ public class RemotePointsController : Controller
             Message = result.Message
         };
 
-        return RedirectToAction(nameof(Index), operationOutcome);
+        TempData["OperationOutcome"] = JsonSerializer.Serialize(operationOutcome);
+
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
@@ -62,7 +65,40 @@ public class RemotePointsController : Controller
             Message = result.Message
         };
 
-        return RedirectToAction(nameof(Index), nameof(RemotePointsController), operationOutcome);
+        TempData["OperationOutcome"] = JsonSerializer.Serialize(operationOutcome);
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UnregisterRemotePoint([FromForm] string nodeId)
+    {
+        var remotePoint = _mediatorManager.GetRegisteredRemotePoints()
+                                          .FirstOrDefault(x => x.NodeId == nodeId);
+        // no such remote point found
+        if(remotePoint is null)
+        {
+            TempData["OperationOutcome"] = JsonSerializer.Serialize(
+                new OperationOutcomeViewModel()
+                {
+                    IsSuccess = false,
+                    Message = $"No remote point with id {nodeId} registered."
+                });
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        var result = await _mediatorManager.UnregisterRemotePoint(remotePoint);
+
+        var operationOutcome = new OperationOutcomeViewModel()
+        {
+            IsSuccess = result.IsSuccess,
+            Message = result.Message
+        };
+
+        TempData["OperationOutcome"] = JsonSerializer.Serialize(operationOutcome);
+
+        return RedirectToAction(nameof(Index));
     }
 
 }

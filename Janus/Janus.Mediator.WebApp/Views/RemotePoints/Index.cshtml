@@ -65,7 +65,11 @@
                         @Html.DisplayFor(modelItem => item.RemotePointType)
                     </td>
                     <td>
-                        <a asp-action="UnregisterRemotePoint" asp-route-id="@item.NodeId" class="btn btn-danger">Send BYE</a>
+                        <form method="post" asp-action="UnregisterRemotePoint" asp-controller="RemotePoints">
+                            <input type="hidden" name="nodeId" value="@item.NodeId"/>
+                            <input type="submit" class="btn btn-danger" value="Send BYE"/>
+                        </form>
+                        
                     </td>
                 </tr>
             }
