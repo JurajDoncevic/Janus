@@ -62,7 +62,7 @@
                         @Html.DisplayFor(modelItem => item.Port)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => Enum.GetName(item.RemotePointType))
+                        @Html.DisplayFor(modelItem => item.RemotePointType)
                     </td>
                     <td>
                         <a asp-action="UnregisterRemotePoint" asp-route-id="@item.NodeId" class="btn btn-danger">Send BYE</a>
