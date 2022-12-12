@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Janus.Mediator.WebApp.ViewModels;
 
-public class MediatorInfoViewModel
+internal sealed class MediatorInfoViewModel
 {
     [Display(Name = "Communication node id")]
     public string NodeId { get; init; } = string.Empty;

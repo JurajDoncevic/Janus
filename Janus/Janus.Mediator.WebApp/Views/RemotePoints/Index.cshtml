@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Janus.Communication.Remotes.RemotePoint>
+﻿@model IEnumerable<RemotePointViewModel>
 
 @{
     ViewData["Title"] = "Remote points";
@@ -6,47 +6,73 @@
 
 <h2>Registered remote points</h2>
 
-<p>
-    <a asp-action="RegisterRemotePoint" class="btn btn-primary">Register a new remote point</a>
-    <a asp-action="PingRemotePoint" class="btn btn-primary">Send HELLO to a remote point</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NodeId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Address)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Port)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RemotePointType)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NodeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Port)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Enum.GetName(item.RemotePointType))
-            </td>
-            <td>
-                <a asp-action="UnregisterRemotePoint" asp-route-id="@item.NodeId" class="btn btn-danger">Send BYE</a>
-            </td>
-        </tr>
+<div class="row">
+    @if(ViewBag.OperationOutcome is not null)
+{
+    if (ViewBag.OperationOutcome.IsSuccess)
+    {
+        <span class="alert alert-success">@ViewBag.OperationOutcome.Message</span>
+    }
+    else
+    {
+        <span class="alert alert-warning">@ViewBag.OperationOutcome.Message</span>
+    }
 }
-    </tbody>
-</table>
+</div>
+
+
+
+<div class="row">
+    <form class="d-inline" method="post">
+        <input name="address" type="text" />
+        <input name="port" type="number" />
+        <input type="submit" value="Register" asp-action="RegisterRemotePoint" class="btn btn-primary" />
+        <input type="submit" value="Send HELLO" asp-action="PingRemotePoint" class="btn btn-primary" />
+    </form>
+</div>
+
+<hr />
+<div class="row">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.NodeId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Address)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Port)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RemotePointType)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NodeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Port)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Enum.GetName(item.RemotePointType))
+                    </td>
+                    <td>
+                        <a asp-action="UnregisterRemotePoint" asp-route-id="@item.NodeId" class="btn btn-danger">Send BYE</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
