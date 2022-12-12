@@ -43,6 +43,9 @@
             <td>
                 @Html.DisplayFor(modelItem => Enum.GetName(item.RemotePointType))
             </td>
+            <td>
+                <a asp-action="UnregisterRemotePoint" asp-route-id="@item.NodeId" class="btn btn-danger">Send BYE</a>
+            </td>
         </tr>
 }
     </tbody>
