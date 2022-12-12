@@ -1,0 +1,34 @@
+﻿@model Janus.Mediator.WebApp.ViewModels.CommandingViewModel
+
+@{
+    ViewData["Title"] = "Commanding on a mediated schema";
+}
+<h2>Commanding</h2>
+<hr />
+<div class="row">
+    <div class="col-6">
+        <div class="row">
+            <h4>Command text</h4>
+            @if (Model.OperationOutcome is not null)
+            {
+                @if (Model.OperationOutcome.IsSuccess)
+                {
+                    <span class="alert alert-success">@Model.OperationOutcome.Message</span>
+                }
+                else
+                {
+                    <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
+                }
+            }
+        </div>
+        <form asp-action="RunQuery" method="post">
+            <input name="queryText" class="form-control" type="text" value="@Model.CommandText" />
+            <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
+        </form>
+
+    </div>
+    <div class="col-6">
+        <h4>Current mediated schema</h4>
+        <textarea disabled style="width:100%; height:fit-content" id="schema-json" asp-for="MediatedDataSourceJson"></textarea>
+    </div>
+</div>

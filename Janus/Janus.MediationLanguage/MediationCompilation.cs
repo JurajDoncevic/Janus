@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using Janus.Commons.SchemaModels;
 
 namespace Janus.MediationLanguage;
-public class MediationFactory
+public class MediationCompilation
 {
-    public static Result<DataSourceMediation> CreateMediationFromScriptText(string mediationScript, IEnumerable<DataSource> availableDataSources)
+    public static Result<DataSourceMediation> CompileMediationFromScriptText(string mediationScript, IEnumerable<DataSource> availableDataSources)
         => Results.AsResult(() =>
         {
             AntlrInputStream inputStream = new AntlrInputStream(mediationScript);

@@ -4,6 +4,7 @@ using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
+using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using static Janus.Commons.SelectionExpressions.Expressions;
@@ -36,6 +37,15 @@ public class CommandLanguageListener : CommandLanguageBaseListener
         _attributeRowValues = new List<Dictionary<string, object>>();
         _valueUpdates = new Dictionary<string, object?>();
     }
+
+    public Option<CommandTypes> ParsedCommandType
+        => _deleteBuilder is not null
+            ? Option<CommandTypes>.Some(CommandTypes.DELETE)
+            : _insertBuilder is not null
+                ? Option<CommandTypes>.Some(CommandTypes.INSERT)
+                : _updateBuilder is not null
+                    ? Option<CommandTypes>.Some(CommandTypes.UPDATE)
+                    : Option<CommandTypes>.None;
 
     public Result<DeleteCommand> BuildDeleteCommand()
         => _deleteBuilder?.Build() ?? Results.OnFailure<DeleteCommand>();

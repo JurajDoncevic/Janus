@@ -2,7 +2,7 @@
 
 namespace Janus.Mediator.WebApp.ViewModels;
 
-internal sealed class DataSourceViewModel
+public sealed class DataSourceViewModel
 {
     [Display(Name = "Data source JSON")]
     public string DataSourceJson { get; init; } = "{}";

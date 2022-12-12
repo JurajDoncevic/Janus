@@ -59,9 +59,9 @@ public interface IComponentManager
     public Task<Result<TabularData>> RunQuery(Query query);
 
     /// <summary>
-    /// Gets the schema on this component
+    /// Gets the currently generated schema on this component
     /// </summary>
     /// <returns></returns>
-    public Task<Result<DataSource>> GetSchema();
+    public Option<DataSource> GetCurrentSchema();
 
 }

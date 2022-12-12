@@ -15,7 +15,7 @@ public class GetCurrentSchemaDisplay : BaseDisplay
     public override string Title => "CURRENT SCHEMA";
 
     protected override async Task<Result> Display()
-        => (await _wrapperController.GetSchema())
+        => (await _wrapperController.GetCurrentSchema())
             .Pass(result => Console.WriteLine(result.Data?.ToString()),
                   result => Console.WriteLine(result.Message))
             .Bind(r => Results.OnSuccess());

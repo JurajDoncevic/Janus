@@ -85,7 +85,7 @@ public class WrapperManager
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;
 
-    public async Task<Result<DataSource>> GetSchema()
+    public async Task<Result<DataSource>> GetCurrentSchema()
         => await (_schemaManager.GetCurrentOutputSchema()
                                 .Match(async (DataSource dataSource) => await Task.FromResult(Results.OnSuccess(dataSource)),
                                        async () => await _schemaManager.ReloadOutputSchema()));

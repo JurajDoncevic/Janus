@@ -1,26 +1,22 @@
-﻿@model IEnumerable<RemotePointViewModel>
+﻿@model RemotePointsListViewModel
 
 @{
     ViewData["Title"] = "Remote points";
 }
 
-<h2>Registered remote points</h2>
-
 <div class="row">
-    @if(ViewBag.OperationOutcome is not null)
-{
-    if (ViewBag.OperationOutcome.IsSuccess)
+    @if (Model.OperationOutcome is not null)
     {
-        <span class="alert alert-success">@ViewBag.OperationOutcome.Message</span>
+        @if (Model.OperationOutcome.IsSuccess)
+        {
+            <span class="alert alert-success">@Model.OperationOutcome.Message</span>
+        }
+        else
+        {
+            <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
+        }
     }
-    else
-    {
-        <span class="alert alert-warning">@ViewBag.OperationOutcome.Message</span>
-    }
-}
 </div>
-
-
 
 <div class="row">
     <form class="d-inline" method="post">
@@ -30,29 +26,30 @@
         <input type="submit" value="Send HELLO" asp-action="PingRemotePoint" class="btn btn-primary" />
     </form>
 </div>
-
 <hr />
+
+<h2>Registered remote points</h2>
 <div class="row">
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.NodeId)
+                    @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.NodeId)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Address)
+                    @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.Address)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Port)
+                    @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.Port)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.RemotePointType)
+                    @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.RemotePointType)
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.RemotePoints)
             {
                 <tr>
                     <td>

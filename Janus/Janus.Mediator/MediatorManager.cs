@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
+using Janus.CommandLanguage;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
@@ -11,6 +12,8 @@ using Janus.Logging;
 using Janus.Mediation.SchemaMediationModels;
 using Janus.MediationLanguage;
 using Janus.Mediator.Persistence;
+using Janus.QueryLanguage;
+using System.Runtime.InteropServices;
 
 namespace Janus.Mediator;
 public sealed class MediatorManager : IComponentManager
@@ -79,18 +82,20 @@ public sealed class MediatorManager : IComponentManager
             ); ;
     }
 
-    public async Task<Result<DataSource>> GetSchema()
-        => await Task.FromResult(
-            _schemaManager.GetCurrentOutputSchema().Match(
-                dataSource => Results.OnSuccess(dataSource),
-                () => Results.OnFailure<DataSource>("No mediated schema generated")
-            ));
+    public Option<DataSource> GetCurrentSchema()
+        => _schemaManager.GetCurrentOutputSchema();
+
+    public async Task<Result<BaseCommand>> CreateCommand(string commandText)
+        => CommandCompilation.CompileCommandFromScriptText(commandText);
 
     public async Task<Result> RunCommand(BaseCommand command)
-        => Results.OnException(new NotImplementedException());
+        => await _commandManager.RunCommand(command, _schemaManager);
+
+    public async Task<Result<Query>> CreateQuery(string queryText)
+    => QueryCompilation.CompileQueryFromScriptText(queryText);
 
     public async Task<Result<TabularData>> RunQuery(Query query)
-        => Results.OnException<TabularData>(new NotImplementedException());
+        => await _queryManager.RunQuery(query, _schemaManager);
 
     public async Task<Result> PersistRemotePoints(IEnumerable<RemotePoint> remotePoints)
         => await Results.AsResult(async () =>
@@ -194,7 +199,7 @@ public sealed class MediatorManager : IComponentManager
         {
             var loadedDataSources = _schemaManager.LoadedDataSources;
 
-            return MediationFactory.CreateMediationFromScriptText(mediationScript, loadedDataSources);
+            return MediationCompilation.CompileMediationFromScriptText(mediationScript, loadedDataSources);
         });
 
     public async Task<Result<DataSource>> ApplyMediation(DataSourceMediation dataSourceMediation)

@@ -16,7 +16,7 @@ public class RemotePointsController : Controller
         _logger = logger?.ResolveLogger<RemotePointsController>();
     }
 
-    public IActionResult Index()
+    public IActionResult Index(OperationOutcomeViewModel? operationOutcome = null)
     {
         var remotePoints = _mediatorManager.GetRegisteredRemotePoints()
                                            .Map(rp => new RemotePointViewModel()
@@ -27,8 +27,13 @@ public class RemotePointsController : Controller
                                                RemotePointType = rp.RemotePointType
                                            });
 
-        ViewBag.OperationOutcome = TempData["Outcome"] is not null ? JsonSerializer.Deserialize<OperationOutcomeViewModel>(TempData["Outcome"]!.ToString()) : null;
-        return View(remotePoints);
+        var viewModel = new RemotePointsListViewModel()
+        {
+            RemotePoints = remotePoints.ToList(),
+            OperationOutcome = operationOutcome
+        };
+
+        return View(viewModel);
     }
     [HttpPost]
     public async Task<IActionResult> RegisterRemotePoint([FromForm] string address, [FromForm] int port)
@@ -36,13 +41,13 @@ public class RemotePointsController : Controller
         var undeterminedRemotePoint = new UndeterminedRemotePoint(address, port);
         var result = await _mediatorManager.RegisterRemotePoint(undeterminedRemotePoint);
 
-        TempData["Outcome"] = JsonSerializer.Serialize(new OperationOutcomeViewModel()
+        var operationOutcome = new OperationOutcomeViewModel()
         {
             IsSuccess = result.IsSuccess,
             Message = result.Message
-        });
+        };
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), operationOutcome);
     }
 
     [HttpPost]
@@ -51,13 +56,13 @@ public class RemotePointsController : Controller
         var undeterminedRemotePoint = new UndeterminedRemotePoint(address, port);
         var result = await _mediatorManager.SendHello(undeterminedRemotePoint);
 
-        TempData["Outcome"] = JsonSerializer.Serialize(new OperationOutcomeViewModel()
+        var operationOutcome = new OperationOutcomeViewModel()
         {
             IsSuccess = result.IsSuccess,
             Message = result.Message
-        });
+        };
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), nameof(RemotePointsController), operationOutcome);
     }
 
 }

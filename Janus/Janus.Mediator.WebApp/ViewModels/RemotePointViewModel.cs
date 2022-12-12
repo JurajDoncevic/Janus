@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Janus.Mediator.WebApp.ViewModels;
 
-internal sealed class RemotePointViewModel
+public sealed class RemotePointViewModel
 {
     [Required]
     [Display(Name = "Node id")]

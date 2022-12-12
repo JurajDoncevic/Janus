@@ -4,6 +4,7 @@ using Janus.Communication.Remotes;
 using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
+using Results = FunctionalExtensions.Base.Resulting.Results;
 
 namespace Janus.Mediator.WebApp.Controllers;
 public class SchemaController : Controller
@@ -18,13 +19,16 @@ public class SchemaController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var getCurrentSchema = await _mediatorManager.GetSchema();
+        var getCurrentSchema = _mediatorManager.GetCurrentSchema();
         var schemaToJson =
-            getCurrentSchema.Bind(dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource));
+            getCurrentSchema.Match(
+                                dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource),
+                                () => Results.OnFailure<string>("No schema loaded")
+                                );
 
         return View(schemaToJson.Match(
             json => new DataSourceViewModel() { DataSourceJson = json },
-            message => new DataSourceViewModel() { Message = message }
+            message => new DataSourceViewModel() { Message =  message }
             ));
     }
 
