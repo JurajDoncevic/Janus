@@ -21,6 +21,13 @@ public class QueryCompilation
 
             var query = parser.query();
 
-            return parseListener.BuildQuery();
+            if (errorListener.HasErrors)
+            {
+                return Results.OnFailure<Query>($"Query parsing errors: {string.Join("\n", errorListener.Errors)}");
+            }
+
+            var buildResult = parseListener.BuildQuery();
+
+            return  buildResult;
         });
 }

@@ -1,6 +1,7 @@
 ﻿using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Janus.Mediator.WebApp.Controllers;
 public class CommandingController : Controller
@@ -16,8 +17,9 @@ public class CommandingController : Controller
         _logger = logger?.ResolveLogger<CommandingController>();
     }
 
-    public IActionResult Index(CommandingViewModel? viewModel = null)
+    public IActionResult Index()
     {
+        var viewModel = JsonSerializer.Deserialize<CommandingViewModel>(TempData["CommandingViewModel"]?.ToString() ?? "null");
         if (viewModel == null)
         {
             var currentSchema = _mediatorManager.GetCurrentSchema()
@@ -29,7 +31,7 @@ public class CommandingController : Controller
 
             viewModel = new CommandingViewModel()
             {
-                MediatedDataSourceJson = currentSchema ? currentSchema.Value : "No schema generated"
+                MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}"
             };
         }
 
@@ -37,7 +39,7 @@ public class CommandingController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> RunCommand([FromBody] string commandText)
+    public async Task<IActionResult> RunCommand([FromForm] string commandText)
     {
         var commandResult =
             await _mediatorManager.CreateCommand(commandText)
@@ -57,14 +59,13 @@ public class CommandingController : Controller
             OperationOutcome = new OperationOutcomeViewModel()
             {
                 IsSuccess = currentSchema && commandResult,
-                Message = !currentSchema
-                            ? "No schema generated"
-                            : !commandResult
-                                ? commandResult.Message
-                                : "Unknown error"
+                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
+                          commandResult.Match(r => "", message => message)
             }
         };
 
-        return RedirectToAction(nameof(Index), viewModel);
+        TempData["CommandingViewModel"] = JsonSerializer.Serialize(viewModel);
+
+        return RedirectToAction(nameof(Index));
     }
 }

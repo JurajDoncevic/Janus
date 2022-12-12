@@ -2,6 +2,8 @@
 using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+using System.Text.Json;
 
 namespace Janus.Mediator.WebApp.Controllers;
 public class QueryingController : Controller
@@ -17,8 +19,10 @@ public class QueryingController : Controller
         _logger = logger?.ResolveLogger<QueryingController>();
     }
 
-    public IActionResult Index(QueryingViewModel? viewModel = null)
+    public IActionResult Index()
     {
+        var viewModel = JsonSerializer.Deserialize<QueryingViewModel>(TempData["QueryingViewModel"]?.ToString() ?? "null");
+
         if (viewModel == null)
         {
             var currentSchema = _mediatorManager.GetCurrentSchema()
@@ -30,7 +34,7 @@ public class QueryingController : Controller
 
             viewModel = new QueryingViewModel()
             {
-                MediatedDataSourceJson = currentSchema ? currentSchema.Value : "No schema generated"
+                MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}"
             };
         }
 
@@ -38,7 +42,7 @@ public class QueryingController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> RunQuery([FromBody] string queryText)
+    public async Task<IActionResult> RunQuery([FromForm] string queryText)
     {
         var queryResult =
             await _mediatorManager.CreateQuery(queryText)
@@ -68,14 +72,13 @@ public class QueryingController : Controller
             OperationOutcome = new OperationOutcomeViewModel()
             {
                 IsSuccess = currentSchema && queryResult,
-                Message = !currentSchema 
-                            ? "No schema generated" 
-                            : !queryResult 
-                                ? queryResult.Message 
-                                : "Unknown error"
+                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
+                          queryResult.Match(r => "", message => message)
             }
         };
 
-        return RedirectToAction(nameof(Index), viewModel);
+        TempData["QueryingViewModel"] = JsonSerializer.Serialize(viewModel);
+
+        return RedirectToAction(nameof(Index));
     }
 }

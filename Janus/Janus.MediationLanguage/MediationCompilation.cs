@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Janus.Commons.SchemaModels;
+using Janus.Commons.QueryModels;
 
 namespace Janus.MediationLanguage;
 public class MediationCompilation
@@ -24,6 +25,11 @@ public class MediationCompilation
 
             parser.AddParseListener(parseListener);
             parser.AddErrorListener(errorListener);
+            
+            if (errorListener.HasErrors)
+            {
+                return Results.OnFailure<DataSourceMediation>($"Mediation parsing errors: {string.Join("\n", errorListener.Errors)}");
+            }
 
             var parsedMediation = parser.datasource_mediation();
 

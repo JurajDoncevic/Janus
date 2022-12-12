@@ -30,19 +30,19 @@ public sealed class MediatorCommandManager : IDelegatingCommandManager
             var currentMediatedSchema = schemaManager.CurrentMediatedSchema;
             if (!currentMediatedSchema)
             {
-                return Results.OnFailure<TabularData>($"No mediated schema generated");
+                return Results.OnFailure($"No mediated schema generated");
             }
 
             var currentMediation = schemaManager.CurrentMediation;
             if (!currentMediation)
             {
-                return Results.OnFailure<TabularData>($"No mediation created");
+                return Results.OnFailure($"No mediation created");
             }
 
             var commandValidation = command.IsValidForDataSource(currentMediatedSchema.Value);
             if (!commandValidation)
             {
-                return Results.OnFailure<TabularData>($"Command {command.Name} is not valid on mediated schema {currentMediatedSchema.Value.Name}: {commandValidation.Message}");
+                return Results.OnFailure($"Command {command.Name} is not valid on mediated schema {currentMediatedSchema.Value.Name}: {commandValidation.Message}");
             }
 
             return await (command switch

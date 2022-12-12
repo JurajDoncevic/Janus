@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Janus.Commons.CommandModels;
+using Janus.Commons.QueryModels;
 
 namespace Janus.CommandLanguage;
 public class CommandCompilation
@@ -20,6 +21,11 @@ public class CommandCompilation
 
         var command = parser.command();
 
+        if (errorListener.HasErrors)
+        {
+            return Results.OnFailure<BaseCommand>($"Command parsing errors: {string.Join("\n", errorListener.Errors)}");
+        }
+
         Result<BaseCommand> buildResult = parseListener switch
         {
             { ParsedCommandType.IsSome: true, ParsedCommandType.Value: CommandTypes.DELETE } => parseListener.BuildDeleteCommand().Map(_ => (BaseCommand)_),
@@ -27,7 +33,7 @@ public class CommandCompilation
             { ParsedCommandType.IsSome: true, ParsedCommandType.Value: CommandTypes.UPDATE } => parseListener.BuildUpdateCommand().Map(_ => (BaseCommand)_),
             _ => Results.OnFailure<BaseCommand>("Unknown command type to build. The command might not have been parsed")
         };
-        
+
         return buildResult;
     });
 }

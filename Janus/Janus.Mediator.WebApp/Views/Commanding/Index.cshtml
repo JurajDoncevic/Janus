@@ -21,8 +21,8 @@
                 }
             }
         </div>
-        <form asp-action="RunQuery" method="post">
-            <input name="queryText" class="form-control" type="text" value="@Model.CommandText" />
+        <form asp-action="RunCommand" method="post">
+            <textarea name="commandText" class="form-control" rows="15" type="text">@Model.CommandText</textarea>
             <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
         </form>
 
