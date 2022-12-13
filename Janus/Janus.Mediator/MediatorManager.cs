@@ -140,6 +140,9 @@ public sealed class MediatorManager : IComponentManager
     public IReadOnlyList<RemotePoint> LoadedSchemaRemotePoints
         => _schemaManager.DataSourceFromRemotePoint.Keys.ToList();
 
+    public async Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint)
+        => await _schemaManager.GetSchemaFrom(remotePoint);
+
     public async Task<Result<DataSource>> LoadSchemaFrom(RemotePoint remotePoint)
         => await _schemaManager.LoadSchema(remotePoint);
 

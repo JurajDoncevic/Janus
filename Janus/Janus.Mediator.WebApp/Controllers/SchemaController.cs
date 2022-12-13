@@ -29,7 +29,7 @@ public class SchemaController : Controller
 
         return View(schemaToJson.Match(
             json => new DataSourceViewModel() { DataSourceJson = json },
-            message => new DataSourceViewModel() { Message =  message }
+            message => new DataSourceViewModel() { Message = message }
             ));
     }
 
@@ -47,15 +47,40 @@ public class SchemaController : Controller
 
     public async Task<IActionResult> VisibleSchemas()
     {
-        var visibleSchemaJsonsOrFailMessages =
-            (await _mediatorManager.GetAvailableSchemas())
-            .ToDictionary(kv => kv.Key, kv => kv.Value.Bind(_ => _jsonSerializationProvider.DataSourceSerializer.Serialize(_)))
-            .ToDictionary(kv => kv.Key, kv => kv.Value ? kv.Value.Data : kv.Value.Message);
+        var remotePoints = _mediatorManager.GetRegisteredRemotePoints();
 
         return View(new VisibleSchemasViewModel()
         {
-            VisibleDataSourcesJsons = visibleSchemaJsonsOrFailMessages
+            RegisteredRemotePoints = remotePoints.Map(rp => new RemotePointViewModel()
+            {
+                NodeId = rp.NodeId,
+                Address = rp.Address,
+                Port = rp.Port,
+                RemotePointType = rp.RemotePointType
+            }).ToList()
         });
+    }
+
+    [HttpGet]
+    [Route("/GetSchema/{nodeId}")]
+    public async Task<IActionResult> GetSchema(string nodeId)
+    {
+        var remotePoint = _mediatorManager.GetRegisteredRemotePoints()
+                            .FirstOrDefault(rp => rp.NodeId.Equals(nodeId));
+
+        if(remotePoint is null)
+        {
+            return NotFound();
+        }
+
+        var schemaResult = 
+            (await _mediatorManager.GetSchemaFrom(remotePoint))
+                .Bind(dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource));
+
+        return schemaResult.Match(
+            schema => (IActionResult)Json(schema),
+            message => (IActionResult)StatusCode(500, message)
+            );
     }
 
     public IActionResult LoadedSchemas()
@@ -70,13 +95,13 @@ public class SchemaController : Controller
         return View();
     }
 
-    public IActionResult CurrentMediation()
+    public IActionResult Mediation()
     {
         // gets the current mediation script, make a GET and POST
         return View();
     }
 
-    public IActionResult CurrentMediation(string mediationScript)
+    public IActionResult Mediation(string mediationScript)
     {
         // sets the current mediation of loaded schemas with a mediation script
         return View();

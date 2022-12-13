@@ -4,5 +4,5 @@ namespace Janus.Mediator.WebApp.ViewModels;
 
 public sealed class VisibleSchemasViewModel
 {
-    public Dictionary<RemotePoint, string> VisibleDataSourcesJsons { get; init; } = new ();
+    public List<RemotePointViewModel> RegisteredRemotePoints { get; init; } = new ();
 }
