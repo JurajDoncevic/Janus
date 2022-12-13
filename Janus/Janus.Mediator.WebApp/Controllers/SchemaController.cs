@@ -15,6 +15,7 @@ public class SchemaController : Controller
     public SchemaController(MediatorManager mediatorManager, JsonSerializationProvider jsonSerializationProvider)
     {
         _mediatorManager = mediatorManager;
+        _jsonSerializationProvider = jsonSerializationProvider;
     }
 
     public async Task<IActionResult> Index()

@@ -5,7 +5,7 @@
 }
 <h2>Commanding</h2>
 <hr />
-<div class="row">
+<div class="row mt-2 mb-2">
     <div class="col-6">
         <div class="row">
             <h4>Command text</h4>
@@ -23,7 +23,7 @@
         </div>
         <form asp-action="RunCommand" method="post">
             <textarea name="commandText" class="form-control" rows="15" type="text">@Model.CommandText</textarea>
-            <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
+            <input type="submit" class="btn btn-primary mt-2" value="Run command!" />
         </form>
 
     </div>

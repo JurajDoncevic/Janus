@@ -7,59 +7,62 @@
 <h2>Querying</h2>
 <hr />
 <div class="row mt-2 mb-2">
-    @if (Model.OperationOutcome is not null)
-    {
-        @if (Model.OperationOutcome.IsSuccess)
+    <div class="row">
+        @if (Model.OperationOutcome is not null)
         {
-            <span class="alert alert-success">@Model.OperationOutcome.Message</span>
+            @if (Model.OperationOutcome.IsSuccess)
+            {
+                <span class="alert alert-success">@Model.OperationOutcome.Message</span>
+            }
+            else
+            {
+                <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
+            }
         }
-        else
-        {
-            <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
-        }
-    }
-</div>
-<div class="row">
-    <div class="col-6">
-        <h4>Query text</h4>
-        <form asp-controller="Querying" asp-action="RunQuery" method="post">
-            <textarea name="queryText" class="form-control" type="text" rows="15">@Model.QueryText</textarea>
-            <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
-        </form>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <h4>Query text</h4>
+            <form asp-controller="Querying" asp-action="RunQuery" method="post">
+                <textarea name="queryText" class="form-control" type="text" rows="15">@Model.QueryText</textarea>
+                <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
+            </form>
 
+        </div>
+        <div class="col-6">
+            <h4>Current mediated schema</h4>
+            <textarea disabled style="width:100%; height:fit-content" id="schema-json" asp-for="MediatedDataSourceJson"></textarea>
+        </div>
     </div>
-    <div class="col-6">
-        <h4>Current mediated schema</h4>
-        <textarea disabled style="width:100%; height:fit-content" id="schema-json" asp-for="MediatedDataSourceJson"></textarea>
-    </div>
-</div>
-@if (Model.QueryResult is not null && Model.QueryResult.ColumnDataTypes.Count > 0)
-{
-    <div class="row mt-3">
-        <h4>Query results</h4>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    @foreach (var column in Model.QueryResult.ColumnDataTypes)
-                    {
-                        <th>@column.Key (@column.Value)</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var dataRow in Model.QueryResult.DataRows)
-                {
+    @if (Model.QueryResult is not null && Model.QueryResult.ColumnDataTypes.Count > 0)
+    {
+        <div class="row mt-3">
+            <h4>Query results</h4>
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        @foreach (var colName in Model.QueryResult.ColumnDataTypes.Keys)
+                        @foreach (var column in Model.QueryResult.ColumnDataTypes)
                         {
-                            <td>@dataRow[colName]</td>
+                            <th>@column.Key (@column.Value)</th>
                         }
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
+                </thead>
+                <tbody>
+                    @foreach (var dataRow in Model.QueryResult.DataRows)
+                    {
+                        <tr>
+                            @foreach (var colName in Model.QueryResult.ColumnDataTypes.Keys)
+                            {
+                                <td>@dataRow[colName]</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
 
 
 @section Scripts{
