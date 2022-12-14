@@ -85,11 +85,8 @@ public class WrapperManager
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;
 
-    public async Task<Result<DataSource>> GetCurrentSchema()
-        => await (_schemaManager.GetCurrentOutputSchema()
-                                .Match(async (DataSource dataSource) => await Task.FromResult(Results.OnSuccess(dataSource)),
-                                       async () => await _schemaManager.ReloadOutputSchema()));
-
+    public Option<DataSource> GetCurrentSchema()
+        => _schemaManager.GetCurrentOutputSchema();
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
         => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));
@@ -130,4 +127,5 @@ public class WrapperManager
 
     public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
         => await _communicationNode.SendBye(remotePoint);
+
 }

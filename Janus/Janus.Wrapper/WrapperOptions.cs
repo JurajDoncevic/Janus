@@ -10,7 +10,7 @@ public sealed class WrapperOptions : IComponentOptions
     private readonly int _timeoutMs;
     private readonly CommunicationFormats _communicationFormat;
     private readonly NetworkAdapterTypes _networkAdapterType;
-    private readonly IEnumerable<RemotePoint> _startupRemotePoints;
+    private readonly IEnumerable<UndeterminedRemotePoint> _startupRemotePoints;
     private readonly string _sourceConnectionString;
     private readonly bool _allowsCommands;
     private readonly string _persistenceConnectionString;
@@ -21,7 +21,7 @@ public sealed class WrapperOptions : IComponentOptions
         int timeoutMs,
         CommunicationFormats communicationFormat,
         NetworkAdapterTypes networkAdapterType,
-        IEnumerable<RemotePoint> startupRemotePoints,
+        IEnumerable<UndeterminedRemotePoint> startupRemotePoints,
         string sourceConnectionString,
         bool allowsCommands,
         string persistenceConnectionString)
@@ -58,7 +58,7 @@ public sealed class WrapperOptions : IComponentOptions
 
     public NetworkAdapterTypes NetworkAdapterType => _networkAdapterType;
 
-    public IReadOnlyList<RemotePoint> StartupRemotePoints => _startupRemotePoints.ToList();
+    public IReadOnlyList<UndeterminedRemotePoint> StartupRemotePoints => _startupRemotePoints.ToList();
 
     public string PersistenceConnectionString => _persistenceConnectionString;
 }
