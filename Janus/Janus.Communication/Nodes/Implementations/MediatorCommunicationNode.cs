@@ -336,7 +336,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         return result;
     }
 
-    public async Task<Result> SendQueryResponse(string exchangeId, TabularData queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
+    public async Task<Result> SendQueryResponse(string exchangeId, TabularData? queryResult, RemotePoint remotePoint, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1)
     {
         // create command response message
         var queryResponse = new QueryResMessage(exchangeId, _options.NodeId, queryResult, errorMessage, blockNumber, totalBlocks);
@@ -353,10 +353,10 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
         return result;
     }
 
-    public async Task<Result> SendSchemaResponse(string exchangeId, DataSource schema, RemotePoint remotePoint)
+    public async Task<Result> SendSchemaResponse(string exchangeId, DataSource? schema, RemotePoint remotePoint, string? outcomeDescription = null)
     {
         // create command response message
-        var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema);
+        var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema, outcomeDescription);
 
         // send command response with timeout
         var result =

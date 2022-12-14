@@ -63,7 +63,7 @@ public sealed class MediatorManager : IComponentManager
         (await _schemaManager.GetCurrentOutputSchema()
             .Match(
                 async dataSource => await _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, dataSource, e.FromRemotePoint),
-                async () => await Task.FromResult(Results.OnFailure("No mediated schema generated"))
+                async () => await _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, null, e.FromRemotePoint, "No mediated schema generated")
             )).Pass(
                 r => _logger?.Info($"Sent current schema to {e.FromRemotePoint} on request"),
                 r => _logger?.Info($"Failed to respond to schema request from {e.FromRemotePoint} due to: {r.Message}")
@@ -93,7 +93,7 @@ public sealed class MediatorManager : IComponentManager
             )).Pass(
                 r => _logger?.Info($"Sent command response to {e.FromRemotePoint} after successful run of {Enum.GetName(e.ReceivedMessage.CommandReqType)} command {e.ReceivedMessage.Command.Name}."),
                 r => _logger?.Info($"Sent command response to {e.FromRemotePoint} after failed command run.")
-            ); ;
+            );
     }
 
     public Option<DataSource> GetCurrentSchema()

@@ -133,10 +133,10 @@ public sealed class WrapperCommunicationNode : BaseCommunicationNode<IWrapperNet
         return result;
     }
 
-    public async Task<Result> SendSchemaResponse(string exchangeId, DataSource schema, RemotePoint remotePoint)
+    public async Task<Result> SendSchemaResponse(string exchangeId, DataSource? schema, RemotePoint remotePoint, string? outcomeDescription = null)
     {
         // create command response message
-        var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema);
+        var schemaResponse = new SchemaResMessage(exchangeId, _options.NodeId, schema, outcomeDescription);
 
         // send command response with timeout
         var result =

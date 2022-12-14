@@ -320,6 +320,30 @@ public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture>
         Assert.Equal(schema, schemaRequestResult.Data);
     }
 
+    [Fact(DisplayName = "MEDIATOR: Send a SCHEMA_REQ, respond and get failing results")]
+    public async void MediatorSendSchemaRequestFailing()
+    {
+        var schema = _testFixture.GetSchema();
+
+        using var mediator1 = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        using var mediator2 = _testFixture.GetMediatorCommunicationNode("Mediator2");
+
+        var mediator2RemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator2.Options.ListenPort);
+        var mediator1RemotePoint = new MediatorRemotePoint(mediator1.Options.NodeId, "127.0.0.1", mediator1.Options.ListenPort);
+
+
+        var registerResult = await mediator1.RegisterRemotePoint(mediator2RemotePoint);
+
+        mediator2.SchemaRequestReceived += async (sender, args)
+            => await mediator2.SendSchemaResponse(args.ReceivedMessage.ExchangeId, null, args.FromRemotePoint, "Some failure");
+
+        var schemaRequestResult = await mediator1.SendSchemaRequest(mediator2RemotePoint);
+
+        Assert.True(registerResult);
+        Assert.False(schemaRequestResult);
+        Assert.Contains("Some", schemaRequestResult.Message);
+    }
+
     [Fact(DisplayName = "MASK: Send a SCHEMA_REQ and get results")]
     public async void MaskSendSchemaRequest()
     {
@@ -339,6 +363,27 @@ public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture>
         Assert.True(registerResult);
         Assert.True(schemaResult);
         Assert.Equal(schema, schemaResult.Data);
+    }
+
+    [Fact(DisplayName = "MASK: Send a SCHEMA_REQ and get failing results")]
+    public async void MaskSendSchemaRequestFailing()
+    {
+        var schema = _testFixture.GetSchema();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        var mediatorRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        mediator.SchemaRequestReceived += async (sender, args)
+            => await mediator.SendSchemaResponse(args.ReceivedMessage.ExchangeId, null, args.FromRemotePoint, "Some failure");
+
+        using var mask = _testFixture.GetMaskCommunicationNode("Mask1");
+
+        var registerResult = await mask.RegisterRemotePoint(mediatorRemotePoint);
+
+        var schemaResult = await mask.SendSchemaRequest(mediatorRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.False(schemaResult);
+        Assert.Contains("Some", schemaResult.Message);
     }
 
     [Fact(DisplayName = "MASK: Send a QUERY_REQ and get results")]
@@ -361,6 +406,28 @@ public abstract class CommunicationNodeTests<TFixture> : IClassFixture<TFixture>
         Assert.True(registerResult);
         Assert.True(queryDataResult);
         Assert.Equal(_testFixture.GetQueryResultData(), queryDataResult.Data);
+    }
+
+    [Fact(DisplayName = "MASK: Send a QUERY_REQ and get failing results")]
+    public async void MaskSendQueryRequestFailing()
+    {
+        var query = _testFixture.GetQuery();
+        var queryResultData = _testFixture.GetQueryResultData();
+
+        using var mediator = _testFixture.GetMediatorCommunicationNode("Mediator1");
+        var mediatorRemotePoint = new UndeterminedRemotePoint("127.0.0.1", mediator.Options.ListenPort);
+        mediator.QueryRequestReceived += async (sender, args)
+            => await mediator.SendQueryResponse(args.ReceivedMessage.ExchangeId, null, args.FromRemotePoint, "Some failure");
+
+        using var mask = _testFixture.GetMaskCommunicationNode("Mask1");
+
+        var registerResult = await mask.RegisterRemotePoint(mediatorRemotePoint);
+
+        var queryDataResult = await mask.SendQueryRequest(query, mediatorRemotePoint);
+
+        Assert.True(registerResult);
+        Assert.False(queryDataResult);
+        Assert.Contains("Some", queryDataResult.Message);
     }
 
     [Fact(DisplayName = "MASK: Send a COMMAND_REQ and get results")]

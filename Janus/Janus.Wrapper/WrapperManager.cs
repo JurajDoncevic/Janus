@@ -8,6 +8,7 @@ using Janus.Commons.SchemaModels.Building;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
+using Janus.Logging;
 using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.LocalQuerying;
 using static FunctionalExtensions.Base.OptionExtensions;
@@ -25,17 +26,20 @@ public class WrapperManager
     private readonly WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> _commandManager;
     private readonly WrapperSchemaManager _schemaManager;
     private readonly WrapperCommunicationNode _communicationNode;
+    private readonly ILogger<WrapperManager<TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>>? _logger;
 
     public WrapperManager(
         WrapperCommunicationNode communicationNode,
         WrapperQueryManager<TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> queryManager,
         WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
-        WrapperSchemaManager schemaManager)
+        WrapperSchemaManager schemaManager,
+        ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _queryManager = queryManager;
         _commandManager = commandManager;
         _schemaManager = schemaManager;
+        _logger = logger?.ResolveLogger<WrapperManager<TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>>();
 
         _communicationNode.CommandRequestReceived += CommunicationNode_CommandRequestReceived;
         _communicationNode.QueryRequestReceived += CommunicationNode_QueryRequestReceived;
@@ -44,42 +48,35 @@ public class WrapperManager
 
     private void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
         => _schemaManager.GetCurrentOutputSchema()
-            .Map(dataSource => _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, dataSource, e.FromRemotePoint));
+            .Match(
+                dataSource => _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, dataSource, e.FromRemotePoint),
+                () => _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, null, e.FromRemotePoint, "No schema generated")
+                );
 
-    private void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
-    {
-        var exchangeId = e.ReceivedMessage.ExchangeId;
-        var fromPoint = e.FromRemotePoint;
-        var query = e.ReceivedMessage.Query;
-
-        _schemaManager.GetCurrentOutputSchema()
-                      .Match(
-                        async dataSource => await Task.FromResult(query.IsValidForDataSource(dataSource))
-                                                      .Bind(result => _queryManager.ExecuteQuery(query))
-                                                      .Match(
-                                                            queryResult => _communicationNode.SendQueryResponse(exchangeId, queryResult, fromPoint),
-                                                            message => _communicationNode.SendQueryResponse(exchangeId, null, fromPoint, $"Query execution error on {_communicationNode.Options.NodeId}:" + message)
-                                                       ),
-                        async () => Task.FromResult(Results.OnFailure("No schema generated"))
-                        );
+    private async void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
+    {        
+        (await (await _queryManager.ExecuteQuery(e.ReceivedMessage.Query))
+            .Match(
+                tabularData => _communicationNode.SendQueryResponse(e.ReceivedMessage.ExchangeId, tabularData, e.FromRemotePoint),
+                message => _communicationNode.SendQueryResponse(e.ReceivedMessage.ExchangeId, null, e.FromRemotePoint, message),
+                message => _communicationNode.SendQueryResponse(e.ReceivedMessage.ExchangeId, null, e.FromRemotePoint, message)
+            )).Pass(
+                r => _logger?.Info($"Sent query response to {e.FromRemotePoint} after successful run of query {e.ReceivedMessage.Query.Name}."),
+                r => _logger?.Info($"Sent query response to {e.FromRemotePoint} after failed query run.")
+            );
     }
 
-    private void CommunicationNode_CommandRequestReceived(object? sender, Communication.Nodes.Events.CommandReqEventArgs e)
+    private async void CommunicationNode_CommandRequestReceived(object? sender, Communication.Nodes.Events.CommandReqEventArgs e)
     {
-        var exchangeId = e.ReceivedMessage.ExchangeId;
-        var fromPoint = e.FromRemotePoint;
-        var command = e.ReceivedMessage.Command;
-
-        _schemaManager.GetCurrentOutputSchema()
-                      .Match(
-                            async dataSource => await Task.FromResult(command.IsValidForDataSource(dataSource))
-                                                          .Bind(result => _commandManager.RunCommand(command))
-                                                          .Match(
-                                                              message => _communicationNode.SendCommandResponse(exchangeId, true, fromPoint, message),
-                                                              message => _communicationNode.SendCommandResponse(exchangeId, false, fromPoint, $"Command execution error on {_communicationNode.Options.NodeId}:" + message)
-                                                          ),
-                            async () => Task.FromResult(Results.OnFailure("No schema generated"))
-                          );
+        (await (await _commandManager.RunCommand(e.ReceivedMessage.Command))
+            .Match(
+                message => _communicationNode.SendCommandResponse(e.ReceivedMessage.ExchangeId, true, e.FromRemotePoint, message),
+                message => _communicationNode.SendCommandResponse(e.ReceivedMessage.ExchangeId, false, e.FromRemotePoint, message),
+                message => _communicationNode.SendCommandResponse(e.ReceivedMessage.ExchangeId, false, e.FromRemotePoint, message)
+            )).Pass(
+                r => _logger?.Info($"Sent command response to {e.FromRemotePoint} after successful run of {Enum.GetName(e.ReceivedMessage.CommandReqType)} command {e.ReceivedMessage.Command.Name}."),
+                r => _logger?.Info($"Sent command response to {e.FromRemotePoint} after failed command run.")
+            );
     }
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
