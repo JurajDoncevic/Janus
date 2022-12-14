@@ -1,4 +1,5 @@
-﻿using Janus.Commons;
+﻿using FunctionalExtensions.Base;
+using Janus.Commons;
 using Janus.Commons.Nodes;
 using Janus.Communication.Remotes;
 
@@ -39,13 +40,7 @@ public static partial class ConfigurationOptionsExtensions
             options.CommunicationFormat,
             options.NetworkAdapterType,
             options.StartupRemotePoints
-                   .Select(remotePointOptions =>
-                        (RemotePoint)(remotePointOptions switch
-                        {
-                            { NodeType: NodeTypes.MASK } rm => new MaskRemotePoint(rm.Address, rm.ListenPort),
-                            { NodeType: NodeTypes.MEDIATOR } rm => new MediatorRemotePoint(rm.Address, rm.ListenPort),
-                            { NodeType: NodeTypes.WRAPPER } rm => new WrapperRemotePoint(rm.Address, rm.ListenPort)
-                        }))
+                   .Map(srp => new UndeterminedRemotePoint(srp.Address, srp.ListenPort))
                    .ToList(),
             options.SourceConnectionString,
             options.AllowsCommands,

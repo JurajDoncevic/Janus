@@ -15,10 +15,19 @@ public class GetCurrentSchemaDisplay : BaseDisplay
     public override string Title => "CURRENT SCHEMA";
 
     protected override async Task<Result> Display()
-        => (await _wrapperController.GetCurrentSchema())
-            .Pass(result => Console.WriteLine(result.Data?.ToString()),
-                  result => Console.WriteLine(result.Message))
-            .Bind(r => Results.OnSuccess());
+        => _wrapperController.GetCurrentSchema()
+            .Pass(result =>
+            {
+                if (result)
+                {
+                    Console.WriteLine(result.Value?.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("No schema generated");
+                }
+            })
+            .Match(r => Results.OnSuccess(), () => Results.OnFailure());
 
 
 }
