@@ -38,10 +38,15 @@
             document.getElementById("schema-" + targetNodeId).textContent = this.responseText;
         }
         xhr.onload = function () {
-            console.log(this.response)
             console.log(this.responseText)
-            let data = JSON.parse(this.responseText)
-            document.getElementById("schema-" + targetNodeId).textContent = JSON.stringify(data, undefined, 2);
+            if (xhr.status >= 200 && xhr.status < 300) {
+                let data = JSON.parse(this.responseText)
+                document.getElementById("schema-" + targetNodeId).textContent = JSON.stringify(data, undefined, 2);
+            } else {
+                document.getElementById("schema-" + targetNodeId).textContent = this.responseText;
+            }
+
+
         }
     }
 </script>
