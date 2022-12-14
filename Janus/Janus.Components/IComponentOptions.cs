@@ -28,7 +28,7 @@ public interface IComponentOptions
     /// <summary>
     /// Remote points to register on startup
     /// </summary>
-    public IReadOnlyList<RemotePoint> StartupRemotePoints { get; }
+    public IReadOnlyList<UndeterminedRemotePoint> StartupRemotePoints { get; }
     /// <summary>
     /// Connection string to the persistence database
     /// </summary>

@@ -15,16 +15,15 @@ internal class MediatorConfiguration
 
     public NetworkAdapterTypes NetworkAdapterType { get; init; } = NetworkAdapterTypes.UNKNOWN;
 
-    public List<RemotePointOptions> StartupRemotePoints { get; init; } = new();
+    public List<RemotePointConfiguration> StartupRemotePoints { get; init; } = new();
 
     public string PersistenceConnectionString { get; init; } = "./mediator_database.db";
 }
 
-internal class RemotePointOptions
+internal class RemotePointConfiguration
 {
-    public NodeTypes NodeType { get; init; }
     public int ListenPort { get; init; }
-    public string Address { get; init; }
+    public string Address { get; init; } = "";
 }
 
 internal static partial class ConfigurationOptionsExtensions
@@ -37,13 +36,7 @@ internal static partial class ConfigurationOptionsExtensions
             configuration.CommunicationFormat,
             configuration.NetworkAdapterType,
             configuration.StartupRemotePoints
-                   .Select(remotePointOptions =>
-                        (RemotePoint)(remotePointOptions switch
-                        {
-                            { NodeType: NodeTypes.MASK } rm => new MaskRemotePoint(rm.Address, rm.ListenPort),
-                            { NodeType: NodeTypes.MEDIATOR } rm => new MediatorRemotePoint(rm.Address, rm.ListenPort),
-                            { NodeType: NodeTypes.WRAPPER } rm => new WrapperRemotePoint(rm.Address, rm.ListenPort)
-                        }))
+                   .Select(remotePointConfiguration => new UndeterminedRemotePoint(remotePointConfiguration.Address, remotePointConfiguration.ListenPort))
                    .ToList(),
             configuration.PersistenceConnectionString
             );

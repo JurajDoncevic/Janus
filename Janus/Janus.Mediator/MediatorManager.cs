@@ -24,12 +24,14 @@ public sealed class MediatorManager : IComponentManager
     private readonly MediatorCommunicationNode _communicationNode;
     private readonly MediatorPersistenceProvider _persistenceProvider;
     private readonly ILogger<MediatorManager>? _logger;
+    private readonly MediatorOptions _mediatorOptions;
 
     public MediatorManager(MediatorCommunicationNode communicationNode,
                            MediatorQueryManager queryManager,
                            MediatorCommandManager commandManager,
                            MediatorSchemaManager schemaManager,
                            MediatorPersistenceProvider persistenceProvider,
+                           MediatorOptions mediatorOptions,
                            ILogger? logger = null)
     {
         _communicationNode = communicationNode;
@@ -37,11 +39,23 @@ public sealed class MediatorManager : IComponentManager
         _commandManager = commandManager;
         _schemaManager = schemaManager;
         _persistenceProvider = persistenceProvider;
+        _mediatorOptions = mediatorOptions;
         _logger = logger?.ResolveLogger<MediatorManager>();
 
         _communicationNode.CommandRequestReceived += CommunicationNode_CommandRequestReceived;
         _communicationNode.QueryRequestReceived += CommunicationNode_QueryRequestReceived;
         _communicationNode.SchemaRequestReceived += CommunicationNode_SchemaRequestReceived;
+
+        RegisterStartupRemotePoints();
+    }
+
+    private async void RegisterStartupRemotePoints()
+    {
+        var regs = _mediatorOptions.StartupRemotePoints
+            .Map(async rp => await RegisterRemotePoint(rp))
+            .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
+
+        await Task.WhenAll(regs);
     }
 
     private async void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)

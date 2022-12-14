@@ -14,31 +14,39 @@
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@remotePoint.NodeId" aria-expanded="true" aria-controls="collapseOne">
                     @remotePoint.NodeId (@remotePoint.Address, @remotePoint.Port, @remotePoint.RemotePointType)
                 </button>
-                <button class="btn btn-outline-primary" onclick="getSchema(@remotePoint.NodeId)">Get schema</button>
+                <button class="btn btn-outline-primary" data-node-id="@remotePoint.NodeId" onclick="getSchema(this)">Get schema</button>
             </h2>
             <div id="collapse-@remotePoint.NodeId" class="accordion-collapse collapse show" aria-labelledby="collapse-@remotePoint.NodeId" data-bs-parent="#remotePointSchemas">
                 <div class="accordion-body">
-                    <pre id="schema-@remotePoint.NodeId">
-
-                            </pre>
+                    <pre id="schema-@remotePoint.NodeId"></pre>
                 </div>
             </div>
         </div>
     </div>
 }
 
+<script>
+    function getSchema(targetElement) {
+        let targetNodeId = targetElement.getAttribute("data-node-id");
+        console.log(targetNodeId)
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/GetSchema/" + targetNodeId, true);
+        //xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send();
+        xhr.onerror = function () {
+            console.log(this.responseText)
+            document.getElementById("schema-" + targetNodeId).textContent = this.responseText;
+        }
+        xhr.onload = function () {
+            console.log(this.response)
+            console.log(this.responseText)
+            let data = JSON.parse(this.responseText)
+            document.getElementById("schema-" + targetNodeId).textContent = JSON.stringify(data, undefined, 2);
+        }
+    }
+</script>
+
 @section Scripts
     {
-    <script>
-        function getSchema(targetNodeId) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/GetSchema/" + targetNodeId, true);
-            //xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send();
-            xhr.onload = function () {
-                let data = JSON.parse(this.responseText)
-                document.getElementById("schema-"targetNodeId).textContent = JSON.stringify(data, undefined, 2);
-            }
-        }
-    </script>
+
 }

@@ -102,8 +102,10 @@ builder.Services.AddSingleton<IDataSourceInfoPersistence, DataSourceInfoPersiste
 builder.Services.AddSingleton<IRemotePointPersistence, RemotePointPersistence>();
 builder.Services.AddSingleton<MediatorPersistenceProvider>();
 
-builder.Services.AddSingleton<MediatorManager>();
 builder.Services.AddSingleton<MediatorOptions>(mediatorConfiguration.ToMediatorOptions());
+
+builder.Services.AddSingleton<MediatorManager>();
+
 
 var app = builder.Build();
 

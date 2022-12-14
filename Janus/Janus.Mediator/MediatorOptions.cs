@@ -10,7 +10,7 @@ public sealed class MediatorOptions : IComponentOptions
     private readonly int _timeoutMs;
     private readonly CommunicationFormats _dataFormat;
     private readonly NetworkAdapterTypes _networkAdapterType;
-    private readonly IEnumerable<RemotePoint> _startupRemotePoints;
+    private readonly IEnumerable<UndeterminedRemotePoint> _startupRemotePoints;
     private readonly string _persistenceConnectionString;
 
     public string NodeId => _nodeId;
@@ -23,7 +23,7 @@ public sealed class MediatorOptions : IComponentOptions
 
     public NetworkAdapterTypes NetworkAdapterType => _networkAdapterType;
 
-    public IReadOnlyList<RemotePoint> StartupRemotePoints => _startupRemotePoints.ToList();
+    public IReadOnlyList<UndeterminedRemotePoint> StartupRemotePoints => _startupRemotePoints.ToList();
 
     public string PersistenceConnectionString => _persistenceConnectionString;
 
@@ -33,7 +33,7 @@ public sealed class MediatorOptions : IComponentOptions
         int timeoutMs,
         CommunicationFormats dataFormat,
         NetworkAdapterTypes networkAdapterType,
-        IEnumerable<RemotePoint> startupRemotePoints,
+        IEnumerable<UndeterminedRemotePoint> startupRemotePoints,
         string persistenceConnectionString)
     {
         _nodeId = nodeId;
