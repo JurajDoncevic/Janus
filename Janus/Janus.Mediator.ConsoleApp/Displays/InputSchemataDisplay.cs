@@ -16,11 +16,6 @@ public class InputSchemataDisplay : BaseDisplay
     protected async override Task<Result> Display()
         => await Results.AsResult(async () =>
         {
-            return (await _mediatorController.GetAvailableSchemas())
-                .Map(result => result.Pass(
-                        r => Console.WriteLine(r.Data!.ToString()),
-                        r => Console.WriteLine(r.Message))
-                    )
-                .All(result => result);
+            return Results.OnException(new NotImplementedException());
         });
 }
