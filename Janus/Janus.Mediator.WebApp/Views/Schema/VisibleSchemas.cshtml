@@ -28,13 +28,11 @@
 <script>
     function getSchema(targetElement) {
         let targetNodeId = targetElement.getAttribute("data-node-id");
-        console.log(targetNodeId)
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "/GetSchema/" + targetNodeId, true);
         //xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send();
         xhr.onerror = function () {
-            console.log(this.responseText)
             document.getElementById("schema-" + targetNodeId).textContent = this.responseText;
         }
         xhr.onload = function () {
@@ -45,8 +43,6 @@
             } else {
                 document.getElementById("schema-" + targetNodeId).textContent = this.responseText;
             }
-
-
         }
     }
 </script>
