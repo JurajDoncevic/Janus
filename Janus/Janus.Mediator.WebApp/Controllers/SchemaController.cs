@@ -83,25 +83,13 @@ public class SchemaController : Controller
             );
     }
 
-    public IActionResult LoadedSchemas()
-    {
-        // gets all schemas loaded schemas available for mediation
-        return View();
-    }
-
-    public IActionResult LoadSchemas(IEnumerable<RemotePoint> remotePoints)
-    {
-        // load all schemas from selected remote points
-        return View();
-    }
-
-    public IActionResult Mediation()
+    public IActionResult SchemaMediation()
     {
         // gets the current mediation script, make a GET and POST
         return View();
     }
 
-    public IActionResult Mediation(string mediationScript)
+    public IActionResult SchemaMediation(SchemaMediationViewModel viewModel)
     {
         // sets the current mediation of loaded schemas with a mediation script
         return View();
