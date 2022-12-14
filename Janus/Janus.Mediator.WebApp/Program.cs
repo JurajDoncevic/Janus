@@ -128,4 +128,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+var runTask = app.RunAsync();
+
+// preload mediator manager, so the web interface doesn't need to be accessed for the app to work
+app.Services.GetService<MediatorManager>();
+
+await runTask;
