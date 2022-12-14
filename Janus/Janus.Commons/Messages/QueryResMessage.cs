@@ -10,7 +10,7 @@ namespace Janus.Commons.Messages;
 public sealed class QueryResMessage : BaseMessage
 {
     private readonly TabularData? _tabularData;
-    private readonly string _errorMessage;
+    private readonly string _outcomeDescription;
     private readonly int _blockNumber;
     private readonly int _totalBlocks;
     private readonly bool _isFailure;
@@ -18,11 +18,11 @@ public sealed class QueryResMessage : BaseMessage
     /// <summary>
     /// Query result data
     /// </summary>
-    public TabularData? TabularData => _tabularData;
+    public Option<TabularData> TabularData => _tabularData is not null ? Option<TabularData>.Some(_tabularData) : Option<TabularData>.None;
     /// <summary>
-    /// Error message (if it exists)
+    /// Outcome description message (if it exists)
     /// </summary>
-    public string ErrorMessage => _errorMessage;
+    public string OutcomeDescription => _outcomeDescription;
     /// <summary>
     /// Response data block sequence number
     /// </summary>
@@ -45,26 +45,25 @@ public sealed class QueryResMessage : BaseMessage
     /// </summary>
     /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
     /// <param name="nodeId">Sender's node ID</param>
-    [JsonConstructor]
-    public QueryResMessage(string exchangeId, string nodeId, TabularData? tabularData, string? errorMessage = null, int blockNumber = 1, int totalBlocks = 1) : base(exchangeId, nodeId, Preambles.QUERY_RESPONSE)
+    public QueryResMessage(string exchangeId, string nodeId, TabularData? tabularData, string? outcomeDescription = null, int blockNumber = 1, int totalBlocks = 1) : base(exchangeId, nodeId, Preambles.QUERY_RESPONSE)
     {
         _tabularData = tabularData;
-        _errorMessage = errorMessage ?? string.Empty;
+        _outcomeDescription = outcomeDescription ?? string.Empty;
         _blockNumber = blockNumber;
         _totalBlocks = totalBlocks;
-        _isFailure = !string.IsNullOrEmpty(_errorMessage) || tabularData == null;
+        _isFailure = !string.IsNullOrEmpty(_outcomeDescription) || tabularData == null;
     }
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="nodeId">Sender's node ID</param>
-    public QueryResMessage(string nodeId, TabularData? tabularData, string errorMessage, int blockNumber = 1, int totalBlocks = 1) : base(nodeId, Preambles.QUERY_REQUEST)
+    public QueryResMessage(string nodeId, TabularData? tabularData, string? outcomeDescription = null, int blockNumber = 1, int totalBlocks = 1) : base(nodeId, Preambles.QUERY_REQUEST)
     {
         _tabularData = tabularData;
-        _errorMessage = errorMessage ?? string.Empty;
+        _outcomeDescription = outcomeDescription ?? string.Empty;
         _blockNumber = blockNumber;
         _totalBlocks = totalBlocks;
-        _isFailure = !string.IsNullOrEmpty(_errorMessage) || tabularData == null;
+        _isFailure = !string.IsNullOrEmpty(_outcomeDescription) || tabularData == null;
     }
 
     public override bool Equals(object? obj)
@@ -73,7 +72,7 @@ public sealed class QueryResMessage : BaseMessage
                _exchangeId == message._exchangeId &&
                _preamble == message._preamble &&
                NodeId == message.NodeId &&
-               _errorMessage == message._errorMessage &&
+               _outcomeDescription.Equals(message._outcomeDescription) &&
                _blockNumber == message._blockNumber &&
                _totalBlocks == message._totalBlocks &&
                _isFailure == message._isFailure &&
@@ -82,6 +81,6 @@ public sealed class QueryResMessage : BaseMessage
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_exchangeId, _preamble, NodeId, _tabularData, _errorMessage, _blockNumber, _totalBlocks, _isFailure);
+        return HashCode.Combine(_exchangeId, _preamble, NodeId, _tabularData, _outcomeDescription, _blockNumber, _totalBlocks, _isFailure);
     }
 }

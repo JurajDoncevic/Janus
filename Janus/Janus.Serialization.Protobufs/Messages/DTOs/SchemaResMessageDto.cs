@@ -16,5 +16,8 @@ internal sealed class SchemaResMessageDto
     public string NodeId { get; set; }
 
     [ProtoMember(4)]
-    public DataSourceDto DataSource { get; set; }
+    public DataSourceDto? DataSource { get; set; }
+
+    [ProtoMember(5)]
+    public string OutcomeDescription { get; set; }
 }

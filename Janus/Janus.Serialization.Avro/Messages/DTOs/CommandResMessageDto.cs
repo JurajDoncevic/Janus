@@ -1,4 +1,6 @@
-﻿namespace Janus.Serialization.Avro.Messages.DTOs;
+﻿using Janus.Commons.Messages;
+
+namespace Janus.Serialization.Avro.Messages.DTOs;
 
 internal sealed class CommandResMessageDto
 {

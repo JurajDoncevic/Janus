@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
+using Janus.Commons.SchemaModels;
 using Janus.Serialization.Bson.DataModels;
 using Janus.Serialization.Bson.Messages.DTOs;
 using System.Text;
@@ -31,16 +32,24 @@ public sealed class QueryResMessageSerializer : IMessageSerializer<QueryResMessa
     /// <returns>Deserialized QUERY_RES</returns>
     public Result<QueryResMessage> Deserialize(byte[] serialized)
         => Results.AsResult(() => JsonSerializer.Deserialize<QueryResMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
-            .Bind(queryResMessageDto =>
-                _tabularDataSerializer.FromDto(queryResMessageDto.TabularData)
-                    .Map(tabularData =>
-                        new QueryResMessage(
-                            queryResMessageDto.ExchangeId,
-                            queryResMessageDto.NodeId,
-                            tabularData,
-                            queryResMessageDto.ErrorMessage,
-                            queryResMessageDto.BlockNumber,
-                            queryResMessageDto.TotalBlocks)));
+            .Bind(queryResMessageDto =>  // this complication is done so a failing serialization message gets propagated
+                    queryResMessageDto.TabularData is not null
+                    ? _tabularDataSerializer.FromDto(queryResMessageDto.TabularData)
+                                            .Map(tabularData =>
+                                                new QueryResMessage(
+                                                    queryResMessageDto.ExchangeId,
+                                                    queryResMessageDto.NodeId,
+                                                    tabularData,
+                                                    queryResMessageDto.OutcomeDescription,
+                                                    queryResMessageDto.BlockNumber,
+                                                    queryResMessageDto.TotalBlocks))
+                    : Results.AsResult(() => new QueryResMessage(
+                                                    queryResMessageDto.ExchangeId,
+                                                    queryResMessageDto.NodeId,
+                                                    null,
+                                                    queryResMessageDto.OutcomeDescription,
+                                                    queryResMessageDto.BlockNumber,
+                                                    queryResMessageDto.TotalBlocks)));
 
     /// <summary>
     /// Serializes a QUERY_RES message
@@ -49,21 +58,34 @@ public sealed class QueryResMessageSerializer : IMessageSerializer<QueryResMessa
     /// <returns>Serialized QUERY_RES</returns>
     public Result<byte[]> Serialize(QueryResMessage message)
         => Results.AsResult(() =>
-        {
-            var tabularDataDto = _tabularDataSerializer.ToDto(message.TabularData).Data;
-            var queryResMessageDto = new QueryResMessageDto
-            {
-                ExchangeId = message.ExchangeId,
-                NodeId = message.NodeId,
-                TabularData = tabularDataDto,
-                BlockNumber = message.BlockNumber,
-                ErrorMessage = message.ErrorMessage,
-                TotalBlocks = message.TotalBlocks
-            };
+           {
+               var serialization = message.TabularData.Match(
+                   tabularData => _tabularDataSerializer.ToDto(tabularData)
+                                   .Map(tabularDataDto => new QueryResMessageDto
+                                   {
+                                       ExchangeId = message.ExchangeId,
+                                       NodeId = message.NodeId,
+                                       TabularData = tabularDataDto,
+                                       BlockNumber = message.BlockNumber,
+                                       OutcomeDescription = message.OutcomeDescription,
+                                       TotalBlocks = message.TotalBlocks
+                                   }),
+                   () => Results.AsResult(() => new QueryResMessageDto
+                   {
+                       ExchangeId = message.ExchangeId,
+                       NodeId = message.NodeId,
+                       TabularData = null,
+                       BlockNumber = message.BlockNumber,
+                       OutcomeDescription = message.OutcomeDescription,
+                       TotalBlocks = message.TotalBlocks
+                   })
+                   ).Bind(dto => Results.AsResult(() =>
+                   {
+                       var json = JsonSerializer.Serialize(dto, _serializerOptions);
+                       var messageBytes = Encoding.UTF8.GetBytes(json);
 
-            var json = JsonSerializer.Serialize(queryResMessageDto, _serializerOptions);
-            var messageBytes = Encoding.UTF8.GetBytes(json);
-
-            return messageBytes;
-        });
+                       return messageBytes;
+                   }));
+               return serialization;
+           });
 }

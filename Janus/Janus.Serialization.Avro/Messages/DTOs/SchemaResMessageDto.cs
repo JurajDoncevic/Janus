@@ -1,4 +1,5 @@
-﻿using Janus.Serialization.Avro.SchemaModels.DTOs;
+﻿using Janus.Commons.Messages;
+using Janus.Serialization.Avro.SchemaModels.DTOs;
 
 namespace Janus.Serialization.Avro.Messages.DTOs;
 internal sealed class SchemaResMessageDto
@@ -6,5 +7,6 @@ internal sealed class SchemaResMessageDto
     public string Preamble { get; set; }
     public string ExchangeId { get; set; }
     public string NodeId { get; set; }
-    public DataSourceDto DataSource { get; set; }
+    public DataSourceDto? DataSource { get; set; }
+    public string OutcomeDescription { get; set; }
 }

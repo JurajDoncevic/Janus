@@ -19,7 +19,7 @@ internal sealed class QueryResMessageDto
     public TabularDataDto? TabularData { get; set; }
 
     [ProtoMember(5)]
-    public string ErrorMessage { get; set; }
+    public string OutcomeDescription { get; set; }
 
     [ProtoMember(6)]
     public int BlockNumber { get; set; }

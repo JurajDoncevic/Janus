@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.Messages;
+using Janus.Commons.SchemaModels;
 using Janus.Serialization.Bson.Messages.DTOs;
 using Janus.Serialization.Bson.SchemaModels;
 using System.Text;
@@ -32,12 +33,17 @@ public sealed class SchemaResMessageSerializer : IMessageSerializer<SchemaResMes
     public Result<SchemaResMessage> Deserialize(byte[] serialized)
         => Results.AsResult(() => JsonSerializer.Deserialize<SchemaResMessageDto>(serialized, _serializerOptions) ?? throw new Exception("Failed to deserialize message DTO"))
             .Bind(schemaResMessageDto =>
-                _dataSourceSerializer.FromDto(schemaResMessageDto.DataSource)
-                    .Map(dataSource =>
-                        new SchemaResMessage(
-                            schemaResMessageDto.ExchangeId,
-                            schemaResMessageDto.NodeId,
-                            dataSource)));
+                    schemaResMessageDto.DataSource is not null
+                    ? _dataSourceSerializer.FromDto(schemaResMessageDto.DataSource)
+                                           .Map(dataSource =>
+                                               new SchemaResMessage(
+                                                   schemaResMessageDto.ExchangeId,
+                                                   schemaResMessageDto.NodeId,
+                                                   dataSource))
+                    : Results.AsResult(() => new SchemaResMessage(schemaResMessageDto.ExchangeId,
+                                                                  schemaResMessageDto.NodeId,
+                                                                  null,
+                                                                  schemaResMessageDto.OutcomeDescription)));
 
     /// <summary>
     /// Serializes a SCHEMA_RES message
@@ -47,17 +53,29 @@ public sealed class SchemaResMessageSerializer : IMessageSerializer<SchemaResMes
     public Result<byte[]> Serialize(SchemaResMessage message)
         => Results.AsResult(() =>
         {
-            var dataSourceDto = _dataSourceSerializer.ToDto(message.DataSource).Data!;
+            var serialization = message.DataSource.Match(
+                dataSource => _dataSourceSerializer.ToDto(dataSource)
+                              .Map(dataSourceDto => new SchemaResMessageDto
+                              {
+                                  ExchangeId = message.ExchangeId,
+                                  NodeId = message.NodeId,
+                                  OutcomeDescription = message.OutcomeDescription,
+                                  DataSource = dataSourceDto
+                              }),
+                () => Results.AsResult(() => new SchemaResMessageDto
+                {
+                    ExchangeId = message.ExchangeId,
+                    NodeId = message.NodeId,
+                    OutcomeDescription = message.OutcomeDescription,
+                    DataSource = null
+                })
+                ).Bind(dto => Results.AsResult(() =>
+                {
+                    var json = JsonSerializer.Serialize(dto, _serializerOptions);
+                    var messageBytes = Encoding.UTF8.GetBytes(json);
+                    return messageBytes;
+                }));
 
-            var schemaResMessageDto = new SchemaResMessageDto
-            {
-                ExchangeId = message.ExchangeId,
-                NodeId = message.NodeId,
-                DataSource = dataSourceDto
-            };
-            var json = JsonSerializer.Serialize(schemaResMessageDto, _serializerOptions);
-            var messageBytes = Encoding.UTF8.GetBytes(json);
-
-            return messageBytes;
+            return serialization;
         });
 }

@@ -220,13 +220,31 @@ public class MessageSerializationTests
         Assert.Equal(schemaReqMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip SCHEMA_RES serialization with Avro")]
-    public void RoundTripSchemaRes()
+    [Fact(DisplayName = "Round-trip success SCHEMA_RES serialization with Avro")]
+    public void RoundTripSuccessSchemaRes()
     {
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
         var dataSource = GetTestDataSource();
         var schemaResMessage = new SchemaResMessage(exchangeId, nodeId, dataSource);
+
+        var serializer = _serializationProvider.SchemaResMessageSerializer;
+
+        var serialization = serializer.Serialize(schemaResMessage);
+        var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
+
+        Assert.True(serialization);
+        Assert.True(deserialization);
+        Assert.Equal(schemaResMessage, deserialization.Data);
+    }
+
+    [Fact(DisplayName = "Round-trip failure SCHEMA_RES serialization with Avro")]
+    public void RoundTripFailureSchemaRes()
+    {
+        var exchangeId = "test_exchange_id";
+        var nodeId = "test_node_id";
+
+        var schemaResMessage = new SchemaResMessage(exchangeId, nodeId, null, "Some outcome");
 
         var serializer = _serializationProvider.SchemaResMessageSerializer;
 
@@ -266,8 +284,8 @@ public class MessageSerializationTests
         Assert.Equal(queryReqMessage, deserialization.Data);
     }
 
-    [Fact(DisplayName = "Round-trip QUERY_RES serialization with Avro")]
-    public void RoundTripQueryRes()
+    [Fact(DisplayName = "Round-trip success QUERY_RES serialization with Avro")]
+    public void RoundTripSuccessQueryRes()
     {
         var exchangeId = "test_exchange_id";
         var nodeId = "test_node_id";
@@ -275,6 +293,26 @@ public class MessageSerializationTests
         var tabularData = GetTestTabularData();
 
         var queryResMessage = new QueryResMessage(exchangeId, nodeId, tabularData);
+
+
+        var serializer = _serializationProvider.QueryResMessageSerializer;
+
+        var serialization = serializer.Serialize(queryResMessage);
+        var deserialization = serialization.Bind(bytes => serializer.Deserialize(bytes));
+
+        Assert.True(serialization);
+        Assert.True(deserialization);
+        Assert.Equal(queryResMessage, deserialization.Data);
+    }
+
+    [Fact(DisplayName = "Round-trip failure QUERY_RES serialization with Avro")]
+    public void RoundTripFailureQueryRes()
+    {
+        var exchangeId = "test_exchange_id";
+        var nodeId = "test_node_id";
+
+
+        var queryResMessage = new QueryResMessage(exchangeId, nodeId, null, "Some outcome");
 
 
         var serializer = _serializationProvider.QueryResMessageSerializer;

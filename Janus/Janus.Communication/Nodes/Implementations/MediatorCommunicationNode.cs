@@ -261,8 +261,10 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         var queryResponse = (QueryResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info("Received returned {0} from {1} in exchange {2}", queryResponse.Preamble, queryResponse.NodeId, queryResponse.ExchangeId);
 
-                        // have to throw exception to register as error and get outcome message
-                        return queryResponse.IsSuccess ? queryResponse.TabularData : throw new Exception(queryResponse.ErrorMessage);
+                        // determine query operation outcome from message and return appropriate Result
+                        return queryResponse.IsSuccess
+                            ? Results.OnSuccess(queryResponse.TabularData.Value) // if response is succcess, then there is always tabular data
+                            : Results.OnFailure<TabularData>(queryResponse.OutcomeDescription);
                     })),
                 _options.TimeoutMs);
 
@@ -304,8 +306,10 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                         var schemaResponse = (SchemaResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info("Received returned {0} from {1} in exchange {2}", schemaResponse.Preamble, schemaResponse.NodeId, schemaResponse.ExchangeId);
 
-                        // have to throw exception to register as error and get outcome message
-                        return schemaResponse.DataSource;
+                        // determine request operation outcome and return Result
+                        return schemaResponse.IsSuccess
+                            ? Results.OnSuccess(schemaResponse.DataSource.Value) // if response is successful, data source is always Some
+                            : Results.OnFailure<DataSource>(schemaResponse.OutcomeDescription);
                     })),
                 _options.TimeoutMs);
 

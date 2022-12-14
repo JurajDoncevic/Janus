@@ -8,7 +8,7 @@ internal class QueryResMessageDto
     public string ExchangeId { get; set; }
     public string NodeId { get; set; }
     public TabularDataDto? TabularData { get; set; }
-    public string ErrorMessage { get; set; }
+    public string OutcomeDescription { get; set; }
     public int BlockNumber { get; set; }
     public int TotalBlocks { get; set; }
 }

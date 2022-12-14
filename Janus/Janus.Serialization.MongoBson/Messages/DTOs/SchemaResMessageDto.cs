@@ -3,5 +3,6 @@
 namespace Janus.Serialization.MongoBson.Messages.DTOs;
 internal sealed class SchemaResMessageDto : BaseMessageDto
 {
-    public DataSourceDto DataSource { get; set; }
+    public DataSourceDto? DataSource { get; set; }
+    public string OutcomeDescription { get; set; }
 }
