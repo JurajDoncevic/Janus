@@ -13,6 +13,7 @@ using Janus.Mediation.SchemaMediationModels;
 using Janus.MediationLanguage;
 using Janus.Mediator.Persistence;
 using Janus.QueryLanguage;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Janus.Mediator;
@@ -152,10 +153,13 @@ public sealed class MediatorManager : IComponentManager
         => await _communicationNode.SendBye(remotePoint);
 
     public IReadOnlyList<RemotePoint> LoadedSchemaRemotePoints
-        => _schemaManager.DataSourceFromRemotePoint.Keys.ToList();
+        => _schemaManager.LoadedDataSourceFromRemotePoint.Keys.ToList();
 
     public async Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint)
         => await _schemaManager.GetSchemaFrom(remotePoint);
+
+    public IReadOnlyDictionary<RemotePoint, DataSource> GetLoadedSchemas()
+        => _schemaManager.LoadedDataSourceFromRemotePoint;
 
     public async Task<Result<DataSource>> LoadSchemaFrom(RemotePoint remotePoint)
         => await _schemaManager.LoadSchema(remotePoint);
@@ -166,12 +170,13 @@ public sealed class MediatorManager : IComponentManager
         => _schemaManager.UnloadSchema(remotePoint);
 
     public Result UnloadAllSchemas()
-        => _schemaManager.DataSourceFromRemotePoint.Keys.ToList()
+        => _schemaManager.LoadedDataSourceFromRemotePoint.Keys.ToList()
             .Map(_schemaManager.UnloadSchema)
             .All(result => result);
 
     public async Task<Dictionary<RemotePoint, Result<DataSource>>> GetAvailableSchemas()
         => await _schemaManager.GetSchemasFromComponents();
+
 
     public async Task<Result<DataSource>> LoadMediatedSchemaFromPersistence()
         => await Results.AsResult(async () =>

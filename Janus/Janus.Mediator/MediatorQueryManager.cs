@@ -59,7 +59,7 @@ public sealed class MediatorQueryManager : IDelegatingQueryManager
             var remoteQueryTasks = new List<Task<Result<TabularData>>>();
             foreach (var partitionedQuery in queryMediation.PartitionedQueries)
             {
-                var targetRemotePoint = schemaManager.RemotePointWithDataSourceName[partitionedQuery.Key.DataSourceName];
+                var targetRemotePoint = schemaManager.RemotePointWithLoadedDataSourceName[partitionedQuery.Key.DataSourceName];
 
                 var remoteQueryTask = _communicationNode.SendQueryRequest(query, targetRemotePoint);
 

@@ -15,4 +15,18 @@ public sealed class RemotePointViewModel
     [Display(Name = "Port")]
     public int Port { get; init; }
     public RemotePointTypes RemotePointType { get; init; }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RemotePointViewModel model &&
+               NodeId == model.NodeId &&
+               Address == model.Address &&
+               Port == model.Port &&
+               RemotePointType == model.RemotePointType;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(NodeId, Address, Port, RemotePointType);
+    }
 }

@@ -47,9 +47,9 @@ public sealed class MediatorCommandManager : IDelegatingCommandManager
 
             return await (command switch
             {
-                { CommandType: CommandTypes.DELETE } => RunDeleteCommand((DeleteCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithDataSourceName),
-                { CommandType: CommandTypes.INSERT } => RunInsertCommand((InsertCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithDataSourceName),
-                { CommandType: CommandTypes.UPDATE } => RunUpdateCommand((UpdateCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithDataSourceName),
+                { CommandType: CommandTypes.DELETE } => RunDeleteCommand((DeleteCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithLoadedDataSourceName),
+                { CommandType: CommandTypes.INSERT } => RunInsertCommand((InsertCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithLoadedDataSourceName),
+                { CommandType: CommandTypes.UPDATE } => RunUpdateCommand((UpdateCommand)command, currentMediatedSchema.Value, currentMediation.Value, schemaManager.RemotePointWithLoadedDataSourceName),
                 _ => Task.FromResult(Results.OnFailure($"Unknown command {command.Name} type given for running."))
             });
         })).Pass(

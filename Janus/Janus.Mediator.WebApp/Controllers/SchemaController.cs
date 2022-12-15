@@ -68,12 +68,12 @@ public class SchemaController : Controller
         var remotePoint = _mediatorManager.GetRegisteredRemotePoints()
                             .FirstOrDefault(rp => rp.NodeId.Equals(nodeId));
 
-        if(remotePoint is null)
+        if (remotePoint is null)
         {
             return NotFound();
         }
 
-        var schemaResult = 
+        var schemaResult =
             (await _mediatorManager.GetSchemaFrom(remotePoint))
                 .Bind(dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource));
 
@@ -85,10 +85,40 @@ public class SchemaController : Controller
 
     public IActionResult SchemaMediation()
     {
+        var registeredRemotePoints = _mediatorManager.GetRegisteredRemotePoints();
+        var loadedSchemasFromRemotePoints = _mediatorManager.GetLoadedSchemas();
+        var remotePointsWithLoadedSchemas = loadedSchemasFromRemotePoints.Keys;
+
+
         // gets the current mediation script, make a GET and POST
-        return View();
+        var viewModel = new SchemaMediationViewModel
+        {
+            AvailableRemotePoints =
+                registeredRemotePoints
+                .Except(remotePointsWithLoadedSchemas)
+                .Map(rp => new RemotePointViewModel { NodeId = rp.NodeId, Address = rp.Address, Port = rp.Port, RemotePointType = rp.RemotePointType })
+                .ToList(),
+            LoadedDataSourceSchemas =
+                loadedSchemasFromRemotePoints
+                .Map(kv => _jsonSerializationProvider.DataSourceSerializer.Serialize(kv.Value)
+                            .Match(
+                                r => (remotePoint: kv.Key, dataSourceJson: r, message: string.Empty),
+                                message => (remotePoint: kv.Key, dataSourceJson: string.Empty, message: message)
+                            ))
+                .ToDictionary(
+                    t => new RemotePointViewModel { NodeId = t.remotePoint.NodeId, Address = t.remotePoint.Address, Port = t.remotePoint.Port, RemotePointType = t.remotePoint.RemotePointType },
+                    t => new DataSourceViewModel
+                    {
+                        DataSourceJson = t.dataSourceJson,
+                        Message = t.message
+                    }),
+         
+            SchemaMediationScript = string.Empty
+        };
+        return View(viewModel);
     }
 
+    [HttpPost]
     public IActionResult SchemaMediation(SchemaMediationViewModel viewModel)
     {
         // sets the current mediation of loaded schemas with a mediation script

@@ -34,11 +34,11 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
     /// <summary>
     /// Remote points of the currently loaded data source schemas by data source name
     /// </summary>
-    public IReadOnlyDictionary<string, RemotePoint> RemotePointWithDataSourceName => _loadedDataSources.ToDictionary(kv => kv.Key, kv => kv.Value.remotePoint);
+    public IReadOnlyDictionary<string, RemotePoint> RemotePointWithLoadedDataSourceName => _loadedDataSources.ToDictionary(kv => kv.Key, kv => kv.Value.remotePoint);
     /// <summary>
     /// Currently loaded data source schemas by their remote point
     /// </summary>
-    public IReadOnlyDictionary<RemotePoint, DataSource> DataSourceFromRemotePoint => _loadedDataSources.Values.ToDictionary(kv => kv.remotePoint, kv => kv.dataSource);
+    public IReadOnlyDictionary<RemotePoint, DataSource> LoadedDataSourceFromRemotePoint => _loadedDataSources.Values.ToDictionary(kv => kv.remotePoint, kv => kv.dataSource);
     /// <summary>
     /// Currently used mediation
     /// </summary>
@@ -54,7 +54,7 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
 
 
     public Result UnloadSchema(string dataSourceName)
-        => Option<RemotePoint>.Some(RemotePointWithDataSourceName[dataSourceName])
+        => Option<RemotePoint>.Some(RemotePointWithLoadedDataSourceName[dataSourceName])
             .Match(
             rp => UnloadSchema(rp),
             () => Results.OnFailure($"Data source schema with name {dataSourceName} not loaded.")
@@ -62,12 +62,12 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
     public Result UnloadSchema(RemotePoint remotePoint)
         => Results.AsResult(() =>
         {
-            if (!DataSourceFromRemotePoint.ContainsKey(remotePoint))
+            if (!LoadedDataSourceFromRemotePoint.ContainsKey(remotePoint))
             {
                 return Results.OnFailure($"No loaded schema from remote point {remotePoint}.");
             }
 
-            string dataSourceName = DataSourceFromRemotePoint[remotePoint].Name;
+            string dataSourceName = LoadedDataSourceFromRemotePoint[remotePoint].Name;
 
             return _loadedDataSources.Remove(dataSourceName)
                 ? Results.OnSuccess()

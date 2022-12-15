@@ -10,5 +10,5 @@ public class SchemaMediationViewModel
     /// <summary>
     /// Schemas available for loading - don't contain a ds with the same name as a loaded schema ds
     /// </summary>
-    public Dictionary<RemotePointViewModel, DataSourceViewModel> AvailableDataSourceSchemas { get; set; }
+    public List<RemotePointViewModel> AvailableRemotePoints { get; set; }
 }
