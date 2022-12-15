@@ -83,6 +83,48 @@ public class SchemaController : Controller
             );
     }
 
+    [HttpGet]
+    [Route("/LoadSchema/{nodeId}")]
+    public async Task<IActionResult> LoadSchema(string nodeId)
+    {
+        var remotePoint = 
+            _mediatorManager.GetRegisteredRemotePoints()
+            .FirstOrDefault(rp => rp.NodeId.Equals(nodeId));
+
+        if (remotePoint is null)
+        {
+            return NotFound($"No remote point with {nodeId}");
+        }
+        
+        var schemaLoading = await _mediatorManager.LoadSchemaFrom(remotePoint);
+
+        return schemaLoading.Match(
+            schema => (IActionResult)Json(schema),
+            message => (IActionResult)StatusCode(500, message)
+            );
+    }
+
+    [HttpGet]
+    [Route("/UnloadSchema/{nodeId}")]
+    public async Task<IActionResult> UnloadSchema(string nodeId)
+    {
+        var remotePoint =
+            _mediatorManager.GetRegisteredRemotePoints()
+            .FirstOrDefault(rp => rp.NodeId.Equals(nodeId));
+
+        if (remotePoint is null)
+        {
+            return NotFound($"No remote point with {nodeId}");
+        }
+
+        var schemaUnloading = _mediatorManager.UnloadSchemaFrom(remotePoint);
+
+        return schemaUnloading.Match(
+            message => (IActionResult)Json(message),
+            message => (IActionResult)StatusCode(500, message)
+            );
+    }
+
     public IActionResult SchemaMediation()
     {
         var registeredRemotePoints = _mediatorManager.GetRegisteredRemotePoints();
@@ -119,9 +161,16 @@ public class SchemaController : Controller
     }
 
     [HttpPost]
-    public IActionResult SchemaMediation(SchemaMediationViewModel viewModel)
+    public IActionResult ApplySchemaMediation(string schemaMediationScript)
     {
-        // sets the current mediation of loaded schemas with a mediation script
-        return View();
+        var mediation = 
+            await Task.FromResult(_mediatorManager.CreateDataSourceMediation(schemaMediationScript))
+                      .Bind(mediation => _mediatorManager.ApplyMediation(mediation))
+                      .Bind(mediatedDataSource => Task.FromResult(_jsonSerializationProvider.DataSourceSerializer.Serialize(mediatedDataSource)));
+        
+        return mediation.Match(
+            dataSource => (IActionResult)Json(dataSource),
+            message => (IActionResult)StatusCode(500, message)
+            );
     }
 }
