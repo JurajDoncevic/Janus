@@ -91,7 +91,7 @@ public sealed class MediatorManager : IComponentManager
                 message => _communicationNode.SendCommandResponse(e.ReceivedMessage.ExchangeId, false, e.FromRemotePoint, message),
                 message => _communicationNode.SendCommandResponse(e.ReceivedMessage.ExchangeId, false, e.FromRemotePoint, message)
             )).Pass(
-                r => _logger?.Info($"Sent command response to {e.FromRemotePoint} after successful run of {Enum.GetName(e.ReceivedMessage.CommandReqType)} command {e.ReceivedMessage.Command.Name}."),
+                r => _logger?.Info($"Sent command response to {e.FromRemotePoint} after successful run of {e.ReceivedMessage.CommandReqType} command {e.ReceivedMessage.Command.Name}."),
                 r => _logger?.Info($"Sent command response to {e.FromRemotePoint} after failed command run.")
             );
     }

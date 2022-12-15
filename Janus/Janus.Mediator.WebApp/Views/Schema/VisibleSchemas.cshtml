@@ -6,6 +6,13 @@
 
 <h3>Schemas on remote points</h3>
 
+@if (Model.RegisteredRemotePoints.Count == 0)
+{
+    <div class="row">
+        <span class="alert alert-warning">No registered remote points</span>
+    </div>
+}
+
 @foreach (var remotePoint in Model.RegisteredRemotePoints)
 {
     <div class="accordion" id="remotePointsSchemas">
@@ -33,7 +40,7 @@
 
 
 @section Scripts
-{
+    {
     <script>
         function getSchema(targetElement) {
             let targetNodeId = targetElement.getAttribute("data-node-id");
