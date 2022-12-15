@@ -161,7 +161,7 @@ public class SchemaController : Controller
     }
 
     [HttpPost]
-    public IActionResult ApplySchemaMediation(string schemaMediationScript)
+    public async Task<IActionResult> ApplySchemaMediation(string schemaMediationScript)
     {
         var mediation = 
             await Task.FromResult(_mediatorManager.CreateDataSourceMediation(schemaMediationScript))
