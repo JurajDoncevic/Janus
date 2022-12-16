@@ -40,7 +40,7 @@ internal class AttributeMediationBuilder : IAttributeMediationBuilder
     internal AttributeMediationBuilder(string attributeName, AttributeId sourceAttributeId, string attributeDescription = "")
     {
         _attributeName = attributeName;
-        _attributeDescription = attributeDescription ?? string.Empty;
+        _attributeDescription = attributeDescription;
         _sourceAttributeId = sourceAttributeId;
     }
 
