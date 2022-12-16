@@ -115,7 +115,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<SqliteWrapperSchemaManager>();
 
         // setup controller
-        services.AddSingleton<SqliteWrapperController>();
+        services.AddSingleton<SqliteWrapperManager>();
 
         services.AddSingleton<WrapperOptions>(wrapperOptions);
         services.AddSingleton<ApplicationOptions>(applicationOptions);

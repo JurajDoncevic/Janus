@@ -112,6 +112,15 @@ public sealed class MediatorManager : IComponentManager
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _queryManager.RunQuery(query, _schemaManager);
 
+    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
+        => await _communicationNode.SendHello(remotePoint);
+
+    public async Task<Result<RemotePoint>> SendHello(string address, int port)
+        => await _communicationNode.SendHello(new UndeterminedRemotePoint(address, port));
+
+    public async Task<Result<IEnumerable<RemotePoint>>> GetPersistedRemotePoints()
+        => await Results.AsResult(async () => _persistenceProvider.RemotePointPersistence.GetAll());
+
     public async Task<Result> PersistRemotePoints(IEnumerable<RemotePoint> remotePoints)
         => await Results.AsResult(async () =>
         {
@@ -122,23 +131,13 @@ public sealed class MediatorManager : IComponentManager
                 .Map(rps => rps.Fold(Results.OnSuccess(), (rp, result) => result.Bind(r => _persistenceProvider.RemotePointPersistence.Delete(rp.NodeId))));
 
             // insert non-persisted remote points
-            var insertion = 
+            var insertion =
             remotePoints
                 .Where(rp => !_persistenceProvider.RemotePointPersistence.Exists(rp.NodeId))
                 .Fold(Results.OnSuccess(), (rp, result) => result.Bind(r => _persistenceProvider.RemotePointPersistence.Insert(rp)));
 
             return insertion && removal;
         });
-
-
-    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
-        => await _communicationNode.SendHello(remotePoint);
-
-    public async Task<Result<RemotePoint>> SendHello(string address, int port)
-        => await _communicationNode.SendHello(new UndeterminedRemotePoint(address, port));
-
-    public async Task<Result<IEnumerable<RemotePoint>>> GetPersistedRemotePoints()
-        => await Results.AsResult(async () => _persistenceProvider.RemotePointPersistence.GetAll());
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;

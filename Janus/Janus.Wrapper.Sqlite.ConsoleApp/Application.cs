@@ -4,14 +4,14 @@ using Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 namespace Janus.Wrapper.Sqlite.ConsoleApp;
 internal class Application
 {
-    private readonly SqliteWrapperController _wrapperController;
+    private readonly SqliteWrapperManager _wrapperController;
     private readonly WrapperOptions _wrapperOptions;
     private readonly ApplicationOptions _applicationOptions;
     private readonly ILogger<Application>? _logger;
     private readonly MainMenuDisplay? _mainMenuDisplay;
     private readonly UiGreetingDisplay? _cliGreetingDisplay;
 
-    public Application(SqliteWrapperController wrapperController, WrapperOptions wrapperOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
+    public Application(SqliteWrapperManager wrapperController, WrapperOptions wrapperOptions, ApplicationOptions applicationOptions, ILogger? logger = null)
     {
         _wrapperController = wrapperController;
         _wrapperOptions = wrapperOptions;

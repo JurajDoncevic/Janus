@@ -7,7 +7,7 @@ public class GetCurrentSchemaDisplay : BaseDisplay
 {
     private readonly ILogger<GetCurrentSchemaDisplay>? _logger;
 
-    public GetCurrentSchemaDisplay(SqliteWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public GetCurrentSchemaDisplay(SqliteWrapperManager wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<GetCurrentSchemaDisplay>();
     }

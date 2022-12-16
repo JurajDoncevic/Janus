@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
+using Janus.CommandLanguage;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
@@ -9,8 +10,10 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
+using Janus.QueryLanguage;
 using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.LocalQuerying;
+using Janus.Wrapper.Persistence;
 using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
@@ -26,6 +29,7 @@ public class WrapperManager
     private readonly WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> _commandManager;
     private readonly WrapperSchemaManager _schemaManager;
     private readonly WrapperCommunicationNode _communicationNode;
+    private readonly WrapperPersistenceProvider _persistenceProvider;
     private readonly ILogger<WrapperManager<TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>>? _logger;
 
     public WrapperManager(
@@ -33,12 +37,14 @@ public class WrapperManager
         WrapperQueryManager<TLocalQuery, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData> queryManager,
         WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
         WrapperSchemaManager schemaManager,
+        WrapperPersistenceProvider persistenceProvider,
         ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _queryManager = queryManager;
         _commandManager = commandManager;
         _schemaManager = schemaManager;
+        _persistenceProvider = persistenceProvider;
         _logger = logger?.ResolveLogger<WrapperManager<TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>>();
 
         _communicationNode.CommandRequestReceived += CommunicationNode_CommandRequestReceived;
@@ -82,11 +88,54 @@ public class WrapperManager
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;
 
-    public Option<DataSource> GetCurrentSchema()
-        => _schemaManager.GetCurrentOutputSchema();
+    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
+        => await _communicationNode.SendHello(remotePoint);
+
+    public async Task<Result<RemotePoint>> SendHello(string address, int port)
+        => await _communicationNode.SendHello(new MediatorRemotePoint(address, port));
+
+    public async Task<Result<RemotePoint>> RegisterRemotePoint(UndeterminedRemotePoint remotePoint)
+        => await _communicationNode.RegisterRemotePoint(remotePoint);
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
         => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));
+
+    public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
+        => await _communicationNode.SendBye(remotePoint);
+
+    public async Task<Result<IEnumerable<RemotePoint>>> GetPersistedRemotePoints()
+        => await Results.AsResult(async () => _persistenceProvider.RemotePointPersistence.GetAll());
+
+    public async Task<Result> PersistRemotePoints(IEnumerable<RemotePoint> remotePoints)
+        => await Results.AsResult(async () =>
+        {
+            // remove remote points from persistence not in given enumerable
+            var removal =
+            _persistenceProvider.RemotePointPersistence.GetAll()
+                .Map(rps => rps.Where(rp => !remotePoints.Contains(rp)))
+                .Map(rps => rps.Fold(Results.OnSuccess(), (rp, result) => result.Bind(r => _persistenceProvider.RemotePointPersistence.Delete(rp.NodeId))));
+
+            // insert non-persisted remote points
+            var insertion =
+            remotePoints
+                .Where(rp => !_persistenceProvider.RemotePointPersistence.Exists(rp.NodeId))
+                .Fold(Results.OnSuccess(), (rp, result) => result.Bind(r => _persistenceProvider.RemotePointPersistence.Insert(rp)));
+
+            return insertion && removal;
+        });
+
+    public Option<DataSource> GetCurrentSchema()
+        => _schemaManager.GetCurrentOutputSchema();
+
+    public async Task<Result<DataSource>> GenerateSchema()
+        => await _schemaManager.ReloadOutputSchema();
+
+    public async Task<Result<BaseCommand>> CreateCommand(string commandText)
+        => CommandCompilation.CompileCommandFromScriptText(commandText);
+
+    public async Task<Result<Query>> CreateQuery(string queryText)
+        => QueryCompilation.CompileQueryFromScriptText(queryText);
+
 
     public async Task<Result> RunCommand(BaseCommand command)
         => await _schemaManager
@@ -105,24 +154,5 @@ public class WrapperManager
                                               .Bind(async validity => await _queryManager.ExecuteQuery(query)),
                 async () => Results.OnFailure<TabularData>("No schema generated")
             );
-
-    public async Task<Result> SaveRegisteredRemotePoints(string filePath)
-        => await Results.AsResult(async () =>
-        {
-            await System.IO.File.WriteAllTextAsync(
-                filePath,
-                System.Text.Json.JsonSerializer.Serialize<IEnumerable<RemotePoint>>(_communicationNode.RemotePoints)
-                );
-            return true;
-        });
-
-    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
-        => await _communicationNode.SendHello(remotePoint);
-
-    public async Task<Result<RemotePoint>> SendHello(string address, int port)
-        => await _communicationNode.SendHello(new MediatorRemotePoint(address, port));
-
-    public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
-        => await _communicationNode.SendBye(remotePoint);
 
 }

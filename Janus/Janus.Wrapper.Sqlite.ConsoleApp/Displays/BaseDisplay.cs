@@ -3,7 +3,7 @@
 namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public abstract class BaseDisplay
 {
-    protected SqliteWrapperController _wrapperController;
+    protected SqliteWrapperManager _wrapperController;
     public abstract string Title { get; }
     protected abstract Task<Result> Display();
 
@@ -26,7 +26,7 @@ public abstract class BaseDisplay
         return result;
     }
 
-    protected BaseDisplay(SqliteWrapperController wrapperController)
+    protected BaseDisplay(SqliteWrapperManager wrapperController)
     {
         _wrapperController = wrapperController ?? throw new ArgumentNullException(nameof(wrapperController));
     }

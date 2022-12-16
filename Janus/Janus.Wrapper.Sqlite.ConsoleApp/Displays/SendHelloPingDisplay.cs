@@ -7,7 +7,7 @@ namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class SendHelloPingDisplay : BaseDisplay
 {
     private readonly ILogger<SendHelloPingDisplay>? _logger;
-    public SendHelloPingDisplay(SqliteWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public SendHelloPingDisplay(SqliteWrapperManager wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         if (wrapperController is null)
         {

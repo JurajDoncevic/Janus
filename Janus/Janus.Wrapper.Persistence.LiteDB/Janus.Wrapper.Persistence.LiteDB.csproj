@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiteDB" Version="5.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
+    <ProjectReference Include="..\Janus.Components\Janus.Components.csproj" />
+    <ProjectReference Include="..\Janus.Serialization.Json\Janus.Serialization.Json.csproj" />
+    <ProjectReference Include="..\Janus.Wrapper\Janus.Wrapper.csproj" />
+  </ItemGroup>
+
+</Project>

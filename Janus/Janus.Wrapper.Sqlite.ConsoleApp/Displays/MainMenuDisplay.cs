@@ -14,7 +14,7 @@ public class MainMenuDisplay : BaseDisplay
     private readonly GetCurrentSchemaDisplay _getCurrentSchemaDisplay;
     private readonly ShutDownDisplay _shutDownDisplay;
 
-    public MainMenuDisplay(SqliteWrapperController wrapperController, ILogger? logger = null) : base(wrapperController)
+    public MainMenuDisplay(SqliteWrapperManager wrapperController, ILogger? logger = null) : base(wrapperController)
     {
         if (wrapperController is null)
         {

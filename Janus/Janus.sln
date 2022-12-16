@@ -73,7 +73,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.Sqlite.WebApp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.WebApp", "Janus.Mediator.WebApp\Janus.Mediator.WebApp.csproj", "{5D5571B9-FCB5-4A28-97BE-A3E4266FFDC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mediator.Persistence.LiteDB", "Janus.Mediator.Persistence.LiteDB\Janus.Mediator.Persistence.LiteDB.csproj", "{5737503A-8106-44D9-8BF5-641371CBEBE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mediator.Persistence.LiteDB", "Janus.Mediator.Persistence.LiteDB\Janus.Mediator.Persistence.LiteDB.csproj", "{5737503A-8106-44D9-8BF5-641371CBEBE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Wrapper.Persistence.LiteDB", "Janus.Wrapper.Persistence.LiteDB\Janus.Wrapper.Persistence.LiteDB.csproj", "{981E39BF-2DBF-4B2B-A51C-D3077D08610F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -225,6 +227,10 @@ Global
 		{5737503A-8106-44D9-8BF5-641371CBEBE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5737503A-8106-44D9-8BF5-641371CBEBE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5737503A-8106-44D9-8BF5-641371CBEBE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{981E39BF-2DBF-4B2B-A51C-D3077D08610F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{981E39BF-2DBF-4B2B-A51C-D3077D08610F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{981E39BF-2DBF-4B2B-A51C-D3077D08610F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{981E39BF-2DBF-4B2B-A51C-D3077D08610F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

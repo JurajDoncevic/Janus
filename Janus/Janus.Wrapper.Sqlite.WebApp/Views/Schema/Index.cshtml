@@ -1,0 +1,30 @@
+﻿@model DataSourceViewModel
+
+@{
+    ViewData["Title"] = "Current inferred schema";
+}
+
+<h2>Current inferred schema</h2>
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="row">
+        <span class="alert alert-warning">@Model.Message</span>
+    </div>
+}
+<div class="mb-2">
+    <button onclick="generateSchema(this)" class="btn btn-primary">Infer schema from source</button>
+</div>
+<div class="row">
+    <pre id="schema-json" class="overflow-scroll border rounded-1 border-1 border-dark border-opacity-25" style="height:70vh">
+        @Model.DataSourceJson
+    </pre>
+</div>
+
+
+@section Scripts{
+    <script src="~/js/generateSchema.js"></script>
+    <script>
+        let data = JSON.parse(document.getElementById("schema-json").innerText)
+        document.getElementById("schema-json").textContent = JSON.stringify(data, undefined, 2);
+    </script>
+}

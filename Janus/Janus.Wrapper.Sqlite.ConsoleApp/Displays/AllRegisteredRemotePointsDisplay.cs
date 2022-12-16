@@ -5,7 +5,7 @@ namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class AllRegisteredRemotePointsDisplay : BaseDisplay
 {
     ILogger<AllRegisteredRemotePointsDisplay>? _logger;
-    public AllRegisteredRemotePointsDisplay(SqliteWrapperController wrapperController, ILogger? logger) : base(wrapperController)
+    public AllRegisteredRemotePointsDisplay(SqliteWrapperManager wrapperController, ILogger? logger) : base(wrapperController)
     {
         _logger = logger?.ResolveLogger<AllRegisteredRemotePointsDisplay>();
     }

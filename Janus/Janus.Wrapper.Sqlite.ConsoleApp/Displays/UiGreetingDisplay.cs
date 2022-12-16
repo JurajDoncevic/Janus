@@ -4,7 +4,7 @@ namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class UiGreetingDisplay : BaseDisplay
 {
     private readonly WrapperOptions _wrapperOptions;
-    public UiGreetingDisplay(SqliteWrapperController wrapperController, WrapperOptions wrapperOptions) : base(wrapperController)
+    public UiGreetingDisplay(SqliteWrapperManager wrapperController, WrapperOptions wrapperOptions) : base(wrapperController)
     {
         _wrapperOptions = wrapperOptions;
     }

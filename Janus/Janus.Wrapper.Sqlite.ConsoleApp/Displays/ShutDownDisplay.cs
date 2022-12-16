@@ -5,7 +5,7 @@ namespace Janus.Wrapper.Sqlite.ConsoleApp.Displays;
 public class ShutDownDisplay : BaseDisplay
 {
     private readonly ILogger<ShutDownDisplay>? _logger;
-    public ShutDownDisplay(SqliteWrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public ShutDownDisplay(SqliteWrapperManager mediatorController, ILogger? logger = null) : base(mediatorController)
     {
         _logger = logger?.ResolveLogger<ShutDownDisplay>();
     }

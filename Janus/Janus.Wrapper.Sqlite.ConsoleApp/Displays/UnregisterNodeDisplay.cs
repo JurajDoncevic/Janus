@@ -8,7 +8,7 @@ public class UnregisterNodeDisplay : BaseDisplay
 {
     private readonly ILogger<UnregisterNodeDisplay>? _logger;
 
-    public UnregisterNodeDisplay(SqliteWrapperController mediatorController, ILogger? logger = null) : base(mediatorController)
+    public UnregisterNodeDisplay(SqliteWrapperManager mediatorController, ILogger? logger = null) : base(mediatorController)
     {
         _logger = logger?.ResolveLogger<UnregisterNodeDisplay>();
     }
