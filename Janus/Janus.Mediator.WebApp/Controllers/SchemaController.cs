@@ -1,6 +1,7 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
 using Janus.Communication.Remotes;
+using Janus.MediationLanguage;
 using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
@@ -154,8 +155,11 @@ public class SchemaController : Controller
                         DataSourceJson = t.dataSourceJson,
                         Message = t.message
                     }),
-         
-            SchemaMediationScript = string.Empty
+
+            SchemaMediationScript = _mediatorManager.GetCurrentSchemaMediation().Match(
+                                        mediation => mediation.ToMediationScript(),
+                                        () => string.Empty
+                                        )
         };
         return View(viewModel);
     }

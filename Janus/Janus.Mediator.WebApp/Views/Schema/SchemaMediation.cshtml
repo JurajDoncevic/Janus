@@ -15,6 +15,10 @@
     </div>
     <div class="col-6">
         <h4>Loaded schemas</h4>
+        <div class="row">
+            <span id="load-schema-notif" hidden class="alert alert-warning"></span>
+        </div>
+        
         @foreach (var (remotePoint, schema) in Model.LoadedDataSourceSchemas)
         {
             <div class="accordion" id="remotePointsSchemas">
@@ -69,4 +73,6 @@
 
 @section Scripts {
     <script src="~/js/getSchema.js"></script>
+    <script src="~/js/loadSchema.js">"</script>
+    <script src="~/js/unloadSchema.js"></script>
 }

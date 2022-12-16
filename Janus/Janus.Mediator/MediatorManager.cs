@@ -229,4 +229,7 @@ public sealed class MediatorManager : IComponentManager
         {
             return await _schemaManager.MediateLoadedSchemas(dataSourceMediation);
         });
+
+    public Option<DataSourceMediation> GetCurrentSchemaMediation()
+        => _schemaManager.CurrentMediation;
 }
