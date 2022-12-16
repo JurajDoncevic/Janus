@@ -76,7 +76,7 @@ public class SchemaController : Controller
 
         var schemaResult =
             (await _mediatorManager.GetSchemaFrom(remotePoint))
-                .Bind(dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource));
+                .Bind(_jsonSerializationProvider.DataSourceSerializer.Serialize);
 
         return schemaResult.Match(
             schema => (IActionResult)Json(schema),
@@ -97,7 +97,9 @@ public class SchemaController : Controller
             return NotFound($"No remote point with {nodeId}");
         }
         
-        var schemaLoading = await _mediatorManager.LoadSchemaFrom(remotePoint);
+        var schemaLoading = 
+            (await _mediatorManager.LoadSchemaFrom(remotePoint))
+            .Bind(_jsonSerializationProvider.DataSourceSerializer.Serialize);
 
         return schemaLoading.Match(
             schema => (IActionResult)Json(schema),
