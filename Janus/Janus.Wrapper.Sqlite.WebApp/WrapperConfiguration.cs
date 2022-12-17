@@ -20,6 +20,7 @@ internal class WrapperConfiguration
     public string PersistenceConnectionString { get; init; } = "./mediator_database.db";
 
     public bool AllowCommands { get; init; }
+
     public string? DataSourceName { get; set; }
 
     public string SourceConnectionString { get; init; } = string.Empty;
