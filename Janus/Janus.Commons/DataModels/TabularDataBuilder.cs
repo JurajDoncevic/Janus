@@ -102,7 +102,7 @@ public class RowDataBuilder
                                        .Select(kvp => (attrId: kvp.Key, attrValue: kvp.Value))
                                        .FirstOrDefault();
         if (colValue != default)
-            throw new IncompatibleDotNetTypeException(colValue.attrId, colValue.GetType());
+            throw new IncompatibleDotNetTypeException(colValue.attrId, colValue.attrValue?.GetType());
         _columnValues = columnValues;
 
         return this;

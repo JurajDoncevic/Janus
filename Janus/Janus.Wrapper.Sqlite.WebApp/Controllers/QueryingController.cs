@@ -46,6 +46,7 @@ public class QueryingController : Controller
     }
 
     [HttpPost]
+    [Route("/")]
     public async Task<IActionResult> RunQuery([FromForm] string queryText)
     {
         var queryResult =
@@ -81,8 +82,7 @@ public class QueryingController : Controller
             }
         };
 
-        TempData["QueryingViewModel"] = JsonSerializer.Serialize(viewModel);
 
-        return RedirectToAction(nameof(Index));
+        return View(nameof(Index), viewModel);
     }
 }
