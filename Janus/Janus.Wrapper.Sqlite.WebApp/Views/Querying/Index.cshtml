@@ -40,27 +40,29 @@
     {
         <div class="row mt-3">
             <h4>Query results</h4>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        @foreach (var column in Model.QueryResult.ColumnDataTypes)
-                        {
-                            <th>@column.Key (@column.Value)</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var dataRow in Model.QueryResult.DataRows)
-                    {
+            <div class="table-responsive" style="height:50vh">
+                <table class="table table-bordered">
+                    <thead class="table-secondary">
                         <tr>
-                            @foreach (var colName in Model.QueryResult.ColumnDataTypes.Keys)
+                            @foreach (var column in Model.QueryResult.ColumnDataTypes)
                             {
-                                <td>@dataRow[colName]</td>
+                                <th>@column.Key (@column.Value)</th>
                             }
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var dataRow in Model.QueryResult.DataRows)
+                        {
+                            <tr>
+                                @foreach (var colName in Model.QueryResult.ColumnDataTypes.Keys)
+                                {
+                                    <td>@dataRow[colName]</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 </div>
