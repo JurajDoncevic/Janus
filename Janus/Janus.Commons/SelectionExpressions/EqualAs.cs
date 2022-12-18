@@ -15,5 +15,5 @@ public sealed class EqualAs : ComparisonOperator
 
     public override string PrettyOperatorString => "==";
 
-    protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.BINARY, DataTypes.DATETIME, DataTypes.BOOLEAN, DataTypes.STRING };
+    protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.LONGINT, DataTypes.DECIMAL, DataTypes.BINARY, DataTypes.DATETIME, DataTypes.BOOLEAN, DataTypes.STRING };
 }

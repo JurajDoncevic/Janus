@@ -8,7 +8,7 @@ namespace Janus.Commons.SelectionExpressions;
 public sealed class LesserThan : ComparisonOperator
 {
 
-    protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.DECIMAL, DataTypes.DATETIME };
+    protected override HashSet<DataTypes> _compatibleDataTypes => new() { DataTypes.INT, DataTypes.LONGINT, DataTypes.DECIMAL, DataTypes.DATETIME };
     internal LesserThan(AttributeId attributeId, object value) : base(attributeId, value)
     {
     }
