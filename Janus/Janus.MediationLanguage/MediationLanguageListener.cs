@@ -123,7 +123,7 @@ public class MediationLanguageListener : MediationLanguageBaseListener
         var tableauConfiguration = new TableauConfiguration
         {
             TableauName = context.STRUCTURE_NAME().GetText().Trim(),
-            TableauDescription = context.description_expr().GetText().Trim('#'),
+            TableauDescription = context.description_expr()?.GetText().Trim('#'),
             AttributeConfigurations = context.attribute_mediation()
                                     .attribute_declaration()
                                     .Select(ctx => new AttributeConfiguration

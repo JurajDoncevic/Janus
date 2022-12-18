@@ -35,11 +35,23 @@
                                 <li><a class="dropdown-item" asp-controller="Schema" asp-action="SchemaMediation">Manage schema mediation</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Querying" asp-action="Index">Querying</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link link-dark dropdown-toggle" id="navbarSchemaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Querying
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarSchemaDropdown">
+                                <li><a class="dropdown-item" asp-controller="Querying" asp-action="Index">Querying on mediated schema</a></li>
+                                <li><a class="dropdown-item" asp-controller="Querying" asp-action="QueryRemotePoint">Querying on a remote point</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Commanding" asp-action="Index">Commanding</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link link-dark dropdown-toggle" id="navbarSchemaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Commanding
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarSchemaDropdown">
+                                <li><a class="dropdown-item" asp-controller="Commanding" asp-action="Index">Commanding on mediated schema</a></li>
+                                <li><a class="dropdown-item" asp-controller="Commanding" asp-action="CommandRemotePoint">Commanding on a remote point</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>

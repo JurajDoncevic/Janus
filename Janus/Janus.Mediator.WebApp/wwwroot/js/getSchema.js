@@ -8,7 +8,6 @@
         document.getElementById("schema-" + targetNodeId).textContent = this.responseText;
     }
     xhr.onload = function () {
-        console.log(this.responseText)
         if (xhr.status >= 200 && xhr.status < 300) {
             let data = JSON.parse(this.responseText)
             document.getElementById("schema-" + targetNodeId).textContent = JSON.stringify(data, undefined, 2);

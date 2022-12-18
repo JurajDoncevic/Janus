@@ -79,7 +79,7 @@ public class SchemaController : Controller
                 .Bind(_jsonSerializationProvider.DataSourceSerializer.Serialize);
 
         return schemaResult.Match(
-            schema => (IActionResult)Json(schema),
+            schema => (IActionResult)Content(schema, "application/json"),
             message => (IActionResult)StatusCode(500, message)
             );
     }
@@ -167,13 +167,14 @@ public class SchemaController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> ApplySchemaMediation(string schemaMediationScript)
+    public async Task<IActionResult> ApplyMediationScript([FromForm]string schemaMediationScript)
     {
         var mediation = 
             await Task.FromResult(_mediatorManager.CreateDataSourceMediation(schemaMediationScript))
                       .Bind(mediation => _mediatorManager.ApplyMediation(mediation))
                       .Bind(mediatedDataSource => Task.FromResult(_jsonSerializationProvider.DataSourceSerializer.Serialize(mediatedDataSource)));
         
+        // either return view or call via js
         return mediation.Match(
             dataSource => (IActionResult)Json(dataSource),
             message => (IActionResult)StatusCode(500, message)

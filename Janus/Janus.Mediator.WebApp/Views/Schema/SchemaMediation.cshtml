@@ -8,8 +8,8 @@
 <div class="row">
     <div class="col-6">
         <h4>Mediation script</h4>
-        <form asp-action="ApplyMediationScript">
-            <textarea name="mediationScript" class="w-100" rows="15">@Model.SchemaMediationScript</textarea>
+        <form asp-action="ApplyMediationScript" method="post">
+            <textarea name="schemaMediationScript" class="w-100" rows="15">@Model.SchemaMediationScript</textarea>
             <input type="submit" value="Apply mediation" class="btn btn-primary"/>
         </form>
     </div>
@@ -31,11 +31,11 @@
                     <div id="collapse-@remotePoint.NodeId" class="accordion-collapse collapse" aria-labelledby="collapse-@remotePoint.NodeId" data-bs-parent="#remotePointSchemas">
                         <div class="accordion-body">
                             <div class="row">
-                                <button class="btn btn-danger w-auto" data-node-id="@remotePoint.NodeId" onclick="unloadSchema(this)">Unload schema</button>
+                                <button class="btn btn-danger w-auto" data-node-id="@remotePoint.NodeId" onclick="unloadSchema(this);">Unload schema</button>
                             </div>
                             <hr>
                             <div class="row">
-                                <pre id="schema-@remotePoint.NodeId"></pre>
+                                <pre id="schema-@remotePoint.NodeId" class="schema overflow-scroll border rounded-1 border-1 border-dark border-opacity-25" style="height:20vh; resize:vertical;">@schema.DataSourceJson</pre>
                             </div>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <pre id="schema-@remotePoint.NodeId"></pre>
+                        <pre id="schema-@remotePoint.NodeId" class="overflow-scroll border rounded-1 border-1 border-dark border-opacity-25" style="resize:vertical; height:20vh"></pre>
                     </div>
                 </div>
             </div>
@@ -72,6 +72,17 @@
 }
 
 @section Scripts {
+    <script>
+        var schemaElements = document.getElementsByClassName("schema");
+
+        for(let i = 0; i < schemaElements.length; i++){
+            var textContent = schemaElements[i].textContent;
+
+            var data = JSON.parse(textContent);
+            schemaElements[i].textContent = JSON.stringify(data, undefined, 2);
+
+        }
+    </script>
     <script src="~/js/getSchema.js"></script>
     <script src="~/js/loadSchema.js">"</script>
     <script src="~/js/unloadSchema.js"></script>
