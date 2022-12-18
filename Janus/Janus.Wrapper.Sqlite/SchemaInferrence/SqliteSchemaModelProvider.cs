@@ -1,8 +1,11 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Resulting;
+using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
 using Janus.Wrapper.SchemaInferrence;
 using Janus.Wrapper.SchemaInferrence.Model;
 using Microsoft.Data.Sqlite;
+using System.Data;
 
 namespace Janus.Wrapper.Sqlite.SchemaInferrence;
 public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
@@ -51,6 +54,43 @@ public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
                             reader.GetFieldValue<int>(0))// ordinal (cid)
                         );
             }
+
+            using var checkTypesOnDataCommand = connection.CreateCommand();
+            checkTypesOnDataCommand.CommandText =
+                $"SELECT * FROM {tableauName} LIMIT 1;";
+
+            using var checkTypeReader = checkTypesOnDataCommand.ExecuteReader();
+            if (checkTypeReader.Read())
+            {
+                attributeInfos =
+                attributeInfos.Fold(
+                    Enumerable.Empty<AttributeInfo>(),
+                    (attrInfo, attrInfos) =>
+                    {
+                        var type = checkTypeReader.GetProviderSpecificFieldType(attrInfo.Name);
+                        // if the inferred type from the schema does not match the type inferred from the data
+                        if (attrInfo.DataType != TypeMappings.MapToDataType(type) ||
+                            !type.IsRepresentableAs(attrInfo.DataType))
+                        {
+                            var adjustedDataType = TypeMappings.MapToDataType(type);
+                            var adjustedAttributeInfo =
+                                new AttributeInfo(
+                                    attrInfo.Name,
+                                    adjustedDataType,
+                                    attrInfo.IsPrimaryKey,
+                                    attrInfo.IsNullable,
+                                    attrInfo.Ordinal
+                                    );
+
+                            return attrInfos.Append(adjustedAttributeInfo);
+                        }
+                        else
+                        {
+                            return attrInfos.Append(attrInfo);
+                        }
+                    });                
+            }
+
 
             return Results.OnSuccess(attributeInfos);
         });
