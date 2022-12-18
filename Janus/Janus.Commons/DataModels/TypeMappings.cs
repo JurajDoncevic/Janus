@@ -1,4 +1,5 @@
 ﻿using Janus.Commons.SchemaModels;
+using System.ComponentModel;
 
 namespace Janus.Commons.DataModels;
 
@@ -38,5 +39,24 @@ public static class TypeMappings
             Type t when t == typeof(string) => DataTypes.STRING,
             Type t when t == typeof(byte[]) => DataTypes.BINARY,
             _ => throw new ArgumentException($"No mapping for Type {type.FullName}")
+        };
+
+    /// <summary>
+    /// Checks if a System.Type can be represented as a given DataType
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="dataType"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static bool IsRepresentableAs(this Type type, DataTypes dataType)
+        => dataType switch
+        {
+            DataTypes.INT => type.IsEquivalentTo(typeof(int)),
+            DataTypes.DECIMAL => type.IsEquivalentTo(typeof(double)),
+            DataTypes.BOOLEAN => type.IsEquivalentTo(typeof(bool)),
+            DataTypes.DATETIME => type.IsEquivalentTo(typeof(DateTime)),
+            DataTypes.STRING => type.IsEquivalentTo(typeof(string)),
+            DataTypes.BINARY => type.IsEquivalentTo(typeof(byte[])),
+            _ => throw new ArgumentException($"No representation for DataType {dataType}")
         };
 }

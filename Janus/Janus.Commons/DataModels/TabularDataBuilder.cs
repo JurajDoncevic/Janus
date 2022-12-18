@@ -98,7 +98,7 @@ public class RowDataBuilder
 
         var colValue = columnValues.Where(kvp =>
                                             kvp.Value != null &&
-                                            !kvp.Value.GetType().IsEquivalentTo(TypeMappings.MapToType(_columnDataTypes[kvp.Key])))
+                                            !TypeMappings.IsRepresentableAs(kvp.Value.GetType(), _columnDataTypes[kvp.Key]))
                                        .Select(kvp => (attrId: kvp.Key, attrValue: kvp.Value))
                                        .FirstOrDefault();
         if (colValue != default)
