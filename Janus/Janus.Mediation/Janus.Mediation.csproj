@@ -8,6 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="QueryModelMediation.cs~RF1042990.TMP" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
 	</ItemGroup>
 

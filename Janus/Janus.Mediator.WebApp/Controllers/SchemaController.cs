@@ -167,7 +167,7 @@ public class SchemaController : Controller
     }
 
     [HttpPost]
-    [Route("/")]
+    [Route("Schema/SchemaMediation")]
     public async Task<IActionResult> ApplyMediationScript([FromForm]string schemaMediationScript)
     {
         var mediation = 

@@ -1,4 +1,5 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
@@ -52,12 +53,22 @@ public static partial class QueryModelMediation
                     joining => joining.Joins
                                       .Map(j => new List<TableauId> { j.ForeignKeyTableauId, j.PrimaryKeyTableauId })
                                       .SelectMany(tableauIds => tableauIds)
+                                      .Append(initialSourceTableauId)
                                       .Map(tableauId => tableauId.NameTuple)
                                       .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]!.SourceQuery.Joining)
                                       .Map(joining => joining.Value.Joins)
                                       .Map(joins => joins.Map(join => (fkAttrId: join.ForeignKeyAttributeId, pkAttrId: join.PrimaryKeyAttributeId)))
                                       .SelectMany(t => t),
-                    () => Enumerable.Empty<(AttributeId fkAttrId, AttributeId pkAttrId)>()
+                    () => initialSourceTableauId.Identity()
+                            .Map(tableauId => tableauId.NameTuple)
+                            .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]!.SourceQuery.Joining)
+                            .Data
+                            .Map(joining => joining.Joins)
+                            .Map(joins => joins.Map(join => (fkAttrId: join.ForeignKeyAttributeId, pkAttrId: join.PrimaryKeyAttributeId)))
+                            .Match(
+                                joins => joins,
+                                () => Enumerable.Empty<(AttributeId fkAttrId, AttributeId pkAttrId)>()
+                            )
                     )
                 .Map(j => Join.CreateJoin(j.fkAttrId, j.pkAttrId));
 

@@ -40,7 +40,8 @@ public static partial class QueryModelMediation
 
         public bool ContainsTableau(TableauId tableauId)
         {
-            return _joins.Any(j => j.ForeignKeyTableauId.Equals(tableauId) || j.PrimaryKeyTableauId.Equals(tableauId));
+            return _initialTableauId.Equals(tableauId) ||
+                _joins.Any(j => j.ForeignKeyTableauId.Equals(tableauId) || j.PrimaryKeyTableauId.Equals(tableauId));
         }
 
         public IReadOnlySet<AttributeId> AddProjectionAttributes(IEnumerable<AttributeId> attributeIds)

@@ -3,6 +3,7 @@ using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace Janus.Mediator.WebApp.Controllers;
@@ -21,32 +22,32 @@ public class QueryingController : Controller
 
     public IActionResult Index()
     {
-        var viewModel = JsonSerializer.Deserialize<QueryingViewModel>(TempData["QueryingViewModel"]?.ToString() ?? "null");
+        var currentSchema = _mediatorManager.GetCurrentSchema()
+                .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
+                                        .Match(
+                                            r => r,
+                                            r => "{}"
+                                        ));
 
-        if (viewModel == null)
+        var viewModel = new QueryingViewModel()
         {
-            var currentSchema = _mediatorManager.GetCurrentSchema()
-                    .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
-                                            .Match(
-                                                r => r,
-                                                r => "{}"
-                                            ));
+            MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}"
+        };
 
-            viewModel = new QueryingViewModel()
-            {
-                MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}"
-            };
-        }
 
         return View(viewModel);
     }
 
     [HttpPost]
+    [Route("Querying/")]
     public async Task<IActionResult> RunQuery([FromForm] string queryText)
     {
+        var stopwatch = Stopwatch.StartNew();
         var queryResult =
             await _mediatorManager.CreateQuery(queryText)
                 .Bind(query => _mediatorManager.RunQuery(query));
+        var timeNeeded = stopwatch.ElapsedMilliseconds;
+        stopwatch.Stop();
 
         var currentSchema = _mediatorManager.GetCurrentSchema()
                             .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
@@ -73,12 +74,10 @@ public class QueryingController : Controller
             {
                 IsSuccess = currentSchema && queryResult,
                 Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
-                          queryResult.Match(r => "", message => message)
+                          queryResult.Match(r => $"Query done in {timeNeeded}ms", message => message)
             }
         };
 
-        TempData["QueryingViewModel"] = JsonSerializer.Serialize(viewModel);
-
-        return RedirectToAction(nameof(Index));
+        return View(nameof(Index), viewModel);
     }
 }
