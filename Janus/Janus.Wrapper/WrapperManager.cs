@@ -30,6 +30,7 @@ public class WrapperManager
     private readonly WrapperSchemaManager _schemaManager;
     private readonly WrapperCommunicationNode _communicationNode;
     private readonly WrapperPersistenceProvider _persistenceProvider;
+    private readonly WrapperOptions _wrapperOptions;
     private readonly ILogger<WrapperManager<TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>>? _logger;
 
     public WrapperManager(
@@ -38,6 +39,7 @@ public class WrapperManager
         WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalMutation, TLocalInstantiation> commandManager,
         WrapperSchemaManager schemaManager,
         WrapperPersistenceProvider persistenceProvider,
+        WrapperOptions wrapperOptions,
         ILogger? logger = null)
     {
         _communicationNode = communicationNode;
@@ -45,6 +47,7 @@ public class WrapperManager
         _commandManager = commandManager;
         _schemaManager = schemaManager;
         _persistenceProvider = persistenceProvider;
+        _wrapperOptions = wrapperOptions;
         _logger = logger?.ResolveLogger<WrapperManager<TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>>();
 
         _communicationNode.CommandRequestReceived += CommunicationNode_CommandRequestReceived;
@@ -61,7 +64,7 @@ public class WrapperManager
 
     private async void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
     {        
-        (await (await _queryManager.ExecuteQuery(e.ReceivedMessage.Query))
+        (await (await RunQuery(e.ReceivedMessage.Query))
             .Match(
                 tabularData => _communicationNode.SendQueryResponse(e.ReceivedMessage.ExchangeId, tabularData, e.FromRemotePoint),
                 message => _communicationNode.SendQueryResponse(e.ReceivedMessage.ExchangeId, null, e.FromRemotePoint, message),
@@ -74,7 +77,7 @@ public class WrapperManager
 
     private async void CommunicationNode_CommandRequestReceived(object? sender, Communication.Nodes.Events.CommandReqEventArgs e)
     {
-        (await (await _commandManager.RunCommand(e.ReceivedMessage.Command))
+        (await (await RunCommand(e.ReceivedMessage.Command))
             .Match(
                 message => _communicationNode.SendCommandResponse(e.ReceivedMessage.ExchangeId, true, e.FromRemotePoint, message),
                 message => _communicationNode.SendCommandResponse(e.ReceivedMessage.ExchangeId, false, e.FromRemotePoint, message),
@@ -138,13 +141,15 @@ public class WrapperManager
 
 
     public async Task<Result> RunCommand(BaseCommand command)
-        => await _schemaManager
-            .GetCurrentOutputSchema()
-            .Match(
-                async dataSource => await Task.FromResult(command.IsValidForDataSource(dataSource))
-                                              .Bind(async validity => await _commandManager.RunCommand(command)),
-                async () => Results.OnFailure("No schema generated")
-            );
+        => !_wrapperOptions.AllowsCommands
+            ? Results.OnFailure("This wrapper does not allow running commands")
+            : await _schemaManager
+                .GetCurrentOutputSchema()
+                .Match(
+                    async dataSource => await Task.FromResult(command.IsValidForDataSource(dataSource))
+                                                  .Bind(async validity => await _commandManager.RunCommand(command)),
+                    async () => Results.OnFailure("No schema generated")
+                );
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _schemaManager
