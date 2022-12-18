@@ -13,7 +13,7 @@ public static class TypeMappings
     public static Type MapToType(DataTypes dataType)
         => dataType switch
         {
-            DataTypes.INT => typeof(long),
+            DataTypes.INT => typeof(int),
             DataTypes.DECIMAL => typeof(double),
             DataTypes.BOOLEAN => typeof(bool),
             DataTypes.DATETIME => typeof(DateTime),
@@ -32,7 +32,6 @@ public static class TypeMappings
         => type switch
         {
             Type t when t == typeof(int) => DataTypes.INT,
-            Type t when t == typeof(long) => DataTypes.INT,
             Type t when t == typeof(double) => DataTypes.DECIMAL,
             Type t when t == typeof(bool) => DataTypes.BOOLEAN,
             Type t when t == typeof(DateTime) => DataTypes.DATETIME,
