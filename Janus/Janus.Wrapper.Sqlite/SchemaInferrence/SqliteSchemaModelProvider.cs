@@ -67,12 +67,11 @@ public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
                     Enumerable.Empty<AttributeInfo>(),
                     (attrInfo, attrInfos) =>
                     {
-                        var type = checkTypeReader.GetProviderSpecificFieldType(attrInfo.Name);
-                        // if the inferred type from the schema does not match the type inferred from the data
-                        if (attrInfo.DataType != TypeMappings.MapToDataType(type) ||
-                            !type.IsRepresentableAs(attrInfo.DataType))
+                        var type = checkTypeReader.GetFieldType(attrInfo.Name);
+                        var adjustedDataType = TypeMappings.MapToDataType(type);
+                        // if the inferred data type from the schema has a lower order than the adjusted data type
+                        if (GetDataTypeInferrenceOrder(attrInfo.DataType) < GetDataTypeInferrenceOrder(adjustedDataType))
                         {
-                            var adjustedDataType = TypeMappings.MapToDataType(type);
                             var adjustedAttributeInfo =
                                 new AttributeInfo(
                                     attrInfo.Name,
@@ -88,7 +87,7 @@ public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
                         {
                             return attrInfos.Append(attrInfo);
                         }
-                    });                
+                    });
             }
 
 
@@ -191,6 +190,24 @@ public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
             string name when name.Contains("boolean") => DataTypes.BOOLEAN,
             string name when name.Contains("date") => DataTypes.DATETIME, // for DATE and DATETIME
             _ => DataTypes.STRING // defaults to string
+        };
+
+    /// <summary>
+    /// Determines the order in which types are inferred. Inferred DataTypes can be upgraded to a higher order, but not downgraded
+    /// </summary>
+    /// <param name="dataType"></param>
+    /// <returns></returns>
+    private int GetDataTypeInferrenceOrder(DataTypes dataType)
+        => dataType switch
+        {
+            DataTypes.INT => 1,
+            DataTypes.LONGINT => 2,
+            DataTypes.DECIMAL => 3,
+            DataTypes.STRING => 4,
+            DataTypes.DATETIME => 5,
+            DataTypes.BOOLEAN => 6,
+            DataTypes.BINARY => 7,
+            _ => 0
         };
 
 }
