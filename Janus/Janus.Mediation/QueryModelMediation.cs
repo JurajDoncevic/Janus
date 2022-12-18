@@ -64,7 +64,7 @@ public static partial class QueryModelMediation
             // localize selection
             var localizedSelectionExpression = queryOnMediatedDataSource.Selection.Match(
                 selection => LocalizeSelectionExpression(selection.Expression, dataSourceMediation),
-                () => FALSE()
+                () => TRUE()
                 );
 
             // determine query partitions - for each join set from the same data source - split a colored graph
@@ -116,7 +116,9 @@ public static partial class QueryModelMediation
 
                             // construct a conjunctive partitioned selection expression - literals remain, let the sources handle them :)
                             queryPartition.SelectionExpression =
-                                literals.Fold((SelectionExpression)TRUE(),
+                                literals.Count() == 1 && comparisons.Count() == 0 // if there is just one literal and no comparisons
+                                ? queryPartition.SelectionExpression // just pass the TRUE or FALSE
+                                : literals.Fold((SelectionExpression)TRUE(),
                                     (lit, selExpr) =>
                                         AND(lit,
                                             comparisons.Fold(selExpr,
@@ -271,7 +273,7 @@ public static partial class QueryModelMediation
             OrOperator => false,
             NotOperator => false,
             AndOperator and => IsConjunctiveExpression(and.LeftOperand) && IsConjunctiveExpression(and.RightOperand),
-            _ => true // literals and comparison ops can't have logical operations inside of them
+            _ => false // literals and comparison ops can't have logical operations inside of them
         };
     }
 

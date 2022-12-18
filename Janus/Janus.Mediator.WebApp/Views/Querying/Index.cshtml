@@ -31,7 +31,7 @@
         </div>
         <div class="col-6">
             <h4>Current mediated schema</h4>
-            <textarea disabled class="w-100" rows="15" id="schema-json" asp-for="MediatedDataSourceJson"></textarea>
+            <pre class="w-100" rows="15" id="schema-json">@Model.MediatedDataSourceJson</pre>
         </div>
     </div>
     @if (Model.QueryResult is not null && Model.QueryResult.ColumnDataTypes.Count > 0)

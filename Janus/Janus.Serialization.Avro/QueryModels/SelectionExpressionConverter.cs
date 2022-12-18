@@ -47,6 +47,7 @@ internal sealed class SelectionExpressionConverter
                 string exp when exp.StartsWith("EQ") => ParseEQ(exp),
                 string exp when exp.StartsWith("NEQ") => ParseNEQ(exp),
                 string exp when exp.StartsWith("TRUE") => ParseTRUE(exp),
+                string exp when exp.StartsWith("FALSE") => ParseFALSE(exp),
                 _ => throw new FormatException($"Unknown expression: {expressionString}")
             };
 
@@ -75,6 +76,11 @@ internal sealed class SelectionExpressionConverter
                 ParseSelectionExpression(matches[0].Value)
                 );
         }
+
+        private static FalseLiteral ParseFALSE(string exp)
+            => exp.Equals(FALSE().LiteralToken)
+                ? FALSE()
+                : throw new FormatException($"Unknown expression: {exp}");
 
         private static TrueLiteral ParseTRUE(string exp)
             => exp.Equals(TRUE().LiteralToken)
