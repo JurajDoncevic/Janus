@@ -15,7 +15,7 @@ public sealed class SqliteWrapperManager
     : WrapperManager<SqliteQuery, SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string, SqliteTabularData, string, string>
 {
     private readonly ILogger<SqliteWrapperManager>? _logger;
-    public SqliteWrapperManager(WrapperCommunicationNode communicationNode, SqliteWrapperQueryManager queryManager, SqliteWrapperCommandManager commandManager, SqliteWrapperSchemaManager schemaManager, WrapperPersistenceProvider persistenceProvider, ILogger? logger = null) : base(communicationNode, queryManager, commandManager, schemaManager, persistenceProvider, logger)
+    public SqliteWrapperManager(WrapperCommunicationNode communicationNode, SqliteWrapperQueryManager queryManager, SqliteWrapperCommandManager commandManager, SqliteWrapperSchemaManager schemaManager, WrapperPersistenceProvider persistenceProvider, WrapperOptions wrapperOptions, ILogger? logger = null) : base(communicationNode, queryManager, commandManager, schemaManager, persistenceProvider, wrapperOptions, logger)
     {
         _logger = logger?.ResolveLogger<SqliteWrapperManager>();
     }
