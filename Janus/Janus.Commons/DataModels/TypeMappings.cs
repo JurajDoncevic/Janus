@@ -1,5 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Janus.Commons.DataModels;
 
@@ -15,6 +16,7 @@ public static class TypeMappings
         => dataType switch
         {
             DataTypes.INT => typeof(int),
+            DataTypes.LONGINT => typeof(long),
             DataTypes.DECIMAL => typeof(double),
             DataTypes.BOOLEAN => typeof(bool),
             DataTypes.DATETIME => typeof(DateTime),
@@ -33,6 +35,7 @@ public static class TypeMappings
         => type switch
         {
             Type t when t == typeof(int) => DataTypes.INT,
+            Type t when t == typeof(long) => DataTypes.LONGINT,
             Type t when t == typeof(double) => DataTypes.DECIMAL,
             Type t when t == typeof(bool) => DataTypes.BOOLEAN,
             Type t when t == typeof(DateTime) => DataTypes.DATETIME,
@@ -52,6 +55,7 @@ public static class TypeMappings
         => dataType switch
         {
             DataTypes.INT => type.IsEquivalentTo(typeof(int)),
+            DataTypes.LONGINT => type.IsEquivalentTo(typeof(long)),
             DataTypes.DECIMAL => type.IsEquivalentTo(typeof(double)),
             DataTypes.BOOLEAN => type.IsEquivalentTo(typeof(bool)),
             DataTypes.DATETIME => type.IsEquivalentTo(typeof(DateTime)),

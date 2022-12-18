@@ -44,10 +44,10 @@ public class MessageSerializationTests
                              .AddSchema("schema3", schemaBuilder => schemaBuilder)
                              .Build();
     private TabularData GetTestTabularData()
-        => TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL } })
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 1 }, { "attr2", "TEST1" }, { "attr3", 1.0 } }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.1 } }))
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 3 }, { "attr2", "TEST3" }, { "attr3", 3.1 } }))
+        => TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>() { { "attr1", DataTypes.INT }, { "attr2", DataTypes.STRING }, { "attr3", DataTypes.DECIMAL }, { "attr4", DataTypes.LONGINT } })
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 1 }, { "attr2", "TEST1" }, { "attr3", 1.0 }, { "attr4", long.MaxValue } }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 2 }, { "attr2", null }, { "attr3", 2.1 }, { "attr4", long.MinValue } }))
+            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?> { { "attr1", 3 }, { "attr2", "TEST3" }, { "attr3", 3.1 }, { "attr4", 1L } }))
             .Build();
 
     private readonly ISerializationProvider<string> _serializationProvider = new JsonSerializationProvider();

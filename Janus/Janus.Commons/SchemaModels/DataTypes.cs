@@ -9,6 +9,7 @@ namespace Janus.Commons.SchemaModels;
 public enum DataTypes
 {
     INT,
+    LONGINT,
     DECIMAL,
     STRING,
     DATETIME,
