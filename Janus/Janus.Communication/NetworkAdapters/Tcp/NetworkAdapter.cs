@@ -139,8 +139,6 @@ public abstract class NetworkAdapter : INetworkAdapter
         => await Task.FromResult(_serializationProvider.HelloReqMessageSerializer.Serialize(message))
             .Bind(async messageBytes => await SendMessageBytes(messageBytes, remotePoint)
                                             .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint)));
-    //=> await SendMessageBytes(message.ToBson(), remotePoint)
-    //    .Pass(result => _logger?.Info("Sending {0} to {1}", message.Preamble, remotePoint));
 
     /// <summary>
     /// Sends a HELLO_RES message to the remote point

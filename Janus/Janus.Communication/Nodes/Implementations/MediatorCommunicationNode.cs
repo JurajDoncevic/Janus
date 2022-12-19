@@ -223,7 +223,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }
@@ -269,7 +269,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }
@@ -314,7 +314,7 @@ public sealed class MediatorCommunicationNode : BaseCommunicationNode<IMediatorN
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }

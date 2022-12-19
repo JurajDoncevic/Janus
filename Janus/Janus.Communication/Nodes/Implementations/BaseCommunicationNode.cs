@@ -212,7 +212,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }
@@ -269,7 +269,7 @@ public abstract class BaseCommunicationNode<TNetworkAdapter> : IDisposable, ICom
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }

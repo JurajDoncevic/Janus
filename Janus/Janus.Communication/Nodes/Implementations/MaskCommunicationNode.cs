@@ -151,7 +151,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }
@@ -197,7 +197,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }
@@ -242,7 +242,7 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                 _options.TimeoutMs);
 
         // unregister the exchange
-        _messageStore.RegisterExchange(exchangeId);
+        _messageStore.UnregisterExchange(exchangeId);
 
         return result;
     }
