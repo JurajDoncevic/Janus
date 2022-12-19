@@ -6,11 +6,25 @@
 <h2>Schema Mediation</h2>
 <hr />
 <div class="row">
+    @if(@Model.OperationOutcome != null)
+    {
+        if(@Model.OperationOutcome?.IsSuccess ?? false)
+        {
+            <span class="alert alert-success">@Model.OperationOutcome?.Message</span>
+        } 
+        else
+        {
+            <span class="alert alert-danger">@Model.OperationOutcome?.Message</span>
+        }
+    }
+
+</div>
+<div class="row">
     <div class="col-6">
         <h4>Mediation script</h4>
         <form asp-action="ApplyMediationScript" method="post">
             <textarea name="schemaMediationScript" class="w-100" rows="15">@Model.SchemaMediationScript</textarea>
-            <input type="submit" value="Apply mediation" class="btn btn-primary" onclick="location.reload"/>
+            <input type="submit" value="Apply mediation" class="btn btn-primary" onclick="location.reload" />
         </form>
     </div>
     <div class="col-6">
@@ -18,7 +32,7 @@
         <div class="row">
             <span id="load-schema-notif" hidden class="alert alert-warning"></span>
         </div>
-        
+
         @foreach (var (remotePoint, schema) in Model.LoadedDataSourceSchemas)
         {
             <div class="accordion" id="remotePointsSchemas">
@@ -75,7 +89,7 @@
     <script>
         var schemaElements = document.getElementsByClassName("schema");
 
-        for(let i = 0; i < schemaElements.length; i++){
+        for (let i = 0; i < schemaElements.length; i++) {
             var textContent = schemaElements[i].textContent;
 
             var data = JSON.parse(textContent);

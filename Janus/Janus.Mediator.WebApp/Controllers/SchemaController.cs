@@ -128,6 +128,7 @@ public class SchemaController : Controller
             );
     }
 
+    [Route("[controller]/SchemaMediation")]
     public IActionResult SchemaMediation()
     {
         var registeredRemotePoints = _mediatorManager.GetRegisteredRemotePoints();
@@ -167,18 +168,53 @@ public class SchemaController : Controller
     }
 
     [HttpPost]
-    [Route("Schema/SchemaMediation")]
+    [Route("[controller]/SchemaMediation")]
     public async Task<IActionResult> ApplyMediationScript([FromForm]string schemaMediationScript)
     {
+        var registeredRemotePoints = _mediatorManager.GetRegisteredRemotePoints();
+        var loadedSchemasFromRemotePoints = _mediatorManager.GetLoadedSchemas();
+        var remotePointsWithLoadedSchemas = loadedSchemasFromRemotePoints.Keys;
+
         var mediation = 
             await Task.FromResult(_mediatorManager.CreateDataSourceMediation(schemaMediationScript))
                       .Bind(mediation => _mediatorManager.ApplyMediation(mediation))
                       .Bind(mediatedDataSource => Task.FromResult(_jsonSerializationProvider.DataSourceSerializer.Serialize(mediatedDataSource)));
-        
+
+        var mediationViewModel = new SchemaMediationViewModel
+        {
+            AvailableRemotePoints =
+                registeredRemotePoints
+                .Except(remotePointsWithLoadedSchemas)
+                .Map(rp => new RemotePointViewModel { NodeId = rp.NodeId, Address = rp.Address, Port = rp.Port, RemotePointType = rp.RemotePointType })
+                .ToList(),
+            LoadedDataSourceSchemas =
+                loadedSchemasFromRemotePoints
+                .Map(kv => _jsonSerializationProvider.DataSourceSerializer.Serialize(kv.Value)
+                            .Match(
+                                r => (remotePoint: kv.Key, dataSourceJson: r, message: string.Empty),
+                                message => (remotePoint: kv.Key, dataSourceJson: string.Empty, message: message)
+                            ))
+                .ToDictionary(
+                    t => new RemotePointViewModel { NodeId = t.remotePoint.NodeId, Address = t.remotePoint.Address, Port = t.remotePoint.Port, RemotePointType = t.remotePoint.RemotePointType },
+                    t => new DataSourceViewModel
+                    {
+                        DataSourceJson = t.dataSourceJson,
+                        Message = t.message
+                    }),
+
+            SchemaMediationScript = _mediatorManager.GetCurrentSchemaMediation().Match(
+                                        mediation => mediation.ToMediationScript(),
+                                        () => string.Empty
+                                        ),
+            OperationOutcome = new OperationOutcomeViewModel
+            {
+                IsSuccess = mediation.IsSuccess,
+                Message = mediation.Message,
+            }
+            
+        };
+
         // either return view or call via js
-        return mediation.Match(
-            dataSource => (IActionResult)Json(dataSource),
-            message => (IActionResult)StatusCode(500, message)
-            );
+        return View(nameof(SchemaMediation), mediationViewModel);
     }
 }

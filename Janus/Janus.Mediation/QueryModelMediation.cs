@@ -7,6 +7,7 @@ using Janus.Commons.SchemaModels.Building;
 using Janus.Commons.SelectionExpressions;
 using Janus.Mediation.QueryMediationModels;
 using Janus.Mediation.SchemaMediationModels;
+using System.Linq;
 using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Mediation;
@@ -32,12 +33,7 @@ public static partial class QueryModelMediation
                 .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]!.SourceQuery.InitialTableauId)
                 .Data;
 
-            // translate projected attrs to source attr ids
-            var projectedSourceAttributeIds = queryOnMediatedDataSource.Projection.Match(
-                projection => projection.IncludedAttributeIds
-                                        .Map(declaredAttrId => dataSourceMediation.GetSourceAttributeId(declaredAttrId)!),
-                () => new List<AttributeId>()
-                );
+
 
             // translate explicit joins between mediated tableaus... 
             var joinsFromQuery = queryOnMediatedDataSource.Joining.Match(
@@ -72,14 +68,26 @@ public static partial class QueryModelMediation
                     )
                 .Map(j => Join.CreateJoin(j.fkAttrId, j.pkAttrId));
 
+            // determine query partitions - for each join set from the same data source - split a colored graph
+            var (queryPartitions, globalJoins) = DetermineQueryPartitions(initialSourceTableauId, joinsFromQuery.Union(joinsInsideMediatedTableau));
+
+            // after the joins, if the projection had *, include all attributes in referenced tableaus
+            // translate projected attrs to source attr ids
+            var projectedSourceAttributeIds = queryOnMediatedDataSource.Projection.Match(
+                projection => projection.IncludedAttributeIds
+                                        .Map(declaredAttrId => dataSourceMediation.GetSourceAttributeId(declaredAttrId)!),
+                () => queryOnMediatedDataSource.ReferencedTableauIds
+                        .Map(tblId => tblId.NameTuple)
+                        .Map(names => mediatedDataSource[names.schemaName]![names.tableauName].Attributes.Map(attr => attr.Id))
+                        .SelectMany(attrId => attrId.Map(a => a.NameTuple))
+                        .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]![names.attributeName]!.SourceAttributeId)
+                );
+
             // localize selection
             var localizedSelectionExpression = queryOnMediatedDataSource.Selection.Match(
                 selection => LocalizeSelectionExpression(selection.Expression, dataSourceMediation),
                 () => TRUE()
                 );
-
-            // determine query partitions - for each join set from the same data source - split a colored graph
-            var (queryPartitions, globalJoins) = DetermineQueryPartitions(initialSourceTableauId, joinsFromQuery.Union(joinsInsideMediatedTableau));
 
             // split projection into separate queries - keep the joining pk and fk attributes from global joins
             queryPartitions =

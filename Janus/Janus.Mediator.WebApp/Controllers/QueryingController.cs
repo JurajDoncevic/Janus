@@ -39,7 +39,7 @@ public class QueryingController : Controller
     }
 
     [HttpPost]
-    [Route("Querying/")]
+    [Route("[controller]/")]
     public async Task<IActionResult> RunQuery([FromForm] string queryText)
     {
         var stopwatch = Stopwatch.StartNew();
