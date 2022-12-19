@@ -90,7 +90,9 @@ public abstract class NetworkAdapter : INetworkAdapter
 
             // await a client
             var client = _tcpListener.AcceptTcpClientAsync(cancellationToken).Result;
-
+            client.ReceiveBufferSize = int.MaxValue; 
+            client.SendBufferSize = int.MaxValue;
+            
             // if there wasn't a cancellation
             if (client != null)
             {
@@ -100,9 +102,10 @@ public abstract class NetworkAdapter : INetworkAdapter
                 // get stream from tcp client
                 var stream = client.GetStream();
                 // receive the bytes from the stream
-                int readByte;
-                while ((readByte = stream.ReadByte()) != -1)
-                    messageBytes = messageBytes.Append((byte)readByte).ToArray();
+                int numReadBytes;
+                byte[] buffer = new byte[1_000_000];
+                while ((numReadBytes = stream.Read(buffer)) > 0)
+                    messageBytes = messageBytes.Concat(buffer.Take(numReadBytes)).ToArray();
                 // .Read(messageBytes, 0, countBytes);
                 // determine message type and raise event
                 _serializationProvider.DetermineMessagePreamble(messageBytes)
