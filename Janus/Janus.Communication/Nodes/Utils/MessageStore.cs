@@ -60,7 +60,7 @@ public class MessageStore
             throw new ArgumentNullException(nameof(exchangeId));
         }
 
-        return _registeredExchangeIds.TryRemove(exchangeId, out _) && _receivedResponseMessages.TryRemove(exchangeId, out _);
+        return _registeredExchangeIds.TryRemove(exchangeId, out _) && _receivedResponseMessages.ContainsKey(exchangeId) ? _receivedResponseMessages.TryRemove(exchangeId, out _) : true;
     }
 
     /// <summary>
