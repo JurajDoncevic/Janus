@@ -286,16 +286,29 @@ public static partial class QueryModelMediation
         return (comparisons, literals);
     }
 
+    private static bool IsOnlyLiteralExpression(SelectionExpression selectionExpression)
+        => selectionExpression switch
+        {
+            Literal => true,
+            _ => false
+        };
+
+    private static bool IsOnlyComparisonExpression(SelectionExpression selectionExpression)
+        => selectionExpression switch
+        {
+            ComparisonOperator => true,
+            _ => false
+        };
+
     private static bool IsConjunctiveExpression(SelectionExpression selectionExpression)
-    {
-        return selectionExpression switch
+        => selectionExpression switch
         {
             OrOperator => false,
             NotOperator => false,
             AndOperator and => IsConjunctiveExpression(and.LeftOperand) && IsConjunctiveExpression(and.RightOperand),
             _ => false // literals and comparison ops can't have logical operations inside of them
         };
-    }
+
 
     private static bool AreFromSameDataSource(TableauId tableauId1, TableauId tableauId2)
     {
