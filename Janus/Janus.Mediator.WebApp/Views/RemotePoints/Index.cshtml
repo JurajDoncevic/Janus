@@ -20,8 +20,8 @@
 
 <div class="row">
     <form class="d-inline" method="post">
-        <input name="address" type="text" />
-        <input name="port" type="number" />
+        <b class="me-1">Address:</b><input name="address" type="text" class="form-control d-inline-block w-25" />
+        <b class="me-1">Port:</b><input name="port" type="number" class="form-control d-inline-block w-auto" />
         <input type="submit" value="Register" asp-action="RegisterRemotePoint" class="btn btn-primary" />
         <input type="submit" value="Send HELLO" asp-action="PingRemotePoint" class="btn btn-primary" />
     </form>

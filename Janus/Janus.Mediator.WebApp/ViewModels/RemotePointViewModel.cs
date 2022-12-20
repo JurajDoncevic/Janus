@@ -29,4 +29,7 @@ public sealed class RemotePointViewModel
     {
         return HashCode.Combine(NodeId, Address, Port, RemotePointType);
     }
+
+    public string String
+        => $"({NodeId};{Address};{Port})";
 }

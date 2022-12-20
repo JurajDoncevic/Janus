@@ -80,4 +80,86 @@ public class QueryingController : Controller
 
         return View(nameof(Index), viewModel);
     }
+
+    public async Task<IActionResult> QueryRemotePoint()
+    {
+        var remotePoints =
+            _mediatorManager.GetRegisteredRemotePoints()
+            .Map(rp => new RemotePointViewModel
+            {
+                NodeId = rp.NodeId,
+                Address = rp.Address,
+                Port = rp.Port,
+                RemotePointType = rp.RemotePointType
+            });
+        var viewModel = new QueryRemotePointViewModel
+        {
+            RemotePoints = remotePoints,
+            SelectedRemotePoint = remotePoints.FirstOrDefault(),
+            QueryText = string.Empty,
+            OperationOutcome = null,
+            QueryResults = null
+        };
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> QueryRemotePoint([FromForm]string queryText, [FromForm]string nodeId)
+    {
+        var targetRemotePoint =
+            _mediatorManager.GetRegisteredRemotePoints()
+            .FirstOrDefault(rp => rp.NodeId.Equals(nodeId));
+
+        var remotePoints =
+            _mediatorManager.GetRegisteredRemotePoints()
+            .Map(rp => new RemotePointViewModel
+            {
+                NodeId = rp.NodeId,
+                Address = rp.Address,
+                Port = rp.Port,
+                RemotePointType = rp.RemotePointType
+            });
+
+        if (targetRemotePoint == null)
+        {
+            return View(new QueryRemotePointViewModel
+            {
+                RemotePoints = remotePoints,
+                SelectedRemotePoint = remotePoints.FirstOrDefault(),
+                QueryText = queryText,
+                OperationOutcome = new OperationOutcomeViewModel
+                {
+                    IsSuccess = false,
+                    Message = $"No remote point with id \"{nodeId}\""
+                }
+
+            });
+        }
+
+        var stopwatch = Stopwatch.StartNew();
+        var queryResult =
+            await _mediatorManager.CreateQuery(queryText)
+            .Bind(query => _mediatorManager.RunQueryOn(query, targetRemotePoint));
+        var elapsedTime = stopwatch.Elapsed.Milliseconds;
+        stopwatch.Stop();
+
+        var viewModel = new QueryRemotePointViewModel
+        {
+            RemotePoints = remotePoints,
+            SelectedRemotePoint = remotePoints.FirstOrDefault(rp => rp.NodeId.Equals(nodeId)),
+            QueryText = queryText,
+            OperationOutcome = new OperationOutcomeViewModel
+            {
+                IsSuccess = queryResult.IsSuccess,
+                Message = $"{queryResult.Message}. Elapsed time: {elapsedTime}ms"
+            },
+            QueryResults = !queryResult.IsSuccess ? null : new TabularDataViewModel
+            {
+                ColumnDataTypes = queryResult.Data.ColumnDataTypes.ToDictionary(_ => _.Key, _ => _.Value),
+                DataRows = queryResult.Data.RowData.Map(rd => rd.ColumnValues.ToDictionary(_ => _.Key, _ => _.Value?.ToString() ?? "NULL")).ToList()
+            }
+        };
+
+        return View(nameof(QueryRemotePoint), viewModel);
+    }
 }
