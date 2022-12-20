@@ -112,6 +112,9 @@ public sealed class MediatorManager : IComponentManager
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _queryManager.RunQuery(query, _schemaManager);
 
+    public async Task<Result<TabularData>> RunQueryOn(Query query, RemotePoint remotePoint)
+        => await _queryManager.RunQueryOn(query, remotePoint);
+
     public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
         => await _communicationNode.SendHello(remotePoint);
 

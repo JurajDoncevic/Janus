@@ -89,7 +89,7 @@ public static partial class QueryModelMediation
                 () => TRUE()
                 );
 
-            // split projection into separate queries - keep the joining pk and fk attributes from global joins
+            // split projection into separate queries - keep the joining pk and fk attributes from global joins in projection
             queryPartitions =
                 queryPartitions
                     .Map(queryPartition =>
@@ -102,7 +102,8 @@ public static partial class QueryModelMediation
                         // join attrs from global joins
                         queryPartition.AddProjectionAttributes(
                             globalJoins.SelectMany(j => new HashSet<AttributeId>() { j.ForeignKeyAttributeId, j.PrimaryKeyAttributeId })
-                                                .ToHashSet());
+                                        .Where(attrId => queryPartition.IsParentTableauReferenced(attrId))
+                                        .ToHashSet());
 
                         return queryPartition;
                     });
@@ -323,8 +324,9 @@ public static partial class QueryModelMediation
                 // whatever the case, add the query join to the selected query partition
                 targetQueryPartition.AddJoin(join);
             }
-            else // 
+            else // add global join; create new partition
             {
+                queryPartitions.Add(new QueryPartition(join.PrimaryKeyTableauId));
                 globalJoins.Add(join);
             }
         }
