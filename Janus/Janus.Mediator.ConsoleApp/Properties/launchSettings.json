@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Janus.Mediator.ConsoleApp": {
-      "commandName": "Project",
-      "commandLineArgs": "--ui --settings appsettings.Development.json"
-    }
-  }
-}
