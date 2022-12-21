@@ -21,7 +21,7 @@ internal class WrapperConfiguration
 
     public bool AllowCommands { get; init; }
 
-    public string? DataSourceName { get; set; }
+    public string DataSourceName { get; set; }
 
     public string SourceConnectionString { get; init; } = string.Empty;
 }
@@ -46,7 +46,8 @@ internal static partial class ConfigurationOptionsExtensions
                    .ToList(),
             configuration.SourceConnectionString,
             configuration.AllowCommands,
-            configuration.PersistenceConnectionString
+            configuration.PersistenceConnectionString,
+            configuration.DataSourceName
             );
 
 }

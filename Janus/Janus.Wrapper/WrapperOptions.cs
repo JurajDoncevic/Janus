@@ -14,6 +14,7 @@ public sealed class WrapperOptions : IComponentOptions
     private readonly string _sourceConnectionString;
     private readonly bool _allowsCommands;
     private readonly string _persistenceConnectionString;
+    private readonly string _dataSourceName;
 
     public WrapperOptions(
         string nodeId,
@@ -24,7 +25,8 @@ public sealed class WrapperOptions : IComponentOptions
         IEnumerable<UndeterminedRemotePoint> startupRemotePoints,
         string sourceConnectionString,
         bool allowsCommands,
-        string persistenceConnectionString)
+        string persistenceConnectionString,
+        string dataSourceName)
     {
         _nodeId = nodeId;
         _listenPort = listenPort;
@@ -35,6 +37,7 @@ public sealed class WrapperOptions : IComponentOptions
         _sourceConnectionString = sourceConnectionString;
         _allowsCommands = allowsCommands;
         _persistenceConnectionString = persistenceConnectionString;
+        _dataSourceName = dataSourceName;
     }
 
 
@@ -61,4 +64,6 @@ public sealed class WrapperOptions : IComponentOptions
     public IReadOnlyList<UndeterminedRemotePoint> StartupRemotePoints => _startupRemotePoints.ToList();
 
     public string PersistenceConnectionString => _persistenceConnectionString;
+
+    public string DataSourceName => _dataSourceName;
 }
