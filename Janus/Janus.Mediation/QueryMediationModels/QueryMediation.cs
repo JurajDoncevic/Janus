@@ -8,7 +8,7 @@ public class QueryMediation
 {
     private readonly Dictionary<TableauId, Query> _partitionedQueries;
     private readonly List<Join> _finalizingJoins;
-    private readonly SelectionExpression _finalizingSelection;
+    private readonly Option<SelectionExpression> _finalizingSelection;
     private readonly HashSet<AttributeId> _finalizingProjection;
     private readonly Query _originalQuery;
     private readonly DataSourceMediation _dataSourceMediation;
@@ -16,7 +16,7 @@ public class QueryMediation
     public QueryMediation(Query originalQuery,
                           IEnumerable<Query> partitionedQueries,
                           IEnumerable<Join> finalizingJoins,
-                          SelectionExpression finalizingSelection,
+                          Option<SelectionExpression> finalizingSelection,
                           IEnumerable<AttributeId> finalizingProjection,
                           DataSourceMediation dataSourceMediation)
     {
@@ -34,7 +34,7 @@ public class QueryMediation
 
     public IReadOnlyList<Join> FinalizingJoins => _finalizingJoins;
 
-    public SelectionExpression FinalizingSelection => _finalizingSelection;
+    public Option<SelectionExpression> FinalizingSelection => _finalizingSelection;
 
     public IReadOnlySet<AttributeId> FinalizingProjection => _finalizingProjection;
 

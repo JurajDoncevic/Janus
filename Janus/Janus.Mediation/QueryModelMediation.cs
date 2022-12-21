@@ -33,8 +33,6 @@ public static partial class QueryModelMediation
                 .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]!.SourceQuery.InitialTableauId)
                 .Data;
 
-
-
             // translate explicit joins between mediated tableaus... 
             var joinsFromQuery = queryOnMediatedDataSource.Joining.Match(
                 joining => joining.Joins
@@ -119,8 +117,8 @@ public static partial class QueryModelMediation
                             });
 
 
-            // if conjunctive selection, split selection into query partitions, else put into finalizing selection
-            SelectionExpression finalizingSelectionExpression = TRUE();
+            Option<SelectionExpression> finalizingSelectionExpression = Option<SelectionExpression>.None;
+            // if conjunctive selection, split selection into query partitions...
             if (IsConjunctiveExpression(localizedSelectionExpression))
             {
                 var (comparisons, literals) = GetComparisonsAndLiterals(localizedSelectionExpression);
@@ -136,9 +134,7 @@ public static partial class QueryModelMediation
 
                             // construct a conjunctive partitioned selection expression - literals remain, let the sources handle them :)
                             queryPartition.SelectionExpression =
-                                literals.Count() == 1 && comparisons.Count() == 0 // if there is just one literal and no comparisons
-                                ? queryPartition.SelectionExpression // just pass the TRUE or FALSE
-                                : literals.Fold((SelectionExpression)TRUE(),
+                                literals.Fold((SelectionExpression)TRUE(),
                                     (lit, selExpr) =>
                                         AND(lit,
                                             comparisons.Fold(selExpr,
@@ -147,10 +143,36 @@ public static partial class QueryModelMediation
                                 );
                             return queryPartition;
                         });
-            }
+            }// if the expression is only a single comparison, push it to the correct query partition
+            else if (IsOnlyComparisonExpression(localizedSelectionExpression))
+            {
+                var referencedAttrIds = GetAttributeIdsFromSelection(localizedSelectionExpression);
+                queryPartitions =
+                    queryPartitions.Map(queryPartition =>
+                    {
+                        // compops usually have just one attribute, but this supports multiple attrs, and ensures they are all from the same partition
+                        if (referencedAttrIds.All(attrId => queryPartition.IsParentTableauReferenced(attrId)))
+                        {
+                            queryPartition.SelectionExpression = localizedSelectionExpression;
+
+                            return queryPartition;
+                        }
+
+                        return queryPartition;
+                    });
+            }// if the expression is only a single literal, push it to all partitions (optimizes a FALSE expression)
+            else if (IsOnlyLiteralExpression(localizedSelectionExpression))
+            {
+                queryPartitions =
+                    queryPartitions.Map(queryPartition =>
+                    {
+                        queryPartition.SelectionExpression = localizedSelectionExpression;
+                        return queryPartition;
+                    });
+            }// else put everything into the finalizing selection
             else
             {
-                finalizingSelectionExpression = localizedSelectionExpression;
+                finalizingSelectionExpression = Option<SelectionExpression>.Some(localizedSelectionExpression);
             }
 
             // create finalizing projection
@@ -201,8 +223,12 @@ public static partial class QueryModelMediation
                             return currentJoinResult;
                         })).Map(rs => rs.Single()); // throws exception if there is no single tabular result of joins
 
-            // execute finalizing selection
-            var selectionResult = joinResult.Bind(joinedTabular => TabularDataOperations.SelectRowData(joinedTabular, queryMediation.FinalizingSelection));
+            // execute finalizing selection if it exists
+            var selectionResult =
+                queryMediation.FinalizingSelection.Match(
+                    selection => joinResult.Bind(joinedTabular => TabularDataOperations.SelectRowData(joinedTabular, selection)),
+                    () => joinResult
+                    );
 
             // execute finalizing projection
             var projectionResult = selectionResult.Bind(selectedTabular => TabularDataOperations.ProjectColumns(selectedTabular, queryMediation.FinalizingProjection.Map(attrId => attrId.ToString()).ToHashSet()));
