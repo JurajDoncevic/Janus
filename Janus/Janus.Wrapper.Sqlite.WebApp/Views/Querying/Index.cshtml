@@ -1,42 +1,29 @@
 ﻿@model QueryingViewModel
 
 @{
-    ViewData["Title"] = "Querying on inferred schema";
+    ViewData["Title"] = "Querying on an inferred schema";
 }
 
 <h2>Querying</h2>
 <hr />
-<div class="row mt-2 mb-2">
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
+<div class="mt-2 mb-2">
     <div class="row">
-        @if (Model.OperationOutcome is not null)
-        {
-            @if (Model.OperationOutcome.IsSuccess)
-            {
-                <span class="alert alert-success">@Model.OperationOutcome.Message</span>
-            }
-            else
-            {
-                <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
-            }
-        }
-    </div>
-    <div class="row">
-        <div class="col-6">
+        <div class="col-7">
             <h4>Query text</h4>
             <form asp-controller="Querying" asp-action="RunQuery" method="post">
-                <textarea name="queryText" class="form-control" type="text" rows="15">@Model.QueryText</textarea>
+                <textarea name="queryText" class="form-control" type="text" style="min-height:50vh">@Model.QueryText</textarea>
                 <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
             </form>
 
         </div>
-        <div class="col-6">
-            <h4>Current inferred schema</h4>
-            <pre id="schema-json" class="overflow-scroll form-control" style="height:70vh">
-                @Model.InferredDataSourceJson
-            </pre>
+        <div class="col-5">
+            <h4>Current mediated schema</h4>
+            <pre id="schema-json" class="overflow-scroll form-control" style="min-height:50vh; height:50vh; resize:vertical">@Model.InferredDataSourceJson</pre>
         </div>
     </div>
-    @if (Model.QueryResult is not null && Model.QueryResult.ColumnDataTypes.Count > 0)
+
+    @if (Model.QueryResult && Model.QueryResult.Value.ColumnDataTypes.Count > 0)
     {
         <div class="row mt-3">
             <h4>Query results</h4>
@@ -44,17 +31,17 @@
                 <table class="table table-bordered">
                     <thead class="table-secondary">
                         <tr>
-                            @foreach (var column in Model.QueryResult.ColumnDataTypes)
+                            @foreach (var column in Model.QueryResult.Value.ColumnDataTypes)
                             {
                                 <th>@column.Key (@column.Value)</th>
                             }
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var dataRow in Model.QueryResult.DataRows)
+                        @foreach (var dataRow in Model.QueryResult.Value.DataRows)
                         {
                             <tr>
-                                @foreach (var colName in Model.QueryResult.ColumnDataTypes.Keys)
+                                @foreach (var colName in Model.QueryResult.Value.ColumnDataTypes.Keys)
                                 {
                                     <td>@dataRow[colName]</td>
                                 }
@@ -66,12 +53,3 @@
         </div>
     }
 </div>
-
-
-
-@section Scripts{
-    <script>
-        let data = JSON.parse(document.getElementById("schema-json").innerText)
-        document.getElementById("schema-json").textContent = JSON.stringify(data, undefined, 2);
-    </script>
-}

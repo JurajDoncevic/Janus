@@ -4,19 +4,7 @@
     ViewData["Title"] = "Remote points";
 }
 
-<div class="row">
-    @if (Model.OperationOutcome is not null)
-    {
-        @if (Model.OperationOutcome.IsSuccess)
-        {
-            <span class="alert alert-success">@Model.OperationOutcome.Message</span>
-        }
-        else
-        {
-            <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
-        }
-    }
-</div>
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
 
 <div class="row">
     <form class="d-inline" method="post">

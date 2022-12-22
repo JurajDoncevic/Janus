@@ -1,43 +1,22 @@
-﻿@model Janus.Wrapper.Sqlite.WebApp.ViewModels.CommandingViewModel
+﻿@model CommandingViewModel
 
 @{
-    ViewData["Title"] = "Commanding on a mediated schema";
+    ViewData["Title"] = "Commanding on an inferred schema";
 }
 <h2>Commanding</h2>
 <hr />
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome"/>
 <div class="row mt-2 mb-2">
-    <div class="col-6">
-        <div class="row">
-            <h4>Command text</h4>
-            @if (Model.OperationOutcome is not null)
-            {
-                @if (Model.OperationOutcome.IsSuccess)
-                {
-                    <span class="alert alert-success">@Model.OperationOutcome.Message</span>
-                }
-                else
-                {
-                    <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
-                }
-            }
-        </div>
+    <div class="col-7">
+        <h4>Command</h4>
         <form asp-action="RunCommand" method="post">
-            <textarea name="commandText" class="form-control" rows="15" type="text">@Model.CommandText</textarea>
+            <textarea name="commandText" class="form-control" style="min-height:50vh" type="text">@Model.CommandText</textarea>
             <input type="submit" class="btn btn-primary mt-2" value="Run command!" />
         </form>
 
     </div>
-    <div class="col-6">
+    <div class="col-5">
         <h4>Current inferred schema</h4>
-        <pre id="schema-json" class="overflow-scroll border rounded-1 border-1 border-dark border-opacity-25" style="height:70vh">
-            @Model.InferredDataSourceJson
-    </pre>
+        <pre class="overflow-scroll form-control" style="min-height:50vh; height:50vh; resize:vertical">@Model.InferredDataSourceJson</pre>
     </div>
 </div>
-
-@section Scripts{
-    <script>
-        let data = JSON.parse(document.getElementById("schema-json").innerText)
-        document.getElementById("schema-json").textContent = JSON.stringify(data, undefined, 2);
-    </script>
-}

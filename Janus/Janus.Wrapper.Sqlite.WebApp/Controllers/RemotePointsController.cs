@@ -1,10 +1,7 @@
-﻿using FunctionalExtensions.Base;
-using Janus.Communication.Remotes;
-using Janus.Wrapper.Sqlite;
+﻿using Janus.Communication.Remotes;
+using Janus.Wrapper.Sqlite.WebApp.Commons;
 using Janus.Wrapper.Sqlite.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Janus.Wrapper.Sqlite.WebApp.Controllers;
 public class RemotePointsController : Controller
@@ -29,11 +26,10 @@ public class RemotePointsController : Controller
                                                RemotePointType = rp.RemotePointType
                                            });
 
-        var operationOutcome = JsonSerializer.Deserialize<OperationOutcomeViewModel>(TempData["OperationOutcome"]?.ToString() ?? "null");
         var viewModel = new RemotePointsListViewModel()
         {
             RemotePoints = remotePoints.ToList(),
-            OperationOutcome = operationOutcome
+            OperationOutcome = TempData.ToOperationOutcomeViewModel()
         };
 
         return View(viewModel);
@@ -44,14 +40,8 @@ public class RemotePointsController : Controller
         var undeterminedRemotePoint = new UndeterminedRemotePoint(address, port);
         var result = await _wrapperManager.RegisterRemotePoint(undeterminedRemotePoint);
 
-        var operationOutcome = new OperationOutcomeViewModel()
-        {
-            IsSuccess = result.IsSuccess,
-            Message = result.Message
-        };
-
-        TempData["OperationOutcome"] = JsonSerializer.Serialize(operationOutcome);
-
+        TempData["Constants.IsSuccess"] = result.IsSuccess;
+        TempData["Constants.Message"] = result.Message;
         return RedirectToAction(nameof(Index));
     }
 
@@ -67,8 +57,8 @@ public class RemotePointsController : Controller
             Message = result.Message
         };
 
-        TempData["OperationOutcome"] = JsonSerializer.Serialize(operationOutcome);
-
+        TempData["Constants.IsSuccess"] = result.IsSuccess;
+        TempData["Constants.Message"] = result.Message;
         return RedirectToAction(nameof(Index));
     }
 
@@ -78,29 +68,17 @@ public class RemotePointsController : Controller
         var remotePoint = _wrapperManager.GetRegisteredRemotePoints()
                                           .FirstOrDefault(x => x.NodeId == nodeId);
         // no such remote point found
-        if(remotePoint is null)
+        if (remotePoint is null)
         {
-            TempData["OperationOutcome"] = JsonSerializer.Serialize(
-                new OperationOutcomeViewModel()
-                {
-                    IsSuccess = false,
-                    Message = $"No remote point with id {nodeId} registered."
-                });
-
+            TempData["Constants.IsSuccess"] = false;
+            TempData["Constants.Message"] = $"No remote point with id {nodeId} registered.";
             return RedirectToAction(nameof(Index));
         }
 
         var result = await _wrapperManager.UnregisterRemotePoint(remotePoint);
 
-        var operationOutcome = new OperationOutcomeViewModel()
-        {
-            IsSuccess = result.IsSuccess,
-            Message = result.Message
-        };
-
-        TempData["OperationOutcome"] = JsonSerializer.Serialize(operationOutcome);
-
+        TempData["Constants.IsSuccess"] = result.IsSuccess;
+        TempData["Constants.Message"] = result.Message;
         return RedirectToAction(nameof(Index));
     }
-
 }

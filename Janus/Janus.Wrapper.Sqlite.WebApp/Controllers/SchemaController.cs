@@ -6,6 +6,7 @@ using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using Results = FunctionalExtensions.Base.Resulting.Results;
 using Janus.Wrapper.Sqlite;
+using static Janus.Wrapper.Sqlite.WebApp.Commons.Helpers;
 
 namespace Janus.Wrapper.Sqlite.WebApp.Controllers;
 public class SchemaController : Controller
@@ -24,40 +25,36 @@ public class SchemaController : Controller
         var getCurrentSchema = _wrapperManager.GetCurrentSchema();
         var schemaToJson =
             getCurrentSchema.Match(
-                                dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource),
-                                () => Results.OnFailure<string>("No schema loaded")
+                                dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource).Map(PrettyJsonString),
+                                () => Results.OnFailure<string>("No inferred schema generated")
                                 );
 
-        return View(schemaToJson.Match(
-            json => new DataSourceViewModel() { DataSourceJson = json },
-            message => new DataSourceViewModel() { Message = message }
-            ));
+        var viewModel = new DataSourceViewModel
+        {
+            DataSourceJson = schemaToJson.Match(data => data, message => string.Empty),
+            OperationOutcome =
+                schemaToJson.IsSuccess
+                ? TempData.ToOperationOutcomeViewModel()
+                : Option<OperationOutcomeViewModel>.Some(new OperationOutcomeViewModel
+                {
+                    IsSuccess = false,
+                    Message = schemaToJson.Message
+                })
+        };
+
+        return View(viewModel);
     }
 
+    [HttpPost]
     public async Task<IActionResult> GenerateSchema()
     {
-        var schemaGeneration = 
+        var schemaGeneration =
             (await _wrapperManager.GenerateSchema())
-                .Bind(r => _jsonSerializationProvider.DataSourceSerializer.Serialize(r));     
-                        
+                .Bind(r => _jsonSerializationProvider.DataSourceSerializer.Serialize(r));
 
-        return schemaGeneration.Match(
-            r => (IActionResult)Json(r),
-            message => (IActionResult)StatusCode(500, message)
-            );
-    }
 
-    public async Task<IActionResult> LoadFromPersistence()
-    {
-        //var getCurrentSchema = await _wrapperManager.();
-        //var schemaToJson =
-        //    getCurrentSchema.Bind(dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource));
-
-        //return schemaToJson.Match(
-        //    json => View(json),
-        //    message => View(message)
-        //    );
-
-        return NotFound();
+        TempData["Constants.IsSuccess"] = schemaGeneration.IsSuccess;
+        TempData["Constants.Message"] = schemaGeneration.Message;
+        return RedirectToAction(nameof(Index));
     }
 }

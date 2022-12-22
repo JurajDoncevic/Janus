@@ -1,13 +1,8 @@
-﻿using Janus.Commons.SchemaModels;
-using Janus.Wrapper.Sqlite.WebApp.ViewModels;
+﻿using Janus.Wrapper.Sqlite.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor.Compilation;
-using System.Text.Json;
-using Janus.Wrapper;
-using Janus.Wrapper.Sqlite;
-using FunctionalExtensions.Base.Resulting;
-using FunctionalExtensions.Base;
+using System.Diagnostics;
+using static Janus.Wrapper.Sqlite.WebApp.Commons.Helpers;
 
 namespace Janus.Wrapper.Sqlite.WebApp.Controllers;
 public class QueryingController : Controller
@@ -25,33 +20,32 @@ public class QueryingController : Controller
 
     public IActionResult Index()
     {
-        var viewModel = JsonSerializer.Deserialize<QueryingViewModel>(TempData["QueryingViewModel"]?.ToString() ?? "null");
+        var currentSchema = _wrapperManager.GetCurrentSchema()
+                .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
+                                        .Match(
+                                            r => r,
+                                            r => "{}"
+                                        ));
 
-        if (viewModel == null)
+        var viewModel = new QueryingViewModel()
         {
-            var currentSchema = _wrapperManager.GetCurrentSchema()
-                    .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
-                                            .Match(
-                                                r => r,
-                                                r => "{}"
-                                            ));
+            InferredDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "No schema generated"
+        };
 
-            viewModel = new QueryingViewModel()
-            {
-                InferredDataSourceJson = currentSchema ? currentSchema.Value : "{}"
-            };
-        }
 
         return View(viewModel);
     }
 
     [HttpPost]
-    [Route("/")]
+    [Route("[controller]/")]
     public async Task<IActionResult> RunQuery([FromForm] string queryText)
     {
+        var stopwatch = Stopwatch.StartNew();
         var queryResult =
             await _wrapperManager.CreateQuery(queryText)
                 .Bind(query => _wrapperManager.RunQuery(query));
+        var timeNeeded = stopwatch.ElapsedMilliseconds;
+        stopwatch.Stop();
 
         var currentSchema = _wrapperManager.GetCurrentSchema()
                             .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
@@ -71,17 +65,17 @@ public class QueryingController : Controller
 
         var viewModel = new QueryingViewModel()
         {
-            InferredDataSourceJson = currentSchema ? currentSchema.Value : "{}",
+            InferredDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "{}",
             QueryText = queryText,
-            QueryResult = tabularDataViewModel,
-            OperationOutcome = new OperationOutcomeViewModel()
-            {
-                IsSuccess = currentSchema && queryResult,
-                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
-                          queryResult.Match(r => "", message => message)
-            }
+            QueryResult = Option<TabularDataViewModel>.Some(tabularDataViewModel),
+            OperationOutcome = Option<OperationOutcomeViewModel>.Some(
+                            new OperationOutcomeViewModel()
+                            {
+                                IsSuccess = currentSchema && queryResult,
+                                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
+                                          queryResult.Match(r => $"Query completed in {timeNeeded}ms", message => message)
+                            })
         };
-
 
         return View(nameof(Index), viewModel);
     }

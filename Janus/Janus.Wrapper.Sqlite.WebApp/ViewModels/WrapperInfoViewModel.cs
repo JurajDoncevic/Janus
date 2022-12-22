@@ -22,6 +22,9 @@ public sealed class WrapperInfoViewModel
     [Display(Name = "Data source connection string")]
     public string SourceConnectionString { get; init; } = string.Empty;
 
+    [Display(Name = "Allows commands")]
+    public bool AllowsCommandExecution { get; init; } = false;
+
     [Display(Name = "Persistence connection string")]
     public string PersistenceConnectionString { get; init; } = string.Empty;
 

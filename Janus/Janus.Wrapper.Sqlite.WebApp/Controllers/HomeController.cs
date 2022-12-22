@@ -32,7 +32,8 @@ public class HomeController : Controller
             PersistenceConnectionString = _wrapperOptions.PersistenceConnectionString,
             TimeoutMs = _wrapperOptions.TimeoutMs,
             SourceConnectionString = _wrapperOptions.SourceConnectionString,
-            WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port
+            WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port,
+            AllowsCommandExecution = _wrapperOptions.AllowsCommands
         };
         return View(viewModel);
     }

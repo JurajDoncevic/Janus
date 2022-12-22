@@ -5,6 +5,7 @@ using System.Text.Json;
 using Janus.Wrapper.Sqlite;
 using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
+using static Janus.Wrapper.Sqlite.WebApp.Commons.Helpers;
 
 namespace Janus.Wrapper.Sqlite.WebApp.Controllers;
 public class CommandingController : Controller
@@ -22,21 +23,20 @@ public class CommandingController : Controller
 
     public IActionResult Index()
     {
-        var viewModel = JsonSerializer.Deserialize<CommandingViewModel>(TempData["CommandingViewModel"]?.ToString() ?? "null");
-        if (viewModel == null)
-        {
-            var currentSchema = _wrapperManager.GetCurrentSchema()
-                    .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
-                                            .Match(
-                                                r => r,
-                                                r => "{}"
-                                            ));
 
-            viewModel = new CommandingViewModel()
-            {
-                InferredDataSourceJson = currentSchema ? currentSchema.Value : "{}"
-            };
-        }
+        var currentSchema = _wrapperManager.GetCurrentSchema()
+                .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
+                                        .Match(
+                                            r => r,
+                                            r => "{}"
+                                        ));
+
+        var viewModel = new CommandingViewModel()
+        {
+            InferredDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "No schema generated",
+            OperationOutcome = TempData.ToOperationOutcomeViewModel()
+        };
+
 
         return View(viewModel);
     }
@@ -48,27 +48,9 @@ public class CommandingController : Controller
             await _wrapperManager.CreateCommand(commandText)
                 .Bind(command => _wrapperManager.RunCommand(command));
 
-        var currentSchema = _wrapperManager.GetCurrentSchema()
-                            .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
-                                                    .Match(
-                                                        r => r,
-                                                        r => "{}"
-                                                    ));
 
-        var viewModel = new CommandingViewModel()
-        {
-            InferredDataSourceJson = currentSchema ? currentSchema.Value : "{}",
-            CommandText = commandText,
-            OperationOutcome = new OperationOutcomeViewModel()
-            {
-                IsSuccess = currentSchema && commandResult,
-                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
-                          commandResult.Match(r => "", message => message)
-            }
-        };
-
-        TempData["CommandingViewModel"] = JsonSerializer.Serialize(viewModel);
-
+        TempData["Constants.IsSuccess"] = commandResult.IsSuccess;
+        TempData["Constants.Message"] = commandResult.Message;
         return RedirectToAction(nameof(Index));
     }
 }
