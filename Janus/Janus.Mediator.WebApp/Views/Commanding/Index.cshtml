@@ -1,4 +1,4 @@
-﻿@model Janus.Mediator.WebApp.ViewModels.CommandingViewModel
+﻿@model CommandingViewModel
 
 @{
     ViewData["Title"] = "Commanding on a mediated schema";
@@ -7,15 +7,16 @@
 <hr />
 <partial name="OperationOutcomePartial" model="Model.OperationOutcome"/>
 <div class="row mt-2 mb-2">
-    <div class="col-6">
+    <div class="col-7">
+        <h4>Command</h4>
         <form asp-action="RunCommand" method="post">
-            <textarea name="commandText" class="form-control" rows="15" type="text">@Model.CommandText</textarea>
+            <textarea name="commandText" class="form-control" style="min-height:50vh" type="text">@Model.CommandText</textarea>
             <input type="submit" class="btn btn-primary mt-2" value="Run command!" />
         </form>
 
     </div>
-    <div class="col-6">
+    <div class="col-5">
         <h4>Current mediated schema</h4>
-        <textarea disabled class="w-100" rows="15" id="schema-json" asp-for="MediatedDataSourceJson"></textarea>
+        <pre class="overflow-scroll form-control" style="min-height:50vh; height:50vh; resize:vertical">@Model.MediatedDataSourceJson</pre>
     </div>
 </div>

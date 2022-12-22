@@ -1,4 +1,5 @@
-﻿using Janus.Mediator.WebApp.ViewModels;
+﻿using FunctionalExtensions.Base.Resulting;
+using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -20,21 +21,20 @@ public class CommandingController : Controller
 
     public IActionResult Index()
     {
-        var viewModel = JsonSerializer.Deserialize<CommandingViewModel>(TempData["CommandingViewModel"]?.ToString() ?? "null");
-        if (viewModel == null)
-        {
-            var currentSchema = _mediatorManager.GetCurrentSchema()
-                    .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
-                                            .Match(
-                                                r => r,
-                                                r => "{}"
-                                            ));
 
-            viewModel = new CommandingViewModel()
-            {
-                MediatedDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "No schema generated"
-            };
-        }
+        var currentSchema = _mediatorManager.GetCurrentSchema()
+                .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
+                                        .Match(
+                                            r => r,
+                                            r => "{}"
+                                        ));
+
+        var viewModel = new CommandingViewModel()
+        {
+            MediatedDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "No schema generated",
+            OperationOutcome = TempData.ToOperationOutcomeViewModel()
+        };
+
 
         return View(viewModel);
     }
@@ -46,28 +46,9 @@ public class CommandingController : Controller
             await _mediatorManager.CreateCommand(commandText)
                 .Bind(command => _mediatorManager.RunCommand(command));
 
-        var currentSchema = _mediatorManager.GetCurrentSchema()
-                            .Map(currentSchema => _jsonSerializationProvider.DataSourceSerializer.Serialize(currentSchema)
-                                                    .Match(
-                                                        r => r,
-                                                        r => "{}"
-                                                    ));
 
-        var viewModel = new CommandingViewModel()
-        {
-            MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}",
-            CommandText = commandText,
-            OperationOutcome = Option<OperationOutcomeViewModel>.Some(
-                new OperationOutcomeViewModel()
-                {
-                    IsSuccess = currentSchema && commandResult,
-                    Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
-                          commandResult.Match(r => "", message => message)
-                })
-        };
-
-        TempData["CommandingViewModel"] = JsonSerializer.Serialize(viewModel);
-
+        TempData["Constants.IsSuccess"] = commandResult.IsSuccess;
+        TempData["Constants.Message"] = commandResult.Message;
         return RedirectToAction(nameof(Index));
     }
 }
