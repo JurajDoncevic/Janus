@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using System.Diagnostics;
 using System.Text.Json;
+using static Janus.Mediator.WebApp.Commons.Helpers;
 
 namespace Janus.Mediator.WebApp.Controllers;
 public class QueryingController : Controller
@@ -31,7 +32,7 @@ public class QueryingController : Controller
 
         var viewModel = new QueryingViewModel()
         {
-            MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}"
+            MediatedDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "No schema generated"
         };
 
 
@@ -67,15 +68,16 @@ public class QueryingController : Controller
 
         var viewModel = new QueryingViewModel()
         {
-            MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}",
+            MediatedDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "{}",
             QueryText = queryText,
-            QueryResult = tabularDataViewModel,
-            OperationOutcome = new OperationOutcomeViewModel()
-            {
-                IsSuccess = currentSchema && queryResult,
-                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
-                          queryResult.Match(r => $"Query done in {timeNeeded}ms", message => message)
-            }
+            QueryResult = Option<TabularDataViewModel>.Some(tabularDataViewModel),
+            OperationOutcome = Option<OperationOutcomeViewModel>.Some(
+                            new OperationOutcomeViewModel()
+                            {
+                                IsSuccess = currentSchema && queryResult,
+                                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
+                                          queryResult.Match(r => $"Query completed in {timeNeeded}ms", message => message)
+                            })
         };
 
         return View(nameof(Index), viewModel);
@@ -95,10 +97,10 @@ public class QueryingController : Controller
         var viewModel = new QueryRemotePointViewModel
         {
             RemotePoints = remotePoints,
-            SelectedRemotePoint = remotePoints.FirstOrDefault(),
+            SelectedRemotePoint = null,
             QueryText = string.Empty,
-            OperationOutcome = null,
-            QueryResults = null
+            OperationOutcome = Option<OperationOutcomeViewModel>.None,
+            QueryResults = Option<TabularDataViewModel>.None
         };
         return View(viewModel);
     }
@@ -127,12 +129,12 @@ public class QueryingController : Controller
                 RemotePoints = remotePoints,
                 SelectedRemotePoint = remotePoints.FirstOrDefault(),
                 QueryText = queryText,
-                OperationOutcome = new OperationOutcomeViewModel
-                {
-                    IsSuccess = false,
-                    Message = $"No remote point with id \"{nodeId}\""
-                }
-
+                OperationOutcome = Option<OperationOutcomeViewModel>.Some(
+                    new OperationOutcomeViewModel
+                    {
+                        IsSuccess = false,
+                        Message = $"No remote point with id \"{nodeId}\""
+                    })
             });
         }
 
@@ -143,21 +145,28 @@ public class QueryingController : Controller
         var elapsedTime = stopwatch.Elapsed.Milliseconds;
         stopwatch.Stop();
 
+        
+
         var viewModel = new QueryRemotePointViewModel
         {
             RemotePoints = remotePoints,
             SelectedRemotePoint = remotePoints.FirstOrDefault(rp => rp.NodeId.Equals(nodeId)),
             QueryText = queryText,
-            OperationOutcome = new OperationOutcomeViewModel
-            {
-                IsSuccess = queryResult.IsSuccess,
-                Message = $"{queryResult.Message}. Elapsed time: {elapsedTime}ms"
-            },
-            QueryResults = !queryResult.IsSuccess ? null : new TabularDataViewModel
-            {
-                ColumnDataTypes = queryResult.Data.ColumnDataTypes.ToDictionary(_ => _.Key, _ => _.Value),
-                DataRows = queryResult.Data.RowData.Map(rd => rd.ColumnValues.ToDictionary(_ => _.Key, _ => _.Value?.ToString() ?? "NULL")).ToList()
-            }
+            OperationOutcome = Option<OperationOutcomeViewModel>.Some(
+                new OperationOutcomeViewModel
+                {
+                    IsSuccess = queryResult.IsSuccess,
+                    Message = $"{queryResult.Message}. Elapsed time: {elapsedTime}ms"
+                }),
+            QueryResults = queryResult.Match(
+                r => Option<TabularDataViewModel>.Some(
+                        new TabularDataViewModel
+                        {
+                            ColumnDataTypes = r.ColumnDataTypes.ToDictionary(_ => _.Key, _ => _.Value),
+                            DataRows = r.RowData.Map(rd => rd.ColumnValues.ToDictionary(_ => _.Key, _ => _.Value?.ToString() ?? "NULL")).ToList()
+                        }),
+                msg => Option<TabularDataViewModel>.None
+                ) 
         };
 
         return View(nameof(QueryRemotePoint), viewModel);

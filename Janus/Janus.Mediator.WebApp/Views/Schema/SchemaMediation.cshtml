@@ -5,29 +5,17 @@
 
 <h2>Schema Mediation</h2>
 <hr />
-<div class="row">
-    @if(@Model.OperationOutcome != null)
-    {
-        if(@Model.OperationOutcome?.IsSuccess ?? false)
-        {
-            <span class="alert alert-success">@Model.OperationOutcome?.Message</span>
-        } 
-        else
-        {
-            <span class="alert alert-danger">@Model.OperationOutcome?.Message</span>
-        }
-    }
+<partial name="_OperationOutcomePartial" model="Model.OperationOutcome" />
 
-</div>
 <div class="row">
-    <div class="col-6">
+    <div class="col-8">
         <h4>Mediation script</h4>
         <form asp-action="ApplyMediationScript" method="post">
             <textarea name="schemaMediationScript" class="w-100" rows="15">@Model.SchemaMediationScript</textarea>
-            <input type="submit" value="Apply mediation" class="btn btn-primary" onclick="location.reload" />
+            <input type="submit" value="Apply mediation" class="btn btn-primary" />
         </form>
     </div>
-    <div class="col-6">
+    <div class="col-4">
         <h4>Loaded schemas</h4>
         <div class="row">
             <span id="load-schema-notif" hidden class="alert alert-warning"></span>
@@ -45,11 +33,11 @@
                     <div id="collapse-@remotePoint.NodeId" class="accordion-collapse collapse" aria-labelledby="collapse-@remotePoint.NodeId" data-bs-parent="#remotePointSchemas">
                         <div class="accordion-body">
                             <div class="row">
-                                <button class="btn btn-danger w-auto" data-node-id="@remotePoint.NodeId" onclick="unloadSchema(this);">Unload schema</button>
+                                <button class="btn btn-danger w-auto" data-node-id="@remotePoint.NodeId" onclick="unloadSchema(this.dataset.nodeId);">Unload schema</button>
                             </div>
                             <hr>
                             <div class="row">
-                                <pre id="schema-@remotePoint.NodeId" class="schema overflow-scroll border rounded-1 border-1 border-dark border-opacity-25" style="height:20vh; resize:vertical;">@schema.DataSourceJson</pre>
+                                <pre id="schema-@remotePoint.NodeId" class="schema overflow-scroll form-control" style="height:20vh; resize:vertical;">@schema.DataSourceJson</pre>
                             </div>
                         </div>
                     </div>
@@ -72,12 +60,15 @@
             <div id="collapse-@remotePoint.NodeId" class="accordion-collapse collapse" aria-labelledby="collapse-@remotePoint.NodeId" data-bs-parent="#remotePointSchemas">
                 <div class="accordion-body">
                     <div class="row">
-                        <button class="btn btn-primary w-auto" data-node-id="@remotePoint.NodeId" onclick="getSchema(this)">Get schema</button>
-                        <button class="btn btn-warning w-auto ms-2" data-node-id="@remotePoint.NodeId" onclick="loadSchema(this)">Load schema</button>
+                        <button class="btn btn-primary w-auto" data-node-id="@remotePoint.NodeId" onclick="getSchema(this.dataset.nodeId)">Get schema</button>
+                        <button class="btn btn-warning w-auto ms-2" data-node-id="@remotePoint.NodeId" onclick="loadSchema(this.dataset.nodeId)">Load schema</button>
+                        <form>
+
+                        </form>
                     </div>
                     <hr>
                     <div class="row">
-                        <pre id="schema-@remotePoint.NodeId" class="overflow-scroll border rounded-1 border-1 border-dark border-opacity-25" style="resize:vertical; height:20vh"></pre>
+                        <pre id="schema-@remotePoint.NodeId" class="overflow-scroll form-control" style="resize:vertical; height:20vh"></pre>
                     </div>
                 </div>
             </div>
@@ -85,19 +76,8 @@
     </div>
 }
 
-@section Scripts {
-    <script>
-        var schemaElements = document.getElementsByClassName("schema");
-
-        for (let i = 0; i < schemaElements.length; i++) {
-            var textContent = schemaElements[i].textContent;
-
-            var data = JSON.parse(textContent);
-            schemaElements[i].textContent = JSON.stringify(data, undefined, 2);
-
-        }
-    </script>
+@section Scripts{
     <script src="~/js/getSchema.js"></script>
-    <script src="~/js/loadSchema.js">"</script>
+    <script src="~/js/loadSchema.js"></script>
     <script src="~/js/unloadSchema.js"></script>
 }

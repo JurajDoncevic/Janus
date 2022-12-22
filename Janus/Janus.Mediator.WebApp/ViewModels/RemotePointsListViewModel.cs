@@ -2,6 +2,6 @@
 
 public class RemotePointsListViewModel
 {
-    public OperationOutcomeViewModel? OperationOutcome { get; set; }
-    public List<RemotePointViewModel> RemotePoints { get; set; } = new();
+    public Option<OperationOutcomeViewModel> OperationOutcome { get; init; }
+    public List<RemotePointViewModel> RemotePoints { get; init; } = new();
 }

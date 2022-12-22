@@ -2,8 +2,8 @@
 
 public sealed class QueryingViewModel
 {
-    public string MediatedDataSourceJson { get; init; } = "{}";
+    public string MediatedDataSourceJson { get; init; } = string.Empty;
     public string QueryText { get; init; } = string.Empty;
-    public TabularDataViewModel? QueryResult { get; init; }
-    public OperationOutcomeViewModel? OperationOutcome { get; init; }
+    public Option<TabularDataViewModel> QueryResult { get; init; }
+    public Option<OperationOutcomeViewModel> OperationOutcome { get; init; }
 }

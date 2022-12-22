@@ -6,6 +6,7 @@ using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using Results = FunctionalExtensions.Base.Resulting.Results;
+using static Janus.Mediator.WebApp.Commons.Helpers;
 
 namespace Janus.Mediator.WebApp.Controllers;
 public class SchemaController : Controller
@@ -19,19 +20,29 @@ public class SchemaController : Controller
         _jsonSerializationProvider = jsonSerializationProvider;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> CurrentSchema()
     {
         var getCurrentSchema = _mediatorManager.GetCurrentSchema();
         var schemaToJson =
             getCurrentSchema.Match(
-                                dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource),
-                                () => Results.OnFailure<string>("No schema loaded")
+                                dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource).Map(PrettyJsonString),
+                                () => Results.OnFailure<string>("No mediated schema generated")
                                 );
 
-        return View(schemaToJson.Match(
-            json => new DataSourceViewModel() { DataSourceJson = json },
-            message => new DataSourceViewModel() { Message = message }
-            ));
+        var viewModel = new DataSourceViewModel
+        {
+            DataSourceJson = schemaToJson.Match(data => data, message => string.Empty),
+            OperationOutcome =
+                schemaToJson.IsSuccess
+                ? Option<OperationOutcomeViewModel>.None
+                : Option<OperationOutcomeViewModel>.Some(new OperationOutcomeViewModel
+                {
+                    IsSuccess = false,
+                    Message = schemaToJson.Message
+                })
+        };
+
+        return View(viewModel);
     }
 
     public async Task<IActionResult> LoadFromPersistence()
@@ -40,10 +51,20 @@ public class SchemaController : Controller
         var schemaToJson =
             getCurrentSchema.Bind(dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource));
 
-        return schemaToJson.Match(
-            json => View(json),
-            message => View(message)
-            );
+        var viewModel = new DataSourceViewModel
+        {
+            DataSourceJson = schemaToJson.Match(data => data, message => string.Empty),
+            OperationOutcome =
+                schemaToJson.IsSuccess
+                ? Option<OperationOutcomeViewModel>.None
+                : Option<OperationOutcomeViewModel>.Some(new OperationOutcomeViewModel
+                {
+                    IsSuccess = false,
+                    Message = schemaToJson.Message
+                })
+        };
+
+        return View(nameof(CurrentSchema), viewModel);
     }
 
     public async Task<IActionResult> VisibleSchemas()
@@ -146,7 +167,7 @@ public class SchemaController : Controller
                 .ToList(),
             LoadedDataSourceSchemas =
                 loadedSchemasFromRemotePoints
-                .Map(kv => _jsonSerializationProvider.DataSourceSerializer.Serialize(kv.Value)
+                .Map(kv => _jsonSerializationProvider.DataSourceSerializer.Serialize(kv.Value).Map(PrettyJsonString)
                             .Match(
                                 r => (remotePoint: kv.Key, dataSourceJson: r, message: string.Empty),
                                 message => (remotePoint: kv.Key, dataSourceJson: string.Empty, message: message)
@@ -156,13 +177,21 @@ public class SchemaController : Controller
                     t => new DataSourceViewModel
                     {
                         DataSourceJson = t.dataSourceJson,
-                        Message = t.message
+                        OperationOutcome = 
+                            string.IsNullOrWhiteSpace(t.message)
+                            ? Option<OperationOutcomeViewModel>.None
+                            : Option<OperationOutcomeViewModel>.Some(new OperationOutcomeViewModel
+                            {
+                                IsSuccess= string.IsNullOrWhiteSpace(t.message),
+                                Message = t.message,
+                            })
                     }),
 
             SchemaMediationScript = _mediatorManager.GetCurrentSchemaMediation().Match(
                                         mediation => mediation.ToMediationScript(),
                                         () => string.Empty
-                                        )
+                                        ),
+            OperationOutcome = TempData.ToOperationOutcomeViewModel()
         };
         return View(viewModel);
     }
@@ -175,46 +204,13 @@ public class SchemaController : Controller
         var loadedSchemasFromRemotePoints = _mediatorManager.GetLoadedSchemas();
         var remotePointsWithLoadedSchemas = loadedSchemasFromRemotePoints.Keys;
 
-        var mediation = 
+        var mediationResult = 
             await Task.FromResult(_mediatorManager.CreateDataSourceMediation(schemaMediationScript))
                       .Bind(mediation => _mediatorManager.ApplyMediation(mediation))
                       .Bind(mediatedDataSource => Task.FromResult(_jsonSerializationProvider.DataSourceSerializer.Serialize(mediatedDataSource)));
 
-        var mediationViewModel = new SchemaMediationViewModel
-        {
-            AvailableRemotePoints =
-                registeredRemotePoints
-                .Except(remotePointsWithLoadedSchemas)
-                .Map(rp => new RemotePointViewModel { NodeId = rp.NodeId, Address = rp.Address, Port = rp.Port, RemotePointType = rp.RemotePointType })
-                .ToList(),
-            LoadedDataSourceSchemas =
-                loadedSchemasFromRemotePoints
-                .Map(kv => _jsonSerializationProvider.DataSourceSerializer.Serialize(kv.Value)
-                            .Match(
-                                r => (remotePoint: kv.Key, dataSourceJson: r, message: string.Empty),
-                                message => (remotePoint: kv.Key, dataSourceJson: string.Empty, message: message)
-                            ))
-                .ToDictionary(
-                    t => new RemotePointViewModel { NodeId = t.remotePoint.NodeId, Address = t.remotePoint.Address, Port = t.remotePoint.Port, RemotePointType = t.remotePoint.RemotePointType },
-                    t => new DataSourceViewModel
-                    {
-                        DataSourceJson = t.dataSourceJson,
-                        Message = t.message
-                    }),
-
-            SchemaMediationScript = _mediatorManager.GetCurrentSchemaMediation().Match(
-                                        mediation => mediation.ToMediationScript(),
-                                        () => string.Empty
-                                        ),
-            OperationOutcome = new OperationOutcomeViewModel
-            {
-                IsSuccess = mediation.IsSuccess,
-                Message = mediation.Message,
-            }
-            
-        };
-
-        // either return view or call via js
-        return View(nameof(SchemaMediation), mediationViewModel);
+        TempData["Constants.IsSuccess"] = mediationResult.IsSuccess;
+        TempData["Constants.Message"] = mediationResult.Message;
+        return RedirectToAction(nameof(SchemaMediation));
     }
 }

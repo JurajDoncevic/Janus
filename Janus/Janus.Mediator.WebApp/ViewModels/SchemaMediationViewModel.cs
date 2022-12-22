@@ -2,15 +2,15 @@
 
 public class SchemaMediationViewModel
 {
-    public string SchemaMediationScript { get; set; }
+    public string SchemaMediationScript { get; init; }
     /// <summary>
     /// Loaded schemas
     /// </summary>
-    public Dictionary<RemotePointViewModel, DataSourceViewModel> LoadedDataSourceSchemas { get; set; }
+    public Dictionary<RemotePointViewModel, DataSourceViewModel> LoadedDataSourceSchemas { get; init; }
     /// <summary>
     /// Schemas available for loading - don't contain a ds with the same name as a loaded schema ds
     /// </summary>
-    public List<RemotePointViewModel> AvailableRemotePoints { get; set; }
+    public List<RemotePointViewModel> AvailableRemotePoints { get; init; }
 
-    public OperationOutcomeViewModel? OperationOutcome { get; set; } = null;
+    public Option<OperationOutcomeViewModel> OperationOutcome { get; init; }
 }
