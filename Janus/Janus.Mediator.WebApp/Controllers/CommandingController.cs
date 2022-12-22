@@ -2,6 +2,7 @@
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using static Janus.Mediator.WebApp.Commons.Helpers;
 
 namespace Janus.Mediator.WebApp.Controllers;
 public class CommandingController : Controller
@@ -31,7 +32,7 @@ public class CommandingController : Controller
 
             viewModel = new CommandingViewModel()
             {
-                MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}"
+                MediatedDataSourceJson = currentSchema ? PrettyJsonString(currentSchema.Value) : "No schema generated"
             };
         }
 
@@ -56,12 +57,13 @@ public class CommandingController : Controller
         {
             MediatedDataSourceJson = currentSchema ? currentSchema.Value : "{}",
             CommandText = commandText,
-            OperationOutcome = new OperationOutcomeViewModel()
-            {
-                IsSuccess = currentSchema && commandResult,
-                Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
+            OperationOutcome = Option<OperationOutcomeViewModel>.Some(
+                new OperationOutcomeViewModel()
+                {
+                    IsSuccess = currentSchema && commandResult,
+                    Message = currentSchema.Match(schema => "", () => "No schema generated.\n") +
                           commandResult.Match(r => "", message => message)
-            }
+                })
         };
 
         TempData["CommandingViewModel"] = JsonSerializer.Serialize(viewModel);

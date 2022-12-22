@@ -5,22 +5,9 @@
 }
 <h2>Commanding</h2>
 <hr />
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome"/>
 <div class="row mt-2 mb-2">
     <div class="col-6">
-        <div class="row">
-            <h4>Command text</h4>
-            @if (Model.OperationOutcome is not null)
-            {
-                @if (Model.OperationOutcome.IsSuccess)
-                {
-                    <span class="alert alert-success">@Model.OperationOutcome.Message</span>
-                }
-                else
-                {
-                    <span class="alert alert-warning">@Model.OperationOutcome.Message</span>
-                }
-            }
-        </div>
         <form asp-action="RunCommand" method="post">
             <textarea name="commandText" class="form-control" rows="15" type="text">@Model.CommandText</textarea>
             <input type="submit" class="btn btn-primary mt-2" value="Run command!" />
