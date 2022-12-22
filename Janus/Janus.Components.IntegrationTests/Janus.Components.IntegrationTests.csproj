@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+    <ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
     <ProjectReference Include="..\Janus.Mediator.Persistence.LiteDB\Janus.Mediator.Persistence.LiteDB.csproj" />
     <ProjectReference Include="..\Janus.Mediator\Janus.Mediator.csproj" />
     <ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
@@ -37,6 +38,21 @@
     <ProjectReference Include="..\Janus.Wrapper.Persistence.LiteDB\Janus.Wrapper.Persistence.LiteDB.csproj" />
     <ProjectReference Include="..\Janus.Wrapper.Sqlite\Janus.Wrapper.Sqlite.csproj" />
     <ProjectReference Include="..\Janus.Wrapper\Janus.Wrapper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="test1.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="test2.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="test3.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="test4.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
