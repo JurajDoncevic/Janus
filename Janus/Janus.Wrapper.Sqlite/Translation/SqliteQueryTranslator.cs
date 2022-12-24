@@ -22,7 +22,7 @@ public sealed class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, s
             () => $"FROM {LocalizeTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
                       j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
-                            (join, expr) => expr + $" INNER JOIN {LocalizeTableauId(join.PrimaryKeyTableauId)} ON {LocalizeAttributeId(join.PrimaryKeyAttributeId)}={LocalizeAttributeId(join.ForeignKeyAttributeId)}"),
+                            (join, expr) => expr + $" LEFT JOIN {LocalizeTableauId(join.PrimaryKeyTableauId)} ON {LocalizeAttributeId(join.PrimaryKeyAttributeId)}={LocalizeAttributeId(join.ForeignKeyAttributeId)}"),
                       () => ""));
 
     public Result<string> TranslateProjection(Option<Projection> projection)
