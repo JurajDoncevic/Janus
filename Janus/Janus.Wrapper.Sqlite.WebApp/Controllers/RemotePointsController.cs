@@ -15,7 +15,7 @@ public class RemotePointsController : Controller
         _logger = logger?.ResolveLogger<RemotePointsController>();
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         var remotePoints = _wrapperManager.GetRegisteredRemotePoints()
                                            .Map(rp => new RemotePointViewModel()
@@ -26,9 +26,21 @@ public class RemotePointsController : Controller
                                                RemotePointType = rp.RemotePointType
                                            });
 
+        var persistedRemotePoints = (await _wrapperManager.GetPersistedRemotePoints()
+                                        .Map(result => result.Map(
+                                            rp => new RemotePointViewModel()
+                                            {
+                                                Address = rp.Address,
+                                                NodeId = rp.NodeId,
+                                                Port = rp.Port,
+                                                RemotePointType = rp.RemotePointType
+                                            })))
+                                        .Match(r => r, message => Enumerable.Empty<RemotePointViewModel>());
+
         var viewModel = new RemotePointsListViewModel()
         {
-            RemotePoints = remotePoints.ToList(),
+            RegisteredRemotePoints = remotePoints.ToList(),
+            PersistedRemotePoints = persistedRemotePoints.ToList(),
             OperationOutcome = TempData.ToOperationOutcomeViewModel()
         };
 
@@ -76,6 +88,34 @@ public class RemotePointsController : Controller
         }
 
         var result = await _wrapperManager.UnregisterRemotePoint(remotePoint);
+
+        TempData["Constants.IsSuccess"] = result.IsSuccess;
+        TempData["Constants.Message"] = result.Message;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PersistRemotePoint([FromForm] RemotePointViewModel viewModel)
+    {
+
+        RemotePoint remotePoint = viewModel switch
+        {
+            { RemotePointType: RemotePointTypes.MASK } => new MaskRemotePoint(viewModel.NodeId, viewModel.Address, viewModel.Port),
+            { RemotePointType: RemotePointTypes.MEDIATOR } => new MediatorRemotePoint(viewModel.NodeId, viewModel.Address, viewModel.Port),
+            { RemotePointType: RemotePointTypes.WRAPPER } => new WrapperRemotePoint(viewModel.NodeId, viewModel.Address, viewModel.Port),
+            { RemotePointType: RemotePointTypes.UNDETERMINED } => new UndeterminedRemotePoint(viewModel.Address, viewModel.Port) // shouldn't reach this
+        };
+        var result = await _wrapperManager.PersistRemotePoint(remotePoint);
+
+        TempData["Constants.IsSuccess"] = result.IsSuccess;
+        TempData["Constants.Message"] = result.Message;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteRemotePoint([FromForm] string nodeId)
+    {
+        var result = await _wrapperManager.DeleteRemotePoint(nodeId);
 
         TempData["Constants.IsSuccess"] = result.IsSuccess;
         TempData["Constants.Message"] = result.Message;

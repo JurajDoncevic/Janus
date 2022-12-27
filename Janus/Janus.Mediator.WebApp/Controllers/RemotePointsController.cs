@@ -1,6 +1,7 @@
 ﻿using Janus.Communication.Remotes;
 using Janus.Mediator.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Janus.Mediator.WebApp.Commons.Helpers;
 
 namespace Janus.Mediator.WebApp.Controllers;
@@ -15,9 +16,9 @@ public class RemotePointsController : Controller
         _logger = logger?.ResolveLogger<RemotePointsController>();
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var remotePoints = _mediatorManager.GetRegisteredRemotePoints()
+        var registeredRemotePoints = _mediatorManager.GetRegisteredRemotePoints()
                                            .Map(rp => new RemotePointViewModel()
                                            {
                                                Address = rp.Address,
@@ -26,9 +27,21 @@ public class RemotePointsController : Controller
                                                RemotePointType = rp.RemotePointType
                                            });
 
+        var persistedRemotePoints = (await _mediatorManager.GetPersistedRemotePoints()
+                                        .Map(result => result.Map(
+                                            rp => new RemotePointViewModel()
+                                            {
+                                                Address = rp.Address,
+                                                NodeId = rp.NodeId,
+                                                Port = rp.Port,
+                                                RemotePointType = rp.RemotePointType
+                                            })))
+                                        .Match(r => r, message => Enumerable.Empty<RemotePointViewModel>());
+
         var viewModel = new RemotePointsListViewModel()
         {
-            RemotePoints = remotePoints.ToList(),
+            RegisteredRemotePoints = registeredRemotePoints.ToList(),
+            PersistedRemotePoints = persistedRemotePoints.ToList(),
             OperationOutcome = TempData.ToOperationOutcomeViewModel()
         };
 
@@ -68,7 +81,7 @@ public class RemotePointsController : Controller
         var remotePoint = _mediatorManager.GetRegisteredRemotePoints()
                                           .FirstOrDefault(x => x.NodeId == nodeId);
         // no such remote point found
-        if(remotePoint is null)
+        if (remotePoint is null)
         {
             TempData["Constants.IsSuccess"] = false;
             TempData["Constants.Message"] = $"No remote point with id {nodeId} registered.";
@@ -76,6 +89,34 @@ public class RemotePointsController : Controller
         }
 
         var result = await _mediatorManager.UnregisterRemotePoint(remotePoint);
+
+        TempData["Constants.IsSuccess"] = result.IsSuccess;
+        TempData["Constants.Message"] = result.Message;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PersistRemotePoint([FromForm]RemotePointViewModel viewModel)
+    {
+
+        RemotePoint remotePoint = viewModel switch
+        {
+            { RemotePointType: RemotePointTypes.MASK } => new MaskRemotePoint(viewModel.NodeId, viewModel.Address, viewModel.Port),
+            { RemotePointType: RemotePointTypes.MEDIATOR } => new MediatorRemotePoint(viewModel.NodeId, viewModel.Address, viewModel.Port),
+            { RemotePointType: RemotePointTypes.WRAPPER } => new WrapperRemotePoint(viewModel.NodeId, viewModel.Address, viewModel.Port),
+            { RemotePointType: RemotePointTypes.UNDETERMINED } => new UndeterminedRemotePoint(viewModel.Address, viewModel.Port) // shouldn't reach this
+        };
+        var result = await _mediatorManager.PersistRemotePoint(remotePoint);
+
+        TempData["Constants.IsSuccess"] = result.IsSuccess;
+        TempData["Constants.Message"] = result.Message;
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteRemotePoint([FromForm] string nodeId)
+    {
+        var result = await _mediatorManager.DeleteRemotePoint(nodeId);
 
         TempData["Constants.IsSuccess"] = result.IsSuccess;
         TempData["Constants.Message"] = result.Message;

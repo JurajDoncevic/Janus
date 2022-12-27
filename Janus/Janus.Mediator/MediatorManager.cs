@@ -124,6 +124,24 @@ public sealed class MediatorManager : IComponentManager
     public async Task<Result<IEnumerable<RemotePoint>>> GetPersistedRemotePoints()
         => await Results.AsResult(async () => _persistenceProvider.RemotePointPersistence.GetAll());
 
+    public async Task<Result> PersistRemotePoint(RemotePoint remotePoint)
+        => await Results.AsResult(async () =>
+        {
+            var inserting =
+                _persistenceProvider.RemotePointPersistence.Insert(remotePoint);
+
+            return inserting;
+        });
+
+    public async Task<Result> DeleteRemotePoint(string nodeId)
+        => await Results.AsResult(async () =>
+        {
+            var deletion =
+                _persistenceProvider.RemotePointPersistence.Delete(nodeId);
+        
+            return deletion;
+        });
+
     public async Task<Result> PersistRemotePoints(IEnumerable<RemotePoint> remotePoints)
         => await Results.AsResult(async () =>
         {
