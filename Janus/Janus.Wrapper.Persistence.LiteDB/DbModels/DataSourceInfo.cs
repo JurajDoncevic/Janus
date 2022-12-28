@@ -8,7 +8,10 @@ internal sealed class DataSourceInfo
         Version = inferredDataSourceVersion;
         InferredDataSourceJson = inferredDataSourceJson;
         PersistedOn = persistedOn ?? DateTime.Now;
+    
     }
+
+    public DataSourceInfo() { }
 
     [BsonId(false)]
     public string Version { get; init; }

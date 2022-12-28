@@ -1,0 +1,55 @@
+﻿@model PersistedSchemaListViewModel
+
+@{
+    ViewData["Title"] = "Persisted Schemas";
+}
+
+<h2>Persisted schemas</h2>
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
+<hr />
+<table class="table table-responsive table-bordered">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameForInnerType((PersistedSchemaViewModel model) => model.InferredDataSourceVersion)
+            </th>
+            <th>
+                @Html.DisplayNameForInnerType((PersistedSchemaViewModel model) => model.InferredDataSourceJson)
+            </th>
+            <th>
+                @Html.DisplayNameForInnerType((PersistedSchemaViewModel model) => model.PersistedOn)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var (idx, item) in Enumerable.Zip(Enumerable.Range(1, Model.PersistedSchemas.Count), Model.PersistedSchemas))
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InferredDataSourceVersion)
+                </td>
+                <td>
+                    <div>
+                        <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#item_@(idx)-schema-json-collapse" aria-expanded="false" aria-controls="item_@(idx)-schema-json-collapse">
+                            Toggle show
+                        </button>
+                        <div class="collapse" id="item_@(idx)-schema-json-collapse">
+                            <pre>@item.InferredDataSourceJson</pre>
+                        </div>
+                    </div>
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersistedOn)
+                </td>
+                <td>
+                    <form action="DeletePersistedSchema" method="post">
+                        <input type="hidden" value="@item.InferredDataSourceVersion" name="dataSourceVersion" />
+                        <input type="submit" value="Delete" class="btn btn-danger" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

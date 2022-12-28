@@ -14,6 +14,7 @@ using Janus.QueryLanguage;
 using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.LocalQuerying;
 using Janus.Wrapper.Persistence;
+using Janus.Wrapper.Persistence.Models;
 using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
@@ -141,6 +142,28 @@ public class WrapperManager
                 .Fold(Results.OnSuccess(), (rp, result) => result.Bind(r => _persistenceProvider.RemotePointPersistence.Insert(rp)));
 
             return insertion && removal;
+        });
+
+    public async Task<Result<IEnumerable<Persistence.Models.DataSourceInfo>>> GetPersistedSchemas()
+        => await Results.AsResult(async () => _persistenceProvider.DataSourceInfoPersistence.GetAll());
+
+    public async Task<Result> PersistSchema(DataSource dataSource)
+        => await Results.AsResult(async () =>
+        {
+            var dataSourceInfo = new DataSourceInfo(dataSource);
+            var insertion =
+                _persistenceProvider.DataSourceInfoPersistence.Insert(dataSourceInfo);
+
+            return insertion;
+        });
+
+    public async Task<Result> DeletePersistedSchema(string schemaVersion)
+        => await Results.AsResult(async () =>
+        {
+            var deletion =
+                _persistenceProvider.DataSourceInfoPersistence.Delete(schemaVersion);
+
+            return deletion;
         });
 
     public Option<DataSource> GetCurrentSchema()

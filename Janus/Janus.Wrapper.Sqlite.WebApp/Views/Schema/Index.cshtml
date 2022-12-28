@@ -8,9 +8,15 @@
 <partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
 
 <div class="row">
-    <form asp-action="GenerateSchema" method="post">
+    <form asp-action="GenerateSchema" method="post" class="float-start w-auto">
         <input type="submit" class="btn btn-primary" value="Infer schema on the data source" />
     </form>
+    @if (!string.IsNullOrWhiteSpace(Model.DataSourceVersion))
+    {
+        <form method="post" asp-action="PersistCurrentSchema" class="float-start w-auto ms-1">
+            <input type="submit" class="btn btn-warning" value="Persist current schema"/>
+        </form>
+    }
 </div>
 
 <div class="row mt-2">

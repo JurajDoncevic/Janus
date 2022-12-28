@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Results = FunctionalExtensions.Base.Resulting.Results;
 using Janus.Wrapper.Sqlite;
 using static Janus.Wrapper.Sqlite.WebApp.Commons.Helpers;
+using Janus.Components.Persistence;
+using Janus.Commons.SchemaModels;
+using Janus.Wrapper.Persistence.Models;
 
 namespace Janus.Wrapper.Sqlite.WebApp.Controllers;
 public class SchemaController : Controller
@@ -31,6 +34,7 @@ public class SchemaController : Controller
 
         var viewModel = new DataSourceViewModel
         {
+            DataSourceVersion = getCurrentSchema.Match(ds => ds.Version, () => string.Empty),
             DataSourceJson = schemaToJson.Match(data => data, message => string.Empty),
             OperationOutcome =
                 schemaToJson.IsSuccess
@@ -57,4 +61,57 @@ public class SchemaController : Controller
         TempData["Constants.Message"] = schemaGeneration.Message;
         return RedirectToAction(nameof(Index));
     }
+
+
+    public async Task<IActionResult> PersistedSchemas()
+    {
+        var persistedSchemas =
+            (await _wrapperManager.GetPersistedSchemas())
+                .Match(r => r, msg => Enumerable.Empty<DataSourceInfo>())
+                .Map(dataSourceInfo => new PersistedSchemaViewModel
+                {
+                    InferredDataSourceVersion = dataSourceInfo.InferredDataSource.Version,
+                    InferredDataSourceJson = PrettyJsonString(_jsonSerializationProvider.DataSourceSerializer.Serialize(dataSourceInfo.InferredDataSource).Data ?? "{}"),
+                    PersistedOn = dataSourceInfo.CreatedOn
+                });
+
+        var viewModel = new PersistedSchemaListViewModel
+        {
+            PersistedSchemas = persistedSchemas.ToList(),
+            OperationOutcome = TempData.ToOperationOutcomeViewModel()
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PersistCurrentSchema()
+    {
+        var currentSchema = _wrapperManager.GetCurrentSchema();
+        if (currentSchema)
+        {
+            var persistence = await _wrapperManager.PersistSchema(currentSchema.Value);
+
+            TempData["Constants.IsSuccess"] = persistence.IsSuccess;
+            TempData["Constants.Message"] = persistence.Message;
+            return RedirectToAction(nameof(Index));
+        }
+        else
+        {
+            TempData["Constants.IsSuccess"] = false;
+            TempData["Constants.Message"] = "No schema persisted because no schema is generated";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeletePersistedSchema([FromForm] string dataSourceVersion)
+    {
+        var deletion = await _wrapperManager.DeletePersistedSchema(dataSourceVersion);
+
+        TempData["Constants.IsSuccess"] = deletion.IsSuccess;
+        TempData["Constants.Message"] = deletion.Message;
+        return RedirectToAction(nameof(PersistedSchemas));
+    }
 }
+
