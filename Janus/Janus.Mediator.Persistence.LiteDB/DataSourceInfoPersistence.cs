@@ -67,7 +67,7 @@ public sealed class DataSourceInfoPersistence : IDataSourceInfoPersistence, IDis
             }
 
             var loadedDataSourcesDeserializations =
-                dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Key.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value))
+                dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Value.RemotePoint.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value.DataSourceJson))
                        .Fold(Results.OnSuccess<Dictionary<RemotePoint, DataSource>>(new()),
                         (deserialization, results) => results.Bind(dict => deserialization.Value.Map(deserRes => dict.Append(KeyValuePair.Create(deserialization.Key, deserRes)).ToDictionary(_ => _.Key, _ => _.Value)))
                        );
@@ -102,7 +102,7 @@ public sealed class DataSourceInfoPersistence : IDataSourceInfoPersistence, IDis
                 }
 
                 var loadedDataSourcesDeserializations =
-                    dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Key.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value))
+                    dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Value.RemotePoint.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value.DataSourceJson))
                            .Fold(Results.OnSuccess<Dictionary<RemotePoint, DataSource>>(new()),
                             (deserialization, results) => results.Bind(dict => deserialization.Value.Map(deserRes => dict.Append(KeyValuePair.Create(deserialization.Key, deserRes)).ToDictionary(_ => _.Key, _ => _.Value)))
                            );
@@ -139,7 +139,7 @@ public sealed class DataSourceInfoPersistence : IDataSourceInfoPersistence, IDis
             }
 
             var loadedDataSourcesDeserializations =
-                dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Key.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value))
+                dbModel.LoadedDataSourcesJsons.ToDictionary(kv => kv.Value.RemotePoint.ToRemotePoint(), kv => _dataSourceSerializer.Deserialize(kv.Value.DataSourceJson))
                        .Fold(Results.OnSuccess<Dictionary<RemotePoint, DataSource>>(new()),
                         (deserialization, results) => results.Bind(dict => deserialization.Value.Map(deserRes => dict.Append(KeyValuePair.Create(deserialization.Key, deserRes)).ToDictionary(_ => _.Key, _ => _.Value)))
                        );

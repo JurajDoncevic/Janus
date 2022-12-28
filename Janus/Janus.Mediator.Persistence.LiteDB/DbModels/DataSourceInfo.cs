@@ -13,14 +13,22 @@ internal sealed class DataSourceInfo
         Version = mediatedDataSourceVersion;
         MediatedDataSourceJson = mediatedDataSourceJson;
         MediationScript = mediationScript;
-        LoadedDataSourcesJsons = loadedDataSources;
+        LoadedDataSourcesJsons = loadedDataSources.ToDictionary(kv => kv.Key.NodeId, kv => new RemotePointDataSource { RemotePoint = kv.Key, DataSourceJson = kv.Value });
         PersistedOn = persistedOn ?? DateTime.Now;
     }
+
+    public DataSourceInfo() { }
 
     [BsonId(false)]
     public string Version { get; init; }
     public string MediatedDataSourceJson { get; init; }
     public string MediationScript { get; private set; }
-    public Dictionary<RemotePointInfo, string> LoadedDataSourcesJsons { get; init; }
+    public Dictionary<string, RemotePointDataSource> LoadedDataSourcesJsons { get; init; }
     public DateTime PersistedOn { get; init; }
+}
+
+internal sealed class RemotePointDataSource
+{
+    public RemotePointInfo RemotePoint { get; init; }
+    public string DataSourceJson { get; set; } = string.Empty;
 }

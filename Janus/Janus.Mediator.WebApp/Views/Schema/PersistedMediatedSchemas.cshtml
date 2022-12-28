@@ -1,0 +1,81 @@
+﻿@model PersistedSchemaListViewModel
+
+@{
+    ViewData["Title"] = "PersistedMediatedSchemas";
+}
+
+<h2>Persisted mediated schemas</h2>
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
+<hr />
+<div class="row">
+    <form action="LoadLatestSchemaFromPersistence", method="post">
+        <input type="submit" class="btn btn-warning" value="Load latest schema" />
+    </form>
+</div>
+<div class="row mt-2">
+    <table class="table table-responsive table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameForInnerType((PersistedSchemaViewModel model) => model.MediatedDataSourceVersion)
+                </th>
+                <th>
+                    @Html.DisplayNameForInnerType((PersistedSchemaViewModel model) => model.MediatedDataSourceJson)
+                </th>
+                <th>
+                    @Html.DisplayNameForInnerType((PersistedSchemaViewModel model) => model.MediationScript)
+                </th>
+                <th>
+                    Required remote points
+                </th>
+                <th>
+                    @Html.DisplayNameForInnerType((PersistedSchemaViewModel model) => model.PersistedOn)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (idx, item) in Enumerable.Zip(Enumerable.Range(1, Model.PersistedSchemas.Count), Model.PersistedSchemas))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MediatedDataSourceVersion)
+                    </td>
+                    <td>
+                        <div>
+                            <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#item_@(idx)-schema-json-collapse" aria-expanded="false" aria-controls="item_@(idx)-schema-json-collapse">
+                                SHOW
+                            </button>
+                            <div class="collapse" id="item_@(idx)-schema-json-collapse">
+                                <pre>@item.MediatedDataSourceJson</pre>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <button class="btn btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#item_@(idx)-script-collapse" aria-expanded="false" aria-controls="item_@(idx)-script-collapse">
+                                SHOW
+                            </button>
+                            <div class="collapse" id="item_@(idx)-script-collapse">
+                                <pre>@item.MediationScript</pre>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        @Html.Raw(string.Join("<br/>", @item.LoadedDataSourceJsons.Keys.Map(rp => rp.String)))
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PersistedOn)
+                    </td>
+                    <td>
+                        <form action="DeleteSchemaFromPersistence" method="post">
+                            <input type="hidden" name="dataSourceVersion" value="@item.MediatedDataSourceVersion" />
+                            <input type="submit" class="btn btn-danger" value="Delete" />
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

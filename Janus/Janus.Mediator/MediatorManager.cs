@@ -160,6 +160,75 @@ public sealed class MediatorManager : IComponentManager
             return insertion && removal;
         });
 
+    public async Task<Result> PersistCurrentMediatedSchema(DataSource currentDataSource, DataSourceMediation dataSourceMediation, Dictionary<RemotePoint, DataSource> loadedDataSources, DateTime? createdOn = null)
+        => await Results.AsResult(async () =>
+        {
+            var insertion =
+                _persistenceProvider
+                .DataSourceInfoPersistence.Insert(new Persistence.Models.DataSourceInfo(
+                    currentDataSource,
+                    dataSourceMediation.ToMediationScript(),
+                    loadedDataSources,
+                    createdOn
+                    ));
+
+            return insertion;
+        });
+
+    public async Task<Result> DeleteMediatedSchema(string version)
+        => await Results.AsResult(async () =>
+        {
+            var deletion = _persistenceProvider.DataSourceInfoPersistence.Delete(version);
+
+            return deletion;
+        });
+
+    public async Task<Result<IEnumerable<Persistence.Models.DataSourceInfo>>> GetAllPersistedSchemas()
+        => await Results.AsResult(async () =>
+        {
+            var persistedSchemas = _persistenceProvider.DataSourceInfoPersistence.GetAll();
+            
+            return persistedSchemas;
+        });
+
+    public async Task<Result<DataSource>> LoadLatestMediatedSchemaFromPersistence()
+        => await Results.AsResult(async () =>
+        {
+            var dataSourceInfoAcquisition = _persistenceProvider.DataSourceInfoPersistence.GetLatest();
+            if (!dataSourceInfoAcquisition)
+            {
+                return Results.OnFailure<DataSource>("Couldn't load data source info from persistence");
+            }
+            var dataSourceInfo = dataSourceInfoAcquisition.Data;
+
+            var targetRemotePoints = dataSourceInfo.LoadedDataSources.Keys;
+
+            _schemaManager.UnloadSchemas();
+
+            var schemaLoading =
+                await targetRemotePoints
+                    .Map(async rp => await _schemaManager.LoadSchema(rp))
+                    .Aggregate((r1, r2) => r1.Bind(_ => r2));
+            if (!schemaLoading)
+            {
+                return Results.OnFailure<DataSource>($"Couldn't load schemas from remote points: {schemaLoading.Message}");
+            }
+
+            var mediationCreation = CreateDataSourceMediation(dataSourceInfo.MediationScript);
+            if (!mediationCreation)
+            {
+                return Results.OnFailure<DataSource>($"Couldn't create mediation from script: {mediationCreation.Message}");
+            }
+
+            var mediation = await _schemaManager.MediateLoadedSchemas(mediationCreation.Data);
+            if (!mediation)
+            {
+                return Results.OnFailure<DataSource>($"Couldn't mediate loaded schemas: {mediation.Message}");
+            }
+
+            return mediation.Data;
+        });
+
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;
 
@@ -196,45 +265,6 @@ public sealed class MediatorManager : IComponentManager
 
     public async Task<Dictionary<RemotePoint, Result<DataSource>>> GetAvailableSchemas()
         => await _schemaManager.GetSchemasFromComponents();
-
-
-    public async Task<Result<DataSource>> LoadMediatedSchemaFromPersistence()
-        => await Results.AsResult(async () =>
-        {
-            var dataSourceInfoAcquisition = _persistenceProvider.DataSourceInfoPersistence.GetLatest();
-            if (!dataSourceInfoAcquisition)
-            {
-                return Results.OnFailure<DataSource>("Couldn't load data source info from persistence");
-            }
-            var dataSourceInfo = dataSourceInfoAcquisition.Data;
-
-            var targetRemotePoints = dataSourceInfo.LoadedDataSources.Keys;
-
-            _schemaManager.UnloadSchemas();
-
-            var schemaLoading =
-            targetRemotePoints
-                .Map(async rp => await _schemaManager.LoadSchema(rp))
-                .Fold(Results.OnSuccess(), (schema, finalResult) => finalResult.Bind(_ => _));
-            if (!schemaLoading)
-            {
-                return Results.OnFailure<DataSource>($"Couldn't load schemas from remote points: {schemaLoading.Message}");
-            }
-
-            var mediationCreation = CreateDataSourceMediation(dataSourceInfo.MediationScript);
-            if (!mediationCreation)
-            {
-                return Results.OnFailure<DataSource>($"Couldn't create mediation from script: {mediationCreation.Message}");
-            }
-
-            var mediation = await _schemaManager.MediateLoadedSchemas(mediationCreation.Data);
-            if (!mediation)
-            {
-                return Results.OnFailure<DataSource>($"Couldn't mediate loaded schemas: {mediation.Message}");
-            }
-
-            return mediation.Data;
-        });
 
     public Result<DataSourceMediation> CreateDataSourceMediation(string mediationScript)
         => Results.AsResult(() =>
