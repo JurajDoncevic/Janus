@@ -32,6 +32,7 @@ public class SchemaController : Controller
 
         var viewModel = new DataSourceViewModel
         {
+            DataSourceVersion = getCurrentSchema.Match(ds => ds.Version, () => string.Empty),
             DataSourceJson = schemaToJson.Match(data => data, message => string.Empty),
             OperationOutcome =
                 schemaToJson.IsSuccess
