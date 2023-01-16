@@ -375,6 +375,9 @@ FodyWeavers.xsd
 **/appsettings.*.json
 /Janus/Janus.Mediator.WebApp/*.db
 /Janus/Janus.Wrapper.Sqlite.WebApp/*.db
+/Janus/Janus.Mask.WebApi.WebApp/*.db
+/Janus/Janus.Mask.WebApi.WebApp/wwwroot/lib
 
 # on for now
 # /Janus/Janus.Components.IntegrationTests/*.db
+/Janus/Janus.Mask.WebApi.WebApp/appsettings.json
