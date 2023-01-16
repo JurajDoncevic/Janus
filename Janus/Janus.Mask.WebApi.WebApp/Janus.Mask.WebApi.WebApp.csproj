@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
-    <PackageReference Include="NLog.Extensions.Hosting" Version="5.2.0" />
+    <PackageReference Include="NLog.Extensions.Hosting" Version="5.2.1" />
   </ItemGroup>
 
   <ItemGroup>
