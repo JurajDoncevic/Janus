@@ -380,4 +380,3 @@ FodyWeavers.xsd
 
 # on for now
 # /Janus/Janus.Components.IntegrationTests/*.db
-/Janus/Janus.Mask.WebApi.WebApp/appsettings.json
