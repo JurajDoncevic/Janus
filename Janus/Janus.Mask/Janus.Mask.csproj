@@ -6,4 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Translation\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Janus.Components\Janus.Components.csproj" />
+  </ItemGroup>
+
 </Project>
