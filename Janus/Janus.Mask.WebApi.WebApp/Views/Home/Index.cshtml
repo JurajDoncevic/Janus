@@ -1,8 +1,25 @@
-﻿@{
+﻿@model Janus.Mask.WebApi.WebApp.ViewModels.MaskInfoViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Janus mask</h1>
+    <img src="~/Content/Images/janus_logo.png" class="img-fluid" style="max-width:200px"/>
+    
+    <div class="row">
+        <div class="col-6 offset-3">
+            <h5>Mask instance information:</h5>
+            <table class="table table-bordered text-start">
+                <tr><td><b>@Html.DisplayNameFor(model => model.NodeId)</b></td><td>@Model.NodeId</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.ListenPort)</b></td><td>@Model.ListenPort</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.CommunicationFormat)</b></td><td>@Model.CommunicationFormat</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.NetworkAdapterType)</b></td><td>@Model.NetworkAdapterType</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.TimeoutMs)</b></td><td>@Model.TimeoutMs</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.WebApiPort)</b></td><td>@Model.WebApiPort</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.PersistenceConnectionString)</b></td><td>@Model.PersistenceConnectionString</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.WebPort)</b></td><td>@Model.WebPort</td></tr>
+            </table>
+        </div>
+    </div>
 </div>

@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
+    <PackageReference Include="NLog.Extensions.Hosting" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +17,37 @@
     <ProjectReference Include="..\Janus.Mask.Persistence.LiteDB\Janus.Mask.Persistence.LiteDB.csproj" />
     <ProjectReference Include="..\Janus.Mask.WebApi\Janus.Mask.WebApi.csproj" />
     <ProjectReference Include="..\Janus.Mask\Janus.Mask.csproj" />
+    <ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
+    <ProjectReference Include="..\Janus.Serialization.Bson\Janus.Serialization.Bson.csproj" />
+    <ProjectReference Include="..\Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj" />
+    <ProjectReference Include="..\Janus.Serialization.Protobufs\Janus.Serialization.Protobufs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Home\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Shared\_Layout.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\css\site.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\js\site.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Shared\OperationOutcomePartial.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\OperationOutcomePartial.cshtml" />
   </ItemGroup>
 
 </Project>

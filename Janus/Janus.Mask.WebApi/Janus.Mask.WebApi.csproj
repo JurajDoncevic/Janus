@@ -10,4 +10,8 @@
     <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Janus.Mask\Janus.Mask.csproj" />
+  </ItemGroup>
+
 </Project>
