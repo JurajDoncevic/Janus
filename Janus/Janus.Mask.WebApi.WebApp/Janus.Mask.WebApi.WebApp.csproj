@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+    <ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
     <ProjectReference Include="..\Janus.Logging\Janus.Logging.csproj" />
     <ProjectReference Include="..\Janus.Mask.Persistence.LiteDB\Janus.Mask.Persistence.LiteDB.csproj" />
     <ProjectReference Include="..\Janus.Mask.WebApi\Janus.Mask.WebApi.csproj" />

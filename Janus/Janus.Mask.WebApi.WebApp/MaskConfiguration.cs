@@ -18,7 +18,20 @@ internal class MaskConfiguration
     public List<RemotePointConfiguration> StartupRemotePoints { get; init; } = new();
 
     public string PersistenceConnectionString { get; init; } = "./mediator_database.db";
-    public int WebApiPort { get; init; }
+
+    public WebApiConfiguration WebApiConfiguration { get; init; } = new WebApiConfiguration
+    {
+        ListenPort = 80001,
+        UseSSL = false,
+        ListenPortSecure = null
+    };
+}
+
+internal class WebApiConfiguration
+{
+    public int ListenPort { get; set; }
+    public int? ListenPortSecure { get; set; }
+    public bool UseSSL { get; set; }
 }
 
 internal class RemotePointConfiguration
@@ -40,7 +53,12 @@ internal static partial class ConfigurationOptionsExtensions
                    .Select(remotePointConfiguration => new UndeterminedRemotePoint(remotePointConfiguration.Address, remotePointConfiguration.ListenPort))
                    .ToList(),
             configuration.PersistenceConnectionString,
-            configuration.WebApiPort
+            new InstanceManagement.WebApiOptions
+            {
+                ListenPort = configuration.WebApiConfiguration.ListenPort,
+                ListenPortSecure = configuration.WebApiConfiguration.ListenPortSecure,
+                UseSSL = configuration.WebApiConfiguration.UseSSL,
+            }
             );
 
 }

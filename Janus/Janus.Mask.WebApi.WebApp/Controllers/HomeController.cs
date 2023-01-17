@@ -28,7 +28,7 @@ public class HomeController : Controller
             NetworkAdapterType = _maskOptions.NetworkAdapterType,
             PersistenceConnectionString = _maskOptions.PersistenceConnectionString,
             TimeoutMs = _maskOptions.TimeoutMs,
-            WebApiPort = _maskOptions.WebApiPort,
+            WebApiPort = _maskOptions.WebApiOptions,
             WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port
         };
         return View(viewModel);
