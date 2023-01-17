@@ -105,7 +105,7 @@ builder.Services.AddSingleton<MaskPersistenceProvider>();
 
 builder.Services.AddSingleton<WebApiMaskOptions>(maskConfiguration.ToMaskOptions());
 
-builder.Services.AddSingleton<MaskManager>();
+builder.Services.AddSingleton<WebApiMaskManager>();
 
 
 var app = builder.Build();
