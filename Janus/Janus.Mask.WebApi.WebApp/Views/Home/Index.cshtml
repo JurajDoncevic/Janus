@@ -2,11 +2,11 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
 <div class="text-center">
     <h1 class="display-4">Janus mask</h1>
-    <img src="~/Content/Images/janus_logo.png" class="img-fluid" style="max-width:200px"/>
-    
+    <img src="~/Content/Images/janus_logo.png" class="img-fluid" style="max-width:200px" />
+
     <div class="row">
         <div class="col-6 offset-3">
             <h5>Mask instance information:</h5>
@@ -17,9 +17,27 @@
                 <tr><td><b>@Html.DisplayNameFor(model => model.NetworkAdapterType)</b></td><td>@Model.NetworkAdapterType</td></tr>
                 <tr><td><b>@Html.DisplayNameFor(model => model.TimeoutMs)</b></td><td>@Model.TimeoutMs</td></tr>
                 <tr><td><b>@Html.DisplayNameFor(model => model.WebApiPort)</b></td><td>@Model.WebApiPort</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.IsSSLUsed)</b></td><td>@Model.IsSSLUsed</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.WebApiSecurePort)</b></td><td>@Model.WebApiSecurePort</td></tr>
                 <tr><td><b>@Html.DisplayNameFor(model => model.PersistenceConnectionString)</b></td><td>@Model.PersistenceConnectionString</td></tr>
                 <tr><td><b>@Html.DisplayNameFor(model => model.WebPort)</b></td><td>@Model.WebPort</td></tr>
+                <tr><td><b>@Html.DisplayNameFor(model => model.IsInstanceRunning)</b></td><td>@Model.IsInstanceRunning</td></tr>
             </table>
         </div>
+    </div>
+    <div class="row">
+        @if (Model.IsInstanceRunning)
+        {
+            <form asp-controller="Home" asp-action="StopWebApiInstance" method="post">
+                <input type="submit" class="btn btn-danger" value="Stop mask Web API" />
+            </form>
+        }
+        else
+        {
+            <form asp-controller="Home" asp-action="StartWebApiInstance" method="post">
+                <input type="submit" class="btn btn-success" value="Start mask Web API" />
+            </form>
+        }
+
     </div>
 </div>

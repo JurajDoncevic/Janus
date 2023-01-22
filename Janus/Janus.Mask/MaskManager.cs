@@ -57,7 +57,7 @@ public class MaskManager : IComponentManager
 
     public Option<DataSource> GetCurrentSchema()
     {
-        throw new NotImplementedException();
+        return Option<DataSource>.None;
     }
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()

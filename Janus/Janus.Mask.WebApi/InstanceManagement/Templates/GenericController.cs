@@ -19,11 +19,11 @@ public abstract class GenericController<TId, TGetModel>
 
     public int DEFAULT_ERROR_CODE => 500;
 
-    public GenericController(ILogger? logger = null)
+    protected GenericController(ProviderFactory providerResolver, ILogger? logger = null)
     {
         _logger = logger?.ResolveLogger<GenericController<TId, TGetModel>>();
-        _queryProvider = new QueryProvider<TId, TGetModel>(TargetingTableauId, IdentityAttributeId);
-        _commandProvider = new CommandProvider<TId>(TargetingTableauId, IdentityAttributeId);
+        _queryProvider = providerResolver.ResolveQueryProvider<TId, TGetModel>(TargetingTableauId, IdentityAttributeId);
+        _commandProvider = providerResolver.ResolveCommandProvider<TId>(TargetingTableauId, IdentityAttributeId);
     }
 
     [HttpGet]

@@ -1,4 +1,5 @@
-﻿using Janus.Mask.WebApi.WebApp.Models;
+﻿using Janus.Mask.WebApi.WebApp.Commons;
+using Janus.Mask.WebApi.WebApp.Models;
 using Janus.Mask.WebApi.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -7,10 +8,10 @@ namespace Janus.Mask.WebApi.WebApp.Controllers;
 public class HomeController : Controller
 {
     private readonly Logging.ILogger<HomeController>? _logger;
-    private readonly MaskManager _maskManager;
+    private readonly WebApiMaskManager _maskManager;
     private readonly WebApiMaskOptions _maskOptions;
     private readonly IConfiguration _configuration;
-    public HomeController(MaskManager maskManager, WebApiMaskOptions maskOptions, IConfiguration configuration, Logging.ILogger? logger = null)
+    public HomeController(WebApiMaskManager maskManager, WebApiMaskOptions maskOptions, IConfiguration configuration, Logging.ILogger? logger = null)
     {
         _maskManager = maskManager;
         _maskOptions = maskOptions;
@@ -28,10 +29,36 @@ public class HomeController : Controller
             NetworkAdapterType = _maskOptions.NetworkAdapterType,
             PersistenceConnectionString = _maskOptions.PersistenceConnectionString,
             TimeoutMs = _maskOptions.TimeoutMs,
-            WebApiPort = _maskOptions.WebApiOptions,
-            WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port
+            WebApiPort = _maskOptions.WebApiOptions.ListenPort,
+            IsSSLUsed = _maskOptions.WebApiOptions.UseSSL,
+            WebApiSecurePort = _maskOptions.WebApiOptions.ListenPortSecure,
+            WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port,
+            IsInstanceRunning = _maskManager.IsInstanceRunning,
+            OperationOutcome = TempData.ToOperationOutcomeViewModel()
         };
         return View(viewModel);
+    }
+
+    [HttpPost]
+    public IActionResult StartWebApiInstance()
+    {
+        var startingResult = _maskManager.StartWebApi();
+
+        TempData["Constants.IsSuccess"] = startingResult.IsSuccess;
+        TempData["Constants.Message"] = startingResult.Message;
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public IActionResult StopWebApiInstance()
+    {
+        var stoppingResult = _maskManager.StopWebApi();
+
+        TempData["Constants.IsSuccess"] = stoppingResult.IsSuccess;
+        TempData["Constants.Message"] = stoppingResult.Message;
+
+        return RedirectToAction(nameof(Index));
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -15,6 +15,9 @@ using Janus.Mask.WebApi.InstanceManagement;
 using FunctionalExtensions.Base;
 using Janus.Mask.WebApi.Translation;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
+using System.Net;
+using Janus.Mask;
+using Janus.Mask.WebApi.InstanceManagement.Providers;
 
 namespace JanusGenericMask.InstanceManagement.Web;
 internal class WebApiInstance
@@ -22,15 +25,19 @@ internal class WebApiInstance
     private WebApplication? _webApp;
     private Task? _runningApplication;
     private readonly WebApiOptions _webApiOptions;
+    private readonly MaskCommandManager _commandManager;
+    private readonly MaskQueryManager _queryManager;
     private IHostApplicationLifetime? _applicationLifetime;
     private TypeFactory? _typeFactory;
     private readonly Janus.Logging.ILogger<WebApiInstance>? _localLogger;
     private readonly Janus.Logging.ILogger? _logger;
     private Option<DataSource> _dataSourceSchema;
 
-    public WebApiInstance(WebApiOptions webApiOptions, Janus.Logging.ILogger? logger = null)
+    public WebApiInstance(WebApiOptions webApiOptions, MaskCommandManager commandManager, MaskQueryManager queryManager, Janus.Logging.ILogger? logger = null)
     {
         _webApiOptions = webApiOptions;
+        _commandManager = commandManager;
+        _queryManager = queryManager;
         _dataSourceSchema = Option<DataSource>.None;
         _localLogger = logger?.ResolveLogger<WebApiInstance>();
         _logger = logger;
@@ -40,24 +47,30 @@ internal class WebApiInstance
         => Results.AsResult(() =>
         {
             _dataSourceSchema = dataSourceSchema ? dataSourceSchema : _dataSourceSchema;
-            if (_dataSourceSchema)
+            if (!_dataSourceSchema)
             {
                 return Results.OnFailure("Can't start Web API instance without a provided schema.");
             }
             var dataSource = _dataSourceSchema.Value;
 
             var builder = WebApplication.CreateBuilder();
-            builder.WebHost.UseUrls($"http://127.0.0.1:{_webApiOptions.ListenPort}", $"https://127.0.0.1:{_webApiOptions.ListenPort + 1}");
+            var urls = new string[] { $"http://127.0.0.1:{_webApiOptions.ListenPort}" };
+            if (_webApiOptions.UseSSL)
+            {
+                urls = urls.Append($"https://127.0.0.1:{_webApiOptions.ListenPortSecure ?? (_webApiOptions.ListenPort + 1)}").ToArray();
+            }
+
+            builder.WebHost.UseUrls(urls);
 
 
             builder.Services.AddSingleton<WebApiOptions>(_webApiOptions);
 
             builder.Logging.ClearProviders();
 
-            if(_logger is not null)
+            if (_logger is not null)
             {
                 builder.Services.AddSingleton<Janus.Logging.ILogger>(provider => _logger);
-            }  
+            }
 
             var controllerTypings = SchemaTranslation.GetControllerTypings(dataSource);
             _typeFactory = new TypeFactory();
@@ -76,6 +89,8 @@ internal class WebApiInstance
                 c.SwaggerDoc($"{dataSource.Version}", new OpenApiInfo { Title = $"{dataSource.Name} API", Version = $"{dataSource.Version}" });
                 c.DocumentFilter<BaseDtoDocumentFilter>();
             });
+
+            builder.Services.AddSingleton(_ => new ProviderFactory(_commandManager, _queryManager));
 
             var app = builder.Build();
 

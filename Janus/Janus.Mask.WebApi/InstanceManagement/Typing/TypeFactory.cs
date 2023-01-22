@@ -234,11 +234,12 @@ public class TypeFactory : IDisposable
         ilGen.Emit(OpCodes.Ldstr, controllerTyping.IdentityAttributeId.ToString()); // load string for identity attribute id
         ilGen.Emit(OpCodes.Stfld, identityAttributeIdField); // store attribute id string into field
         ilGen.Emit(OpCodes.Ldarg_0); // push this
-        ilGen.Emit(OpCodes.Ldarg_1); // push logger
+        ilGen.Emit(OpCodes.Ldarg_1); // push provider resolver
+        ilGen.Emit(OpCodes.Ldarg_2); // push logger
         ilGen.Emit(OpCodes.Call, baseCtor); // call base constructor
         ilGen.Emit(OpCodes.Ldarg_0); // push this
-        ilGen.Emit(OpCodes.Ldarg_1); // push logger
-        ilGen.Emit(OpCodes.Stfld, loggerField); // store tableau id string into field
+        ilGen.Emit(OpCodes.Ldarg_2); // push logger
+        ilGen.Emit(OpCodes.Stfld, loggerField); // store logger into field
         ilGen.Emit(OpCodes.Ret); // return :)
 
         return targetTypeBuilder;

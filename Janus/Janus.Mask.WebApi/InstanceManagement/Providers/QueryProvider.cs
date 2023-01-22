@@ -10,14 +10,14 @@ using Janus.Mask.WebApi.Translation;
 namespace Janus.Mask.WebApi.InstanceManagement.Providers;
 public class QueryProvider<TId, TModel> where TModel : BaseDto
 {
-    private readonly FakeQueryManager _queryManager;
+    private readonly MaskQueryManager _queryManager;
 
     private readonly TableauId _targetTableauId;
     private readonly AttributeId _identityAttributeId;
 
-    public QueryProvider(TableauId targetTableauId, AttributeId indetityAttributeId)
+    internal QueryProvider(TableauId targetTableauId, AttributeId indetityAttributeId, MaskQueryManager queryManager)
     {
-        _queryManager = new FakeQueryManager();
+        _queryManager = queryManager;
         _targetTableauId = targetTableauId;
         _identityAttributeId = indetityAttributeId;
     }
@@ -33,7 +33,7 @@ public class QueryProvider<TId, TModel> where TModel : BaseDto
         var queryResult =
             _queryManager.RunQuery(translatedQuery)
                 .Map(data => lens.Get(data))
-                .Map(data => data.FirstOrDefault());
+                .Map(data => data.FirstOrDefault()).Result;
 
         return queryResult;
     }
@@ -45,7 +45,7 @@ public class QueryProvider<TId, TModel> where TModel : BaseDto
 
         var queryResult =
             _queryManager.RunQuery(translatedQuery)
-                .Map(data => lens.Get(data));
+                .Map(data => lens.Get(data)).Result;
 
         return queryResult;
     }

@@ -6,14 +6,14 @@ using Janus.Mask.WebApi.Translation;
 namespace Janus.Mask.WebApi.InstanceManagement.Providers;
 public class CommandProvider<TId>
 {
-    private readonly FakeCommandManager _commandManager;
+    private readonly MaskCommandManager _commandManager;
 
     private readonly TableauId _targetTableauId;
     private readonly AttributeId _identityAttributeId;
 
-    public CommandProvider(TableauId targetTableauId, AttributeId indetityAttributeId)
+    internal CommandProvider(TableauId targetTableauId, AttributeId indetityAttributeId, MaskCommandManager commandManager)
     {
-        _commandManager = new FakeCommandManager();
+        _commandManager = commandManager;
         _targetTableauId = targetTableauId;
         _identityAttributeId = indetityAttributeId;
     }
@@ -23,7 +23,7 @@ public class CommandProvider<TId>
         string routeQuery = $"?{_identityAttributeId.AttributeName}={id}"; // leave the translator to do all the work :)
         var translatedCommand = CommandTranslation.TranslateDeleteCommand(_targetTableauId, routeQuery);
 
-        var result = _commandManager.RunCommand(translatedCommand);
+        var result = _commandManager.RunCommand(translatedCommand).Result;
 
         return result;
     }
@@ -32,7 +32,7 @@ public class CommandProvider<TId>
     {
         var translatedCommand = CommandTranslation.TranslateInsertCommand(_targetTableauId, model);
 
-        var result = _commandManager.RunCommand(translatedCommand);
+        var result = _commandManager.RunCommand(translatedCommand).Result;
 
         return result;
     }
@@ -41,7 +41,7 @@ public class CommandProvider<TId>
     {
         var translatedCommand = CommandTranslation.TranslateUpdateCommand(_targetTableauId, model, routeQuery);
 
-        var result = _commandManager.RunCommand(translatedCommand);
+        var result = _commandManager.RunCommand(translatedCommand).Result;
 
         return result;
     }

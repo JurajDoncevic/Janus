@@ -81,8 +81,8 @@ maskConfiguration.NetworkAdapterType switch
                 CommunicationFormats.PROTOBUFS => new ProtobufsSerializationProvider(),
                 _ => new AvroSerializationProvider()
             })
-        .AddSingleton<MediatorCommunicationNode>(serviceProvider =>
-            CommunicationNodes.CreateTcpMediatorCommunicationNode(
+        .AddSingleton<MaskCommunicationNode>(serviceProvider =>
+            CommunicationNodes.CreateTcpMaskCommunicationNode(
                 new Janus.Communication.Nodes.CommunicationNodeOptions(
                     maskConfiguration.NodeId,
                     maskConfiguration.ListenPort,

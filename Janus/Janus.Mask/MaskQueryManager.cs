@@ -7,8 +7,14 @@ using Janus.Components;
 namespace Janus.Mask;
 public class MaskQueryManager : IDelegatingQueryManager
 {
-    public Task<Result<TabularData>> RunQueryOn(Query query, RemotePoint remotePoint)
-        => Results.AsResult<TabularData>(async () =>
+    public async Task<Result<TabularData>> RunQuery(Query query)
+        => await Results.AsResult<TabularData>(async () =>
+        {
+            return Results.OnException<TabularData>(new NotImplementedException());
+        });
+
+    public async Task<Result<TabularData>> RunQueryOn(Query query, RemotePoint remotePoint)
+        => await Results.AsResult<TabularData>(async () =>
         {
             return Results.OnException<TabularData>(new NotImplementedException());
         });

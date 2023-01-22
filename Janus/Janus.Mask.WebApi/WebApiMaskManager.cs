@@ -2,13 +2,7 @@
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.Persistence;
-using Janus.Mask;
 using JanusGenericMask.InstanceManagement.Web;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Mask.WebApi;
 public class WebApiMaskManager : MaskManager
@@ -18,8 +12,10 @@ public class WebApiMaskManager : MaskManager
     public WebApiMaskManager(MaskCommunicationNode communicationNode, MaskQueryManager queryManager, MaskCommandManager commandManager, MaskSchemaManager schemaManager, MaskPersistenceProvider persistenceProvider, WebApiMaskOptions maskOptions, ILogger? logger = null) 
         : base(communicationNode, queryManager, commandManager, schemaManager, persistenceProvider, maskOptions, logger)
     {
-        _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, logger);
+        _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, commandManager, queryManager, logger);
     }
+
+    public bool IsInstanceRunning => _webApiInstance.IsRunning();
 
     public Result StartWebApi()
         => Results.AsResult(() =>

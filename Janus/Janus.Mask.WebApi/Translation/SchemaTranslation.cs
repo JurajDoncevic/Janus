@@ -9,6 +9,10 @@ internal class SchemaTranslation
     internal static IEnumerable<ControllerTyping> GetControllerTypings(DataSource dataSourceSchema)
     {
         IEnumerable<ControllerTyping> controllerTypings = Enumerable.Empty<ControllerTyping>();
+        if (dataSourceSchema == null)
+        {
+            return controllerTypings;
+        }
         foreach (var schema in dataSourceSchema.Schemas)
         {
             string controllerNamePrefix = $"{schema.Name}";
@@ -22,7 +26,7 @@ internal class SchemaTranslation
 
 
                 var defaultUpdateSet = tableau.UpdateSets.FirstOrDefault(us => tableau.AttributeNames.All(attrName => us.AttributeNames.Contains(attrName)));
-                var postDto = 
+                var postDto =
                     defaultUpdateSet is not null
                     ? Option<DtoTyping>.Some(
                         new DtoTyping(
@@ -34,7 +38,7 @@ internal class SchemaTranslation
                                 )))
                     : Option<DtoTyping>.None;
 
-                var getDto = 
+                var getDto =
                     new DtoTyping(
                         $"{tableau.Name}_Get",
                         idPropertyType,
@@ -66,7 +70,7 @@ internal class SchemaTranslation
                             tableau.Id,
                             tableau.Attributes.First(attr => attr.IsIdentity).Id // exception should already be thrown above
                             );
-                
+
 
                 controllerTypings = controllerTypings.Append(controllerTyping);
             }

@@ -23,9 +23,19 @@ public sealed class MaskInfoViewModel
     [Display(Name = "Persistence connection string")]
     public string PersistenceConnectionString { get; init; } = string.Empty;
 
-    [Display(Name = "Port for the web application")]
+    [Display(Name = "Port for the web management application")]
     public int WebPort { get; init; }
 
     [Display(Name = "Port for the mask web API")]
     public int WebApiPort { get; init; }
+
+    [Display(Name = "Secure port for the mask web API")]
+    public int? WebApiSecurePort { get; init; }
+
+    [Display(Name = "SSL used for the mask web API")]
+    public bool IsSSLUsed { get; init; }
+
+    [Display(Name = "Web API mask instance running")]
+    public bool IsInstanceRunning { get; init; }
+    public Option<OperationOutcomeViewModel> OperationOutcome { get; set; } = Option<OperationOutcomeViewModel>.None;
 }
