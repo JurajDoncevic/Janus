@@ -7,12 +7,14 @@ using Janus.Components;
 using Janus.Logging;
 
 namespace Janus.Mask;
-public class MaskSchemaManager : IComponentSchemaManager, IDelegatingSchemaManager
+public sealed class MaskSchemaManager : IComponentSchemaManager, IDelegatingSchemaManager
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly ILogger<MaskSchemaManager>? _logger;
     private Option<DataSource> _currentSchema = Option<DataSource>.None;
     private Option<RemotePoint> _currentSchemaRemotePoint;
+
+    public Option<RemotePoint> CurrentSchemaRemotePoint => _currentSchemaRemotePoint;
 
     public MaskSchemaManager(MaskCommunicationNode communicationNode, ILogger? logger = null)
     {
@@ -24,15 +26,19 @@ public class MaskSchemaManager : IComponentSchemaManager, IDelegatingSchemaManag
         => _currentSchema;
 
     public async Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint)
-        => await Results.AsResult(async () =>
+        => (await Results.AsResult(async () =>
         {
             var result = await _communicationNode.SendSchemaRequest(remotePoint);
 
             return result;
-        });
+        }))
+        .Pass(
+            r => _logger?.Info($"Successfully got schema named {r.Data.Name} ({r.Data.Version}) from {remotePoint}"),
+            r => _logger?.Info($"Failed to get schema from {remotePoint} with message: {r.Message}")
+            );
 
     public async Task<Result<DataSource>> LoadSchema(RemotePoint remotePoint)
-        => await Results.AsResult(async () =>
+        => (await Results.AsResult(async () =>
         {
             if (!_communicationNode.RemotePoints.Contains(remotePoint))
             {
@@ -47,10 +53,14 @@ public class MaskSchemaManager : IComponentSchemaManager, IDelegatingSchemaManag
             }
 
             return result;
-        });
+        }))
+        .Pass(
+            r => _logger?.Info($"Successfully loaded schema named {r.Data.Name} ({r.Data.Version}) from {remotePoint}"),
+            r => _logger?.Info($"Failed to load schema from {remotePoint} with message: {r.Message}")
+            );
 
     public async Task<Result<DataSource>> ReloadOutputSchema()
-        => await Results.AsResult(async () =>
+        => (await Results.AsResult(async () =>
         {
             if (!_currentSchemaRemotePoint)
             {
@@ -70,13 +80,21 @@ public class MaskSchemaManager : IComponentSchemaManager, IDelegatingSchemaManag
             }
 
             return result;
-        });
+        }))
+        .Pass(
+            r => _logger?.Info($"Successfully reloaded schema named {r.Data.Name} ({r.Data.Version}) from {_currentSchemaRemotePoint.Value}"),
+            r => _logger?.Info($"Failed to reload schema with message: {r.Message}")
+            );
 
     public Result UnloadSchema()
         => _currentSchemaRemotePoint.Match(
             rp => UnloadSchema(rp),
             () => Results.OnFailure("No schema currently loaded")
-            );
+            )
+            .Pass(
+                r => _logger?.Info($"Successfully unloaded schema"),
+                r => _logger?.Info($"Failed to unload schema with message: {r.Message}")
+                );
 
     public Result UnloadSchema(RemotePoint remotePoint)
         => Results.AsResult(() =>
@@ -91,5 +109,9 @@ public class MaskSchemaManager : IComponentSchemaManager, IDelegatingSchemaManag
             {
                 return Results.OnFailure($"No schema loaded from remote point {remotePoint}");
             }
-        });
+        })
+        .Pass(
+            r => _logger?.Info($"Successfully unloaded schema belonging to {remotePoint}"),
+            r => _logger?.Info($"Failed to unload schema with message: {r.Message}")
+            );
 }
