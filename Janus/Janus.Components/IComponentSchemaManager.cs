@@ -29,12 +29,6 @@ public interface IDelegatingSchemaManager
     public Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint);
 
     /// <summary>
-    /// Gets all schemas from all remote points
-    /// </summary>
-    /// <returns></returns>
-    public Task<Dictionary<RemotePoint, Result<DataSource>>> GetSchemasFromComponents();
-
-    /// <summary>
     /// Include a data source schema from a remote point in the loaded schemas. Data sources with same names can't be loaded at the same time
     /// </summary>
     /// <param name="remotePoint"></param>
@@ -47,12 +41,6 @@ public interface IDelegatingSchemaManager
     /// <param name="remotePoint"></param>
     /// <returns></returns>
     public Result UnloadSchema(RemotePoint remotePoint);
-
-    /// <summary>
-    /// Reloads all loaded schemas
-    /// </summary>
-    /// <returns></returns>
-    public Task<IEnumerable<Result<DataSource>>> ReloadSchemas();
 }
 
 public interface IMediatingSchemaManager
@@ -63,4 +51,16 @@ public interface IMediatingSchemaManager
     /// <param name="mediation"></param>
     /// <returns></returns>
     public Task<Result<DataSource>> MediateLoadedSchemas(DataSourceMediation mediation);
+
+    /// <summary>
+    /// Gets all schemas from all registered remote points
+    /// </summary>
+    /// <returns></returns>
+    public Task<Dictionary<RemotePoint, Result<DataSource>>> GetSchemasFromComponents();
+
+    /// <summary>
+    /// Reloads all loaded schemas
+    /// </summary>
+    /// <returns></returns>
+    public Task<IEnumerable<Result<DataSource>>> ReloadSchemas();
 }
