@@ -53,8 +53,8 @@ public sealed class MediatorCommandManager : IDelegatingCommandManager
                 _ => Task.FromResult(Results.OnFailure($"Unknown command {command.Name} type given for running."))
             });
         })).Pass(
-            r => _logger?.Info($"Successfully ran {Enum.GetName(command.CommandType)} command {command.Name}"),
-            r => _logger?.Info($"Failed to run {Enum.GetName(command.CommandType)} command {command.Name} with message: {r.Message}")
+            r => _logger?.Info($"Successfully ran {command.CommandType} command {command.Name}"),
+            r => _logger?.Info($"Failed to run {command.CommandType} command {command.Name} with message: {r.Message}")
             );
 
     private async Task<Result> RunUpdateCommand(UpdateCommand command, DataSource mediatedSchema, DataSourceMediation dataSourceMediation, IReadOnlyDictionary<string, RemotePoint> remotePointsWithDataSourceNames)
