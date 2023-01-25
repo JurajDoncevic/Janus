@@ -2,9 +2,7 @@
 
 public class PersistedSchemaViewModel
 {
-    public string MediatedDataSourceVersion { get; set; } = string.Empty;
-    public string MediatedDataSourceJson { get; init; } = string.Empty;
-    public string MediationScript { get; init; } = string.Empty;
-    public Dictionary<RemotePointViewModel, string> LoadedDataSourceJsons { get; init; } = new();
+    public string DataSourceVersion { get; set; } = string.Empty;
+    public string DataSourceJson { get; init; } = string.Empty;
     public DateTime PersistedOn { get; init; }
 }
