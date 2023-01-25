@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Janus Mediator - @ViewData["Title"]</title>
+    <title>Janus Mask - @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Janus.Mediator.WebApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Janus.Mask.WebApi.WebApp.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
@@ -30,10 +30,8 @@
                                 Schema management
                             </a>
                             <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarSchemaDropdown">
-                                <li><a class="dropdown-item" asp-controller="Schema" asp-action="CurrentSchema">Current mediated schema</a></li>
-                                <li><a class="dropdown-item" asp-controller="Schema" asp-action="VisibleSchemas">Visible schemas</a></li>
-                                <li><a class="dropdown-item" asp-controller="Schema" asp-action="SchemaMediation">Schema mediation management</a></li>
-                                <li><a class="dropdown-item" asp-controller="Schema" asp-action="PersistedMediatedSchemas">Persisted mediated schemas</a></li>
+                                <li><a class="dropdown-item" asp-controller="Schema" asp-action="CurrentSchema">Current schema</a></li>
+                                <li><a class="dropdown-item" asp-controller="Schema" asp-action="SchemaSetup">Schema setup</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
@@ -41,7 +39,7 @@
                                 Querying
                             </a>
                             <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarSchemaDropdown">
-                                <li><a class="dropdown-item" asp-controller="Querying" asp-action="Index">Querying on mediated schema</a></li>
+                                <li><a class="dropdown-item" asp-controller="Querying" asp-action="Index">Querying on current schema</a></li>
                                 <li><a class="dropdown-item" asp-controller="Querying" asp-action="QueryRemotePoint">Querying on a remote point</a></li>
                             </ul>
                         </li>
@@ -50,7 +48,7 @@
                                 Commanding
                             </a>
                             <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarSchemaDropdown">
-                                <li><a class="dropdown-item" asp-controller="Commanding" asp-action="Index">Commanding on mediated schema</a></li>
+                                <li><a class="dropdown-item" asp-controller="Commanding" asp-action="Index">Commanding on current schema</a></li>
                                 <li><a class="dropdown-item" asp-controller="Commanding" asp-action="CommandRemotePoint">Commanding on a remote point</a></li>
                             </ul>
                         </li>
@@ -67,7 +65,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - Janus Mediator
+            &copy; 2022 - Janus Mask
         </div>
     </footer>
     <script src="~/lib/jquery/jquery.min.js"></script>
