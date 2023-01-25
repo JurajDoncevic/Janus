@@ -9,6 +9,7 @@ using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
 using Janus.Mask.Persistence;
+using Janus.Mask.Persistence.Models;
 
 namespace Janus.Mask;
 public class MaskManager : IComponentManager
@@ -80,4 +81,32 @@ public class MaskManager : IComponentManager
 
     public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint) 
         => await _communicationNode.SendBye(remotePoint);
+
+    public async Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint)
+        => await _communicationNode.SendSchemaRequest(remotePoint);
+
+    public async Task<Result<DataSource>> LoadSchemaFrom(RemotePoint remotePoint)
+        => await _schemaManager.LoadSchema(remotePoint);
+
+    public Result UnloadSchemaFrom(RemotePoint remotePoint)
+        => _schemaManager.UnloadSchema(remotePoint);
+
+    public Result UnloadSchema()
+    => _schemaManager.UnloadSchema();
+
+    public async Task<Result> PersistCurrentSchema(DataSource dataSource)
+        => _persistenceProvider.DataSourceInfoPersistence.Insert(
+            new Persistence.Models.DataSourceInfo(dataSource)
+            );
+
+    public async Task<Result<IEnumerable<DataSourceInfo>>> GetAllPersistedSchemas()
+        => _persistenceProvider.DataSourceInfoPersistence.GetAll();
+
+    public async Task<Result<DataSource>> LoadLatestSchemaFromPersistence()
+        => _persistenceProvider.DataSourceInfoPersistence
+            .GetLatest()
+            .Map(dsInfo => dsInfo.InferredDataSource);
+
+    public async Task<Result> DeleteSchema(string dataSourceVersion)
+        => _persistenceProvider.DataSourceInfoPersistence.Delete(dataSourceVersion);
 }

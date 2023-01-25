@@ -49,20 +49,8 @@ public class SchemaController : Controller
                 .Match(r => r, message => Enumerable.Empty<Persistence.Models.DataSourceInfo>())
                 .Map(schema => new PersistedSchemaViewModel
                 {
-                    MediatedDataSourceVersion = schema.MediatedDataSource.Version,
-                    MediatedDataSourceJson = PrettyJsonString(_jsonSerializationProvider.DataSourceSerializer.Serialize(schema.MediatedDataSource).Data ?? "{}"),
-                    MediationScript = schema.MediationScript,
-                    LoadedDataSourceJsons = schema.LoadedDataSources.ToDictionary(
-                                                                    kv => new RemotePointViewModel
-                                                                    {
-                                                                        NodeId = kv.Key.NodeId,
-                                                                        Address = kv.Key.Address,
-                                                                        Port = kv.Key.Port,
-                                                                        RemotePointType = kv.Key.RemotePointType,
-
-                                                                    },
-                                                                    kv => PrettyJsonString(_jsonSerializationProvider.DataSourceSerializer.Serialize(kv.Value).Data ?? "{}")
-                                                                    ),
+                    DataSourceVersion = schema.InferredDataSource.Version,
+                    DataSourceJson = PrettyJsonString(_jsonSerializationProvider.DataSourceSerializer.Serialize(schema.InferredDataSource).Data ?? "{}"),
                     PersistedOn = schema.CreatedOn
                 });
 
