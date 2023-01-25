@@ -9,11 +9,6 @@ using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
 using Janus.Mask.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Mask;
 public class MaskManager : IComponentManager
@@ -55,25 +50,17 @@ public class MaskManager : IComponentManager
         await Task.WhenAll(regs);
     }
 
-    public Option<DataSource> GetCurrentSchema()
-    {
-        return Option<DataSource>.None;
-    }
+    public Option<DataSource> GetCurrentSchema() 
+        => _schemaManager.GetCurrentOutputSchema();
 
-    public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<RemotePoint> GetRegisteredRemotePoints() 
+        => _communicationNode.RemotePoints;
 
-    public Task<Result<RemotePoint>> RegisterRemotePoint(UndeterminedRemotePoint remotePoint)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result<RemotePoint>> RegisterRemotePoint(UndeterminedRemotePoint remotePoint)
+        => await _communicationNode.RegisterRemotePoint(remotePoint);
 
-    public Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
+        => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));
 
     public Task<Result> RunCommand(BaseCommand command)
     {
@@ -85,18 +72,12 @@ public class MaskManager : IComponentManager
         throw new NotImplementedException();
     }
 
-    public Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
+        => await _communicationNode.SendHello(remotePoint);
 
-    public Task<Result<RemotePoint>> SendHello(string address, int port)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result<RemotePoint>> SendHello(string address, int port) 
+        => await _communicationNode.SendHello(new UndeterminedRemotePoint(address, port));
 
-    public Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint) 
+        => await _communicationNode.SendBye(remotePoint);
 }
