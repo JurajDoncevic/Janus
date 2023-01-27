@@ -3,6 +3,7 @@ using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using Results = FunctionalExtensions.Base.Resulting.Results;
 using static Janus.Mask.WebApi.WebApp.Commons.Helpers;
+using Janus.Mask.WebApi.WebApp.Commons;
 
 namespace Janus.Mask.WebApi.WebApp.Controllers;
 public class SchemaController : Controller
@@ -18,16 +19,16 @@ public class SchemaController : Controller
 
     public async Task<IActionResult> CurrentSchema()
     {
-        var getCurrentSchema = _maskManager.GetCurrentSchema();
+        var currentSchema = _maskManager.GetCurrentSchema();
         var schemaToJson =
-            getCurrentSchema.Match(
+            currentSchema.Match(
                                 dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource).Map(PrettyJsonString),
                                 () => Results.OnFailure<string>("No mediated schema generated")
                                 );
 
         var viewModel = new DataSourceViewModel
         {
-            DataSourceVersion = getCurrentSchema.Match(ds => ds.Version, () => string.Empty),
+            DataSourceVersion = currentSchema.Match(ds => ds.Version, () => string.Empty),
             DataSourceJson = schemaToJson.Match(data => data, message => string.Empty),
             OperationOutcome =
                 schemaToJson.IsSuccess
@@ -37,6 +38,38 @@ public class SchemaController : Controller
                     IsSuccess = false,
                     Message = schemaToJson.Message
                 })
+        };
+
+        return View(viewModel);
+    }
+
+    public async Task<IActionResult> SchemaLoading()
+    {
+        var currentSchema = _maskManager.GetCurrentSchema();
+        var schemaToJson =
+            currentSchema.Match(
+                        dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource).Map(PrettyJsonString),
+                        () => Results.OnFailure<string>("No schema loaded")
+                        );
+        var viewModel = new SchemaLoadingViewModel
+        {
+            CurrentLoadedSchema = currentSchema.Map(_ => new DataSourceViewModel
+            {
+                DataSourceVersion = currentSchema.Match(ds => ds.Version, () => string.Empty),
+                DataSourceJson = schemaToJson.Match(data => data, message => string.Empty)
+            }),
+            VisibleSchemas = new VisibleSchemasViewModel
+            {
+                RegisteredRemotePoints = _maskManager.GetRegisteredRemotePoints()
+                                            .Map(rp => new RemotePointViewModel
+                                            {
+                                                NodeId = rp.NodeId,
+                                                Address = rp.Address,
+                                                Port = rp.Port,
+                                                RemotePointType = rp.RemotePointType
+                                            }).ToList()
+            },
+            OperationOutcome = Helpers.ToOperationOutcomeViewModel(TempData)
         };
 
         return View(viewModel);
@@ -170,19 +203,11 @@ public class SchemaController : Controller
     }
 
     [HttpGet]
-    [Route("/UnloadSchema/{nodeId}")]
-    public async Task<IActionResult> UnloadSchema(string nodeId)
+    [Route("/UnloadSchema/")]
+    public async Task<IActionResult> UnloadSchema()
     {
-        var remotePoint =
-            _maskManager.GetRegisteredRemotePoints()
-            .FirstOrDefault(rp => rp.NodeId.Equals(nodeId));
 
-        if (remotePoint is null)
-        {
-            return NotFound($"No remote point with {nodeId}");
-        }
-
-        var schemaUnloading = _maskManager.UnloadSchemaFrom(remotePoint);
+        var schemaUnloading = _maskManager.UnloadSchema();
 
         return schemaUnloading.Match(
             message => (IActionResult)Json(message),

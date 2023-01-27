@@ -1,5 +1,5 @@
-﻿function unloadSchema(targetNodeId) {
-    $.get(`/UnloadSchema/${targetNodeId}`, function (data, status) {
+﻿function unloadSchema() {
+    $.get(`/UnloadSchema/`, function (data, status) {
         //return data;
     })
         .done(function (data) {
@@ -7,6 +7,6 @@
         })
         .fail(function (data) {
             $("#load-schema-notif").removeAttr("hidden");
-            $("#load-schema-notif").text("Error while unloading schema from " + targetNodeId + ": " + data.responseText);
+            $("#load-schema-notif").text("Error while unloading schema: " + data.responseText);
         });
 }

@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.11" />
     <PackageReference Include="NLog.Extensions.Hosting" Version="5.2.1" />
   </ItemGroup>
 
