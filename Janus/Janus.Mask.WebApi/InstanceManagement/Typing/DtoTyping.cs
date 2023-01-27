@@ -2,7 +2,6 @@
 public class DtoTyping
 {
     private readonly string _name;
-    private Type? _generatedType;
     private readonly Type _idPropertyType;
     private readonly Dictionary<string, Type> _properties;
 
@@ -10,16 +9,25 @@ public class DtoTyping
                      Type idPropertyType,
                      Dictionary<string, Type> properties)
     {
-        _name = name;
+        _name = name; //CapitalizeName(name);
         _idPropertyType = idPropertyType;
         _properties = properties;
     }
 
     public string Name => _name;
 
-    public Type? GeneratedType => _generatedType;
-
     public Type IdPropertyType => _idPropertyType;
 
     public IReadOnlyDictionary<string, Type> Properties => _properties;
+
+    private string CapitalizeName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return name;
+        }
+        var capitalChar = char.ToUpper(name.Trim().FirstOrDefault());
+
+        return capitalChar + name[1..];
+    }
 }

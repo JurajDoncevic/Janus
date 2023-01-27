@@ -18,12 +18,12 @@ public class TypeFactory : IDisposable
 
     public TypeFactory(string assemblyName = "DynamicAssembly")
     {
-        
+
         _dynamicAssemblyName = new AssemblyName(assemblyName);
         _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(_dynamicAssemblyName, AssemblyBuilderAccess.RunAndCollect);
         _moduleBuilder = _assemblyBuilder.DefineDynamicModule("DynamicModule");
         _assembly = _moduleBuilder.Assembly;
-        
+
         AssemblyLoadContext.GetLoadContext(_assembly);
     }
 
@@ -219,10 +219,11 @@ public class TypeFactory : IDisposable
     private TypeBuilder GenerateControllerConstructor(TypeBuilder targetTypeBuilder, ControllerTyping controllerTyping, Type[]? ctorInitTypes, Type parentType, FieldBuilder targetTableauIdField, FieldBuilder identityAttributeIdField, FieldBuilder loggerField)
     {
         // get base constructor from GenericConstructor
-        var baseCtor = parentType.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, ctorInitTypes ?? Type.EmptyTypes, null);
+        var baseCtor = parentType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, ctorInitTypes ?? Type.EmptyTypes, null);
 
         // define the same constructor on the new subtype
-        var ctorBuilder = targetTypeBuilder.DefineConstructor(baseCtor.Attributes, baseCtor.CallingConvention, baseCtor.GetParameters().Select(p => p.ParameterType).ToArray());
+        // method attributes are changed to public, and family private is removed by XOR
+        var ctorBuilder = targetTypeBuilder.DefineConstructor(MethodAttributes.Public | baseCtor.Attributes ^ MethodAttributes.Family, baseCtor.CallingConvention, baseCtor.GetParameters().Select(p => p.ParameterType).ToArray());
 
         // generate the constructor of the new subtype
         var ilGen = ctorBuilder.GetILGenerator();
@@ -292,7 +293,7 @@ public class TypeFactory : IDisposable
         updateMethodImplBuilder.SetCustomAttribute(routeAttr);
 
         var concatMethod = typeof(string).GetMethod("Concat", BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
-        var debugLogMethod = loggerField.FieldType.GetMethod("Debug");
+        var debugLogMethod = loggerField.FieldType.GetMethod("Debug", BindingFlags.Public | BindingFlags.Instance, new Type[] { typeof(string) });
         var okActionResultMethod = typeof(ControllerBase).GetMethod("Ok", BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes);
         var problemActionResultMethod = typeof(ControllerBase).GetMethod("Problem", BindingFlags.Public | BindingFlags.Instance, new Type[] { typeof(string), typeof(string), typeof(int), typeof(string), typeof(string) });
         var commandProviderUpdateMethod = commandProviderField.FieldType.GetMethod("Update");
@@ -313,6 +314,7 @@ public class TypeFactory : IDisposable
         updateMethodImplGen.Emit(OpCodes.Ldarg_1); // push selection for concat
         updateMethodImplGen.Emit(OpCodes.Call, concatMethod); // concat
         updateMethodImplGen.Emit(OpCodes.Callvirt, debugLogMethod); // log concated string
+        updateMethodImplGen.Emit(OpCodes.Pop); // remove Unit returned from Debug() call from stack
         updateMethodImplGen.Emit(OpCodes.Nop);
         // call command provider and store result in var
         updateMethodImplGen.Emit(OpCodes.Ldarg_0); // push this
@@ -390,7 +392,7 @@ public class TypeFactory : IDisposable
         var routeAttr = new CustomAttributeBuilder(routeAttributeType, new object[] { "" });
         createMethodImplBuilder.SetCustomAttribute(routeAttr);
 
-        var debugLogMethod = loggerField.FieldType.GetMethod("Debug");
+        var debugLogMethod = loggerField.FieldType.GetMethod("Debug", BindingFlags.Public | BindingFlags.Instance, new Type[] { typeof(string) });
         var okActionResultMethod = typeof(ControllerBase).GetMethod("Ok", BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes);
         var problemActionResultMethod = typeof(ControllerBase).GetMethod("Problem", BindingFlags.Public | BindingFlags.Instance, new Type[] { typeof(string), typeof(string), typeof(int), typeof(string), typeof(string) });
         var commandProviderCreateMethod = commandProviderField.FieldType.GetMethod("Create");
@@ -404,11 +406,12 @@ public class TypeFactory : IDisposable
         var finalLabel = createMethodImplGen.DefineLabel();
         // declare locals
         createMethodImplGen.DeclareLocal(typeof(Result)); // var result
-                                                          // log create event
+        // log create event
         createMethodImplGen.Emit(OpCodes.Ldarg_0); // push this
         createMethodImplGen.Emit(OpCodes.Ldfld, loggerField);
         createMethodImplGen.Emit(OpCodes.Ldstr, $"Controller {targetTypeBuilder.Name} action Create called");
         createMethodImplGen.Emit(OpCodes.Callvirt, debugLogMethod);
+        createMethodImplGen.Emit(OpCodes.Pop); // remove the Unit from Debug() from the stack
         createMethodImplGen.Emit(OpCodes.Nop);
         // call command provider and store result in var
         createMethodImplGen.Emit(OpCodes.Ldarg_0); // push this
@@ -416,11 +419,11 @@ public class TypeFactory : IDisposable
         createMethodImplGen.Emit(OpCodes.Ldarg_1); // load model
         createMethodImplGen.Emit(OpCodes.Callvirt, commandProviderCreateMethod); // call command provider update
         createMethodImplGen.Emit(OpCodes.Stloc_0); // store result in var in loc_0
-                                                   // return action result depending on result
+        // return action result depending on result
         createMethodImplGen.Emit(OpCodes.Ldloc_0); // load result from var in loc_0
         createMethodImplGen.Emit(OpCodes.Call, resultImplicitBoolMethod); // call implicit bool method
         createMethodImplGen.Emit(OpCodes.Brtrue_S, resultSuccessLabel); // if result impl bool method gives true jump to success
-                                                                        // on failure return Problem(statusCode: DEFAULT_ERROR_CODE, detail: result.Message)
+        // on failure return Problem(statusCode: DEFAULT_ERROR_CODE, detail: result.Message)
         createMethodImplGen.MarkLabel(resultFailureLabel);
         createMethodImplGen.Emit(OpCodes.Ldarg_0); // load this
         createMethodImplGen.Emit(OpCodes.Ldloca_S, 0); // get the result

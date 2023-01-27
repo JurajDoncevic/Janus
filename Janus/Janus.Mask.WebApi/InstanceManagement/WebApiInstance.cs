@@ -132,7 +132,7 @@ internal class WebApiInstance
 
     public bool IsRunning()
         => _runningApplication is not null &&
-           _runningApplication.Status == TaskStatus.Running;
+           _runningApplication.Status == TaskStatus.WaitingForActivation;
 }
 
 
