@@ -63,7 +63,7 @@ public class TypeFactory : IDisposable
         // add properties if any
         foreach (var (propertyName, propertyType) in dtoTyping.Properties)
         {
-            string fieldName = "_" + char.ToLower(propertyName.First()).ToString() + string.Concat(propertyName.Skip(1));
+            string fieldName = "_" + propertyName; // + char.ToLower(propertyName.First()).ToString() + string.Concat(propertyName.Skip(1));
             var fieldBuilder = typeBuilder.DefineField(fieldName, propertyType, FieldAttributes.Private);
             var propBuilder = typeBuilder.DefineProperty(propertyName, PropertyAttributes.HasDefault, propertyType, null);
 
@@ -129,7 +129,7 @@ public class TypeFactory : IDisposable
         var queryProviderField = parentType.GetField("_queryProvider", BindingFlags.NonPublic | BindingFlags.Instance);
         // field for ILogger
         var loggerType = typeof(ILogger<>).MakeGenericType(parentType);
-        var loggerField = typeBuilder.DefineField("_logger", loggerType, FieldAttributes.Private);
+        var loggerField = typeBuilder.DefineField("_logger", loggerType, FieldAttributes.Family);
         // default error code get method
         var defaultErrorCodeGetMethod = parentType.GetMethod("get_DEFAULT_ERROR_CODE", BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance);
 
@@ -238,9 +238,9 @@ public class TypeFactory : IDisposable
         ilGen.Emit(OpCodes.Ldarg_1); // push provider resolver
         ilGen.Emit(OpCodes.Ldarg_2); // push logger
         ilGen.Emit(OpCodes.Call, baseCtor); // call base constructor
-        ilGen.Emit(OpCodes.Ldarg_0); // push this
-        ilGen.Emit(OpCodes.Ldarg_2); // push logger
-        ilGen.Emit(OpCodes.Stfld, loggerField); // store logger into field
+        //ilGen.Emit(OpCodes.Ldarg_0); // push this
+        //ilGen.Emit(OpCodes.Ldarg_2); // push logger
+        //ilGen.Emit(OpCodes.Stfld, loggerField); // store logger into field
         ilGen.Emit(OpCodes.Ret); // return :)
 
         return targetTypeBuilder;

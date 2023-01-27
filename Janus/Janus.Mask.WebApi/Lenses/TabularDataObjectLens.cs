@@ -29,7 +29,7 @@ public class TabularDataObjectLens<TView>
                 var viewItem = Activator.CreateInstance<TView>();
                 foreach (var (colName, value) in rowData.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)))
                 {
-                    string fieldName = $"_{char.ToLower(colName.First())}{string.Concat(colName.Skip(1))}";
+                    string fieldName = $"_{colName}";//$"_{char.ToLower(colName.First())}{string.Concat(colName.Skip(1))}";
 
                     var targetField = viewType.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
                     targetField?.SetValue(viewItem, value);

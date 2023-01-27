@@ -10,7 +10,7 @@ public abstract class GenericController<TId, TGetModel>
     : ControllerBase
     where TGetModel : BaseDto
 {
-    private readonly ILogger<GenericController<TId, TGetModel>>? _logger;
+    protected readonly ILogger<GenericController<TId, TGetModel>>? _logger;
     protected readonly QueryProvider<TId, TGetModel> _queryProvider;
     protected readonly CommandProvider<TId> _commandProvider;
 
