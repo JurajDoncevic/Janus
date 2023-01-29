@@ -22,7 +22,7 @@ public class ControllerTyping
                             TableauId targetTableauId,
                             AttributeId identityAttributeId)
     {
-        _controllerName = controllerName; //CapitalizeName(controllerName);
+        _controllerName = controllerName;
         _routePrefix = routePrefix;
         _idPropertyType = idPropertyType;
         _getDto = getDto;
@@ -48,14 +48,4 @@ public class ControllerTyping
 
     public AttributeId IdentityAttributeId => _identityAttributeId;
 
-    private string CapitalizeName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            return name;
-        }
-        var capitalChar = char.ToUpper(name.Trim().FirstOrDefault());
-
-        return capitalChar + name[1..];
-    }
 }

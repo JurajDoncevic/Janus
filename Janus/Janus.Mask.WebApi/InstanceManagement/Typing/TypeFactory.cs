@@ -127,9 +127,8 @@ public class TypeFactory : IDisposable
         var commandProviderField = parentType.GetField("_commandProvider", BindingFlags.NonPublic | BindingFlags.Instance);
         // field for query provider
         var queryProviderField = parentType.GetField("_queryProvider", BindingFlags.NonPublic | BindingFlags.Instance);
-        // field for ILogger
-        var loggerType = typeof(ILogger<>).MakeGenericType(parentType);
-        var loggerField = typeBuilder.DefineField("_logger", loggerType, FieldAttributes.Family);
+        // filed for logger
+        var loggerField = parentType.GetField("_logger", BindingFlags.NonPublic | BindingFlags.Instance);
         // default error code get method
         var defaultErrorCodeGetMethod = parentType.GetMethod("get_DEFAULT_ERROR_CODE", BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance);
 
@@ -216,7 +215,7 @@ public class TypeFactory : IDisposable
     /// <param name="identityAttributeIdField">Target identity attribute id field</param>
     /// <param name="loggerField">Logger field</param>
     /// <returns>Type builder after generation</returns>
-    private TypeBuilder GenerateControllerConstructor(TypeBuilder targetTypeBuilder, ControllerTyping controllerTyping, Type[]? ctorInitTypes, Type parentType, FieldBuilder targetTableauIdField, FieldBuilder identityAttributeIdField, FieldBuilder loggerField)
+    private TypeBuilder GenerateControllerConstructor(TypeBuilder targetTypeBuilder, ControllerTyping controllerTyping, Type[]? ctorInitTypes, Type parentType, FieldBuilder targetTableauIdField, FieldBuilder identityAttributeIdField, FieldInfo loggerField)
     {
         // get base constructor from GenericConstructor
         var baseCtor = parentType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, ctorInitTypes ?? Type.EmptyTypes, null);
@@ -238,9 +237,6 @@ public class TypeFactory : IDisposable
         ilGen.Emit(OpCodes.Ldarg_1); // push provider resolver
         ilGen.Emit(OpCodes.Ldarg_2); // push logger
         ilGen.Emit(OpCodes.Call, baseCtor); // call base constructor
-        ilGen.Emit(OpCodes.Ldarg_0); // push this
-        ilGen.Emit(OpCodes.Ldarg_2); // push logger
-        ilGen.Emit(OpCodes.Stfld, loggerField); // store logger into field
         ilGen.Emit(OpCodes.Ret); // return :)
 
         return targetTypeBuilder;
@@ -256,7 +252,7 @@ public class TypeFactory : IDisposable
     /// <param name="loggerField">Logger field</param>
     /// <param name="defaultErrorCodeGetMethod">Default error code getter method</param>
     /// <returns>Type builder after generation</returns>
-    private TypeBuilder GenerateUpdateControllerActionMethod(TypeBuilder targetTypeBuilder, DtoTyping putDto, int dtoIdx, FieldInfo commandProviderField, FieldBuilder loggerField, MethodInfo defaultErrorCodeGetMethod)
+    private TypeBuilder GenerateUpdateControllerActionMethod(TypeBuilder targetTypeBuilder, DtoTyping putDto, int dtoIdx, FieldInfo commandProviderField, FieldInfo loggerField, MethodInfo defaultErrorCodeGetMethod)
     {
         var putDtoType = putDto.GenerateType(this);
         var putInterfaceType = typeof(IPutController<>).MakeGenericType(putDtoType);
@@ -362,7 +358,7 @@ public class TypeFactory : IDisposable
     /// <param name="loggerField">Logger field</param>
     /// <param name="defaultErrorCodeGetMethod">Default error code getter method</param>
     /// <returns>Type builde after generation</returns>
-    private TypeBuilder GenerateCreateControllerActionMethod(TypeBuilder targetTypeBuilder, DtoTyping postDto, FieldInfo commandProviderField, FieldBuilder loggerField, MethodInfo defaultErrorCodeGetMethod)
+    private TypeBuilder GenerateCreateControllerActionMethod(TypeBuilder targetTypeBuilder, DtoTyping postDto, FieldInfo commandProviderField, FieldInfo loggerField, MethodInfo defaultErrorCodeGetMethod)
     {
         var postDtoType = postDto.GenerateType(this);
         var postInterfaceType = typeof(IPostController<>).MakeGenericType(postDtoType);

@@ -9,7 +9,7 @@ public class DtoTyping
                      Type idPropertyType,
                      Dictionary<string, Type> properties)
     {
-        _name = name; //CapitalizeName(name);
+        _name = name;
         _idPropertyType = idPropertyType;
         _properties = properties;
     }
@@ -20,14 +20,4 @@ public class DtoTyping
 
     public IReadOnlyDictionary<string, Type> Properties => _properties;
 
-    private string CapitalizeName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            return name;
-        }
-        var capitalChar = char.ToUpper(name.Trim().FirstOrDefault());
-
-        return capitalChar + name[1..];
-    }
 }
