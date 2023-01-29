@@ -1,5 +1,6 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
+using Janus.CommandLanguage;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
@@ -10,6 +11,7 @@ using Janus.Components;
 using Janus.Logging;
 using Janus.Mask.Persistence;
 using Janus.Mask.Persistence.Models;
+using Janus.QueryLanguage;
 
 namespace Janus.Mask;
 public class MaskManager : IComponentManager
@@ -62,16 +64,20 @@ public class MaskManager : IComponentManager
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(string address, int port)
         => await _communicationNode.RegisterRemotePoint(new UndeterminedRemotePoint(address, port));
+    public async Task<Result<BaseCommand>> CreateCommand(string commandText)
+        => CommandCompilation.CompileCommandFromScriptText(commandText);
 
-    public Task<Result> RunCommand(BaseCommand command)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result> RunCommand(BaseCommand command)
+        => await _commandManager.RunCommand(command);
 
-    public Task<Result<TabularData>> RunQuery(Query query)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<Result<Query>> CreateQuery(string queryText)
+    => QueryCompilation.CompileQueryFromScriptText(queryText);
+
+    public async Task<Result<TabularData>> RunQuery(Query query)
+        => await _queryManager.RunQuery(query);
+
+    public async Task<Result<TabularData>> RunQueryOn(Query query, RemotePoint remotePoint)
+        => await _queryManager.RunQueryOn(query, remotePoint);
 
     public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
         => await _communicationNode.SendHello(remotePoint);

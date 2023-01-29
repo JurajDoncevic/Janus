@@ -1,0 +1,86 @@
+﻿@model QueryRemotePointViewModel
+@{
+    ViewData["Title"] = "Query remote point";
+}
+
+<h2>Query a registered remote point</h2>
+<hr />
+
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
+
+<div class="row">
+    <div class="col-7">
+        <h3>Query</h3>
+        <form asp-action="QueryRemotePoint" method="post" class="w-100">
+            <textarea name="queryText" class="form-control" style="min-height:50vh">@Model.QueryText</textarea>
+            <div class="form-group mt-2 row g-1">
+                <div class="col-2">
+                    <input type="submit" class="btn btn-primary form-control" value="Run query" />
+                </div>
+                <div class="col-5">
+                    <select id="targetNodeIdSelect" name="nodeId" class="form-control form-select" onchange="getSelectedSchema(this.value)" asp-items="@(new SelectList(Model.RemotePoints, "NodeId", "String", Model.SelectedRemotePoint))">
+                        @if(Model.SelectedRemotePoint is null)
+                        {
+                            <option disabled selected value="none">Select target node</option>
+                        }
+                    </select>
+                </div>
+                
+            </div>
+
+        </form>
+    </div>
+    <div class="col-5">
+        <h3>Schema</h3>
+        <pre id="schema-json" class="schema overflow-scroll form-control" style="min-height:50vh; height:50vh; resize:vertical"></pre>
+    </div>
+</div>
+<hr />
+<div class="row">
+    @if (Model.QueryResults && Model.QueryResults.Value.ColumnDataTypes.Count > 0)
+    {
+        <h4>Query results</h4>
+        <div class="table-responsive" style="height:50vh">
+            <table class="table table-bordered">
+                <thead class="table-secondary">
+                    <tr>
+                        @foreach (var column in Model.QueryResults.Value.ColumnDataTypes)
+                        {
+                            <th>@column.Key (@column.Value)</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var dataRow in Model.QueryResults.Value.DataRows)
+                    {
+                        <tr>
+                            @foreach (var colName in Model.QueryResults.Value.ColumnDataTypes.Keys)
+                            {
+                                <td>@dataRow[colName]</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+
+@section Scripts{
+    <script src="~/js/getschema.js"></script>
+    <script>
+        function getSelectedSchema(nodeId) {
+            getSchema(nodeId, 'schema-json');
+        }
+    </script>
+    <script>
+        $(document).ready(function(){
+            let selectedValue = $('#targetNodeIdSelect').find(":selected").val();
+            if(selectedValue != 'none'){
+                getSelectedSchema(selectedValue, 'schema-json');
+            }       
+        });
+    </script>
+}
+
