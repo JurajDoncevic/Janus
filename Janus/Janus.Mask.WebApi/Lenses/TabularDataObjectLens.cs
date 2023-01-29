@@ -29,7 +29,7 @@ public class TabularDataObjectLens<TView>
                 var viewItem = Activator.CreateInstance<TView>();
                 foreach (var (colName, value) in rowData.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)))
                 {
-                    string fieldName = $"_{colName}";//$"_{char.ToLower(colName.First())}{string.Concat(colName.Skip(1))}";
+                    string fieldName = $"_{colName}";
 
                     var targetField = viewType.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
                     targetField?.SetValue(viewItem, value);
@@ -43,12 +43,12 @@ public class TabularDataObjectLens<TView>
     private readonly Func<string, IEnumerable<TView>, TabularData> _put =
         (columnNamePrefix, view) =>
         {
-            var viewType = typeof(TView);
+            var viewType = view.FirstOrDefault()?.GetType() ?? typeof(TView);
 
             var columnInfos =
-                viewType.GetFields()
-                .Map(field => (name: field.Name, type: field.FieldType))
-                .Map(t => (fieldName: t.name, fieldType: t.type, columnName: $"{columnNamePrefix}{char.ToUpper(t.name.Skip(1).First())}{string.Concat(t.name.Skip(2))}"))
+                viewType.GetRuntimeProperties()
+                .Map(field => (name: field.Name, type: field.PropertyType))
+                .Map(t => (fieldName: t.name, fieldType: t.type, columnName: $"{columnNamePrefix}.{t.name}"))
                 .ToDictionary(t => t.fieldName, t => t);
 
             var columnDataTypes =
@@ -60,10 +60,10 @@ public class TabularDataObjectLens<TView>
             {
                 var rowData = new Dictionary<string, object?>();
 
-                foreach (var field in viewType.GetFields())
+                foreach (var property in viewType.GetRuntimeProperties())
                 {
-                    var value = field.GetValue(viewItem);
-                    var columnName = columnInfos[field.Name].columnName;
+                    var value = property.GetValue(viewItem);
+                    var columnName = columnInfos[property.Name].columnName;
                     rowData.Add(columnName, value);
                 }
 
