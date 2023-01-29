@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;
 using Janus.Mask.WebApi.InstanceManagement.Providers;
+using FunctionalExtensions.Base;
 
 namespace Janus.Mask.WebApi.InstanceManagement;
 public class GenericControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
@@ -24,7 +25,7 @@ public class GenericControllerFeatureProvider : IApplicationFeatureProvider<Cont
         // so the list of 'real' controllers has already been populated.
         foreach (var controllerTyping in _controllerTypings)
         {
-            var typeName = CapitalizeName(controllerTyping.ControllerName) + "Controller";
+            var typeName = controllerTyping.ControllerName + "Controller";
             if (!feature.Controllers.Any(t => t.Name == typeName))
             {
                 // There's no 'real' controller for this entity, so add the generic version.
@@ -35,22 +36,20 @@ public class GenericControllerFeatureProvider : IApplicationFeatureProvider<Cont
                     .GetTypeInfo();
 
                 var ctrType =
-                    _typeFactory.CreateControllerType(controllerTyping, "JanusGenericMask.InstanceManagement.Web.Dynamic", controllerType, new Type[] { typeof(ProviderFactory), typeof(ILogger) })
+                    _typeFactory.CreateControllerType(controllerTyping, "Janus.Mask.WebApi.InstanceManagement.Dynamic", controllerType, new Type[] { typeof(ProviderFactory), typeof(ILogger) })
                     .GetTypeInfo();
 
                 feature.Controllers.Add(ctrType);
             }
         }
-    }
+        // remove controllers not belonging to the the typed controllers
+        var typedControllerNames = _controllerTypings.Map(typing => typing.ControllerName + "Controller").ToList();
+        var rogueControllerTypes = feature.Controllers.Where(ctrlType => !typedControllerNames.Contains(ctrlType.Name)).ToList();
 
-    private string CapitalizeName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
+        foreach (var rogueCtrlType in rogueControllerTypes)
         {
-            return name;
+            feature.Controllers.Remove(rogueCtrlType);
         }
-        var capitalChar = char.ToUpper(name.Trim().FirstOrDefault());
 
-        return capitalChar + name[1..];
     }
 }
