@@ -21,7 +21,7 @@ public sealed class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, s
         => Results.AsResult(
             () => $"FROM {LocalizeTableauId(startingWith ?? joining.Value.Joins.First().ForeignKeyTableauId)}" +
                   joining.Match(
-                      j => j.Joins.OrderBy(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
+                      j => j.Joins.OrderByDescending(j => j.ForeignKeyTableauId.Equals(startingWith)).Fold("",
                             (join, expr) => expr + $" LEFT JOIN {LocalizeTableauId(join.PrimaryKeyTableauId)} ON {LocalizeAttributeId(join.PrimaryKeyAttributeId)}={LocalizeAttributeId(join.ForeignKeyAttributeId)}"),
                       () => ""));
 

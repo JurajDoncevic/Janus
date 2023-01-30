@@ -50,9 +50,9 @@ public class SqliteQueryTranslationTests
         var expectedSqliteQueryText =
             "SELECT tracks.Name, albums.Title, genres.Name, artists.Name " +
             "FROM tracks " +
-            "LEFT JOIN artists ON artists.ArtistId=albums.ArtistId " +
             "LEFT JOIN albums ON albums.AlbumId=tracks.AlbumId " +
             "LEFT JOIN genres ON genres.GenreId=tracks.GenreId " +
+            "LEFT JOIN artists ON artists.ArtistId=albums.ArtistId " +
             "WHERE true;";
 
         var query = QueryModelBuilder.InitQueryOnDataSource("chinook.main.tracks", dataSource)
