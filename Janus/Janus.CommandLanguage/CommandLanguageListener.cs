@@ -217,6 +217,7 @@ public class CommandLanguageListener : CommandLanguageBaseListener
             var ctx when ctx.STRING() != null => ParseStringValue(ctx.GetText().Trim('"')),
             var ctx when ctx.DATETIME() != null => ParseStringValue(ctx.GetText()),
             var ctx when ctx.INTEGER() != null => ParseStringValue(ctx.GetText()),
+            var ctx when ctx.LONGINT() != null => ParseStringValue(ctx.GetText()),
             var ctx when ctx.DECIMAL() != null => ParseStringValue(ctx.GetText()),
             var ctx when ctx.BINARY() != null => ParseStringValue(ctx.GetText()[2..]),
             var ctx when ctx.BOOLEAN() != null => ParseStringValue(ctx.GetText()),
@@ -228,6 +229,7 @@ public class CommandLanguageListener : CommandLanguageBaseListener
             var ctx when ctx.STRING() != null => DataTypes.STRING,
             var ctx when ctx.DATETIME() != null => DataTypes.DATETIME,
             var ctx when ctx.INTEGER() != null => DataTypes.INT,
+            var ctx when ctx.LONGINT() != null => DataTypes.LONGINT,
             var ctx when ctx.DECIMAL() != null => DataTypes.DECIMAL,
             var ctx when ctx.BINARY() != null => DataTypes.BINARY,
             var ctx when ctx.BOOLEAN() != null => DataTypes.BOOLEAN,
@@ -236,6 +238,8 @@ public class CommandLanguageListener : CommandLanguageBaseListener
 
     private object ParseStringValue(string exp)
     {
+        if (Regex.IsMatch(exp.Trim(), @"^0L|-?[1-9][0-9]*L$") && long.TryParse(exp.Trim().TrimEnd('L'), out var longValue)) // to ignore decimals 
+            return longValue;
         if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*$") && int.TryParse(exp, out var intValue)) // to ignore decimals 
             return intValue;
         if (Regex.IsMatch(exp.Trim(), @"^-?([1-9][0-9]*|0)[\.|,][0-9]+$") && double.TryParse(exp, NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalValue))

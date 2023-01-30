@@ -157,6 +157,7 @@ public class QueryLanguageListener : QueryLanguageBaseListener
             var ctx when ctx.STRING() != null => ParseStringValue(ctx.GetText().Trim('"')),
             var ctx when ctx.DATETIME() != null => ParseStringValue(ctx.GetText()),
             var ctx when ctx.INTEGER() != null => ParseStringValue(ctx.GetText()),
+            var ctx when ctx.LONGINT() != null => ParseStringValue(ctx.GetText()),
             var ctx when ctx.DECIMAL() != null => ParseStringValue(ctx.GetText()),
             var ctx when ctx.BINARY() != null => ParseStringValue(ctx.GetText()[2..]),
             var ctx when ctx.BOOLEAN() != null => ParseStringValue(ctx.GetText()),
@@ -165,6 +166,8 @@ public class QueryLanguageListener : QueryLanguageBaseListener
 
     private object ParseStringValue(string exp)
     {
+        if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*L$") && int.TryParse(exp, out var longValue)) // to ignore decimals 
+            return longValue;
         if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*$") && int.TryParse(exp, out var intValue)) // to ignore decimals 
             return intValue;
         if (Regex.IsMatch(exp.Trim(), @"^-?([1-9][0-9]*|0)[\.|,][0-9]+$") && double.TryParse(exp, NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalValue))

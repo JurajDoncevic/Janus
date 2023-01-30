@@ -34,6 +34,7 @@ WHITESPACE	:[ \r\t\n]+ -> skip;
 
 /* literals */
 DATETIME	: [0-9][0-9]'-'[0-9][0-9]'-'[0-9][0-9][0-9][0-9]'T'[0-9][0-9]':'[0-9][0-9]':'[0-9][0-9];
+LONGINT     :'-'?([1-9]+[0-9]*|[0])'L';
 INTEGER     :'-'?([1-9]+[0-9]*|[0]);
 DECIMAL     :'-'?([1-9]+[0-9]*|[0])('.'[0-9]+);
 BOOLEAN     :'TRUE'|'FALSE'|'true'|'false';
@@ -48,7 +49,7 @@ DATASOURCE_ID    :[a-zA-Z][a-zA-Z0-9_-]*;
 
 /* Parser rules */
 /* literals */
-literal :STRING|DATETIME|INTEGER|DECIMAL|BOOLEAN|BINARY;
+literal :STRING|DATETIME|INTEGER|DECIMAL|BOOLEAN|BINARY|LONGINT;
 
 /* comparison expressions */
 lvalue          :ATTRIBUTE_ID;
