@@ -45,7 +45,7 @@ public sealed class SqliteCommandTranslator
     public Result<string> TranslateSelection(Option<CommandSelection> selection)
         => Results.AsResult(()
             => selection
-                ? GenerateExpression(selection.Value.Expression)
+                ? "WHERE " + GenerateExpression(selection.Value.Expression)
                 : "WHERE false");
 
     public Result<SqliteUpdate> TranslateUpdate(UpdateCommand update)
