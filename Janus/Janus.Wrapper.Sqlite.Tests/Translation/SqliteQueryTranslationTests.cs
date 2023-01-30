@@ -18,7 +18,7 @@ public class SqliteQueryTranslationTests
 
         var expectedSqliteQueryText =
             "SELECT albums.Title, artists.Name " +
-            "FROM albums INNER JOIN artists ON artists.ArtistId=albums.ArtistId " +
+            "FROM albums LEFT JOIN artists ON artists.ArtistId=albums.ArtistId " +
             "WHERE (((artists.Name=\"Hans Zimmer\" OR albums.Title=\"Monteverdi: L'Orfeo\") OR artists.Name=\"U2\") OR artists.ArtistId>=180);";
 
         var query = QueryModelBuilder.InitQueryOnDataSource("chinook.main.albums", dataSource)
@@ -50,9 +50,9 @@ public class SqliteQueryTranslationTests
         var expectedSqliteQueryText =
             "SELECT tracks.Name, albums.Title, genres.Name, artists.Name " +
             "FROM tracks " +
-            "INNER JOIN artists ON artists.ArtistId=albums.ArtistId " +
-            "INNER JOIN albums ON albums.AlbumId=tracks.AlbumId " +
-            "INNER JOIN genres ON genres.GenreId=tracks.GenreId " +
+            "LEFT JOIN artists ON artists.ArtistId=albums.ArtistId " +
+            "LEFT JOIN albums ON albums.AlbumId=tracks.AlbumId " +
+            "LEFT JOIN genres ON genres.GenreId=tracks.GenreId " +
             "WHERE true;";
 
         var query = QueryModelBuilder.InitQueryOnDataSource("chinook.main.tracks", dataSource)
