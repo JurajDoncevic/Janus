@@ -19,7 +19,7 @@ public class CommandTranslation
 
     public static InsertCommand TranslateInsertCommand(TableauId onTableauId, object dataTuple)
     {
-        var lens = new TabularDataObjectLens<object>(onTableauId.ToString());
+        var lens = new TabularDataObjectLens<object>(); // no need for prefix, as columns require just names
 
         var data = new List<object> { dataTuple };
 

@@ -48,7 +48,7 @@ public class TabularDataObjectLens<TView>
             var columnInfos =
                 viewType.GetRuntimeProperties()
                 .Map(field => (name: field.Name, type: field.PropertyType))
-                .Map(t => (fieldName: t.name, fieldType: t.type, columnName: $"{columnNamePrefix}.{t.name}"))
+                .Map(t => (fieldName: t.name, fieldType: t.type, columnName: $"{columnNamePrefix}{t.name}"))
                 .ToDictionary(t => t.fieldName, t => t);
 
             var columnDataTypes =
