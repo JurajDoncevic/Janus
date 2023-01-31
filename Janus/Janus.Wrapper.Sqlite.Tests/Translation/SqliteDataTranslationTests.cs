@@ -25,28 +25,30 @@ public class SqliteDataTranslationTests
 
         using var reader = command.ExecuteReader();
 
-        var results = new List<Dictionary<string, (Type, object)>>(); // {column name, (type, value)} 
-        var rowSchema = new Dictionary<string, Type>();
+        var dataRows = new List<Dictionary<string, object?>>(); 
+        var dataSchema = new Dictionary<string, Type>();
         while (reader.Read())
         {
-            if (rowSchema.Count == 0)
+            if (dataSchema.Count == 0)
             {
                 foreach (var column in reader.GetColumnSchema())
                 {
-                    rowSchema.Add($"{column.BaseCatalogName}.{column.BaseTableName}.{column.ColumnName}", column.DataType!);
+                    dataSchema.Add($"{column.BaseCatalogName}.{column.BaseTableName}.{column.ColumnName}", column.DataType!);
                 }
             }
 
-            var row = new Dictionary<string, (Type, object)>();
-            foreach (var columnName in rowSchema.Keys)
+            var row = new Dictionary<string, object?>();
+            foreach (var columnName in dataSchema.Keys)
             {
-                row.Add(columnName, (rowSchema[columnName], reader.GetValue(rowSchema.Keys.ToList().IndexOf(columnName))));
+                var columnIndex = dataSchema.Keys.ToList().IndexOf(columnName);
+                var fieldValue = ReadFieldWithType(reader, columnIndex, dataSchema[columnName]);
+                row.Add(columnName, fieldValue);
             }
 
-            results.Add(row);
+            dataRows.Add(row);
         }
 
-        var sqliteTabularData = new SqliteTabularData { Data = results };
+        var sqliteTabularData = new SqliteTabularData(dataSchema, dataRows);
 
         var dataTranslator = new SqliteDataTranslator(_dataSourceName);
 
@@ -58,4 +60,42 @@ public class SqliteDataTranslationTests
         Assert.Equal(sqliteTabularData.DataSchema.ToDictionary(kv => $"{_dataSourceName}.{kv.Key}", kv => kv.Value), tabularData.ColumnDataTypes.ToDictionary(kv => kv.Key, kv => TypeMappings.MapToType(kv.Value)));
         Assert.Equal(3503, tabularData.RowData.Count);
     }
+
+    /// <summary>
+    /// Reads field value with provided type. Boxes data into object?
+    /// </summary>
+    /// <param name="reader">Open reader</param>
+    /// <param name="columnIndex">Index of column to read</param>
+    /// <param name="expectedType">Expected type in the column</param>
+    /// <returns></returns>
+    private object? ReadFieldWithType(SqliteDataReader reader, int columnIndex, Type expectedType)
+        => reader.IsDBNull(columnIndex)
+            ? null
+            : expectedType switch
+            {
+                Type type when type.Equals(typeof(long)) => reader.GetInt64(columnIndex),
+                Type type when type.Equals(typeof(double)) => reader.GetDouble(columnIndex),
+                Type type when type.Equals(typeof(string)) => reader.GetString(columnIndex),
+                Type type when type.Equals(typeof(byte[])) => (object)reader.GetFieldValue<byte[]>(columnIndex),
+                Type type when type.Equals(typeof(DateTime)) => reader.GetDateTime(columnIndex),
+                Type type when type.Equals(typeof(bool)) => reader.GetBoolean(columnIndex),
+                _ => reader.GetDouble(columnIndex)
+            };
+
+    /// <summary>
+    /// Gets a System.Type for a given Sqlite data type name. See more: https://www.sqlite.org/datatype3.html
+    /// </summary>
+    /// <param name="dataTypeName">Sqlite data type name</param>
+    /// <returns>System.Type corresponding to the data type name</returns>
+    private Type GetColumnTypeByDataTypeName(string dataTypeName)
+        => dataTypeName switch
+        {
+            string dtn when dtn.Contains("INT") => typeof(long),
+            string dtn when dtn.Contains("REAL") || dtn.Contains("FLOA") || dtn.Contains("DOUB") => typeof(double),
+            string dtn when dtn.Contains("CHAR") || dtn.Contains("CLOB") || dtn.Contains("TEXT") => typeof(string),
+            string dtn when dtn.Contains("BLOB") => typeof(byte[]),
+            string dtn when dtn.Contains("DATE") => typeof(DateTime),
+            string dtn when dtn.Contains("BOOL") => typeof(bool),
+            _ => typeof(double)
+        };
 }
