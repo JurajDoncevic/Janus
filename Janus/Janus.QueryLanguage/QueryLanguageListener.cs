@@ -166,7 +166,7 @@ public class QueryLanguageListener : QueryLanguageBaseListener
 
     private object ParseStringValue(string exp)
     {
-        if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*L$") && int.TryParse(exp, out var longValue)) // to ignore decimals 
+        if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*L$") && long.TryParse(exp, out var longValue)) // to ignore decimals 
             return longValue;
         if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*$") && int.TryParse(exp, out var intValue)) // to ignore decimals 
             return intValue;
