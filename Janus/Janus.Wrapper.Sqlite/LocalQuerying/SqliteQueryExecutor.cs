@@ -57,6 +57,13 @@ public sealed class SqliteQueryExecutor : IQueryExecutor<string, string, string,
             return new SqliteTabularData(dataSchema, dataRows);
         });
 
+    /// <summary>
+    /// Reads field value with provided type. Boxes data into object?
+    /// </summary>
+    /// <param name="reader">Open reader</param>
+    /// <param name="columnIndex">Index of column to read</param>
+    /// <param name="expectedType">Expected type in the column</param>
+    /// <returns></returns>
     private object? ReadFieldWithType(SqliteDataReader reader, int columnIndex, Type expectedType)
         => reader.IsDBNull(columnIndex) 
             ? null 
@@ -71,6 +78,11 @@ public sealed class SqliteQueryExecutor : IQueryExecutor<string, string, string,
                 _ => reader.GetDouble(columnIndex)
             };
 
+    /// <summary>
+    /// Gets a System.Type for a given Sqlite data type name. See more: https://www.sqlite.org/datatype3.html
+    /// </summary>
+    /// <param name="dataTypeName">Sqlite data type name</param>
+    /// <returns>System.Type corresponding to the data type name</returns>
     private Type GetColumnTypeByDataTypeName(string dataTypeName)
         => dataTypeName switch
         {
