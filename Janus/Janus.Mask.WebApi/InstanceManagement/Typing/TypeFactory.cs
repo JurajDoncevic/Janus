@@ -7,6 +7,7 @@ using FunctionalExtensions.Base;
 using System.Runtime.Loader;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
 using Janus.Logging;
+using System.Text.Json.Serialization;
 
 namespace Janus.Mask.WebApi.InstanceManagement.Typing;
 public class TypeFactory : IDisposable
@@ -66,6 +67,11 @@ public class TypeFactory : IDisposable
             string fieldName = "_" + propertyName; // + char.ToLower(propertyName.First()).ToString() + string.Concat(propertyName.Skip(1));
             var fieldBuilder = typeBuilder.DefineField(fieldName, propertyType, FieldAttributes.Private);
             var propBuilder = typeBuilder.DefineProperty(propertyName, PropertyAttributes.HasDefault, propertyType, null);
+            propBuilder.SetCustomAttribute(
+                new CustomAttributeBuilder(
+                    typeof(JsonPropertyNameAttribute).GetConstructor(new Type[] { typeof(string) }),
+                    new object?[] { propertyName }
+                ));
 
 
             // method attributes for property getters and setters
