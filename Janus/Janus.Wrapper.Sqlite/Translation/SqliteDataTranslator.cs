@@ -20,8 +20,8 @@ public sealed class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularDat
             var attributeDataTypes = data.DataSchema.ToDictionary(kv => $"{_resultSchemaPrefix}.{kv.Key}", kv => TypeMappings.MapToDataType(kv.Value));
 
             var tabularData =
-                data.Data.Fold(TabularDataBuilder.InitTabularData(attributeDataTypes),
-                    (row, builder) => builder.AddRow(conf => conf.WithRowData(row.ToDictionary(kv => $"{_resultSchemaPrefix}.{kv.Key}", kv => kv.Value.Item2.GetType().Equals(typeof(DBNull)) ? null : kv.Value.Item2)!))
+                data.DataRows.Fold(TabularDataBuilder.InitTabularData(attributeDataTypes),
+                    (row, builder) => builder.AddRow(conf => conf.WithRowData(row.ToDictionary(kv => $"{_resultSchemaPrefix}.{kv.Key}", kv => kv.Value)!))
                     ).Build();
 
             return tabularData;
