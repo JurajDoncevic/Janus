@@ -164,6 +164,13 @@ public class QueryLanguageListener : QueryLanguageBaseListener
             var ctx => throw new Exception($"Can't determine literal value type {ctx.GetText()}")
         };
 
+    /// <summary>
+    /// The ParseStringValue method takes a string exp as an input, and attempts to parse it as a long, int, double, bool, or DateTime value.
+    /// If the input string matches any of these data types, it returns the parsed value. 
+    /// If the input string does not match any of these data types, the method returns the original string.
+    /// </summary>
+    /// <param name="exp"></param>
+    /// <returns></returns>
     private object ParseStringValue(string exp)
     {
         if (Regex.IsMatch(exp.Trim(), @"^0|-?[1-9][0-9]*L$") && long.TryParse(exp, out var longValue)) // to ignore decimals 
