@@ -57,12 +57,12 @@ public sealed class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, s
     private string GenerateComparisonOp(ComparisonOperator compOp)
         => compOp switch
         {
-            EqualAs eq => $"{LocalizeAttributeId(eq.AttributeId)}={MaybeWrapInQuot(eq.Value)}",
-            NotEqualAs neq => $"{LocalizeAttributeId(neq.AttributeId)}<>{MaybeWrapInQuot(neq.Value)}",
-            GreaterThan gt => $"{LocalizeAttributeId(gt.AttributeId)}>{MaybeWrapInQuot(gt.Value)}",
-            GreaterOrEqualThan gte => $"{LocalizeAttributeId(gte.AttributeId)}>={MaybeWrapInQuot(gte.Value)}",
-            LesserThan lt => $"{LocalizeAttributeId(lt.AttributeId)}<{MaybeWrapInQuot(lt.Value)}",
-            LesserOrEqualThan lte => $"{LocalizeAttributeId(lte.AttributeId)}<={MaybeWrapInQuot(lte.Value)}",
+            EqualAs eq => $"{LocalizeAttributeId(eq.AttributeId)}={AdjustValue(eq.Value)}",
+            NotEqualAs neq => $"{LocalizeAttributeId(neq.AttributeId)}<>{AdjustValue(neq.Value)}",
+            GreaterThan gt => $"{LocalizeAttributeId(gt.AttributeId)}>{AdjustValue(gt.Value)}",
+            GreaterOrEqualThan gte => $"{LocalizeAttributeId(gte.AttributeId)}>={AdjustValue(gte.Value)}",
+            LesserThan lt => $"{LocalizeAttributeId(lt.AttributeId)}<{AdjustValue(lt.Value)}",
+            LesserOrEqualThan lte => $"{LocalizeAttributeId(lte.AttributeId)}<={AdjustValue(lte.Value)}",
             _ => throw new Exception($"Uknown comparison operator {compOp.OperatorString}")
         };
 
@@ -93,9 +93,20 @@ public sealed class SqliteQueryTranslator : ILocalQueryTranslator<SqliteQuery, s
         return $"{tableauName}.{attributeName}";
     }
 
-    private object MaybeWrapInQuot(object value)
-        => value is string
+    private object? MaybeWrapStringInQuot(object? value)
+        => value is not null && value is string
             ? $"\"{value}\""
             : value;
+    
+    private object? MaybeWrapDateTime(object? value)
+        => value is not null && value is DateTime
+            ? $"datetime(\"{((DateTime)value).ToString("yyyy-MM-ddTHH:mm:ss")}\")"
+            : value;
+
+    private object? AdjustValue(object? value)
+        => value.Identity()
+            .Map(MaybeWrapStringInQuot)
+            .Map(MaybeWrapDateTime)
+            .Data;
 
 }
