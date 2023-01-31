@@ -46,7 +46,7 @@ public class SelectionExpressionJsonConverter : JsonConverter<SelectionExpressio
 
         private static NotEqualAs ParseNEQ(string exp)
         {
-            var splits = exp[3..^1].Split(",");
+            var splits = exp[4..^1].Split(",");
 
             return Expressions.NEQ(splits[0], Utils.ParseStringValue(splits[1]));
         }
