@@ -174,7 +174,8 @@ public class QueryLanguageListener : QueryLanguageBaseListener
             return decimalValue;
         if (bool.TryParse(exp.Trim(), out var boolValue))
             return boolValue;
-        if (DateTime.TryParse(exp.Trim(), out var dateTimeValue))
+        if (Regex.IsMatch(exp.Trim(), @"^\d{2}-\d{2}-\d{4}(T\d{2}:\d{2}:\d{2})?$") &&
+            DateTime.TryParseExact(exp.Trim(), new string[] { "dd-MM-yyyyTHH:mm:ss", "dd-MM-yyyy" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeValue))
             return dateTimeValue;
         return exp;
     }
