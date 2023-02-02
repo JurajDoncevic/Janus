@@ -57,7 +57,7 @@ public sealed class Joining
 /// <summary>
 /// Describes a join specification
 /// </summary>
-public class Join
+public sealed class Join
 {
     private readonly AttributeId _primaryKeyAttributeId;
     private readonly AttributeId _foreignKeyAttributeId;
