@@ -106,7 +106,6 @@ public abstract class NetworkAdapter : INetworkAdapter
                 byte[] buffer = new byte[1_000_000];
                 while ((numReadBytes = stream.Read(buffer)) > 0)
                     messageBytes = messageBytes.Concat(buffer.Take(numReadBytes)).ToArray();
-                // .Read(messageBytes, 0, countBytes);
                 // determine message type and raise event
                 _serializationProvider.DetermineMessagePreamble(messageBytes)
                             .Bind<string, BaseMessage>(preamble => BuildMessage(preamble, messageBytes))
