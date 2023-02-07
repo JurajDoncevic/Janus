@@ -3,6 +3,9 @@ using Janus.Communication.Remotes;
 using Janus.Components;
 
 namespace Janus.Mediator;
+/// <summary>
+/// Mediator component options
+/// </summary>
 public sealed class MediatorOptions : IComponentOptions
 {
     private readonly string _nodeId;

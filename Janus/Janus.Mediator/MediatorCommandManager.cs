@@ -1,8 +1,6 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
-using Janus.Commons.DataModels;
-using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
@@ -10,9 +8,12 @@ using Janus.Components;
 using Janus.Logging;
 using Janus.Mediation;
 using Janus.Mediation.SchemaMediationModels;
-using System.Runtime.CompilerServices;
 
 namespace Janus.Mediator;
+
+/// <summary>
+/// Command manager for a mediator component
+/// </summary>
 public sealed class MediatorCommandManager : IDelegatingCommandManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
@@ -24,6 +25,12 @@ public sealed class MediatorCommandManager : IDelegatingCommandManager
         _logger = logger?.ResolveLogger<MediatorCommandManager>();
     }
 
+    /// <summary>
+    /// Runs a mediated command over other remote nodes
+    /// </summary>
+    /// <param name="command">Command on the mediated data source</param>
+    /// <param name="schemaManager">Current schema manager</param>
+    /// <returns>Operation result</returns>
     public async Task<Result> RunCommand(BaseCommand command, MediatorSchemaManager schemaManager)
         => (await Results.AsResult(async () =>
         {

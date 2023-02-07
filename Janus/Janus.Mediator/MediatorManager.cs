@@ -17,6 +17,10 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Janus.Mediator;
+
+/// <summary>
+/// Mediator component manager
+/// </summary>
 public sealed class MediatorManager : IComponentManager
 {
     private readonly MediatorQueryManager _queryManager;
@@ -50,6 +54,9 @@ public sealed class MediatorManager : IComponentManager
         RegisterStartupRemotePoints();
     }
 
+    /// <summary>
+    /// Tries to registers the startup remote points in parallel
+    /// </summary>
     private async void RegisterStartupRemotePoints()
     {
         var regs = _mediatorOptions.StartupRemotePoints
@@ -59,6 +66,7 @@ public sealed class MediatorManager : IComponentManager
         await Task.WhenAll(regs);
     }
 
+    #region RECEIVED MESSAGE HANDLERS
     private async void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
     {
         (await _schemaManager.GetCurrentOutputSchema()
@@ -70,7 +78,7 @@ public sealed class MediatorManager : IComponentManager
                 r => _logger?.Info($"Failed to respond to schema request from {e.FromRemotePoint} due to: {r.Message}")
             );
     }
-
+    
     private async void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
     {
         (await (await _queryManager.RunQuery(e.ReceivedMessage.Query, _schemaManager))
@@ -97,8 +105,7 @@ public sealed class MediatorManager : IComponentManager
             );
     }
 
-    public Option<DataSource> GetCurrentSchema()
-        => _schemaManager.GetCurrentOutputSchema();
+    #endregion
 
     #region COMMANDING
     /// <summary>
@@ -306,6 +313,8 @@ public sealed class MediatorManager : IComponentManager
     #endregion
 
     #region SCHEMA MANAGEMENT AND MEDIATION
+    public Option<DataSource> GetCurrentSchema()
+        => _schemaManager.GetCurrentOutputSchema();
 
     /// <summary>
     /// Remote points of currently loaded data sources

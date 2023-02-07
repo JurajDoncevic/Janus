@@ -9,6 +9,10 @@ using Janus.Logging;
 using Janus.Mediation;
 
 namespace Janus.Mediator;
+
+/// <summary>
+/// Query manager for a mediator component
+/// </summary>
 public sealed class MediatorQueryManager : IDelegatingQueryManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
@@ -25,7 +29,7 @@ public sealed class MediatorQueryManager : IDelegatingQueryManager
     /// </summary>
     /// <param name="query">Query on the mediated data source</param>
     /// <param name="schemaManager">Current schema manager</param>
-    /// <returns></returns>
+    /// <returns>Tabular data query result</returns>
     public async Task<Result<TabularData>> RunQuery(Query query, MediatorSchemaManager schemaManager)
         => (await Results.AsResult(async () =>
         {

@@ -10,6 +10,10 @@ using Janus.Mediation.SchemaMediationModels;
 using System.Runtime.InteropServices;
 
 namespace Janus.Mediator;
+
+/// <summary>
+/// Schema manager for a mediator component
+/// </summary>
 public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegatingSchemaManager, IMediatingSchemaManager
 {
     private readonly MediatorCommunicationNode _communicationNode;
