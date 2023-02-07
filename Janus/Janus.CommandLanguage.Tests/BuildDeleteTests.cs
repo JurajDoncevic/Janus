@@ -13,10 +13,10 @@ public class BuildDeleteTests
                 "WHERE TRUE;")]
     [InlineData("DELETE " +
                 "FROM datasource1.schema1.tableau1 " +
-                "WHERE datasource.schema.tableau.attr1 > 0 AND datasource.schema.tableau.attr2 == 0;")]
+                "WHERE datasource1.schema1.tableau1.attr1 > 0 AND datasource1.schema1.tableau1.attr2 == 0;")]
     [InlineData("DELETE " +
                 "FROM datasource1.schema1.tableau1 " +
-                "WHERE (datasource.schema.tableau.attr1 > 0 OR datasource.schema.tableau.attr2 == 0) AND TRUE;")]
+                "WHERE (datasource1.schema1.tableau1.attr1 > 0 OR datasource1.schema1.tableau1.attr2 == 0) AND TRUE;")]
     public void BuildDeleteCommand(string testText)
     {
         AntlrInputStream inputStream = new AntlrInputStream(testText);
