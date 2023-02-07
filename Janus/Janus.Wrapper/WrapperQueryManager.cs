@@ -24,7 +24,7 @@ public class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection,
         _queryExecutor = queryExecutor;
     }
 
-    public async Task<Result<TabularData>> ExecuteQuery(Query query)
+    public async Task<Result<TabularData>> RunQuery(Query query)
         => (await Task.FromResult(_queryTranslator.Translate(query))
             .Bind(_queryExecutor.ExecuteQuery))
             .Bind(_dataTranslator.TranslateToTabularData);

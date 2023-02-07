@@ -4,6 +4,9 @@ using Janus.Communication.Remotes;
 
 namespace Janus.Components;
 
+/// <summary>
+/// Query manager that executes queries on its own schema
+/// </summary>
 public interface IExecutingQueryManager
 {
     /// <summary>
@@ -11,9 +14,12 @@ public interface IExecutingQueryManager
     /// </summary>
     /// <param name="query">Query to execute</param>
     /// <returns></returns>
-    public Task<Result<TabularData>> ExecuteQuery(Query query);
+    public Task<Result<TabularData>> RunQuery(Query query);
 }
 
+/// <summary>
+/// Query manager that can delegate query execution to other components
+/// </summary>
 public interface IDelegatingQueryManager
 {
     /// <summary>

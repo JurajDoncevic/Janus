@@ -3,6 +3,9 @@ using Janus.Communication.Remotes;
 
 namespace Janus.Components;
 
+/// <summary>
+/// Command manager that executes commands on its own schema 
+/// </summary>
 public interface IExecutingCommandManager
 {
     /// <summary>
@@ -13,6 +16,9 @@ public interface IExecutingCommandManager
     public Task<Result> RunCommand(BaseCommand command);
 }
 
+/// <summary>
+/// Command manager that delegates command execution to other components
+/// </summary>
 public interface IDelegatingCommandManager
 {
     /// <summary>

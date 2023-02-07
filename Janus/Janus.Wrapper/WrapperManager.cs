@@ -195,7 +195,7 @@ public class WrapperManager
             .GetCurrentOutputSchema()
             .Match(
                 async dataSource => await Task.FromResult(query.IsValidForDataSource(dataSource))
-                                              .Bind(async validity => await _queryManager.ExecuteQuery(query)),
+                                              .Bind(async validity => await _queryManager.RunQuery(query)),
                 async () => Results.OnFailure<TabularData>("No schema generated")
             );
 

@@ -4,6 +4,9 @@ using Janus.Mediation.SchemaMediationModels;
 
 namespace Janus.Components;
 
+/// <summary>
+/// Describes a schema manager's base functionality
+/// </summary>
 public interface IComponentSchemaManager
 {
     /// <summary>
@@ -19,6 +22,9 @@ public interface IComponentSchemaManager
 
 }
 
+/// <summary>
+/// Describes a schema manager working over other components' schemas
+/// </summary>
 public interface IDelegatingSchemaManager
 {
     /// <summary>
@@ -43,6 +49,9 @@ public interface IDelegatingSchemaManager
     public Result UnloadSchema(RemotePoint remotePoint);
 }
 
+/// <summary>
+/// Describes a schema manager that performs mediation
+/// </summary>
 public interface IMediatingSchemaManager
 {
     /// <summary>
