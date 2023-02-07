@@ -7,7 +7,7 @@ using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
 public class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection, TLocalData>
-    : IExecutingQueryManager
+    : IComponentQueryManager
     where TLocalQuery : LocalQuery<TSelection, TJoining, TProjection>
 {
     private readonly ILocalQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> _queryTranslator;

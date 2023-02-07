@@ -5,12 +5,12 @@ using Janus.Communication.Remotes;
 namespace Janus.Components;
 
 /// <summary>
-/// Query manager that executes queries on its own schema
+/// Query manager that runs queries on its own schema
 /// </summary>
-public interface IExecutingQueryManager
+public interface IComponentQueryManager
 {
     /// <summary>
-    /// Executes a query on this component's data source. Masks and mediators delegate, wrappers execute the query
+    /// Runs a query on this component's data source. Masks and mediators delegate, wrappers execute the query
     /// </summary>
     /// <param name="query">Query to execute</param>
     /// <returns></returns>
@@ -18,7 +18,7 @@ public interface IExecutingQueryManager
 }
 
 /// <summary>
-/// Query manager that can delegate query execution to other components
+/// Query manager that can delegate query runs to other components
 /// </summary>
 public interface IDelegatingQueryManager
 {

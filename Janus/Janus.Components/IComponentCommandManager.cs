@@ -4,12 +4,12 @@ using Janus.Communication.Remotes;
 namespace Janus.Components;
 
 /// <summary>
-/// Command manager that executes commands on its own schema 
+/// Command manager that runs commands on its own schema 
 /// </summary>
-public interface IExecutingCommandManager
+public interface IComponentCommandManager
 {
     /// <summary>
-    /// Executes a command on the component's schema
+    /// Runs a command on the component's schema
     /// </summary>
     /// <param name="command">Command to execute</param>
     /// <returns></returns>
