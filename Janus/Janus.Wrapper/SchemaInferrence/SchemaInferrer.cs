@@ -3,16 +3,29 @@ using Janus.Commons.SchemaModels;
 using Janus.Wrapper.SchemaInferrence.Model;
 
 namespace Janus.Wrapper.SchemaInferrence;
+/// <summary>
+/// Infers a schema from a concrete data source type
+/// </summary>
 public class SchemaInferrer
 {
     private readonly ISchemaModelProvider _provider;
     private readonly string? _dataSourceName;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="schemaModelProvider">Schema model provider for a data source type</param>
+    /// <param name="dataSourceName">Expected data source name</param>
     public SchemaInferrer(ISchemaModelProvider schemaModelProvider, string? dataSourceName = null)
     {
         _provider = schemaModelProvider;
         _dataSourceName = dataSourceName;
     }
 
+    /// <summary>
+    /// Infers a schema model over the designated concrete data source
+    /// </summary>
+    /// <returns>DataSource schema model</returns>
     public Result<DataSource> InferSchemaModel()
         => Results.AsResult<DataSource>(() =>
         {

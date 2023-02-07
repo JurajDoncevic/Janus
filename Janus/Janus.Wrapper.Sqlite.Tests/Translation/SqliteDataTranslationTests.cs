@@ -52,7 +52,7 @@ public class SqliteDataTranslationTests
 
         var dataTranslator = new SqliteDataTranslator(_dataSourceName);
 
-        var translationResult = dataTranslator.TranslateToTabularData(sqliteTabularData);
+        var translationResult = dataTranslator.Translate(sqliteTabularData);
 
         var tabularData = translationResult.Data!;
 

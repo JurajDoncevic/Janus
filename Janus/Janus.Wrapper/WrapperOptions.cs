@@ -3,6 +3,9 @@ using Janus.Communication.Remotes;
 using Janus.Components;
 
 namespace Janus.Wrapper;
+/// <summary>
+/// Wrapper component options
+/// </summary>
 public sealed class WrapperOptions : IComponentOptions
 {
     private readonly string _nodeId;

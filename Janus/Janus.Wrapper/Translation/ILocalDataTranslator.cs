@@ -1,8 +1,8 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
+using Janus.Components.Translation;
 
 namespace Janus.Wrapper.Translation;
-public interface ILocalDataTranslator<TLocalData>
+public interface ILocalDataTranslator<TLocalData> : IDataTranslator<TLocalData, TabularData>
 {
-    public Result<TabularData> TranslateToTabularData(TLocalData data);
 }

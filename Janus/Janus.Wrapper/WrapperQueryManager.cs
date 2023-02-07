@@ -6,6 +6,14 @@ using Janus.Wrapper.LocalQuerying;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
+/// <summary>
+/// Query manager for a wrapper component
+/// </summary>
+/// <typeparam name="TLocalQuery"></typeparam>
+/// <typeparam name="TSelection"></typeparam>
+/// <typeparam name="TJoining"></typeparam>
+/// <typeparam name="TProjection"></typeparam>
+/// <typeparam name="TLocalData"></typeparam>
 public class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection, TLocalData>
     : IComponentQueryManager
     where TLocalQuery : LocalQuery<TSelection, TJoining, TProjection>
@@ -27,6 +35,6 @@ public class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection,
     public async Task<Result<TabularData>> RunQuery(Query query)
         => (await Task.FromResult(_queryTranslator.Translate(query))
             .Bind(_queryExecutor.ExecuteQuery))
-            .Bind(_dataTranslator.TranslateToTabularData);
+            .Bind(_dataTranslator.Translate);
 
 }

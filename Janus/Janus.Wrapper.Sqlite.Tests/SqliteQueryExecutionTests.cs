@@ -37,7 +37,7 @@ public class SqliteQueryExecutionTests
         var queryExecutionResult =
             (await Task.FromResult(queryTranslator.Translate(query))
                 .Bind(queryExecutor.ExecuteQuery))
-                .Bind(dataTranslator.TranslateToTabularData);
+                .Bind(dataTranslator.Translate);
 
         Assert.True(queryExecutionResult);
         Assert.Equal(3503, queryExecutionResult.Data!.RowData.Count);

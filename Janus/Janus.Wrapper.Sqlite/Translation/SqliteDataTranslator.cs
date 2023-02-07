@@ -14,7 +14,7 @@ public sealed class SqliteDataTranslator : ILocalDataTranslator<SqliteTabularDat
         _resultSchemaPrefix = resultSchemaPrefix;
     }
 
-    public Result<TabularData> TranslateToTabularData(SqliteTabularData data)
+    public Result<TabularData> Translate(SqliteTabularData data)
         => Results.AsResult(() =>
         {
             var attributeDataTypes = data.DataSchema.ToDictionary(kv => $"{_resultSchemaPrefix}.{kv.Key}", kv => TypeMappings.MapToDataType(kv.Value));

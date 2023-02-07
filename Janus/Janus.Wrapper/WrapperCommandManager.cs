@@ -5,6 +5,15 @@ using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper;
+/// <summary>
+/// Command manager for a wrapper component
+/// </summary>
+/// <typeparam name="TDeleteCommand"></typeparam>
+/// <typeparam name="TInsertCommand"></typeparam>
+/// <typeparam name="TUpdateCommand"></typeparam>
+/// <typeparam name="TSelection"></typeparam>
+/// <typeparam name="TMutation"></typeparam>
+/// <typeparam name="TInstantiation"></typeparam>
 public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>
     : IComponentCommandManager
     where TDeleteCommand : LocalDelete<TSelection>

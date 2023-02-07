@@ -18,6 +18,19 @@ using Janus.Wrapper.Persistence.Models;
 using static FunctionalExtensions.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
+/// <summary>
+/// Manager for a wrapper component
+/// </summary>
+/// <typeparam name="TLocalQuery"></typeparam>
+/// <typeparam name="TDeleteCommand"></typeparam>
+/// <typeparam name="TInsertCommand"></typeparam>
+/// <typeparam name="TUpdateCommand"></typeparam>
+/// <typeparam name="TLocalSelection"></typeparam>
+/// <typeparam name="TLocalJoining"></typeparam>
+/// <typeparam name="TLocalProjection"></typeparam>
+/// <typeparam name="TLocalData"></typeparam>
+/// <typeparam name="TLocalMutation"></typeparam>
+/// <typeparam name="TLocalInstantiation"></typeparam>
 public class WrapperManager
     <TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
     : IComponentManager
