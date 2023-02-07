@@ -341,6 +341,13 @@ public static partial class QueryModelMediation
         return tableauId1.DataSourceName.Equals(tableauId2.DataSourceName);
     }
 
+    /// <summary>
+    /// Determines the query pertitions and global joins according to the given joins and initial tableau id.
+    /// Joins that can be executed "locally" are pushed to an according query partition
+    /// </summary>
+    /// <param name="initialTableauId"></param>
+    /// <param name="joins"></param>
+    /// <returns></returns>
     private static (IEnumerable<QueryPartition> queryPartitions, IEnumerable<Join> globalJoins) DetermineQueryPartitions(TableauId initialTableauId, IEnumerable<Join> joins)
     {
         var queryPartitions = new List<QueryPartition>
