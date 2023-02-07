@@ -100,30 +100,54 @@ public sealed class MediatorManager : IComponentManager
     public Option<DataSource> GetCurrentSchema()
         => _schemaManager.GetCurrentOutputSchema();
 
+    #region COMMANDING
+    /// <summary>
+    /// Creates a command from the given command text in the command language
+    /// </summary>
+    /// <param name="commandText">Command text</param>
+    /// <returns>Result of command creation</returns>
     public async Task<Result<BaseCommand>> CreateCommand(string commandText)
         => CommandCompilation.CompileCommandFromScriptText(commandText);
 
     public async Task<Result> RunCommand(BaseCommand command)
         => await _commandManager.RunCommand(command, _schemaManager);
+    #endregion
 
+    #region QUERYING
+    /// <summary>
+    /// Creates a query from the given query text in the query language
+    /// </summary>
+    /// <param name="queryText">Query text</param>
+    /// <returns>Result of query creation</returns>
     public async Task<Result<Query>> CreateQuery(string queryText)
     => QueryCompilation.CompileQueryFromScriptText(queryText);
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _queryManager.RunQuery(query, _schemaManager);
 
+    /// <summary>
+    /// Runs a query on the given remote point
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="remotePoint"></param>
+    /// <returns></returns>
     public async Task<Result<TabularData>> RunQueryOn(Query query, RemotePoint remotePoint)
         => await _queryManager.RunQueryOn(query, remotePoint);
+    #endregion
 
-    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
-        => await _communicationNode.SendHello(remotePoint);
-
-    public async Task<Result<RemotePoint>> SendHello(string address, int port)
-        => await _communicationNode.SendHello(new UndeterminedRemotePoint(address, port));
-
+    #region PERSISTENCE
+    /// <summary>
+    /// Gets the persisted remote points
+    /// </summary>
+    /// <returns>Result of remote points</returns>
     public async Task<Result<IEnumerable<RemotePoint>>> GetPersistedRemotePoints()
         => await Results.AsResult(async () => _persistenceProvider.RemotePointPersistence.GetAll());
 
+    /// <summary>
+    /// Persists a remote point
+    /// </summary>
+    /// <param name="remotePoint">Remote point to persist</param>
+    /// <returns>Operation result</returns>
     public async Task<Result> PersistRemotePoint(RemotePoint remotePoint)
         => await Results.AsResult(async () =>
         {
@@ -133,6 +157,11 @@ public sealed class MediatorManager : IComponentManager
             return inserting;
         });
 
+    /// <summary>
+    /// Deletes a remote point from persistence
+    /// </summary>
+    /// <param name="nodeId">Remote point node id</param>
+    /// <returns>Result of deletion</returns>
     public async Task<Result> DeleteRemotePoint(string nodeId)
         => await Results.AsResult(async () =>
         {
@@ -142,6 +171,11 @@ public sealed class MediatorManager : IComponentManager
             return deletion;
         });
 
+    /// <summary>
+    /// Persists multiple remote points
+    /// </summary>
+    /// <param name="remotePoints">Remote points to persist</param>
+    /// <returns>Operation result</returns>
     public async Task<Result> PersistRemotePoints(IEnumerable<RemotePoint> remotePoints)
         => await Results.AsResult(async () =>
         {
@@ -160,6 +194,14 @@ public sealed class MediatorManager : IComponentManager
             return insertion && removal;
         });
 
+    /// <summary>
+    /// Persists the current mediated schema, together with the mediation that created it.
+    /// </summary>
+    /// <param name="currentDataSource">Current data source</param>
+    /// <param name="dataSourceMediation">Current data source mediation that created the current data source</param>
+    /// <param name="loadedDataSources">Loaded data sources required to implement the mediation</param>
+    /// <param name="createdOn">DateTime of mediation creation</param>
+    /// <returns>Operation result</returns>
     public async Task<Result> PersistCurrentMediatedSchema(DataSource currentDataSource, DataSourceMediation dataSourceMediation, Dictionary<RemotePoint, DataSource> loadedDataSources, DateTime? createdOn = null)
         => await Results.AsResult(async () =>
         {
@@ -175,6 +217,11 @@ public sealed class MediatorManager : IComponentManager
             return insertion;
         });
 
+    /// <summary>
+    /// Deletes a mediated schema from persistence 
+    /// </summary>
+    /// <param name="version">Version of the schema</param>
+    /// <returns>Operation result</returns>
     public async Task<Result> DeleteMediatedSchema(string version)
         => await Results.AsResult(async () =>
         {
@@ -183,6 +230,10 @@ public sealed class MediatorManager : IComponentManager
             return deletion;
         });
 
+    /// <summary>
+    /// Gets all persisted (mediated) schemas
+    /// </summary>
+    /// <returns>Persisted data source schemas</returns>
     public async Task<Result<IEnumerable<Persistence.Models.DataSourceInfo>>> GetAllPersistedSchemas()
         => await Results.AsResult(async () =>
         {
@@ -191,6 +242,10 @@ public sealed class MediatorManager : IComponentManager
             return persistedSchemas;
         });
 
+    /// <summary>
+    /// Loads the latest persisted mediated schema
+    /// </summary>
+    /// <returns>Latets mediated data source schema</returns>
     public async Task<Result<DataSource>> LoadLatestMediatedSchemaFromPersistence()
         => await Results.AsResult(async () =>
         {
@@ -228,6 +283,14 @@ public sealed class MediatorManager : IComponentManager
 
             return mediation.Data;
         });
+    #endregion
+
+    #region COMMUNICATION
+    public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
+    => await _communicationNode.SendHello(remotePoint);
+
+    public async Task<Result<RemotePoint>> SendHello(string address, int port)
+        => await _communicationNode.SendHello(new UndeterminedRemotePoint(address, port));
 
     public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;
@@ -240,32 +303,77 @@ public sealed class MediatorManager : IComponentManager
 
     public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
         => await _communicationNode.SendBye(remotePoint);
+    #endregion
 
+    #region SCHEMA MANAGEMENT AND MEDIATION
+
+    /// <summary>
+    /// Remote points of currently loaded data sources
+    /// </summary>
     public IReadOnlyList<RemotePoint> LoadedSchemaRemotePoints
         => _schemaManager.LoadedDataSourceFromRemotePoint.Keys.ToList();
 
+    /// <summary>
+    /// Gets a schema from a remote point
+    /// </summary>
+    /// <param name="remotePoint">Remote point</param>
+    /// <returns>Schema acquisition result</returns>
     public async Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint)
         => await _schemaManager.GetSchemaFrom(remotePoint);
 
+    /// <summary>
+    /// Gets loaded schemas by their remote points 
+    /// </summary>
+    /// <returns>Dictionary of remote points and data source schemas</returns>
     public IReadOnlyDictionary<RemotePoint, DataSource> GetLoadedSchemas()
         => _schemaManager.LoadedDataSourceFromRemotePoint;
 
+    /// <summary>
+    /// Loads a schema from a remote point
+    /// </summary>
+    /// <param name="remotePoint">Remote point</param>
+    /// <returns>Loaded data source schema</returns>
     public async Task<Result<DataSource>> LoadSchemaFrom(RemotePoint remotePoint)
         => await _schemaManager.LoadSchema(remotePoint);
 
+    /// <summary>
+    /// Unloads a schema by the data source name
+    /// </summary>
+    /// <param name="dataSourceName">Schema data source name</param>
+    /// <returns>Operation result</returns>
     public Result UnloadSchema(string dataSourceName)
         => _schemaManager.UnloadSchema(dataSourceName);
+
+    /// <summary>
+    /// Unloads a schema coming from the given remote point
+    /// </summary>
+    /// <param name="remotePoint">Source remote point of the data source schema</param>
+    /// <returns>Operation result</returns>
     public Result UnloadSchemaFrom(RemotePoint remotePoint)
         => _schemaManager.UnloadSchema(remotePoint);
 
+    /// <summary>
+    /// Unloads all schemas
+    /// </summary>
+    /// <returns>Operation result</returns>
     public Result UnloadAllSchemas()
         => _schemaManager.LoadedDataSourceFromRemotePoint.Keys.ToList()
             .Map(_schemaManager.UnloadSchema)
             .All(result => result);
 
+    /// <summary>
+    /// Gets all available schemas from registered remote points
+    /// </summary>
+    /// <returns>Dictionary of registered remote points and schema acquisition outcomes</returns>
     public async Task<Dictionary<RemotePoint, Result<DataSource>>> GetAvailableSchemas()
         => await _schemaManager.GetSchemasFromComponents();
 
+    /// <summary>
+    /// Creates a data source mediation from a mediation script written in the mediation language. 
+    /// Doesn't apply the mediation to the component!
+    /// </summary>
+    /// <param name="mediationScript">Mediation script text</param>
+    /// <returns>Result of data source mediation creation</returns>
     public Result<DataSourceMediation> CreateDataSourceMediation(string mediationScript)
         => Results.AsResult(() =>
         {
@@ -274,12 +382,22 @@ public sealed class MediatorManager : IComponentManager
             return MediationCompilation.CompileMediationFromScriptText(mediationScript, loadedDataSources);
         });
 
+    /// <summary>
+    /// Applies a mediation to the component
+    /// </summary>
+    /// <param name="dataSourceMediation"></param>
+    /// <returns>Mediation result</returns>
     public async Task<Result<DataSource>> ApplyMediation(DataSourceMediation dataSourceMediation)
         => await Results.AsResult(async () =>
         {
             return await _schemaManager.MediateLoadedSchemas(dataSourceMediation);
         });
 
+    /// <summary>
+    /// Gets the current schema mediation
+    /// </summary>
+    /// <returns>Optional data source mediation object</returns>
     public Option<DataSourceMediation> GetCurrentSchemaMediation()
         => _schemaManager.CurrentMediation;
+    #endregion
 }

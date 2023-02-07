@@ -9,6 +9,11 @@ using System.Threading.Tasks;
 namespace Janus.MediationLanguage;
 public static class MediationDecompilation
 {
+    /// <summary>
+    /// Recreates the mediation script which created the data source mediation
+    /// </summary>
+    /// <param name="dataSourceMediation"></param>
+    /// <returns></returns>
     public static string ToMediationScript(this DataSourceMediation dataSourceMediation)
     {
         var dataSourceMediationClause =
