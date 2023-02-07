@@ -6,6 +6,9 @@ using Janus.Communication.Remotes;
 
 namespace Janus.Components;
 
+/// <summary>
+/// Describes the base functionalities of a component
+/// </summary>
 public interface IComponentManager
 {
     /// <summary>
