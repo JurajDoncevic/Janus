@@ -1,4 +1,5 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Commons.QueryModels;
 using Janus.Components;
@@ -38,6 +39,8 @@ public abstract class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TPr
     public async Task<Result<TabularData>> RunQuery(Query query)
         => (await Task.FromResult(_queryTranslator.Translate(query))
             .Bind(_queryExecutor.ExecuteQuery))
-            .Bind(_dataTranslator.Translate);
+            .Bind(_dataTranslator.Translate)
+            .Pass(r => _logger?.Info($"Command {query.Name} ran successfully."),
+                  r => _logger?.Info($"Failed command {query.Name} run with message: {r.Message}"));
 
 }

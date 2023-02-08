@@ -1,4 +1,5 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Components;
 using Janus.Logging;
@@ -36,7 +37,7 @@ public abstract class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpd
     }
 
     public async Task<Result> RunCommand(BaseCommand command)
-        => await (command switch
+        => (await (command switch
         {
             DeleteCommand deleteCommand => Task.FromResult(_commandTranslator.TranslateDelete(deleteCommand))
                                             .Bind(_commandExecutor.ExecuteDeleteCommand),
@@ -45,6 +46,8 @@ public abstract class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpd
             UpdateCommand updateCommand => Task.FromResult(_commandTranslator.TranslateUpdate(updateCommand))
                                             .Bind(_commandExecutor.ExecuteUpdateCommand),
             _ => Task.FromResult(Results.OnFailure("Unknown command type"))
-        });
+        }))
+        .Pass(r => _logger?.Info($"Command {command.Name} ran successfully."),
+              r => _logger?.Info($"Failed command {command.Name} run with message: {r.Message}"));
 
 }
