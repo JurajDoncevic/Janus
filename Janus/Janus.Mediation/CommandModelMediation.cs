@@ -11,7 +11,7 @@ namespace Janus.Mediation;
 /// <summary>
 /// Command model mediation operations
 /// </summary>
-public class CommandModelMediation
+public static class CommandModelMediation
 {
     public static Result<DeleteCommandMediation> MediateCommand(DeleteCommand deleteOnMediatedDataSource, DataSource mediatedDataSource, DataSourceMediation dataSourceMediation)
         => Results.AsResult(() =>

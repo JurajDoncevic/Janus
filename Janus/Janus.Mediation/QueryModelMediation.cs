@@ -15,7 +15,7 @@ namespace Janus.Mediation;
 /// <summary>
 /// Query model mediation operations
 /// </summary>
-public static partial class QueryModelMediation
+public static class QueryModelMediation
 {
     /// <summary>
     /// Creates a query mediation for a query on a mediated data source
