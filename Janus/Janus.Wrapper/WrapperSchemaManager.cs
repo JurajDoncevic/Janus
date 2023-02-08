@@ -8,7 +8,7 @@ namespace Janus.Wrapper;
 /// <summary>
 /// Schema manager for a wrapper component
 /// </summary>
-public class WrapperSchemaManager : IComponentSchemaManager
+public abstract class WrapperSchemaManager : IComponentSchemaManager
 {
     private readonly SchemaInferrer _schemaInferrer;
     private Option<DataSource> _currentSchema;

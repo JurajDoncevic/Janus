@@ -31,7 +31,7 @@ namespace Janus.Wrapper;
 /// <typeparam name="TLocalData"></typeparam>
 /// <typeparam name="TLocalMutation"></typeparam>
 /// <typeparam name="TLocalInstantiation"></typeparam>
-public class WrapperManager
+public abstract class WrapperManager
     <TLocalQuery, TDeleteCommand, TInsertCommand, TUpdateCommand, TLocalSelection, TLocalJoining, TLocalProjection, TLocalData, TLocalMutation, TLocalInstantiation>
     : IComponentManager
     where TLocalQuery : LocalQuery<TLocalSelection, TLocalJoining, TLocalProjection>

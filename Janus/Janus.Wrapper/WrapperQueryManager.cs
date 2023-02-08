@@ -14,7 +14,7 @@ namespace Janus.Wrapper;
 /// <typeparam name="TJoining"></typeparam>
 /// <typeparam name="TProjection"></typeparam>
 /// <typeparam name="TLocalData"></typeparam>
-public class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection, TLocalData>
+public abstract class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection, TLocalData>
     : IComponentQueryManager
     where TLocalQuery : LocalQuery<TSelection, TJoining, TProjection>
 {

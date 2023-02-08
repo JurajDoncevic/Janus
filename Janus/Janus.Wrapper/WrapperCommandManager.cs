@@ -14,7 +14,7 @@ namespace Janus.Wrapper;
 /// <typeparam name="TSelection"></typeparam>
 /// <typeparam name="TMutation"></typeparam>
 /// <typeparam name="TInstantiation"></typeparam>
-public class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>
+public abstract class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>
     : IComponentCommandManager
     where TDeleteCommand : LocalDelete<TSelection>
     where TInsertCommand : LocalInsert<TInstantiation>
