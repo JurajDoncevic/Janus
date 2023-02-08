@@ -1,4 +1,4 @@
-﻿namespace Janus.Wrapper.SchemaInferrence.Model;
+﻿namespace Janus.Wrapper.SchemaInference.Model;
 public class DataSourceInfo
 {
     private readonly string _name;

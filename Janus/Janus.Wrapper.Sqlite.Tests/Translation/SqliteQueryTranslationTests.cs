@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.QueryModels;
-using Janus.Wrapper.SchemaInferrence;
-using Janus.Wrapper.Sqlite.SchemaInferrence;
+using Janus.Wrapper.SchemaInference;
+using Janus.Wrapper.Sqlite.SchemaInference;
 using Janus.Wrapper.Sqlite.Translation;
 using Xunit;
 using static Janus.Commons.SelectionExpressions.Expressions;

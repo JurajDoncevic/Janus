@@ -2,12 +2,12 @@
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
-using Janus.Wrapper.SchemaInferrence;
-using Janus.Wrapper.SchemaInferrence.Model;
+using Janus.Wrapper.SchemaInference;
+using Janus.Wrapper.SchemaInference.Model;
 using Microsoft.Data.Sqlite;
 using System.Data;
 
-namespace Janus.Wrapper.Sqlite.SchemaInferrence;
+namespace Janus.Wrapper.Sqlite.SchemaInference;
 public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
 {
     private readonly string _connectionString;
@@ -70,7 +70,7 @@ public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
                         var type = checkTypeReader.GetFieldType(attrInfo.Name);
                         var adjustedDataType = TypeMappings.MapToDataType(type);
                         // if the inferred data type from the schema has a lower order than the adjusted data type
-                        if (GetDataTypeInferrenceOrder(attrInfo.DataType) < GetDataTypeInferrenceOrder(adjustedDataType))
+                        if (GetDataTypeInferenceOrder(attrInfo.DataType) < GetDataTypeInferenceOrder(adjustedDataType))
                         {
                             var adjustedAttributeInfo =
                                 new AttributeInfo(
@@ -197,7 +197,7 @@ public sealed class SqliteSchemaModelProvider : ISchemaModelProvider
     /// </summary>
     /// <param name="dataType"></param>
     /// <returns></returns>
-    private int GetDataTypeInferrenceOrder(DataTypes dataType)
+    private int GetDataTypeInferenceOrder(DataTypes dataType)
         => dataType switch
         {
             DataTypes.INT => 1,

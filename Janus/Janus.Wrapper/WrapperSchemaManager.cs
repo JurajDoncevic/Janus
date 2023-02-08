@@ -3,7 +3,7 @@ using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Components;
 using Janus.Logging;
-using Janus.Wrapper.SchemaInferrence;
+using Janus.Wrapper.SchemaInference;
 
 namespace Janus.Wrapper;
 /// <summary>

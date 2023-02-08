@@ -1,8 +1,8 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
-using Janus.Wrapper.SchemaInferrence.Model;
+using Janus.Wrapper.SchemaInference.Model;
 
-namespace Janus.Wrapper.SchemaInferrence;
+namespace Janus.Wrapper.SchemaInference;
 /// <summary>
 /// Infers a schema from a concrete data source type
 /// </summary>

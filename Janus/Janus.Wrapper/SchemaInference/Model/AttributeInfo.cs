@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Wrapper.SchemaInferrence.Model;
+namespace Janus.Wrapper.SchemaInference.Model;
 public class AttributeInfo
 {
     private readonly string _name;

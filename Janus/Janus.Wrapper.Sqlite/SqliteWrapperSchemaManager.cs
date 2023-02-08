@@ -1,5 +1,5 @@
 ﻿using Janus.Logging;
-using Janus.Wrapper.SchemaInferrence;
+using Janus.Wrapper.SchemaInference;
 
 namespace Janus.Wrapper.Sqlite;
 public sealed class SqliteWrapperSchemaManager : WrapperSchemaManager

@@ -1,16 +1,16 @@
-﻿using Janus.Wrapper.SchemaInferrence;
-using Janus.Wrapper.Sqlite.SchemaInferrence;
+﻿using Janus.Wrapper.SchemaInference;
+using Janus.Wrapper.Sqlite.SchemaInference;
 using Xunit;
 
-namespace Janus.Wrapper.Sqlite.Tests.SchemaInferrence;
-public abstract class SqliteSchemaInferrenceTests
+namespace Janus.Wrapper.Sqlite.Tests.SchemaInference;
+public abstract class SqliteSchemaInferenceTests
 {
     private readonly SchemaInferrer _schemaInferrer;
     public abstract string ConnectionString { get; }
     public abstract string DataSourceName { get; }
     public abstract string ExpectedSchemaString { get; }
 
-    public SqliteSchemaInferrenceTests()
+    public SqliteSchemaInferenceTests()
     {
         _schemaInferrer = new SchemaInferrer(new SqliteSchemaModelProvider(ConnectionString), DataSourceName);
     }

@@ -1,5 +1,5 @@
-﻿namespace Janus.Wrapper.Sqlite.Tests.SchemaInferrence;
-public class SqliteSchemaInferrenceChinookTests : SqliteSchemaInferrenceTests
+﻿namespace Janus.Wrapper.Sqlite.Tests.SchemaInference;
+public class SqliteSchemaInferenceChinookTests : SqliteSchemaInferenceTests
 {
     public override string ConnectionString => "Data Source=./chinook.db;";
 

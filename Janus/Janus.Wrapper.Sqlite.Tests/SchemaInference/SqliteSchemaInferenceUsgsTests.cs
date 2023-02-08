@@ -1,5 +1,5 @@
-﻿namespace Janus.Wrapper.Sqlite.Tests.SchemaInferrence;
-public class SqliteSchemaInferrenceUsgsTests : SqliteSchemaInferrenceTests
+﻿namespace Janus.Wrapper.Sqlite.Tests.SchemaInference;
+public class SqliteSchemaInferenceUsgsTests : SqliteSchemaInferenceTests
 {
     public override string ConnectionString => "Data Source=./usgs-lower-us.db;";
 
