@@ -2,6 +2,7 @@
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Components;
+using Janus.Logging;
 using Janus.Wrapper.SchemaInferrence;
 
 namespace Janus.Wrapper;
@@ -12,16 +13,22 @@ public abstract class WrapperSchemaManager : IComponentSchemaManager
 {
     private readonly SchemaInferrer _schemaInferrer;
     private Option<DataSource> _currentSchema;
-    public WrapperSchemaManager(SchemaInferrer schemaInferrer)
+
+    private readonly ILogger<WrapperSchemaManager>? _logger;
+
+    public WrapperSchemaManager(SchemaInferrer schemaInferrer, ILogger? logger = null)
     {
         _schemaInferrer = schemaInferrer;
+        _logger = logger?.ResolveLogger<WrapperSchemaManager>();
     }
 
     public Option<DataSource> GetCurrentOutputSchema()
         => _currentSchema;
 
-    public Task<Result<DataSource>> ReloadOutputSchema()
-        => Task.FromResult(
+    public async Task<Result<DataSource>> ReloadOutputSchema()
+        => (await Task.FromResult(
             _schemaInferrer.InferSchemaModel()
-                .Pass(result => _currentSchema = Option<DataSource>.Some(result.Data)));
+                .Pass(result => _currentSchema = Option<DataSource>.Some(result.Data))))
+                .Pass(r => _logger?.Info($"Reloaded schema with name {r.Data.Name} and version {r.Data.Version}."),
+                      r => _logger?.Info($"Failed to load schema with message: {r.Message}"));
 }

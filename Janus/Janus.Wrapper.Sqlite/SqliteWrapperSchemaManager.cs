@@ -1,9 +1,12 @@
-﻿using Janus.Wrapper.SchemaInferrence;
+﻿using Janus.Logging;
+using Janus.Wrapper.SchemaInferrence;
 
 namespace Janus.Wrapper.Sqlite;
 public sealed class SqliteWrapperSchemaManager : WrapperSchemaManager
 {
-    public SqliteWrapperSchemaManager(SchemaInferrer schemaInferrer) : base(schemaInferrer)
+    private readonly ILogger<SqliteWrapperSchemaManager>? _logger;
+    public SqliteWrapperSchemaManager(SchemaInferrer schemaInferrer, ILogger? logger = null) : base(schemaInferrer, logger)
     {
+        _logger = logger?.ResolveLogger<SqliteWrapperSchemaManager>();
     }
 }

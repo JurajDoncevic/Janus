@@ -1,6 +1,7 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Components;
+using Janus.Logging;
 using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.Translation;
 
@@ -22,13 +23,16 @@ public abstract class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpd
 {
     private readonly ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
     private readonly ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandExecutor;
+    private readonly ILogger<WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>>? _logger;
 
     public WrapperCommandManager(
         ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
-        ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandExecutor)
+        ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandExecutor,
+        ILogger? logger = null )
     {
         _commandTranslator = commandTranslator;
         _commandExecutor = commandExecutor;
+        _logger = logger?.ResolveLogger<WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>>();
     }
 
     public async Task<Result> RunCommand(BaseCommand command)
