@@ -17,6 +17,7 @@ using Janus.Mask.Persistence.LiteDB;
 using Janus.Serialization.MongoBson;
 using Janus.Mask;
 using Janus.Mask.WebApi;
+using Janus.Mask.WebApi.Translation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +93,10 @@ maskConfiguration.NetworkAdapterType switch
                 serviceProvider.GetService<Janus.Logging.ILogger>())),
     _ => throw new Exception("Unknown network adapter type")
 };
+
+
+builder.Services.AddSingleton<WebApiQueryTranslator>();
+builder.Services.AddSingleton<WebApiCommandTranslator>();
 
 builder.Services.AddSingleton<MaskQueryManager>();
 builder.Services.AddSingleton<MaskCommandManager>();
