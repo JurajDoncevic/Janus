@@ -91,6 +91,7 @@ public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, 
         typeName switch
         {
             string tn when tn.Equals(typeof(int).FullName) => typeof(int),
+            string tn when tn.Equals(typeof(long).FullName) => typeof(long),
             string tn when tn.Equals(typeof(double).FullName) => typeof(double),
             string tn when tn.Equals(typeof(string).FullName) => typeof(string),
             string tn when tn.Equals(typeof(DateTime).FullName) => typeof(DateTime),
@@ -110,6 +111,7 @@ public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, 
         => value == null ? Array.Empty<byte>() : originalType switch
         {
             Type t when t == typeof(int) => BitConverter.GetBytes((int)value),
+            Type t when t == typeof(long) => BitConverter.GetBytes((long)value),
             Type t when t == typeof(double) => BitConverter.GetBytes((double)value),
             Type t when t == typeof(bool) => BitConverter.GetBytes((bool)value),
             Type t when t == typeof(DateTime) => BitConverter.GetBytes(DateTime.Now.Ticks),
@@ -129,6 +131,7 @@ public sealed class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, 
         => bytes.Length == 0 ? null : expectedType switch
         {
             Type t when t == typeof(int) => BitConverter.ToInt32(bytes),
+            Type t when t == typeof(long) => BitConverter.ToInt64(bytes),
             Type t when t == typeof(double) => BitConverter.ToDouble(bytes),
             Type t when t == typeof(bool) => BitConverter.ToBoolean(bytes),
             Type t when t == typeof(DateTime) => new DateTime(BitConverter.ToInt64(bytes)),

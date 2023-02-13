@@ -97,6 +97,7 @@ public class UpdateCommandSerializer : ICommandSerializer<UpdateCommand, string>
         typeName switch
         {
             string tn when tn.Equals(typeof(int).FullName) => typeof(int),
+            string tn when tn.Equals(typeof(long).FullName) => typeof(long),
             string tn when tn.Equals(typeof(double).FullName) => typeof(double),
             string tn when tn.Equals(typeof(string).FullName) => typeof(string),
             string tn when tn.Equals(typeof(DateTime).FullName) => typeof(DateTime),
