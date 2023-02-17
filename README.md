@@ -3,7 +3,7 @@
 ## What is Janus?
 Janus is a **mask-mediator-wrapper** architecture for (not just) heterogeneous data source integration system.
 
-![Janus Logo](/wiki/figures/janus_logo.jpg)
+![Janus Logo](/wiki/figures/janus_logo.png)
 *Janus project logo*
 
 Janus is a **prototype** of a heterogeneous data source integration system. It can also be used as a versatile data management system, capable of emulating other architectures. It is being developed as part
