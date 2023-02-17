@@ -4,7 +4,7 @@
 Janus is a **mask-mediator-wrapper** architecture for (not just) heterogeneous data source integration system.
 
 <div align="center">
-<img src="/JurajDoncevic/Janus/raw/master/wiki/figures/janus_logo.png" width=40% alt="Janus project logo">
+<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/janus_logo.png?raw=true" width=40% alt="Janus project logo">
 <br>
 <caption><i>Janus project logo</i></caption>
 </div>
@@ -22,7 +22,7 @@ referencing the old roman god of duality, gates and transitions - *Janus Bifrons
 The mask-mediator-wrapper (MMW) architecture on which Janus is based is an extension of the mediator-wrapper (MW) architectural pattern.
 
 <div align="center">
-<img src="/JurajDoncevic/Janus/raw/master/wiki/figures/mediator_wrapper_pattern.png" width=40% alt="MW pattern">
+<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/mediator_wrapper_pattern.png?raw=true" width=40% alt="MW pattern">
 <br>
 <caption><i>The mediator-wrapper pattern</i></caption>
 </div>
@@ -31,7 +31,7 @@ The mask-mediator-wrapper (MMW) architecture on which Janus is based is an exten
 The MMW architecture extends the mediator-wrapper architecture by the addition of a mask component type. Masks are used for schema, query and data representation. This concern was usually assigned to specialized client applications built for specific integration systems. Masks provide the ability to support a variety of user applications that are not inherently designed for the integration system itself. An example of a MMW system is shown here:
 
 <div align="center">
-<img src="/JurajDoncevic/Janus/raw/master/wiki/figures/mmw_architecture_example.png" width=40% alt="MMW wxample">
+<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/mmw_architecture_example.png?raw=true" width=40% alt="MMW wxample">
 <br>
 <caption><i>MMW example</i></caption>
 </div>
