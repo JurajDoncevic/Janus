@@ -4,7 +4,7 @@ using Janus.Commons.SchemaModels;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
 
 namespace Janus.Mask.WebApi.Translation;
-internal class SchemaTranslation
+internal class WebApiSchemaTranslation
 {
     internal static IEnumerable<ControllerTyping> GetControllerTypings(DataSource dataSourceSchema)
     {

@@ -75,13 +75,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Wrapper.Persistence.L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Components.IntegrationTests", "Janus.Components.IntegrationTests\Janus.Components.IntegrationTests.csproj", "{AB261E10-10C3-4A9C-BFD1-11EA8A963935}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask", "Janus.Mask\Janus.Mask.csproj", "{C19CB974-8778-428E-832F-BF08ABB96BDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask", "Janus.Mask\Janus.Mask.csproj", "{C19CB974-8778-428E-832F-BF08ABB96BDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.WebApi", "Janus.Mask.WebApi\Janus.Mask.WebApi.csproj", "{55494657-E3E2-456D-A145-45E1CCC20750}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.WebApi", "Janus.Mask.WebApi\Janus.Mask.WebApi.csproj", "{55494657-E3E2-456D-A145-45E1CCC20750}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.WebApi.WebApp", "Janus.Mask.WebApi.WebApp\Janus.Mask.WebApi.WebApp.csproj", "{D4378AD0-F38E-4D59-BFEF-470E7DD68703}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.WebApi.WebApp", "Janus.Mask.WebApi.WebApp\Janus.Mask.WebApi.WebApp.csproj", "{D4378AD0-F38E-4D59-BFEF-470E7DD68703}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.Persistence.LiteDB", "Janus.Mask.Persistence.LiteDB\Janus.Mask.Persistence.LiteDB.csproj", "{0BF83B3F-A284-40D3-88DC-87031755B185}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.Persistence.LiteDB", "Janus.Mask.Persistence.LiteDB\Janus.Mask.Persistence.LiteDB.csproj", "{0BF83B3F-A284-40D3-88DC-87031755B185}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Lenses", "Janus.Lenses\Janus.Lenses.csproj", "{BD0A75BB-8D06-4D39-9470-6A21B908BA1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -249,6 +251,10 @@ Global
 		{0BF83B3F-A284-40D3-88DC-87031755B185}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BF83B3F-A284-40D3-88DC-87031755B185}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BF83B3F-A284-40D3-88DC-87031755B185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD0A75BB-8D06-4D39-9470-6A21B908BA1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD0A75BB-8D06-4D39-9470-6A21B908BA1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD0A75BB-8D06-4D39-9470-6A21B908BA1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD0A75BB-8D06-4D39-9470-6A21B908BA1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

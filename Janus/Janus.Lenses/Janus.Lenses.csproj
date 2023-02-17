@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Janus.CommandLanguage\Janus.CommandLanguage.csproj" />
-    <ProjectReference Include="..\Janus.Components\Janus.Components.csproj" />
-    <ProjectReference Include="..\Janus.QueryLanguage\Janus.QueryLanguage.csproj" />
+    <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
   </ItemGroup>
 
 </Project>
