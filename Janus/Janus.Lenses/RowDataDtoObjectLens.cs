@@ -7,19 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Janus.Lenses;
-public class RowDataDtoObjectLens<TView> : Lens<RowData, TView>
+public sealed class RowDataDtoObjectLens<TDto> : Lens<RowData, TDto>
 {
     internal RowDataDtoObjectLens() : base()
     {
     }
 
-    public override Func<TView, RowData, RowData> Put =>
+    public override Func<TDto, RowData, RowData> Put =>
         (view, originalSource) =>
         {
-            var viewType = view?.GetType() ?? typeof(TView);
+            var dtoType = view?.GetType() ?? typeof(TDto);
+
+            string columnNamePrefix = FindLongestCommonPrefix(originalSource.ColumnValues.Keys);
 
             var columnInfos =
-                viewType.GetRuntimeProperties()
+                dtoType.GetRuntimeProperties()
                 .Map(field => (name: field.Name, type: field.PropertyType))
                 .Map(t => (fieldName: t.name, fieldType: t.type, columnName: $"{columnNamePrefix}{t.name}"))
                 .ToDictionary(t => t.fieldName, t => t);
@@ -27,27 +29,25 @@ public class RowDataDtoObjectLens<TView> : Lens<RowData, TView>
             var columnDataTypes =
                 columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.fieldType));
 
-            var tblrBuilder = TabularDataBuilder.InitTabularData(columnDataTypes);
+            var rowData = new Dictionary<string, object?>(originalSource.ColumnValues);
 
-            var rowData = new Dictionary<string, object?>();
-
-            foreach (var property in viewType.GetRuntimeProperties())
+            foreach (var property in dtoType.GetRuntimeProperties())
             {
                 var value = property.GetValue(view);
                 var columnName = columnInfos[property.Name].columnName;
-                rowData.Add(columnName, value);
+                rowData[columnName] = value;
             }
 
             return RowData.FromDictionary(rowData);
         };
 
-    public override Func<RowData, TView> Get =>
+    public override Func<RowData, TDto> Get =>
         (source) =>
         {
-            var viewType = typeof(TView);
+            var viewType = typeof(TDto);
 
 
-            var viewItem = Activator.CreateInstance<TView>();
+            var viewItem = Activator.CreateInstance<TDto>();
             foreach (var (colName, value) in source.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)))
             {
                 string fieldName = $"_{colName}";
@@ -58,4 +58,34 @@ public class RowDataDtoObjectLens<TView> : Lens<RowData, TView>
 
             return viewItem;
         };
+
+    private string FindLongestCommonPrefix(IEnumerable<string> strings)
+    {
+        if (strings == null || strings.Count() == 0)
+        {
+            return string.Empty;
+        }
+
+        string prefix = strings.First();
+
+        // Iterate through all strings in the list and find the longest common prefix
+        for (int i = 1; i < strings.Count(); i++)
+        {
+            string currentString = strings.ElementAt(i);
+            int j = 0;
+            while (j < prefix.Length && j < currentString.Length && prefix[j] == currentString[j])
+            {
+                j++;
+            }
+            prefix = prefix.Substring(0, j);
+        }
+
+        return prefix;
+    }
+}
+
+public static class RowDataDtoObjectLens
+{
+    public static RowDataDtoObjectLens<T> Create<T>()
+        => new RowDataDtoObjectLens<T>();
 }
