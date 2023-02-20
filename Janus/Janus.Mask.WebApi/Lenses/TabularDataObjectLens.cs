@@ -47,12 +47,12 @@ public class TabularDataObjectLens<TView>
 
             var columnInfos =
                 viewType.GetRuntimeProperties()
-                .Map(field => (name: field.Name, type: field.PropertyType))
-                .Map(t => (fieldName: t.name, fieldType: t.type, columnName: $"{columnNamePrefix}{t.name}"))
-                .ToDictionary(t => t.fieldName, t => t);
+                .Map(property => (name: property.Name, type: property.PropertyType))
+                .Map(t => (propertyName: t.name, propertyType: t.type, columnName: $"{columnNamePrefix}{t.name}"))
+                .ToDictionary(t => t.propertyName, t => t);
 
             var columnDataTypes =
-                columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.fieldType));
+                columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.propertyType));
 
             var tblrBuilder = TabularDataBuilder.InitTabularData(columnDataTypes);
 
