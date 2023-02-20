@@ -10,7 +10,7 @@ public sealed class RowData
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="attributeValues">Values of attributes in the row</param>
+    /// <param name="columnValues">Values of columns in the row</param>
     internal RowData(Dictionary<string, object?> columnValues)
     {
         _columnValues = columnValues ?? throw new ArgumentNullException(nameof(columnValues));
@@ -21,7 +21,7 @@ public sealed class RowData
     /// </summary>
     public IReadOnlyDictionary<string, object?> ColumnValues => _columnValues;
 
-    public object this[string columnName] => _columnValues[columnName];
+    public object? this[string columnName] => _columnValues[columnName];
 
     public override string ToString()
         => "(" + string.Join(";", _columnValues.Values) + ")";
@@ -36,4 +36,7 @@ public sealed class RowData
     {
         return HashCode.Combine(_columnValues);
     }
+
+    public static RowData FromDictionary(Dictionary<string, object?> columnValues)
+        => new RowData(columnValues);
 }
