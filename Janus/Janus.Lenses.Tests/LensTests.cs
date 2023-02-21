@@ -13,13 +13,26 @@ public class LensTests
     [Fact]
     public void TestRowDataLens()
     {
-        var lens = RowDataDtoObjectLens.Create<PersonDto>();
+        var lens = RowDataDtoLens.Create<PersonDto>();
 
         var dto = lens.Get(PeopleData1.RowData.First());
         var rowData = lens.Put(dto, PeopleData1.RowData.First());
 
         Assert.NotNull(dto);
         Assert.NotNull(rowData);
+    }
+
+    [Fact]
+    public void TestTabularDataLens()
+    {
+        var lens = TabularDataDtoLens.Create<PersonDto>();
+
+        var dto = lens.Get(PeopleData1);
+        var tabularData = lens.Put(dto, PeopleData1);
+
+        Assert.NotNull(dto);
+        Assert.NotNull(tabularData);
+        Assert.Equal(PeopleData1, tabularData);
     }
 
 

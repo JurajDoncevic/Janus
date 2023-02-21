@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Janus.Lenses;
-public sealed class RowDataDtoObjectLens<TDto> : Lens<RowData, TDto>
+public sealed class RowDataDtoLens<TDto> : Lens<RowData, TDto>
 {
-    internal RowDataDtoObjectLens() : base()
+    internal RowDataDtoLens() : base()
     {
     }
 
@@ -84,8 +84,8 @@ public sealed class RowDataDtoObjectLens<TDto> : Lens<RowData, TDto>
     }
 }
 
-public static class RowDataDtoObjectLens
+public static class RowDataDtoLens
 {
-    public static RowDataDtoObjectLens<T> Create<T>()
-        => new RowDataDtoObjectLens<T>();
+    public static RowDataDtoLens<T> Create<T>()
+        => new RowDataDtoLens<T>();
 }
