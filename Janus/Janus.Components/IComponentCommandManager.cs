@@ -1,4 +1,6 @@
 ﻿using Janus.Commons.CommandModels;
+using Janus.Commons.DataModels;
+using Janus.Commons.QueryModels;
 using Janus.Communication.Remotes;
 
 namespace Janus.Components;
@@ -28,4 +30,19 @@ public interface IDelegatingCommandManager
     /// <param name="remotePoint"></param>
     /// <returns></returns>
     public Task<Result> RunCommandOnComponent(BaseCommand command, RemotePoint remotePoint);
+}
+
+/// <summary>
+/// Command manager that works over a mediated schema
+/// </summary>
+/// <typeparam name="TSchemaManager">Type of schema manager - Mediating</typeparam>
+public interface IMediatingCommandManager<TSchemaManager> where TSchemaManager : IMediatingSchemaManager
+{
+    /// <summary>
+    /// Runs a command on a mediated schema in the schema manager
+    /// </summary>
+    /// <param name="command">Command over mediated schema</param>
+    /// <param name="schemaManager">Current mediating schema manager</param>
+    /// <returns></returns>
+    public Task<Result> RunCommand(BaseCommand command, TSchemaManager schemaManager);
 }

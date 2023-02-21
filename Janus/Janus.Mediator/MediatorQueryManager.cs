@@ -13,7 +13,7 @@ namespace Janus.Mediator;
 /// <summary>
 /// Query manager for a mediator component
 /// </summary>
-public sealed class MediatorQueryManager : IDelegatingQueryManager
+public sealed class MediatorQueryManager : IDelegatingQueryManager, IMediatingQueryManager<MediatorSchemaManager>
 {
     private readonly MediatorCommunicationNode _communicationNode;
     private readonly ILogger<MediatorQueryManager>? _logger;

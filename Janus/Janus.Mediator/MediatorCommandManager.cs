@@ -14,7 +14,7 @@ namespace Janus.Mediator;
 /// <summary>
 /// Command manager for a mediator component
 /// </summary>
-public sealed class MediatorCommandManager : IDelegatingCommandManager
+public sealed class MediatorCommandManager : IDelegatingCommandManager, IMediatingCommandManager<MediatorSchemaManager>
 {
     private readonly MediatorCommunicationNode _communicationNode;
     private readonly ILogger<MediatorCommandManager>? _logger;

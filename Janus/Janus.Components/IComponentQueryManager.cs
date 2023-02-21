@@ -30,3 +30,18 @@ public interface IDelegatingQueryManager
     /// <returns></returns>
     public Task<Result<TabularData>> RunQueryOn(Query query, RemotePoint remotePoint);
 }
+
+/// <summary>
+/// Query manager that works over a mediated schema
+/// </summary>
+/// <typeparam name="TSchemaManager">Type of schema manager - Mediating</typeparam>
+public interface IMediatingQueryManager<TSchemaManager> where TSchemaManager : IMediatingSchemaManager
+{
+    /// <summary>
+    /// Runs a query on a mediated schema in the schema manager
+    /// </summary>
+    /// <param name="query">Query over mediated schema</param>
+    /// <param name="schemaManager">Current mediating schema manager</param>
+    /// <returns></returns>
+    public Task<Result<TabularData>> RunQuery(Query query, TSchemaManager schemaManager);
+}
