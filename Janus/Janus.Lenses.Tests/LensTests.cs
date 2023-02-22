@@ -13,7 +13,7 @@ public class LensTests
     [Fact]
     public void TestRowDataLens()
     {
-        var lens = RowDataDtoLens.Create<PersonDto>();
+        var lens = RowDataDtoLens.Construct<PersonDto>();
 
         var dto = lens.Get(PeopleData1.RowData.First());
         var rowData = lens.Put(dto, PeopleData1.RowData.First());
@@ -25,7 +25,7 @@ public class LensTests
     [Fact]
     public void TestTabularDataLens()
     {
-        var lens = TabularDataDtoLens.Create<PersonDto>();
+        var lens = TabularDataDtoLens.Construct<PersonDto>();
 
         var dto = lens.Get(PeopleData1);
         var tabularData = lens.Put(dto, PeopleData1);

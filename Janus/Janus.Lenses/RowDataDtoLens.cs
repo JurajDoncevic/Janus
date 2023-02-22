@@ -1,10 +1,5 @@
 ﻿using Janus.Commons.DataModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Janus.Lenses;
 public sealed class RowDataDtoLens<TDto> : Lens<RowData, TDto>
@@ -86,6 +81,6 @@ public sealed class RowDataDtoLens<TDto> : Lens<RowData, TDto>
 
 public static class RowDataDtoLens
 {
-    public static RowDataDtoLens<T> Create<T>()
+    public static RowDataDtoLens<T> Construct<T>()
         => new RowDataDtoLens<T>();
 }

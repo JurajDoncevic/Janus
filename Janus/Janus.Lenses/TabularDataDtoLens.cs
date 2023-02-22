@@ -12,7 +12,7 @@ public class TabularDataDtoLens<TDto> : Lens<TabularData, IEnumerable<TDto>>
 
     internal TabularDataDtoLens() : base()
     {
-        _rowDataLens = RowDataDtoLens.Create<TDto>();
+        _rowDataLens = RowDataDtoLens.Construct<TDto>();
     }
 
     public override Func<IEnumerable<TDto>, TabularData, TabularData> Put =>
@@ -29,6 +29,6 @@ public class TabularDataDtoLens<TDto> : Lens<TabularData, IEnumerable<TDto>>
 
 public static class TabularDataDtoLens
 {
-    public static TabularDataDtoLens<T> Create<T>()
+    public static TabularDataDtoLens<T> Construct<T>()
         => new TabularDataDtoLens<T>();
 }
