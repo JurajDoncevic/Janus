@@ -6,20 +6,33 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
+using Janus.Mask.LocalQuerying;
+using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public class MaskQueryManager : IDelegatingQueryManager
+public abstract class MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection>
+    : IDelegatingQueryManager
+    where TLocalQuery : LocalQuery<TStartingWith, TSelection, TJoining, TProjection>
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly MaskSchemaManager _schemaManager;
-    private readonly ILogger<MaskQueryManager>? _logger;
+    private readonly ILocalQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> _queryTranslator;
 
-    public MaskQueryManager(MaskCommunicationNode communicationNode, MaskSchemaManager schemaManager, ILogger? logger = null)
+    private readonly ILogger<MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection>>? _logger;
+
+    public MaskQueryManager(
+        MaskCommunicationNode communicationNode,
+        MaskSchemaManager schemaManager,
+        ILocalQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> queryTranslator,
+        ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _schemaManager = schemaManager;
-        _logger = logger?.ResolveLogger<MaskQueryManager>();
+        _queryTranslator = queryTranslator;
+        _logger = logger?.ResolveLogger<MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection>>();
     }
+
+    public abstract Task<Result<TResultModel>> RunQuery<TResultModel>(TLocalQuery query);
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => (await Results.AsResult<TabularData>(async () =>

@@ -9,23 +9,25 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
+using Janus.Mask.LocalQuerying;
 using Janus.Mask.Persistence;
 using Janus.Mask.Persistence.Models;
 using Janus.QueryLanguage;
 
 namespace Janus.Mask;
-public class MaskManager : IComponentManager
+public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> : IComponentManager
+    where TLocalQuery : LocalQuery<TStartingWith, TSelection, TJoining, TProjection>
 {
-    private readonly MaskQueryManager _queryManager;
-    private readonly MaskCommandManager _commandManager;
-    private readonly MaskSchemaManager _schemaManager;
-    private readonly MaskCommunicationNode _communicationNode;
-    private readonly MaskPersistenceProvider _persistenceProvider;
-    private readonly ILogger<MaskManager>? _logger;
-    private readonly MaskOptions _maskOptions;
+    protected readonly MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> _queryManager;
+    protected readonly MaskCommandManager _commandManager;
+    protected readonly MaskSchemaManager _schemaManager;
+    protected readonly MaskCommunicationNode _communicationNode;
+    protected readonly MaskPersistenceProvider _persistenceProvider;
+    private readonly ILogger<MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection>>? _logger;
+    protected readonly MaskOptions _maskOptions;
 
     public MaskManager(MaskCommunicationNode communicationNode,
-                       MaskQueryManager queryManager,
+                       MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> queryManager,
                        MaskCommandManager commandManager,
                        MaskSchemaManager schemaManager,
                        MaskPersistenceProvider persistenceProvider,
@@ -38,7 +40,7 @@ public class MaskManager : IComponentManager
         _schemaManager = schemaManager;
         _persistenceProvider = persistenceProvider;
         _maskOptions = maskOptions;
-        _logger = logger?.ResolveLogger<MaskManager>();
+        _logger = logger?.ResolveLogger<MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection>>();
 
 
         RegisterStartupRemotePoints();
