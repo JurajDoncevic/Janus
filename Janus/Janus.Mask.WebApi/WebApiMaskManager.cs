@@ -1,6 +1,8 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
+using Janus.Commons.QueryModels;
+using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Components.Translation;
 using Janus.Logging;
@@ -14,7 +16,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Runtime.CompilerServices;
 
 namespace Janus.Mask.WebApi;
-public class WebApiMaskManager : MaskManager
+public class WebApiMaskManager 
+    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit>
 {
     private readonly WebApiInstance _webApiInstance;
     private readonly WebApiQueryTranslator _queryTranslator;

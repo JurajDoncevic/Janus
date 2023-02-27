@@ -18,6 +18,7 @@ using Janus.Mask.WebApi.InstanceManagement.Templates;
 using System.Net;
 using Janus.Mask;
 using Janus.Mask.WebApi.InstanceManagement.Providers;
+using Janus.Mask.WebApi;
 
 namespace JanusGenericMask.InstanceManagement.Web;
 internal class WebApiInstance
@@ -26,7 +27,7 @@ internal class WebApiInstance
     private Task? _runningApplication;
     private readonly WebApiOptions _webApiOptions;
     private readonly MaskCommandManager _commandManager;
-    private readonly MaskQueryManager _queryManager;
+    private readonly WebApiMaskQueryManager _queryManager;
     private readonly WebApiQueryTranslator _queryTranslator;
     private readonly WebApiCommandTranslator _commandTranslator;
     private IHostApplicationLifetime? _applicationLifetime;
@@ -35,7 +36,7 @@ internal class WebApiInstance
     private readonly Janus.Logging.ILogger? _logger;
     private Option<DataSource> _dataSourceSchema;
 
-    public WebApiInstance(WebApiOptions webApiOptions, MaskCommandManager commandManager, MaskQueryManager queryManager, WebApiQueryTranslator queryTranslator, WebApiCommandTranslator commandTranslator, Janus.Logging.ILogger? logger = null)
+    public WebApiInstance(WebApiOptions webApiOptions, MaskCommandManager commandManager, WebApiMaskQueryManager queryManager, WebApiQueryTranslator queryTranslator, WebApiCommandTranslator commandTranslator, Janus.Logging.ILogger? logger = null)
     {
         _webApiOptions = webApiOptions;
         _commandManager = commandManager;

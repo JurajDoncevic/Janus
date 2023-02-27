@@ -98,7 +98,7 @@ maskConfiguration.NetworkAdapterType switch
 builder.Services.AddSingleton<WebApiQueryTranslator>();
 builder.Services.AddSingleton<WebApiCommandTranslator>();
 
-builder.Services.AddSingleton<MaskQueryManager>();
+builder.Services.AddSingleton<WebApiMaskQueryManager>();
 builder.Services.AddSingleton<MaskCommandManager>();
 builder.Services.AddSingleton<MaskSchemaManager>();
 
@@ -137,6 +137,6 @@ app.MapControllerRoute(
 var runTask = app.RunAsync();
 
 // preload mediator manager, so the web interface doesn't need to be accessed for the app to work
-app.Services.GetService<MaskManager>();
+app.Services.GetService<WebApiMaskManager>();
 
 await runTask;

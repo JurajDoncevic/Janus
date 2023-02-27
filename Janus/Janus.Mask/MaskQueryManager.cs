@@ -6,6 +6,7 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
+using Janus.Mask.LocalDataModel;
 using Janus.Mask.LocalQuerying;
 using Janus.Mask.Translation;
 
@@ -32,7 +33,7 @@ public abstract class MaskQueryManager<TLocalQuery, TStartingWith, TSelection, T
         _logger = logger?.ResolveLogger<MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection>>();
     }
 
-    public abstract Task<Result<TResultModel>> RunQuery<TResultModel>(TLocalQuery query);
+    public abstract Task<Result<LocalData<TDataItem>>> RunQuery<TDataItem>(TLocalQuery query);
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => (await Results.AsResult<TabularData>(async () =>

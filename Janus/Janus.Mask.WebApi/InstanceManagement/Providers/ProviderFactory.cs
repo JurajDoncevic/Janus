@@ -6,11 +6,11 @@ namespace Janus.Mask.WebApi.InstanceManagement.Providers;
 public class ProviderFactory
 {
     private readonly MaskCommandManager _commandManager;
-    private readonly MaskQueryManager _queryManager;
+    private readonly WebApiMaskQueryManager _queryManager;
     private readonly WebApiQueryTranslator _queryTranslator;
     private readonly WebApiCommandTranslator _commandTranslator;
 
-    public ProviderFactory(MaskCommandManager commandManager, MaskQueryManager queryManager, WebApiQueryTranslator queryTranslator, WebApiCommandTranslator commandTranslator)
+    public ProviderFactory(MaskCommandManager commandManager, WebApiMaskQueryManager queryManager, WebApiQueryTranslator queryTranslator, WebApiCommandTranslator commandTranslator)
     {
         _commandManager = commandManager;
         _queryManager = queryManager;
