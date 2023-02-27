@@ -1,23 +1,18 @@
 ﻿using FunctionalExtensions.Base;
 using FunctionalExtensions.Base.Resulting;
-using Janus.Commons.DataModels;
-using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
-using Janus.Components.Translation;
 using Janus.Logging;
 using Janus.Mask.Persistence;
-using Janus.Mask.WebApi.Lenses;
 using Janus.Mask.WebApi.LocalCommanding;
+using Janus.Mask.WebApi.LocalDataModel;
 using Janus.Mask.WebApi.LocalQuerying;
 using Janus.Mask.WebApi.Translation;
 using JanusGenericMask.InstanceManagement.Web;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Runtime.CompilerServices;
 
 namespace Janus.Mask.WebApi;
 public class WebApiMaskManager 
-    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit>
+    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object>
 {
     private readonly WebApiInstance _webApiInstance;
     private readonly WebApiQueryTranslator _queryTranslator;
@@ -25,7 +20,7 @@ public class WebApiMaskManager
 
     public WebApiMaskManager(MaskCommunicationNode communicationNode,
                              WebApiMaskQueryManager queryManager,
-                             MaskCommandManager commandManager,
+                             WebApiMaskCommandManager commandManager,
                              MaskSchemaManager schemaManager,
                              MaskPersistenceProvider persistenceProvider,
                              WebApiMaskOptions maskOptions,
@@ -42,17 +37,25 @@ public class WebApiMaskManager
     {
         _queryTranslator = queryTranslator;
         _commandTranslator = commandTranslator;
-        _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, commandManager, queryManager, queryTranslator, commandTranslator, logger);
+        _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, commandManager, queryManager, logger);
     }
 
     public bool IsInstanceRunning => _webApiInstance.IsRunning();
 
+    /// <summary>
+    /// Starts the Web API instance
+    /// </summary>
+    /// <returns></returns>
     public Result StartWebApi()
         => Results.AsResult(() =>
         {
             return _webApiInstance.StartApplication(GetCurrentSchema());
         });
 
+    /// <summary>
+    /// Stops the Web API instance
+    /// </summary>
+    /// <returns></returns>
     public Result StopWebApi()
         => Results.AsResult(() =>
         {
@@ -61,50 +64,61 @@ public class WebApiMaskManager
 
     #region WEB API QUERYING AND COMMANDING
 
-    public async Task<Result<IEnumerable<TModel>>> RunQuery<TModel>(WebApiQuery query)
+    /// <summary>
+    /// Runs a query on the current Web API schema
+    /// </summary>
+    /// <typeparam name="TModel"></typeparam>
+    /// <param name="query">Web API query</param>
+    /// <returns>Web API DTO data</returns>
+    public async Task<Result<WebApiDtoData<TModel>>> RunQuery<TModel>(WebApiQuery query)
         => await Results.AsResult(() =>
         {
-
-            var lens = new TabularDataObjectLens<TModel>(query.StartingWith.ToString() + ".");
-
             var queryResult =
-                Task.FromResult(_queryTranslator.Translate(query)) // this should be pushed into the QueryManager
-                .Bind(query => _queryManager.RunQuery(query))
-                .Map(data => lens.Get(data));
+                _queryManager.RunQuery<TModel>(query)
+                .Map(data => (WebApiDtoData<TModel>)data);
 
             return queryResult;
         });
 
+    /// <summary>
+    /// Runs a delete command on the current Web API schema
+    /// </summary>
+    /// <param name="command">Web API delete command</param>
+    /// <returns>Operation outcome</returns>
     public async Task<Result> RunCommand(WebApiDelete command)
         => await Results.AsResult(() =>
         {
             var result =
-                Task.FromResult(_commandTranslator
-                    .TranslateDelete(command)) // this should be pushed into the CommandManager
-                    .Bind(translatedCommand => _commandManager.RunCommand(translatedCommand));
+                _commandManager.RunCommand(command);
 
             return result;
         });
 
+    /// <summary>
+    /// Runs an insert command on the current Web API schema
+    /// </summary>
+    /// <param name="command">Web API insert command</param>
+    /// <returns>Operation outcome</returns>
     public async Task<Result> RunCommand(WebApiInsert command)
         => await Results.AsResult(() =>
         {
             var result =
-                Task.FromResult(_commandTranslator
-                    .TranslateInsert(command)) // this should be pushed into the CommandManager
-                    .Bind(translatedCommand => _commandManager.RunCommand(translatedCommand));
+                _commandManager.RunCommand(command);
 
             return result;
         });
 
+    /// <summary>
+    /// Runs an update command on the current Web API schema
+    /// </summary>
+    /// <param name="command">Web API update command</param>
+    /// <returns>Operation outcome</returns>
     public async Task<Result> RunCommand(WebApiUpdate command)
         => await Results.AsResult(() =>
         {
             var result =
-                Task.FromResult(_commandTranslator
-                    .TranslateUpdate(command)) // this should be pushed into the CommandManager
-                    .Bind(translatedCommand => _commandManager.RunCommand(translatedCommand));
-        
+                _commandManager.RunCommand(command);
+
             return result;
         });
     #endregion

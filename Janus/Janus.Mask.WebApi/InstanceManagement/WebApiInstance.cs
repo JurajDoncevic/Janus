@@ -15,8 +15,6 @@ using Janus.Mask.WebApi.InstanceManagement;
 using FunctionalExtensions.Base;
 using Janus.Mask.WebApi.Translation;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
-using System.Net;
-using Janus.Mask;
 using Janus.Mask.WebApi.InstanceManagement.Providers;
 using Janus.Mask.WebApi;
 
@@ -26,23 +24,19 @@ internal class WebApiInstance
     private WebApplication? _webApp;
     private Task? _runningApplication;
     private readonly WebApiOptions _webApiOptions;
-    private readonly MaskCommandManager _commandManager;
+    private readonly WebApiMaskCommandManager _commandManager;
     private readonly WebApiMaskQueryManager _queryManager;
-    private readonly WebApiQueryTranslator _queryTranslator;
-    private readonly WebApiCommandTranslator _commandTranslator;
     private IHostApplicationLifetime? _applicationLifetime;
     private TypeFactory? _typeFactory;
     private readonly Janus.Logging.ILogger<WebApiInstance>? _localLogger;
     private readonly Janus.Logging.ILogger? _logger;
     private Option<DataSource> _dataSourceSchema;
 
-    public WebApiInstance(WebApiOptions webApiOptions, MaskCommandManager commandManager, WebApiMaskQueryManager queryManager, WebApiQueryTranslator queryTranslator, WebApiCommandTranslator commandTranslator, Janus.Logging.ILogger? logger = null)
+    public WebApiInstance(WebApiOptions webApiOptions, WebApiMaskCommandManager commandManager, WebApiMaskQueryManager queryManager, Janus.Logging.ILogger? logger = null)
     {
         _webApiOptions = webApiOptions;
         _commandManager = commandManager;
         _queryManager = queryManager;
-        _queryTranslator = queryTranslator;
-        _commandTranslator = commandTranslator;
         _dataSourceSchema = Option<DataSource>.None;
         _localLogger = logger?.ResolveLogger<WebApiInstance>();
         _logger = logger;
@@ -95,7 +89,7 @@ internal class WebApiInstance
                 c.DocumentFilter<BaseDtoDocumentFilter>();
             });
 
-            builder.Services.AddSingleton(_ => new ProviderFactory(_commandManager, _queryManager, _queryTranslator, _commandTranslator));
+            builder.Services.AddSingleton(_ => new ProviderFactory(_commandManager, _queryManager));
 
             var app = builder.Build();
 

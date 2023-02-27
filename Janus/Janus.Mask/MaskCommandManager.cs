@@ -6,20 +6,36 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
+using Janus.Mask.LocalCommanding;
+using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public sealed class MaskCommandManager : IDelegatingCommandManager
+public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation> 
+    : IDelegatingCommandManager
+    where TDeleteCommand : LocalDelete<TSelection>
+    where TInsertCommand : LocalInsert<TInstantiation>
+    where TUpdateCommand : LocalUpdate<TSelection, TMutation>
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly MaskSchemaManager _schemaManager;
-    private readonly ILogger<MaskCommandManager>? _logger;
+    private readonly ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
+    private readonly ILogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation>>? _logger;
 
-    public MaskCommandManager(MaskCommunicationNode communicationNode, MaskSchemaManager schemaManager, ILogger? logger = null)
+    public MaskCommandManager(
+        MaskCommunicationNode communicationNode,
+        MaskSchemaManager schemaManager,
+        ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
+        ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _schemaManager = schemaManager;
-        _logger = logger?.ResolveLogger<MaskCommandManager>();
+        _commandTranslator = commandTranslator;
+        _logger = logger?.ResolveLogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation>>();
     }
+
+    public abstract Task<Result> RunCommand(TDeleteCommand command);
+    public abstract Task<Result> RunCommand(TInsertCommand command);
+    public abstract Task<Result> RunCommand(TUpdateCommand command);
 
     public async Task<Result> RunCommand(BaseCommand command)
         => (await Results.AsResult(async () =>

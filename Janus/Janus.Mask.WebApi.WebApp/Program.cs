@@ -99,7 +99,7 @@ builder.Services.AddSingleton<WebApiQueryTranslator>();
 builder.Services.AddSingleton<WebApiCommandTranslator>();
 
 builder.Services.AddSingleton<WebApiMaskQueryManager>();
-builder.Services.AddSingleton<MaskCommandManager>();
+builder.Services.AddSingleton<WebApiMaskCommandManager>();
 builder.Services.AddSingleton<MaskSchemaManager>();
 
 builder.Services.AddSingleton<ILiteDatabase, LiteDatabase>(services => new LiteDatabase(maskConfiguration.PersistenceConnectionString));

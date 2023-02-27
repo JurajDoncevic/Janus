@@ -5,23 +5,19 @@ using Janus.Mask.WebApi.Translation;
 namespace Janus.Mask.WebApi.InstanceManagement.Providers;
 public class ProviderFactory
 {
-    private readonly MaskCommandManager _commandManager;
+    private readonly WebApiMaskCommandManager _commandManager;
     private readonly WebApiMaskQueryManager _queryManager;
-    private readonly WebApiQueryTranslator _queryTranslator;
-    private readonly WebApiCommandTranslator _commandTranslator;
 
-    public ProviderFactory(MaskCommandManager commandManager, WebApiMaskQueryManager queryManager, WebApiQueryTranslator queryTranslator, WebApiCommandTranslator commandTranslator)
+    public ProviderFactory(WebApiMaskCommandManager commandManager, WebApiMaskQueryManager queryManager)
     {
         _commandManager = commandManager;
         _queryManager = queryManager;
-        _queryTranslator = queryTranslator;
-        _commandTranslator = commandTranslator;
     }
 
     public QueryProvider<TId, TModel> ResolveQueryProvider<TId, TModel>(TableauId targetTableauId, AttributeId identityAttributeId)
         where TModel : BaseDto
-        => new QueryProvider<TId, TModel>(targetTableauId, identityAttributeId, _queryManager, _queryTranslator);
+        => new QueryProvider<TId, TModel>(targetTableauId, identityAttributeId, _queryManager);
 
     public CommandProvider<TId> ResolveCommandProvider<TId>(TableauId targetTableauId, AttributeId identityAttributeId)
-        => new CommandProvider<TId>(targetTableauId, identityAttributeId, _commandManager, _commandTranslator);
+        => new CommandProvider<TId>(targetTableauId, identityAttributeId, _commandManager);
 }
