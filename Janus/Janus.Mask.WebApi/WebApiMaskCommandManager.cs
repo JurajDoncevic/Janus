@@ -5,7 +5,7 @@ using Janus.Mask.WebApi.LocalCommanding;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;
-public class WebApiMaskCommandManager : MaskCommandManager<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
+public sealed class WebApiMaskCommandManager : MaskCommandManager<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
 {
     private readonly WebApiCommandTranslator _commandTranslator;
     private readonly ILogger<WebApiMaskCommandManager>? _logger;

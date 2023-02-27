@@ -11,7 +11,7 @@ using Janus.Mask.WebApi.Translation;
 using JanusGenericMask.InstanceManagement.Web;
 
 namespace Janus.Mask.WebApi;
-public class WebApiMaskManager 
+public sealed class WebApiMaskManager 
     : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object>
 {
     private readonly WebApiInstance _webApiInstance;
