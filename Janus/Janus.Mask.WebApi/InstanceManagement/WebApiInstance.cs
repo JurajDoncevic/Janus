@@ -13,7 +13,6 @@ using FunctionalExtensions.Base.Resulting;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.InstanceManagement;
 using FunctionalExtensions.Base;
-using Janus.Mask.WebApi.Translation;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
 using Janus.Mask.WebApi.InstanceManagement.Providers;
 using Janus.Mask.WebApi;
@@ -26,17 +25,19 @@ internal class WebApiInstance
     private readonly WebApiOptions _webApiOptions;
     private readonly WebApiMaskCommandManager _commandManager;
     private readonly WebApiMaskQueryManager _queryManager;
+    private readonly WebApiMaskSchemaManager _schemaManager;
     private IHostApplicationLifetime? _applicationLifetime;
     private TypeFactory? _typeFactory;
     private readonly Janus.Logging.ILogger<WebApiInstance>? _localLogger;
     private readonly Janus.Logging.ILogger? _logger;
     private Option<DataSource> _dataSourceSchema;
 
-    public WebApiInstance(WebApiOptions webApiOptions, WebApiMaskCommandManager commandManager, WebApiMaskQueryManager queryManager, Janus.Logging.ILogger? logger = null)
+    public WebApiInstance(WebApiOptions webApiOptions, WebApiMaskCommandManager commandManager, WebApiMaskQueryManager queryManager, WebApiMaskSchemaManager schemaManager, Janus.Logging.ILogger? logger = null)
     {
         _webApiOptions = webApiOptions;
         _commandManager = commandManager;
         _queryManager = queryManager;
+        _schemaManager = schemaManager;
         _dataSourceSchema = Option<DataSource>.None;
         _localLogger = logger?.ResolveLogger<WebApiInstance>();
         _logger = logger;
@@ -71,7 +72,12 @@ internal class WebApiInstance
                 builder.Services.AddSingleton<Janus.Logging.ILogger>(provider => _logger);
             }
 
-            var controllerTypings = WebApiSchemaTranslation.GetControllerTypings(dataSource);
+            var controllerTypings = 
+                _schemaManager.CurrentMaskedSchema
+                              .Match(
+                                schema => schema, 
+                                () => throw new Exception("No masked schema could be generated.")
+                                );
             _typeFactory = new TypeFactory();
 
             var genericControllerProvider = new GenericControllerFeatureProvider(controllerTypings, _typeFactory);

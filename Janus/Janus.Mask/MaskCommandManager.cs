@@ -10,27 +10,27 @@ using Janus.Mask.LocalCommanding;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation> 
+public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema> 
     : IDelegatingCommandManager
     where TDeleteCommand : LocalDelete<TSelection>
     where TInsertCommand : LocalInsert<TInstantiation>
     where TUpdateCommand : LocalUpdate<TSelection, TMutation>
 {
     private readonly MaskCommunicationNode _communicationNode;
-    private readonly MaskSchemaManager _schemaManager;
+    private readonly MaskSchemaManager<TMaskSchema> _schemaManager;
     private readonly IMaskCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
-    private readonly ILogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation>>? _logger;
+    private readonly ILogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema>>? _logger;
 
     public MaskCommandManager(
         MaskCommunicationNode communicationNode,
-        MaskSchemaManager schemaManager,
+        MaskSchemaManager<TMaskSchema> schemaManager,
         IMaskCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
         ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _schemaManager = schemaManager;
         _commandTranslator = commandTranslator;
-        _logger = logger?.ResolveLogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation>>();
+        _logger = logger?.ResolveLogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema>>();
     }
 
     public abstract Task<Result> RunCommand(TDeleteCommand command);

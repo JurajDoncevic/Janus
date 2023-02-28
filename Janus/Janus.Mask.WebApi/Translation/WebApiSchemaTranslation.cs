@@ -1,19 +1,21 @@
 ﻿using FunctionalExtensions.Base;
 using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
+using Janus.Mask.Translation;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
 
 namespace Janus.Mask.WebApi.Translation;
-internal class WebApiSchemaTranslation
+
+public class WebApiSchemaTranslator : IMaskSchemaTranslator<IEnumerable<ControllerTyping>>
 {
-    internal static IEnumerable<ControllerTyping> GetControllerTypings(DataSource dataSourceSchema)
+    public IEnumerable<ControllerTyping> Translate(DataSource dataSource)
     {
         IEnumerable<ControllerTyping> controllerTypings = Enumerable.Empty<ControllerTyping>();
-        if (dataSourceSchema == null)
+        if (dataSource == null)
         {
             return controllerTypings;
         }
-        foreach (var schema in dataSourceSchema.Schemas)
+        foreach (var schema in dataSource.Schemas)
         {
             string controllerNamePrefix = $"{schema.Name}";
 

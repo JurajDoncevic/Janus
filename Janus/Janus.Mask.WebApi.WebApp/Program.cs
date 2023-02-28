@@ -100,7 +100,7 @@ builder.Services.AddSingleton<WebApiCommandTranslator>();
 
 builder.Services.AddSingleton<WebApiMaskQueryManager>();
 builder.Services.AddSingleton<WebApiMaskCommandManager>();
-builder.Services.AddSingleton<MaskSchemaManager>();
+builder.Services.AddSingleton<WebApiMaskSchemaManager>();
 
 builder.Services.AddSingleton<ILiteDatabase, LiteDatabase>(services => new LiteDatabase(maskConfiguration.PersistenceConnectionString));
 builder.Services.AddSingleton<JsonSerializationProvider>();

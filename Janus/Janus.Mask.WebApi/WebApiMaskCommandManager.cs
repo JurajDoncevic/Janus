@@ -1,15 +1,16 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
+using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.LocalCommanding;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;
-public sealed class WebApiMaskCommandManager : MaskCommandManager<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
+public sealed class WebApiMaskCommandManager : MaskCommandManager<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object, IEnumerable<ControllerTyping>>
 {
     private readonly WebApiCommandTranslator _commandTranslator;
     private readonly ILogger<WebApiMaskCommandManager>? _logger;
-    public WebApiMaskCommandManager(MaskCommunicationNode communicationNode, MaskSchemaManager schemaManager, WebApiCommandTranslator commandTranslator, ILogger? logger = null) : base(communicationNode, schemaManager, commandTranslator, logger)
+    public WebApiMaskCommandManager(MaskCommunicationNode communicationNode, WebApiMaskSchemaManager schemaManager, WebApiCommandTranslator commandTranslator, ILogger? logger = null) : base(communicationNode, schemaManager, commandTranslator, logger)
     {
         _commandTranslator= commandTranslator;
         _logger = logger?.ResolveLogger<WebApiMaskCommandManager>();

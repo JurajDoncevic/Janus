@@ -70,7 +70,7 @@ public abstract class WrapperManager
     }
 
     private void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
-        => _schemaManager.GetCurrentOutputSchema()
+        => _schemaManager.CurrentOutputSchema
             .Match(
                 dataSource => _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, dataSource, e.FromRemotePoint),
                 () => _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, null, e.FromRemotePoint, "No schema generated")
@@ -180,7 +180,7 @@ public abstract class WrapperManager
         });
 
     public Option<DataSource> GetCurrentSchema()
-        => _schemaManager.GetCurrentOutputSchema();
+        => _schemaManager.CurrentOutputSchema;
 
     public async Task<Result<DataSource>> GenerateSchema()
         => await _schemaManager.ReloadOutputSchema();
@@ -196,7 +196,7 @@ public abstract class WrapperManager
         => !_wrapperOptions.AllowsCommands
             ? Results.OnFailure("This wrapper does not allow running commands")
             : await _schemaManager
-                .GetCurrentOutputSchema()
+                .CurrentOutputSchema
                 .Match(
                     async dataSource => await Task.FromResult(command.IsValidForDataSource(dataSource))
                                                   .Bind(async validity => await _commandManager.RunCommand(command)),
@@ -205,7 +205,7 @@ public abstract class WrapperManager
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => await _schemaManager
-            .GetCurrentOutputSchema()
+            .CurrentOutputSchema
             .Match(
                 async dataSource => await Task.FromResult(query.IsValidForDataSource(dataSource))
                                               .Bind(async validity => await _queryManager.RunQuery(query)),

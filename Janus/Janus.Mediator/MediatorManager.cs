@@ -69,7 +69,7 @@ public sealed class MediatorManager : IComponentManager
     #region RECEIVED MESSAGE HANDLERS
     private async void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
     {
-        (await _schemaManager.GetCurrentOutputSchema()
+        (await _schemaManager.CurrentOutputSchema
             .Match(
                 async dataSource => await _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, dataSource, e.FromRemotePoint),
                 async () => await _communicationNode.SendSchemaResponse(e.ReceivedMessage.ExchangeId, null, e.FromRemotePoint, "No mediated schema generated")
@@ -314,7 +314,7 @@ public sealed class MediatorManager : IComponentManager
 
     #region SCHEMA MANAGEMENT AND MEDIATION
     public Option<DataSource> GetCurrentSchema()
-        => _schemaManager.GetCurrentOutputSchema();
+        => _schemaManager.CurrentOutputSchema;
 
     /// <summary>
     /// Remote points of currently loaded data sources

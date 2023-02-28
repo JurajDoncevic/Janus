@@ -4,6 +4,7 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.Persistence;
+using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.LocalCommanding;
 using Janus.Mask.WebApi.LocalDataModel;
 using Janus.Mask.WebApi.LocalQuerying;
@@ -12,7 +13,7 @@ using JanusGenericMask.InstanceManagement.Web;
 
 namespace Janus.Mask.WebApi;
 public sealed class WebApiMaskManager 
-    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object>
+    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object, IEnumerable<ControllerTyping>>
 {
     private readonly WebApiInstance _webApiInstance;
     private readonly WebApiQueryTranslator _queryTranslator;
@@ -21,7 +22,7 @@ public sealed class WebApiMaskManager
     public WebApiMaskManager(MaskCommunicationNode communicationNode,
                              WebApiMaskQueryManager queryManager,
                              WebApiMaskCommandManager commandManager,
-                             MaskSchemaManager schemaManager,
+                             WebApiMaskSchemaManager schemaManager,
                              MaskPersistenceProvider persistenceProvider,
                              WebApiMaskOptions maskOptions,
                              WebApiQueryTranslator queryTranslator,
@@ -37,7 +38,7 @@ public sealed class WebApiMaskManager
     {
         _queryTranslator = queryTranslator;
         _commandTranslator = commandTranslator;
-        _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, commandManager, queryManager, logger);
+        _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, commandManager, queryManager, schemaManager, logger);
     }
 
     public bool IsInstanceRunning => _webApiInstance.IsRunning();

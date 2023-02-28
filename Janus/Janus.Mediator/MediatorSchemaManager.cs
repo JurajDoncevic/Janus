@@ -145,7 +145,7 @@ public sealed class MediatorSchemaManager : IComponentSchemaManager, IDelegating
             return mediatedDataSourceResult;
         }));
 
-    public Option<DataSource> GetCurrentOutputSchema()
+    public Option<DataSource> CurrentOutputSchema
         => _currentMediatedSchema;
 
     public async Task<Result<DataSource>> ReloadOutputSchema()

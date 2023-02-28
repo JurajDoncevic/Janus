@@ -16,13 +16,15 @@ public abstract class WrapperSchemaManager : IComponentSchemaManager
 
     private readonly ILogger<WrapperSchemaManager>? _logger;
 
+    
+
     public WrapperSchemaManager(SchemaInferrer schemaInferrer, ILogger? logger = null)
     {
         _schemaInferrer = schemaInferrer;
         _logger = logger?.ResolveLogger<WrapperSchemaManager>();
     }
 
-    public Option<DataSource> GetCurrentOutputSchema()
+    public Option<DataSource> CurrentOutputSchema
         => _currentSchema;
 
     public async Task<Result<DataSource>> ReloadOutputSchema()

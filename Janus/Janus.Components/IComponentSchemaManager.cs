@@ -10,10 +10,11 @@ namespace Janus.Components;
 public interface IComponentSchemaManager
 {
     /// <summary>
-    /// Gets the current output schema
+    /// The current output schema
     /// </summary>
     /// <returns></returns>
-    public Option<DataSource> GetCurrentOutputSchema();
+    public Option<DataSource> CurrentOutputSchema { get; }
+
     /// <summary>
     /// Reloads the schema from the current data sources
     /// </summary>

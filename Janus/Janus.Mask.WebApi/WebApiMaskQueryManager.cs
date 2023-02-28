@@ -4,17 +4,18 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.LocalDataModel;
+using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.Lenses;
 using Janus.Mask.WebApi.LocalDataModel;
 using Janus.Mask.WebApi.LocalQuerying;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;
-public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, TableauId, string?, Unit, Unit>
+public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, TableauId, string?, Unit, Unit, IEnumerable<ControllerTyping>>
 {
     private readonly WebApiQueryTranslator _queryTranslator;
     private readonly ILogger<WebApiMaskQueryManager>? _logger;
-    public WebApiMaskQueryManager(MaskCommunicationNode communicationNode, MaskSchemaManager schemaManager, WebApiQueryTranslator queryTranslator, ILogger? logger = null) : base(communicationNode, schemaManager, queryTranslator, logger)
+    public WebApiMaskQueryManager(MaskCommunicationNode communicationNode, WebApiMaskSchemaManager schemaManager, WebApiQueryTranslator queryTranslator, ILogger? logger = null) : base(communicationNode, schemaManager, queryTranslator, logger)
     {
         _queryTranslator = queryTranslator;
         logger?.ResolveLogger<WebApiMaskQueryManager>();
