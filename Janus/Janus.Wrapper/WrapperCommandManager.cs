@@ -22,12 +22,12 @@ public abstract class WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpd
     where TInsertCommand : LocalInsert<TInstantiation>
     where TUpdateCommand : LocalUpdate<TSelection, TMutation>
 {
-    private readonly ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
+    private readonly IWrapperCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
     private readonly ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandExecutor;
     private readonly ILogger<WrapperCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>>? _logger;
 
     public WrapperCommandManager(
-        ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
+        IWrapperCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
         ICommandExecutor<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandExecutor,
         ILogger? logger = null )
     {

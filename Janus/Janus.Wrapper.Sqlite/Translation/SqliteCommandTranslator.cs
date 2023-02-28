@@ -10,7 +10,7 @@ using Janus.Wrapper.Translation;
 
 namespace Janus.Wrapper.Sqlite.Translation;
 public sealed class SqliteCommandTranslator
-    : ILocalCommandTranslator<SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string>
+    : IWrapperCommandTranslator<SqliteDelete, SqliteInsert, SqliteUpdate, string, string, string>
 {
     public Result<SqliteDelete> TranslateDelete(DeleteCommand delete)
         => TranslateSelection(delete.Selection)

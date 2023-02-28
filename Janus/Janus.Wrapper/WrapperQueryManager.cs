@@ -20,13 +20,13 @@ public abstract class WrapperQueryManager<TLocalQuery, TSelection, TJoining, TPr
     : IComponentQueryManager
     where TLocalQuery : LocalQuery<TSelection, TJoining, TProjection>
 {
-    private readonly ILocalQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> _queryTranslator;
-    private readonly ILocalDataTranslator<TLocalData> _dataTranslator;
+    private readonly IWrapperQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> _queryTranslator;
+    private readonly IWrapperDataTranslator<TLocalData> _dataTranslator;
     private readonly IQueryExecutor<TSelection, TJoining, TProjection, TLocalData, TLocalQuery> _queryExecutor;
     private readonly ILogger<WrapperQueryManager<TLocalQuery, TSelection, TJoining, TProjection, TLocalData>>? _logger;
     public WrapperQueryManager(
-        ILocalQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> queryTranslator,
-        ILocalDataTranslator<TLocalData> dataTranslator,
+        IWrapperQueryTranslator<TLocalQuery, TSelection, TJoining, TProjection> queryTranslator,
+        IWrapperDataTranslator<TLocalData> dataTranslator,
         IQueryExecutor<TSelection, TJoining, TProjection, TLocalData, TLocalQuery> queryExecutor,
         ILogger? logger = null)
     {
