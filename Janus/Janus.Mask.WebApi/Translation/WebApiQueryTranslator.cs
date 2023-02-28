@@ -16,7 +16,7 @@ public sealed class WebApiQueryTranslator : IMaskQueryTranslator<WebApiQuery, Ta
     public Result<Query> Translate(WebApiQuery query)
         => Results.AsResult(() =>
         {
-            var translatedQuery = 
+            var translatedQuery =
                 TranslateSelection(Option<string?>.Some(query.Selection?.TrimStart('?')), $"{query.StartingWith}.")
                 .Map(selectionExpression => QueryModelOpenBuilder.InitOpenQuery(query.StartingWith)
                                             .WithSelection(conf => conf.WithExpression(selectionExpression))

@@ -1,6 +1,5 @@
 ﻿using Janus.Commons.SchemaModels;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
-using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi.InstanceManagement.Providers;
 public class ProviderFactory

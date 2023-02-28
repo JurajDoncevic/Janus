@@ -1,7 +1,6 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
-using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.LocalCommanding;
 using Janus.Mask.WebApi.LocalSchemaModel;
 using Janus.Mask.WebApi.Translation;
@@ -13,7 +12,7 @@ public sealed class WebApiMaskCommandManager : MaskCommandManager<WebApiDelete, 
     private readonly ILogger<WebApiMaskCommandManager>? _logger;
     public WebApiMaskCommandManager(MaskCommunicationNode communicationNode, WebApiMaskSchemaManager schemaManager, WebApiCommandTranslator commandTranslator, ILogger? logger = null) : base(communicationNode, schemaManager, commandTranslator, logger)
     {
-        _commandTranslator= commandTranslator;
+        _commandTranslator = commandTranslator;
         _logger = logger?.ResolveLogger<WebApiMaskCommandManager>();
     }
 

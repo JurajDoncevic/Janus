@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Janus.Mask.WebApi.WebApp.ViewModels;
+﻿namespace Janus.Mask.WebApi.WebApp.ViewModels;
 
 public sealed class DataSourceViewModel
 {

@@ -96,7 +96,7 @@ public class RemotePointsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> PersistRemotePoint([FromForm]RemotePointViewModel viewModel)
+    public async Task<IActionResult> PersistRemotePoint([FromForm] RemotePointViewModel viewModel)
     {
 
         RemotePoint remotePoint = viewModel switch

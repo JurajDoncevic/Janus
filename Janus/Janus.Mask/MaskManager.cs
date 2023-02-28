@@ -16,7 +16,7 @@ using Janus.Mask.Persistence.Models;
 using Janus.QueryLanguage;
 
 namespace Janus.Mask;
-public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TDeleteCommand, TInsertCommand, TUpdateCommand, TMutation, TInstantiation, TMaskSchema> 
+public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TDeleteCommand, TInsertCommand, TUpdateCommand, TMutation, TInstantiation, TMaskSchema>
     : IComponentManager
     where TLocalQuery : LocalQuery<TStartingWith, TSelection, TJoining, TProjection>
     where TDeleteCommand : LocalDelete<TSelection>
@@ -61,10 +61,10 @@ public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProj
         await Task.WhenAll(regs);
     }
 
-    public Option<DataSource> GetCurrentSchema() 
+    public Option<DataSource> GetCurrentSchema()
         => _schemaManager.CurrentOutputSchema;
 
-    public IEnumerable<RemotePoint> GetRegisteredRemotePoints() 
+    public IEnumerable<RemotePoint> GetRegisteredRemotePoints()
         => _communicationNode.RemotePoints;
 
     public async Task<Result<RemotePoint>> RegisterRemotePoint(UndeterminedRemotePoint remotePoint)
@@ -90,10 +90,10 @@ public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProj
     public async Task<Result<RemotePoint>> SendHello(RemotePoint remotePoint)
         => await _communicationNode.SendHello(remotePoint);
 
-    public async Task<Result<RemotePoint>> SendHello(string address, int port) 
+    public async Task<Result<RemotePoint>> SendHello(string address, int port)
         => await _communicationNode.SendHello(new UndeterminedRemotePoint(address, port));
 
-    public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint) 
+    public async Task<Result> UnregisterRemotePoint(RemotePoint remotePoint)
         => await _communicationNode.SendBye(remotePoint);
 
     public async Task<Result<DataSource>> GetSchemaFrom(RemotePoint remotePoint)

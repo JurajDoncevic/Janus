@@ -1,11 +1,7 @@
-﻿using Janus.Commons.SchemaModels;
-using Janus.Mask.WebApi;
-using Janus.Mask.WebApi.WebApp.ViewModels;
+﻿using Janus.Mask.WebApi.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using System.Diagnostics;
-using System.Text.Json;
 using static Janus.Mask.WebApi.WebApp.Commons.Helpers;
 
 namespace Janus.Mask.WebApi.WebApp.Controllers;
@@ -107,7 +103,7 @@ public class QueryingController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> QueryRemotePoint([FromForm]string queryText, [FromForm]string nodeId)
+    public async Task<IActionResult> QueryRemotePoint([FromForm] string queryText, [FromForm] string nodeId)
     {
         var targetRemotePoint =
             _maskManager.GetRegisteredRemotePoints()
@@ -146,7 +142,7 @@ public class QueryingController : Controller
         var elapsedTime = stopwatch.Elapsed.Milliseconds;
         stopwatch.Stop();
 
-        
+
 
         var viewModel = new QueryRemotePointViewModel
         {
@@ -167,7 +163,7 @@ public class QueryingController : Controller
                             DataRows = r.RowData.Map(rd => rd.ColumnValues.ToDictionary(_ => _.Key, _ => _.Value?.ToString() ?? "NULL")).ToList()
                         }),
                 msg => Option<TabularDataViewModel>.None
-                ) 
+                )
         };
 
         return View(nameof(QueryRemotePoint), viewModel);

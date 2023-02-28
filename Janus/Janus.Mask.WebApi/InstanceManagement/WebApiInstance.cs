@@ -1,21 +1,21 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FunctionalExtensions.Base;
+using FunctionalExtensions.Base.Resulting;
+using Janus.Commons.SchemaModels;
+using Janus.Mask.WebApi;
+using Janus.Mask.WebApi.InstanceManagement;
+using Janus.Mask.WebApi.InstanceManagement.Providers;
+using Janus.Mask.WebApi.InstanceManagement.Templates;
+using Janus.Mask.WebApi.InstanceManagement.Typing;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.OpenApi.Any;
 using System.Reflection;
 using System.Text.Json;
-using Janus.Commons.SchemaModels;
-using FunctionalExtensions.Base.Resulting;
-using Janus.Mask.WebApi.InstanceManagement.Typing;
-using Janus.Mask.WebApi.InstanceManagement;
-using FunctionalExtensions.Base;
-using Janus.Mask.WebApi.InstanceManagement.Templates;
-using Janus.Mask.WebApi.InstanceManagement.Providers;
-using Janus.Mask.WebApi;
 
 namespace JanusGenericMask.InstanceManagement.Web;
 internal class WebApiInstance
@@ -72,10 +72,10 @@ internal class WebApiInstance
                 builder.Services.AddSingleton<Janus.Logging.ILogger>(provider => _logger);
             }
 
-            var webApiTyping = 
+            var webApiTyping =
                 _schemaManager.CurrentMaskedSchema
                               .Match(
-                                schema => schema, 
+                                schema => schema,
                                 () => throw new Exception("No masked schema could be generated.")
                                 );
             _typeFactory = new TypeFactory();

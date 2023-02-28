@@ -8,7 +8,7 @@ using Janus.Logging;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public abstract class MaskSchemaManager<TMaskSchema> 
+public abstract class MaskSchemaManager<TMaskSchema>
     : IComponentSchemaManager, IDelegatingSchemaManager
 {
     private readonly MaskCommunicationNode _communicationNode;

@@ -1,6 +1,6 @@
 ﻿using Janus.Commons.SchemaModels;
-using Janus.Mask.WebApi.InstanceManagement.Providers;
 using Janus.Logging;
+using Janus.Mask.WebApi.InstanceManagement.Providers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Janus.Mask.WebApi.InstanceManagement.Templates;

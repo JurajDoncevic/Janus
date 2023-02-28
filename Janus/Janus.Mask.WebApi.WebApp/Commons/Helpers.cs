@@ -1,5 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
-using Janus.Mask.WebApi.WebApp.ViewModels;
+﻿using Janus.Mask.WebApi.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Text;
 
@@ -8,13 +7,13 @@ namespace Janus.Mask.WebApi.WebApp.Commons;
 internal static class Helpers
 {
     internal static Option<OperationOutcomeViewModel> ToOperationOutcomeViewModel(this ITempDataDictionary tempData)
-        => tempData.ContainsKey("Constants.IsSuccess") && 
+        => tempData.ContainsKey("Constants.IsSuccess") &&
            tempData.ContainsKey("Constants.Message")
            ? Option<OperationOutcomeViewModel>.Some(new OperationOutcomeViewModel
-             {
-                 IsSuccess = (bool)(tempData["Constants.IsSuccess"] ?? false),
-                 Message = (string)(tempData["Constants.Message"] ?? string.Empty)
-             })
+           {
+               IsSuccess = (bool)(tempData["Constants.IsSuccess"] ?? false),
+               Message = (string)(tempData["Constants.Message"] ?? string.Empty)
+           })
            : Option<OperationOutcomeViewModel>.None;
 
     internal static string PrettyJsonString(string json)

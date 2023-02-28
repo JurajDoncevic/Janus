@@ -4,7 +4,6 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.LocalDataModel;
-using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.Lenses;
 using Janus.Mask.WebApi.LocalDataModel;
 using Janus.Mask.WebApi.LocalQuerying;

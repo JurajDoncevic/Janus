@@ -1,9 +1,6 @@
-﻿using FunctionalExtensions.Base.Resulting;
-using Janus.Mask.WebApi;
-using Janus.Mask.WebApi.WebApp.ViewModels;
+﻿using Janus.Mask.WebApi.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using static Janus.Mask.WebApi.WebApp.Commons.Helpers;
 
 namespace Janus.Mask.WebApi.WebApp.Controllers;

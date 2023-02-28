@@ -10,7 +10,7 @@ using Janus.Mask.LocalCommanding;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema> 
+public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema>
     : IDelegatingCommandManager
     where TDeleteCommand : LocalDelete<TSelection>
     where TInsertCommand : LocalInsert<TInstantiation>

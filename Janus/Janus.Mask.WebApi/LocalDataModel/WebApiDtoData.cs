@@ -1,5 +1,4 @@
-﻿using Janus.Commons.DataModels;
-using Janus.Mask.LocalDataModel;
+﻿using Janus.Mask.LocalDataModel;
 
 namespace Janus.Mask.WebApi.LocalDataModel;
 
@@ -7,7 +6,7 @@ namespace Janus.Mask.WebApi.LocalDataModel;
 /// Describes a local data for the web api mask - a collection of DTOs
 /// </summary>
 /// <typeparam name="TDto"></typeparam>
-public class WebApiDtoData<TDto> :  LocalData<TDto>
+public class WebApiDtoData<TDto> : LocalData<TDto>
 {
     private readonly IEnumerable<TDto> _data;
 

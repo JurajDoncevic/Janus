@@ -1,11 +1,11 @@
-﻿using Janus.Mask.WebApi.InstanceManagement.Templates;
-using Janus.Mask.WebApi.InstanceManagement.Typing;
+﻿using FunctionalExtensions.Base;
 using Janus.Logging;
+using Janus.Mask.WebApi.InstanceManagement.Providers;
+using Janus.Mask.WebApi.InstanceManagement.Templates;
+using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;
-using Janus.Mask.WebApi.InstanceManagement.Providers;
-using FunctionalExtensions.Base;
 
 namespace Janus.Mask.WebApi.InstanceManagement;
 public class GenericControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>

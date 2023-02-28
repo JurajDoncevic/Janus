@@ -1,9 +1,9 @@
-﻿using Janus.Mask.WebApi.WebApp.ViewModels;
+﻿using Janus.Mask.WebApi.WebApp.Commons;
+using Janus.Mask.WebApi.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
-using Results = FunctionalExtensions.Base.Resulting.Results;
 using static Janus.Mask.WebApi.WebApp.Commons.Helpers;
-using Janus.Mask.WebApi.WebApp.Commons;
+using Results = FunctionalExtensions.Base.Resulting.Results;
 
 namespace Janus.Mask.WebApi.WebApp.Controllers;
 public class SchemaController : Controller
