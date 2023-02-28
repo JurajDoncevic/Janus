@@ -11,7 +11,7 @@ using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Mask.WebApi.Translation;
 
-public sealed class WebApiQueryTranslator : ILocalQueryTranslator<WebApiQuery, TableauId, string?, Unit, Unit>
+public sealed class WebApiQueryTranslator : IMaskQueryTranslator<WebApiQuery, TableauId, string?, Unit, Unit>
 {
     public Result<Query> Translate(WebApiQuery query)
         => Results.AsResult(() =>

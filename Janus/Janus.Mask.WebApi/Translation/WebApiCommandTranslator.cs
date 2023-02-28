@@ -11,7 +11,7 @@ using static Janus.Commons.SelectionExpressions.Expressions;
 
 namespace Janus.Mask.WebApi.Translation;
 
-public sealed class WebApiCommandTranslator : ILocalCommandTranslator<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
+public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
 {
     private readonly TabularDataObjectLens<object> _lens;
 

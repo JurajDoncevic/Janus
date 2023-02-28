@@ -3,6 +3,6 @@ using Janus.Components.Translation;
 using Janus.Mask.LocalDataModel;
 
 namespace Janus.Wrapper.Translation;
-public interface ILocalDataTranslator<TLocalDataItem> : IDataTranslator<LocalData<TLocalDataItem>, TabularData>
+public interface IMaskDataTranslator<TLocalDataItem> : IDataTranslator<LocalData<TLocalDataItem>, TabularData>
 {
 }

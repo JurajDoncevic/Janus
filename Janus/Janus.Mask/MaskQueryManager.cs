@@ -17,14 +17,14 @@ public abstract class MaskQueryManager<TLocalQuery, TStartingWith, TSelection, T
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly MaskSchemaManager _schemaManager;
-    private readonly ILocalQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> _queryTranslator;
+    private readonly IMaskQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> _queryTranslator;
 
     private readonly ILogger<MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection>>? _logger;
 
     public MaskQueryManager(
         MaskCommunicationNode communicationNode,
         MaskSchemaManager schemaManager,
-        ILocalQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> queryTranslator,
+        IMaskQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> queryTranslator,
         ILogger? logger = null)
     {
         _communicationNode = communicationNode;

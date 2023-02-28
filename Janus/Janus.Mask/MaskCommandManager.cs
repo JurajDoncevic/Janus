@@ -18,13 +18,13 @@ public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdate
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly MaskSchemaManager _schemaManager;
-    private readonly ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
+    private readonly IMaskCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
     private readonly ILogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation>>? _logger;
 
     public MaskCommandManager(
         MaskCommunicationNode communicationNode,
         MaskSchemaManager schemaManager,
-        ILocalCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
+        IMaskCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
         ILogger? logger = null)
     {
         _communicationNode = communicationNode;
