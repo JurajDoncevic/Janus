@@ -11,6 +11,7 @@ using Janus.Components;
 using Janus.Logging;
 using Janus.Mask.LocalCommanding;
 using Janus.Mask.LocalQuerying;
+using Janus.Mask.LocalSchemaModel;
 using Janus.Mask.Persistence;
 using Janus.Mask.Persistence.Models;
 using Janus.QueryLanguage;
@@ -22,6 +23,7 @@ public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProj
     where TDeleteCommand : LocalDelete<TSelection>
     where TInsertCommand : LocalInsert<TInstantiation>
     where TUpdateCommand : LocalUpdate<TSelection, TMutation>
+    where TMaskSchema : LocalDataSource
 
 {
     protected readonly MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TMaskSchema> _queryManager;

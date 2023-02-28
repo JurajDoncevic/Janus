@@ -8,12 +8,14 @@ using Janus.Components;
 using Janus.Logging;
 using Janus.Mask.LocalDataModel;
 using Janus.Mask.LocalQuerying;
+using Janus.Mask.LocalSchemaModel;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
 public abstract class MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TMaskSchema>
     : IDelegatingQueryManager
     where TLocalQuery : LocalQuery<TStartingWith, TSelection, TJoining, TProjection>
+    where TMaskSchema : LocalDataSource
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly MaskSchemaManager<TMaskSchema> _schemaManager;

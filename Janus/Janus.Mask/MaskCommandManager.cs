@@ -7,6 +7,7 @@ using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
 using Janus.Mask.LocalCommanding;
+using Janus.Mask.LocalSchemaModel;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
@@ -15,6 +16,7 @@ public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdate
     where TDeleteCommand : LocalDelete<TSelection>
     where TInsertCommand : LocalInsert<TInstantiation>
     where TUpdateCommand : LocalUpdate<TSelection, TMutation>
+    where TMaskSchema : LocalDataSource
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly MaskSchemaManager<TMaskSchema> _schemaManager;
