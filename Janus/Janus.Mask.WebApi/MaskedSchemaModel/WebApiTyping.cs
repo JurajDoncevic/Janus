@@ -1,5 +1,4 @@
-﻿using Janus.Mask.WebApi.InstanceManagement.Typing;
-using Janus.Mask.MaskedSchemaModel;
+﻿using Janus.Mask.MaskedSchemaModel;
 
 namespace Janus.Mask.WebApi.MaskedSchemaModel;
 

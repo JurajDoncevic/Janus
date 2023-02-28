@@ -2,6 +2,7 @@
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.Reflection.Emit;

@@ -1,4 +1,4 @@
-﻿namespace Janus.Mask.WebApi.InstanceManagement.Typing;
+﻿namespace Janus.Mask.WebApi.MaskedSchemaModel;
 public class DtoTyping
 {
     private readonly string _name;

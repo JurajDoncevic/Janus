@@ -3,6 +3,7 @@ using Janus.Logging;
 using Janus.Mask.WebApi.InstanceManagement.Providers;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;

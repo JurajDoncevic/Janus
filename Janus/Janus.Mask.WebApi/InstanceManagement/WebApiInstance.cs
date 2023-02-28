@@ -6,6 +6,7 @@ using Janus.Mask.WebApi.InstanceManagement;
 using Janus.Mask.WebApi.InstanceManagement.Providers;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

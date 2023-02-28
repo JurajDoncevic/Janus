@@ -1,4 +1,5 @@
 ﻿using Janus.Mask.WebApi.InstanceManagement.Templates;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 
 namespace Janus.Mask.WebApi.InstanceManagement.Typing;
 public static class TypeFactoryExtensions

@@ -1,7 +1,7 @@
 ﻿using FunctionalExtensions.Base;
 using Janus.Commons.SchemaModels;
 
-namespace Janus.Mask.WebApi.InstanceManagement.Typing;
+namespace Janus.Mask.WebApi.MaskedSchemaModel;
 public class ControllerTyping
 {
     private readonly string _controllerName;
