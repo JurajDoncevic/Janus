@@ -8,12 +8,13 @@ using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.LocalCommanding;
 using Janus.Mask.WebApi.LocalDataModel;
 using Janus.Mask.WebApi.LocalQuerying;
+using Janus.Mask.WebApi.LocalSchemaModel;
 using Janus.Mask.WebApi.Translation;
 using JanusGenericMask.InstanceManagement.Web;
 
 namespace Janus.Mask.WebApi;
 public sealed class WebApiMaskManager 
-    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object, IEnumerable<ControllerTyping>>
+    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object, WebApiTyping>
 {
     private readonly WebApiInstance _webApiInstance;
     private readonly WebApiQueryTranslator _queryTranslator;

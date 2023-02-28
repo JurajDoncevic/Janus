@@ -3,10 +3,11 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
 using Janus.Mask.WebApi.LocalCommanding;
+using Janus.Mask.WebApi.LocalSchemaModel;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;
-public sealed class WebApiMaskCommandManager : MaskCommandManager<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object, IEnumerable<ControllerTyping>>
+public sealed class WebApiMaskCommandManager : MaskCommandManager<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object, WebApiTyping>
 {
     private readonly WebApiCommandTranslator _commandTranslator;
     private readonly ILogger<WebApiMaskCommandManager>? _logger;

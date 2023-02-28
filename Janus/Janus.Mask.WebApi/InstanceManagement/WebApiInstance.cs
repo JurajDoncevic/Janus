@@ -72,7 +72,7 @@ internal class WebApiInstance
                 builder.Services.AddSingleton<Janus.Logging.ILogger>(provider => _logger);
             }
 
-            var controllerTypings = 
+            var webApiTyping = 
                 _schemaManager.CurrentMaskedSchema
                               .Match(
                                 schema => schema, 
@@ -80,7 +80,7 @@ internal class WebApiInstance
                                 );
             _typeFactory = new TypeFactory();
 
-            var genericControllerProvider = new GenericControllerFeatureProvider(controllerTypings, _typeFactory);
+            var genericControllerProvider = new GenericControllerFeatureProvider(webApiTyping.ControllerTypings, _typeFactory);
             // Add services to the container.
             builder.Services.AddControllers()
                             .ConfigureApplicationPartManager(apm => apm.FeatureProviders.Add(genericControllerProvider));

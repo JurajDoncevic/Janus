@@ -3,17 +3,18 @@ using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
 using Janus.Mask.Translation;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
+using Janus.Mask.WebApi.LocalSchemaModel;
 
 namespace Janus.Mask.WebApi.Translation;
 
-public class WebApiSchemaTranslator : IMaskSchemaTranslator<IEnumerable<ControllerTyping>>
+public class WebApiSchemaTranslator : IMaskSchemaTranslator<WebApiTyping>
 {
-    public IEnumerable<ControllerTyping> Translate(DataSource dataSource)
+    public WebApiTyping Translate(DataSource dataSource)
     {
         IEnumerable<ControllerTyping> controllerTypings = Enumerable.Empty<ControllerTyping>();
         if (dataSource == null)
         {
-            return controllerTypings;
+            return new WebApiTyping(controllerTypings);
         }
         foreach (var schema in dataSource.Schemas)
         {
@@ -78,6 +79,6 @@ public class WebApiSchemaTranslator : IMaskSchemaTranslator<IEnumerable<Controll
             }
         }
 
-        return controllerTypings;
+        return new WebApiTyping(controllerTypings);
     }
 }
