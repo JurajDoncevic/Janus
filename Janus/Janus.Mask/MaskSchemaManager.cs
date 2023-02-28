@@ -5,34 +5,34 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
-using Janus.Mask.LocalSchemaModel;
+using Janus.Mask.MaskedSchemaModel;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public abstract class MaskSchemaManager<TMaskSchema>
+public abstract class MaskSchemaManager<TMaskedSchema>
     : IComponentSchemaManager, IDelegatingSchemaManager
-    where TMaskSchema : LocalDataSource
+    where TMaskedSchema : MaskedDataSource
 {
     private readonly MaskCommunicationNode _communicationNode;
-    private readonly IMaskSchemaTranslator<TMaskSchema> _schemaTranslator;
-    private readonly ILogger<MaskSchemaManager<TMaskSchema>>? _logger;
+    private readonly IMaskSchemaTranslator<TMaskedSchema> _schemaTranslator;
+    private readonly ILogger<MaskSchemaManager<TMaskedSchema>>? _logger;
     private Option<DataSource> _currentSchema = Option<DataSource>.None;
     private Option<RemotePoint> _currentSchemaRemotePoint;
 
     public Option<RemotePoint> CurrentSchemaRemotePoint => _currentSchemaRemotePoint;
 
-    public MaskSchemaManager(MaskCommunicationNode communicationNode, IMaskSchemaTranslator<TMaskSchema> schemaTranslator, ILogger? logger = null)
+    public MaskSchemaManager(MaskCommunicationNode communicationNode, IMaskSchemaTranslator<TMaskedSchema> schemaTranslator, ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _schemaTranslator = schemaTranslator;
-        _logger = logger?.ResolveLogger<MaskSchemaManager<TMaskSchema>>();
+        _logger = logger?.ResolveLogger<MaskSchemaManager<TMaskedSchema>>();
     }
 
     /// <summary>
     /// Returns the current masked schema (masked output)
     /// </summary>
     /// <returns>Masked schema</returns>
-    public Option<TMaskSchema> CurrentMaskedSchema
+    public Option<TMaskedSchema> CurrentMaskedSchema
         => _currentSchema.Map(_schemaTranslator.Translate);
 
     public Option<DataSource> CurrentOutputSchema

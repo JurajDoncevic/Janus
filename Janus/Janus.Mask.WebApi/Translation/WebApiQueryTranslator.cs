@@ -4,7 +4,7 @@ using Janus.Commons.QueryModels;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SelectionExpressions;
 using Janus.Mask.Translation;
-using Janus.Mask.WebApi.LocalQuerying;
+using Janus.Mask.WebApi.MaskedQueryModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using static Janus.Commons.SelectionExpressions.Expressions;

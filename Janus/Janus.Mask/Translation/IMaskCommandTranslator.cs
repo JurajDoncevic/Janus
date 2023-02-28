@@ -1,15 +1,15 @@
 ﻿using Janus.Commons.CommandModels;
 using Janus.Commons.SelectionExpressions;
 using Janus.Components.Translation;
-using Janus.Mask.LocalCommanding;
+using Janus.Mask.MaskedCommandModel;
 
 namespace Janus.Mask.Translation;
-public interface IMaskCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation>
-    : ICommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation,
+public interface IMaskCommandTranslator<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedMutation, TMaskedInstantiation>
+    : ICommandTranslator<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedMutation, TMaskedInstantiation,
                          DeleteCommand, InsertCommand, UpdateCommand, SelectionExpression, Mutation, Instantiation>
-    where TDeleteCommand : LocalDelete<TSelection>
-    where TInsertCommand : LocalInsert<TInstantiation>
-    where TUpdateCommand : LocalUpdate<TSelection, TMutation>
+    where TMaskedDeleteCommand : MaskedDelete<TMaskedSelection>
+    where TMaskedInsertCommand : MaskedInsert<TMaskedInstantiation>
+    where TMaskedUpdateCommand : MaskedUpdate<TMaskedSelection, TMaskedMutation>
 {
 
 }

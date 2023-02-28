@@ -1,6 +1,6 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
-using Janus.Mask.WebApi.LocalCommanding;
+using Janus.Mask.WebApi.MaskedCommandModel;
 
 namespace Janus.Mask.WebApi.InstanceManagement.Providers;
 public class CommandProvider<TId>

@@ -6,38 +6,38 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
-using Janus.Mask.LocalCommanding;
-using Janus.Mask.LocalSchemaModel;
+using Janus.Mask.MaskedCommandModel;
+using Janus.Mask.MaskedSchemaModel;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public abstract class MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema>
+public abstract class MaskCommandManager<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedInstantiation, TMaskedMutation, TMaskedSchema>
     : IDelegatingCommandManager
-    where TDeleteCommand : LocalDelete<TSelection>
-    where TInsertCommand : LocalInsert<TInstantiation>
-    where TUpdateCommand : LocalUpdate<TSelection, TMutation>
-    where TMaskSchema : LocalDataSource
+    where TMaskedDeleteCommand : MaskedDelete<TMaskedSelection>
+    where TMaskedInsertCommand : MaskedInsert<TMaskedInstantiation>
+    where TMaskedUpdateCommand : MaskedUpdate<TMaskedSelection, TMaskedMutation>
+    where TMaskedSchema : MaskedDataSource
 {
     private readonly MaskCommunicationNode _communicationNode;
-    private readonly MaskSchemaManager<TMaskSchema> _schemaManager;
-    private readonly IMaskCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> _commandTranslator;
-    private readonly ILogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema>>? _logger;
+    private readonly MaskSchemaManager<TMaskedSchema> _schemaManager;
+    private readonly IMaskCommandTranslator<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedMutation, TMaskedInstantiation> _commandTranslator;
+    private readonly ILogger<MaskCommandManager<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedInstantiation, TMaskedMutation, TMaskedSchema>>? _logger;
 
     public MaskCommandManager(
         MaskCommunicationNode communicationNode,
-        MaskSchemaManager<TMaskSchema> schemaManager,
-        IMaskCommandTranslator<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TMutation, TInstantiation> commandTranslator,
+        MaskSchemaManager<TMaskedSchema> schemaManager,
+        IMaskCommandTranslator<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedMutation, TMaskedInstantiation> commandTranslator,
         ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _schemaManager = schemaManager;
         _commandTranslator = commandTranslator;
-        _logger = logger?.ResolveLogger<MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema>>();
+        _logger = logger?.ResolveLogger<MaskCommandManager<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedInstantiation, TMaskedMutation, TMaskedSchema>>();
     }
 
-    public abstract Task<Result> RunCommand(TDeleteCommand command);
-    public abstract Task<Result> RunCommand(TInsertCommand command);
-    public abstract Task<Result> RunCommand(TUpdateCommand command);
+    public abstract Task<Result> RunCommand(TMaskedDeleteCommand command);
+    public abstract Task<Result> RunCommand(TMaskedInsertCommand command);
+    public abstract Task<Result> RunCommand(TMaskedUpdateCommand command);
 
     public async Task<Result> RunCommand(BaseCommand command)
         => (await Results.AsResult(async () =>

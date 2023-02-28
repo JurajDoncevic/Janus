@@ -1,10 +1,10 @@
-﻿namespace Janus.Mask.LocalDataModel;
+﻿namespace Janus.Mask.MaskedDataModel;
 
 /// <summary>
 /// Describes a mask's local data model
 /// </summary>
 /// <typeparam name="TItem">Data item type</typeparam>
-public abstract class LocalData<TItem>
+public abstract class MaskedData<TItem>
 {
     /// <summary>
     /// List of data items

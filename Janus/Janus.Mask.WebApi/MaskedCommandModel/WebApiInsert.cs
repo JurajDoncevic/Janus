@@ -1,8 +1,8 @@
 ﻿using Janus.Commons.SchemaModels;
-using Janus.Mask.LocalCommanding;
+using Janus.Mask.MaskedCommandModel;
 
-namespace Janus.Mask.WebApi.LocalCommanding;
-public sealed class WebApiInsert : LocalInsert<object>
+namespace Janus.Mask.WebApi.MaskedCommandModel;
+public sealed class WebApiInsert : MaskedInsert<object>
 {
     public WebApiInsert(object instantiation, TableauId target) : base(instantiation, target)
     {

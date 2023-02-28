@@ -1,12 +1,12 @@
-﻿namespace Janus.Mask.LocalQuerying;
-public abstract class LocalQuery<TStartingWith, TSelection, TJoining, TProjection>
+﻿namespace Janus.Mask.MaskedQueryModel;
+public abstract class MaskedQuery<TStartingWith, TSelection, TJoining, TProjection>
 {
     private readonly TSelection _selection;
     private readonly TJoining _joining;
     private readonly TProjection _projection;
     private readonly TStartingWith _startingWith;
 
-    protected LocalQuery(TStartingWith startingWith, TSelection selection, TJoining joining, TProjection projection)
+    protected MaskedQuery(TStartingWith startingWith, TSelection selection, TJoining joining, TProjection projection)
     {
         _startingWith = startingWith;
         _selection = selection;

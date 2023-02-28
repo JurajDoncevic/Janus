@@ -1,11 +1,11 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Mask.LocalCommanding;
-public abstract class LocalCommand
+namespace Janus.Mask.MaskedCommandModel;
+public abstract class MaskedCommand
 {
     private readonly TableauId _target;
 
-    protected LocalCommand(TableauId target)
+    protected MaskedCommand(TableauId target)
     {
         _target = target;
     }

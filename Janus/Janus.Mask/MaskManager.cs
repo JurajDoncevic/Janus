@@ -9,35 +9,35 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
-using Janus.Mask.LocalCommanding;
-using Janus.Mask.LocalQuerying;
-using Janus.Mask.LocalSchemaModel;
+using Janus.Mask.MaskedCommandModel;
+using Janus.Mask.MaskedQueryModel;
+using Janus.Mask.MaskedSchemaModel;
 using Janus.Mask.Persistence;
 using Janus.Mask.Persistence.Models;
 using Janus.QueryLanguage;
 
 namespace Janus.Mask;
-public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TDeleteCommand, TInsertCommand, TUpdateCommand, TMutation, TInstantiation, TMaskSchema>
+public class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedMutation, TMaskedInstantiation, TMaskedSchema>
     : IComponentManager
-    where TLocalQuery : LocalQuery<TStartingWith, TSelection, TJoining, TProjection>
-    where TDeleteCommand : LocalDelete<TSelection>
-    where TInsertCommand : LocalInsert<TInstantiation>
-    where TUpdateCommand : LocalUpdate<TSelection, TMutation>
-    where TMaskSchema : LocalDataSource
+    where TMaskedQuery : MaskedQuery<TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection>
+    where TMaskedDeleteCommand : MaskedDelete<TMaskedSelection>
+    where TMaskedInsertCommand : MaskedInsert<TMaskedInstantiation>
+    where TMaskedUpdateCommand : MaskedUpdate<TMaskedSelection, TMaskedMutation>
+    where TMaskedSchema : MaskedDataSource
 
 {
-    protected readonly MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TMaskSchema> _queryManager;
-    protected readonly MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema> _commandManager;
-    protected readonly MaskSchemaManager<TMaskSchema> _schemaManager;
+    protected readonly MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema> _queryManager;
+    protected readonly MaskCommandManager<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedInstantiation, TMaskedMutation, TMaskedSchema> _commandManager;
+    protected readonly MaskSchemaManager<TMaskedSchema> _schemaManager;
     protected readonly MaskCommunicationNode _communicationNode;
     protected readonly MaskPersistenceProvider _persistenceProvider;
-    private readonly ILogger<MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TDeleteCommand, TInsertCommand, TUpdateCommand, TMutation, TInstantiation, TMaskSchema>>? _logger;
+    private readonly ILogger<MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedMutation, TMaskedInstantiation, TMaskedSchema>>? _logger;
     protected readonly MaskOptions _maskOptions;
 
     public MaskManager(MaskCommunicationNode communicationNode,
-                       MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TMaskSchema> queryManager,
-                       MaskCommandManager<TDeleteCommand, TInsertCommand, TUpdateCommand, TSelection, TInstantiation, TMutation, TMaskSchema> commandManager,
-                       MaskSchemaManager<TMaskSchema> schemaManager,
+                       MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema> queryManager,
+                       MaskCommandManager<TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedSelection, TMaskedInstantiation, TMaskedMutation, TMaskedSchema> commandManager,
+                       MaskSchemaManager<TMaskedSchema> schemaManager,
                        MaskPersistenceProvider persistenceProvider,
                        MaskOptions maskOptions,
                        ILogger? logger = null)
@@ -48,7 +48,7 @@ public class MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProj
         _schemaManager = schemaManager;
         _persistenceProvider = persistenceProvider;
         _maskOptions = maskOptions;
-        _logger = logger?.ResolveLogger<MaskManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TDeleteCommand, TInsertCommand, TUpdateCommand, TMutation, TInstantiation, TMaskSchema>>();
+        _logger = logger?.ResolveLogger<MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedMutation, TMaskedInstantiation, TMaskedSchema>>();
 
 
         RegisterStartupRemotePoints();

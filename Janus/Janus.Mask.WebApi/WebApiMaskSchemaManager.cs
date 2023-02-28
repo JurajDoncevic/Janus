@@ -1,6 +1,6 @@
 ﻿using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
-using Janus.Mask.WebApi.LocalSchemaModel;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;

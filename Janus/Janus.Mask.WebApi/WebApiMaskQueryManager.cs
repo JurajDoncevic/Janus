@@ -3,11 +3,11 @@ using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
-using Janus.Mask.LocalDataModel;
+using Janus.Mask.MaskedDataModel;
 using Janus.Mask.WebApi.Lenses;
-using Janus.Mask.WebApi.LocalDataModel;
-using Janus.Mask.WebApi.LocalQuerying;
-using Janus.Mask.WebApi.LocalSchemaModel;
+using Janus.Mask.WebApi.MaskedDataModel;
+using Janus.Mask.WebApi.MaskedQueryModel;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;
@@ -21,7 +21,7 @@ public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, Table
         logger?.ResolveLogger<WebApiMaskQueryManager>();
     }
 
-    public override async Task<Result<LocalData<TDto>>> RunQuery<TDto>(WebApiQuery query)
+    public override async Task<Result<MaskedData<TDto>>> RunQuery<TDto>(WebApiQuery query)
         => await Results.AsResult(() =>
         {
             var lens = new TabularDataObjectLens<TDto>(query.StartingWith.ToString() + ".");
@@ -31,7 +31,7 @@ public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, Table
                 .Bind(query => RunQuery(query))
                 .Map(data => lens.Get(data))
                 .Map(data => new WebApiDtoData<TDto>(data))
-                .Map(data => (LocalData<TDto>)data); // box it
+                .Map(data => (MaskedData<TDto>)data); // box it
 
             return queryResult;
         });

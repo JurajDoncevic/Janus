@@ -4,7 +4,7 @@ using Janus.Commons.CommandModels;
 using Janus.Commons.SelectionExpressions;
 using Janus.Mask.Translation;
 using Janus.Mask.WebApi.Lenses;
-using Janus.Mask.WebApi.LocalCommanding;
+using Janus.Mask.WebApi.MaskedCommandModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using static Janus.Commons.SelectionExpressions.Expressions;

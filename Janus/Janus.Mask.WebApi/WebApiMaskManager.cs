@@ -4,10 +4,10 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.Persistence;
-using Janus.Mask.WebApi.LocalCommanding;
-using Janus.Mask.WebApi.LocalDataModel;
-using Janus.Mask.WebApi.LocalQuerying;
-using Janus.Mask.WebApi.LocalSchemaModel;
+using Janus.Mask.WebApi.MaskedCommandModel;
+using Janus.Mask.WebApi.MaskedDataModel;
+using Janus.Mask.WebApi.MaskedQueryModel;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 using Janus.Mask.WebApi.Translation;
 using JanusGenericMask.InstanceManagement.Web;
 

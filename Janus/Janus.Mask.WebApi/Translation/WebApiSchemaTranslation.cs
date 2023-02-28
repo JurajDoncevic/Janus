@@ -3,7 +3,7 @@ using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
 using Janus.Mask.Translation;
 using Janus.Mask.WebApi.InstanceManagement.Typing;
-using Janus.Mask.WebApi.LocalSchemaModel;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 
 namespace Janus.Mask.WebApi.Translation;
 

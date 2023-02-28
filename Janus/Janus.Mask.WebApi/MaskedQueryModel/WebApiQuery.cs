@@ -1,9 +1,9 @@
 ﻿using FunctionalExtensions.Base;
 using Janus.Commons.SchemaModels;
-using Janus.Mask.LocalQuerying;
+using Janus.Mask.MaskedQueryModel;
 
-namespace Janus.Mask.WebApi.LocalQuerying;
-public sealed class WebApiQuery : LocalQuery<TableauId, string?, Unit, Unit>
+namespace Janus.Mask.WebApi.MaskedQueryModel;
+public sealed class WebApiQuery : MaskedQuery<TableauId, string?, Unit, Unit>
 {
     public WebApiQuery(TableauId startingWith, string? selection = null) : base(startingWith, selection, UnitExtensions.Unit(), UnitExtensions.Unit())
     {

@@ -1,12 +1,12 @@
 ﻿using Janus.Mask.WebApi.InstanceManagement.Typing;
-using Janus.Mask.LocalSchemaModel;
+using Janus.Mask.MaskedSchemaModel;
 
-namespace Janus.Mask.WebApi.LocalSchemaModel;
+namespace Janus.Mask.WebApi.MaskedSchemaModel;
 
 /// <summary>
 /// Describes a Web API masked schema as a collection of controller typings
 /// </summary>
-public sealed class WebApiTyping : LocalDataSource
+public sealed class WebApiTyping : MaskedDataSource
 {
     private readonly IEnumerable<ControllerTyping> _controllerTypings;
 

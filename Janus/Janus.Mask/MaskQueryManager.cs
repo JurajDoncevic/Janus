@@ -6,36 +6,36 @@ using Janus.Communication.Nodes.Implementations;
 using Janus.Communication.Remotes;
 using Janus.Components;
 using Janus.Logging;
-using Janus.Mask.LocalDataModel;
-using Janus.Mask.LocalQuerying;
-using Janus.Mask.LocalSchemaModel;
+using Janus.Mask.MaskedDataModel;
+using Janus.Mask.MaskedQueryModel;
+using Janus.Mask.MaskedSchemaModel;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public abstract class MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TMaskSchema>
+public abstract class MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema>
     : IDelegatingQueryManager
-    where TLocalQuery : LocalQuery<TStartingWith, TSelection, TJoining, TProjection>
-    where TMaskSchema : LocalDataSource
+    where TMaskedQuery : MaskedQuery<TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection>
+    where TMaskedSchema : MaskedDataSource
 {
     private readonly MaskCommunicationNode _communicationNode;
-    private readonly MaskSchemaManager<TMaskSchema> _schemaManager;
-    private readonly IMaskQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> _queryTranslator;
+    private readonly MaskSchemaManager<TMaskedSchema> _schemaManager;
+    private readonly IMaskQueryTranslator<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection> _queryTranslator;
 
-    private readonly ILogger<MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TMaskSchema>>? _logger;
+    private readonly ILogger<MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema>>? _logger;
 
     public MaskQueryManager(
         MaskCommunicationNode communicationNode,
-        MaskSchemaManager<TMaskSchema> schemaManager,
-        IMaskQueryTranslator<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection> queryTranslator,
+        MaskSchemaManager<TMaskedSchema> schemaManager,
+        IMaskQueryTranslator<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection> queryTranslator,
         ILogger? logger = null)
     {
         _communicationNode = communicationNode;
         _schemaManager = schemaManager;
         _queryTranslator = queryTranslator;
-        _logger = logger?.ResolveLogger<MaskQueryManager<TLocalQuery, TStartingWith, TSelection, TJoining, TProjection, TMaskSchema>>();
+        _logger = logger?.ResolveLogger<MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema>>();
     }
 
-    public abstract Task<Result<LocalData<TDataItem>>> RunQuery<TDataItem>(TLocalQuery query);
+    public abstract Task<Result<MaskedData<TDataItem>>> RunQuery<TDataItem>(TMaskedQuery query);
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => (await Results.AsResult<TabularData>(async () =>

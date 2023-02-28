@@ -1,8 +1,8 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
-using Janus.Mask.WebApi.LocalCommanding;
-using Janus.Mask.WebApi.LocalSchemaModel;
+using Janus.Mask.WebApi.MaskedCommandModel;
+using Janus.Mask.WebApi.MaskedSchemaModel;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;

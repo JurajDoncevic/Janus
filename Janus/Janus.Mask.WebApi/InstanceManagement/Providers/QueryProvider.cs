@@ -2,7 +2,7 @@
 using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Mask.WebApi.InstanceManagement.Templates;
-using Janus.Mask.WebApi.LocalQuerying;
+using Janus.Mask.WebApi.MaskedQueryModel;
 
 namespace Janus.Mask.WebApi.InstanceManagement.Providers;
 public class QueryProvider<TId, TModel> where TModel : BaseDto

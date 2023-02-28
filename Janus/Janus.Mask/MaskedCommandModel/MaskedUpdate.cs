@@ -1,12 +1,12 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Mask.LocalCommanding;
-public abstract class LocalUpdate<TSelection, TMutation> : LocalCommand
+namespace Janus.Mask.MaskedCommandModel;
+public abstract class MaskedUpdate<TSelection, TMutation> : MaskedCommand
 {
     private readonly TSelection _selection;
     private readonly TMutation _mutation;
 
-    protected LocalUpdate(TableauId target, TSelection selection, TMutation mutation) : base(target)
+    protected MaskedUpdate(TableauId target, TSelection selection, TMutation mutation) : base(target)
     {
         _selection = selection;
         _mutation = mutation;

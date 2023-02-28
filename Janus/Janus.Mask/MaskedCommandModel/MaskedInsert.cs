@@ -1,11 +1,11 @@
 ﻿using Janus.Commons.SchemaModels;
 
-namespace Janus.Mask.LocalCommanding;
-public abstract class LocalInsert<TInstantiation> : LocalCommand
+namespace Janus.Mask.MaskedCommandModel;
+public abstract class MaskedInsert<TInstantiation> : MaskedCommand
 {
     private readonly TInstantiation _instantiation;
 
-    protected LocalInsert(TInstantiation instantiation, TableauId target) : base(target)
+    protected MaskedInsert(TInstantiation instantiation, TableauId target) : base(target)
     {
         _instantiation = instantiation;
     }
