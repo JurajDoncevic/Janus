@@ -97,6 +97,7 @@ maskConfiguration.NetworkAdapterType switch
 
 builder.Services.AddSingleton<WebApiQueryTranslator>();
 builder.Services.AddSingleton<WebApiCommandTranslator>();
+builder.Services.AddSingleton<WebApiSchemaTranslator>();
 
 builder.Services.AddSingleton<WebApiMaskQueryManager>();
 builder.Services.AddSingleton<WebApiMaskCommandManager>();
