@@ -5,6 +5,7 @@ using Janus.Commons.SelectionExpressions;
 using Janus.Mask.Translation;
 using Janus.Mask.WebApi.Lenses;
 using Janus.Mask.WebApi.MaskedCommandModel;
+using Janus.Mask.WebApi.MaskedDataModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using static Janus.Commons.SelectionExpressions.Expressions;
@@ -14,10 +15,12 @@ namespace Janus.Mask.WebApi.Translation;
 public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
 {
     private readonly TabularDataObjectLens<object> _lens;
+    private readonly WebApiDataTranslator<object> _dataTranslator;
 
     public WebApiCommandTranslator()
     {
         _lens = new TabularDataObjectLens<object>();
+        _dataTranslator = new WebApiDataTranslator<object>();
     }
 
     public Result<DeleteCommand> TranslateDelete(WebApiDelete delete)
@@ -36,10 +39,15 @@ public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelet
     public Result<InsertCommand> TranslateInsert(WebApiInsert insert)
         => Results.AsResult(() =>
         {
-            var data = new List<object> { insert.Instantiation };
+            var instantiationData = new WebApiDtoData<object>(new List<object> { insert.Instantiation });
+            var dataTranslation = _dataTranslator.Translate(instantiationData);
+            if (!dataTranslation)
+            {
+                return Results.OnFailure<InsertCommand>($"Failed instantiation data translation: {dataTranslation.Message}");
+            }
 
             var insertBuilder = InsertCommandOpenBuilder.InitOpenInsert(insert.Target)
-                                    .WithInstantiation(conf => conf.WithValues(_lens.Put(data)));
+                                    .WithInstantiation(conf => conf.WithValues(dataTranslation.Data));
 
             return insertBuilder.Build();
         });

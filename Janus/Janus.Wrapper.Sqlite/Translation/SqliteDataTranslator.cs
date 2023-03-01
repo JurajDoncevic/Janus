@@ -26,4 +26,13 @@ public sealed class SqliteDataTranslator : IWrapperDataTranslator<SqliteTabularD
 
             return tabularData;
         });
+
+    public Result<SqliteTabularData> Translate(TabularData destination)
+        => Results.AsResult(() =>
+        {
+            return new SqliteTabularData(
+                destination.ColumnDataTypes.ToDictionary(kv => kv.Key, kv => TypeMappings.MapToType(kv.Value)),
+                destination.RowData.Map(row => new Dictionary<string, object?>(row.ColumnValues)).ToList()
+                );
+        });
 }

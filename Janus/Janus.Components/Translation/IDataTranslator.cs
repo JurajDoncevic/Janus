@@ -13,4 +13,11 @@ public interface IDataTranslator<TSource, TDestination>
     /// <param name="source">Source type data</param>
     /// <returns>Destination type data</returns>
     Result<TDestination> Translate(TSource source);
+
+    /// <summary>
+    /// Translates data from the destination type to the source type
+    /// </summary>
+    /// <param name="source">Source type data</param>
+    /// <returns>Destination type data</returns>
+    Result<TSource> Translate(TDestination destination);
 }

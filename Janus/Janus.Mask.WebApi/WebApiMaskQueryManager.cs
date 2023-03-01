@@ -4,7 +4,6 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.MaskedDataModel;
-using Janus.Mask.WebApi.Lenses;
 using Janus.Mask.WebApi.MaskedDataModel;
 using Janus.Mask.WebApi.MaskedQueryModel;
 using Janus.Mask.WebApi.MaskedSchemaModel;
@@ -24,13 +23,12 @@ public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, Table
     public override async Task<Result<MaskedData<TDto>>> RunQuery<TDto>(WebApiQuery query)
         => await Results.AsResult(() =>
         {
-            var lens = new TabularDataObjectLens<TDto>(query.StartingWith.ToString() + ".");
+            var dataTranslator = new WebApiDataTranslator<TDto>(query.StartingWith.ToString() + ".");
 
             var queryResult =
                 Task.FromResult(_queryTranslator.Translate(query))
                 .Bind(query => RunQuery(query))
-                .Map(data => lens.Get(data))
-                .Map(data => new WebApiDtoData<TDto>(data))
+                .Bind(async data => dataTranslator.Translate(data))
                 .Map(data => (MaskedData<TDto>)data); // box it
 
             return queryResult;
