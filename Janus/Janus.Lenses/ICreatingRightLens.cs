@@ -7,5 +7,5 @@ public interface ICreatingRightLens<TRight>
 public interface ICreatingRightSpecsLens<TRight, TRightSpecs>
     where TRightSpecs : class
 {
-    public TRight CreateRight(TRightSpecs? rightSpecs = null);
+    public TRight CreateRight(TRightSpecs rightSpecs);
 }

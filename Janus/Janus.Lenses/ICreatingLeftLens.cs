@@ -7,5 +7,5 @@ public interface ICreatingLeftLens<TLeft>
 public interface ICreatingLeftSpecsLens<TLeft, TLeftSpecs>
     where TLeftSpecs : class
 {
-    public TLeft CreateLeft(TLeftSpecs? leftSpecs = null);
+    public TLeft CreateLeft(TLeftSpecs leftSpecs);
 }

@@ -5,10 +5,12 @@ using System.Reflection;
 namespace Janus.Lenses;
 public sealed class RowDataDtoLens<TDto>
     : Lens<RowData, TDto>,
-    ICreatingLeftSpecsLens<RowData, Dictionary<string, DataTypes>>
+    ICreatingLeftSpecsLens<RowData, Type>
 {
-    internal RowDataDtoLens() : base()
+    private readonly Option<string> _columnNamePrefix;
+    internal RowDataDtoLens(string? columnNamePrefix = null) : base()
     {
+        _columnNamePrefix = Option<string>.Some(columnNamePrefix);
     }
 
     public override Func<TDto, RowData?, RowData> Put =>
@@ -16,7 +18,10 @@ public sealed class RowDataDtoLens<TDto>
         {
             var dtoType = view?.GetType() ?? typeof(TDto);
 
-            string columnNamePrefix = FindLongestCommonPrefix((originalSource ?? CreateLeft()).ColumnValues.Keys);
+            string columnNamePrefix = 
+                _columnNamePrefix 
+                ? _columnNamePrefix.Value
+                : FindLongestCommonPrefix((originalSource ?? CreateLeft(dtoType)).ColumnValues.Keys);
 
             var columnInfos =
                 dtoType.GetRuntimeProperties()
@@ -27,7 +32,7 @@ public sealed class RowDataDtoLens<TDto>
             var columnDataTypes =
                 columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.fieldType));
 
-            var rowData = new Dictionary<string, object?>((originalSource ?? CreateLeft()).ColumnValues);
+            var rowData = new Dictionary<string, object?>((originalSource ?? CreateLeft(dtoType)).ColumnValues);
 
             foreach (var property in dtoType.GetRuntimeProperties())
             {
@@ -57,8 +62,10 @@ public sealed class RowDataDtoLens<TDto>
             return viewItem;
         };
 
-    public RowData CreateLeft(Dictionary<string, DataTypes>? columnDataTypes = null)
-        => RowData.FromDictionary((columnDataTypes ?? new Dictionary<string, DataTypes>()).ToDictionary(kv => kv.Key, kv => GetDefaultValue(kv.Value)));
+    public RowData CreateLeft(Type dtoType)
+        => RowData.FromDictionary(
+            dtoType.GetRuntimeProperties().ToDictionary(p => p.Name, p => GetDefaultValue(TypeMappings.MapToDataType(p.PropertyType)))
+            );
 
     private object? GetDefaultValue(DataTypes dataType)
         => dataType switch
