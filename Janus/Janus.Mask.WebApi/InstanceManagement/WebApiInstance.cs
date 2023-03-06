@@ -107,6 +107,7 @@ internal class WebApiInstance
             {
                 conf.SwaggerEndpoint($"/swagger/{dataSource.Version}/swagger.json", $"{dataSource.Version}");
                 conf.RoutePrefix = string.Empty;
+                conf.DisplayRequestDuration();
             });
 
             //app.UseHttpsRedirection();
