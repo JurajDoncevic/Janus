@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janus.Lenses;
+﻿namespace Janus.Lenses;
 public abstract class Lens<TSource, TView>
 {
 
@@ -12,7 +6,7 @@ public abstract class Lens<TSource, TView>
     {
     }
 
-    public abstract Func<TView, TSource, TSource> Put { get; }
+    public abstract Func<TView, TSource?, TSource> Put { get; }
 
     public abstract Func<TSource, TView> Get { get; }
 
@@ -29,7 +23,7 @@ public abstract class Lens<TSource, TView>
     /// <param name="updatedView"></param>
     /// <param name="source"></param>
     /// <returns></returns>
-    public TSource CallPut(TView updatedView, TSource source) => Put(updatedView, source);
+    public TSource CallPut(TView updatedView, TSource? source) => Put(updatedView, source);
 
     public override bool Equals(object? obj)
     {

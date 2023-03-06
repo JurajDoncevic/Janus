@@ -1,19 +1,22 @@
 ﻿using Janus.Commons.DataModels;
+using Janus.Commons.SchemaModels;
 using System.Reflection;
 
 namespace Janus.Lenses;
-public sealed class RowDataDtoLens<TDto> : Lens<RowData, TDto>
+public sealed class RowDataDtoLens<TDto>
+    : Lens<RowData, TDto>,
+    ICreatingLeftSpecsLens<RowData, Dictionary<string, DataTypes>>
 {
     internal RowDataDtoLens() : base()
     {
     }
 
-    public override Func<TDto, RowData, RowData> Put =>
+    public override Func<TDto, RowData?, RowData> Put =>
         (view, originalSource) =>
         {
             var dtoType = view?.GetType() ?? typeof(TDto);
 
-            string columnNamePrefix = FindLongestCommonPrefix(originalSource.ColumnValues.Keys);
+            string columnNamePrefix = FindLongestCommonPrefix((originalSource ?? CreateLeft()).ColumnValues.Keys);
 
             var columnInfos =
                 dtoType.GetRuntimeProperties()
@@ -24,7 +27,7 @@ public sealed class RowDataDtoLens<TDto> : Lens<RowData, TDto>
             var columnDataTypes =
                 columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.fieldType));
 
-            var rowData = new Dictionary<string, object?>(originalSource.ColumnValues);
+            var rowData = new Dictionary<string, object?>((originalSource ?? CreateLeft()).ColumnValues);
 
             foreach (var property in dtoType.GetRuntimeProperties())
             {
@@ -53,6 +56,23 @@ public sealed class RowDataDtoLens<TDto> : Lens<RowData, TDto>
 
             return viewItem;
         };
+
+    public RowData CreateLeft(Dictionary<string, DataTypes>? columnDataTypes = null)
+        => RowData.FromDictionary((columnDataTypes ?? new Dictionary<string, DataTypes>()).ToDictionary(kv => kv.Key, kv => GetDefaultValue(kv.Value)));
+
+    private object? GetDefaultValue(DataTypes dataType)
+        => dataType switch
+        {
+            DataTypes.INT => 0,
+            DataTypes.LONGINT => 0L,
+            DataTypes.DECIMAL => 0.0,
+            DataTypes.STRING => string.Empty,
+            DataTypes.DATETIME => DateTime.MinValue,
+            DataTypes.BOOLEAN => false,
+            DataTypes.BINARY => new byte[0] { },
+            _ => null
+        };
+
 
     private string FindLongestCommonPrefix(IEnumerable<string> strings)
     {
