@@ -41,6 +41,12 @@ public sealed class TabularDataBuilder : IPostInitTabularDataBuilder
         _rows = new List<RowData>();
     }
 
+    /// <summary>
+    /// Initializes the tabular data builder with given column data types
+    /// </summary>
+    /// <param name="columnDataTypes">Names and data types of columns</param>
+    /// <returns>Builder</returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static IPostInitTabularDataBuilder InitTabularData(Dictionary<string, DataTypes> columnDataTypes)
     {
         if (columnDataTypes is null)
