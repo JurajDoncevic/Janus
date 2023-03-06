@@ -33,7 +33,7 @@ public class GenericControllerFeatureProvider : IApplicationFeatureProvider<Cont
                 var controllerType =
                     (typeof(GenericController<,>))
                     .MakeGenericType(controllerTyping.IdPropertyType,
-                                     controllerTyping.GetDto.GenerateType(_typeFactory))
+                                     controllerTyping.GetDto.GenerateDtoType(_typeFactory))
                     .GetTypeInfo();
 
                 var ctrType =

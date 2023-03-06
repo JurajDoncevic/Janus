@@ -260,7 +260,7 @@ public class TypeFactory : IDisposable
     /// <returns>Type builder after generation</returns>
     private TypeBuilder GenerateUpdateControllerActionMethod(TypeBuilder targetTypeBuilder, DtoTyping putDto, int dtoIdx, FieldInfo commandProviderField, FieldInfo loggerField, MethodInfo defaultErrorCodeGetMethod)
     {
-        var putDtoType = putDto.GenerateType(this);
+        var putDtoType = putDto.GenerateDtoType(this);
         var putInterfaceType = typeof(IPutController<>).MakeGenericType(putDtoType);
         var interfaceUpdateMethod = putInterfaceType.GetMethod("Update");
         targetTypeBuilder.AddInterfaceImplementation(putInterfaceType);
@@ -366,7 +366,7 @@ public class TypeFactory : IDisposable
     /// <returns>Type builde after generation</returns>
     private TypeBuilder GenerateCreateControllerActionMethod(TypeBuilder targetTypeBuilder, DtoTyping postDto, FieldInfo commandProviderField, FieldInfo loggerField, MethodInfo defaultErrorCodeGetMethod)
     {
-        var postDtoType = postDto.GenerateType(this);
+        var postDtoType = postDto.GenerateDtoType(this);
         var postInterfaceType = typeof(IPostController<>).MakeGenericType(postDtoType);
         var interfaceCreateMethod = postInterfaceType.GetMethod("Create");
         targetTypeBuilder.AddInterfaceImplementation(postInterfaceType);
