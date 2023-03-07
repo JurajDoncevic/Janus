@@ -100,9 +100,9 @@ public sealed class InstantiationOpenBuilder
     /// </summary>
     /// <param name="tabularData">Data to be inserted. <b>The attributes are qualified by their names.</b> Don't use attribute ids</param>
     /// <returns></returns>
-    public InstantiationOpenBuilder WithValues(TabularData tabulardata)
+    public InstantiationOpenBuilder WithValues(TabularData tabularData)
     {
-        _tabularDataToInsert = tabulardata;
+        _tabularDataToInsert = tabularData;
         return this;
     }
 
