@@ -6,6 +6,8 @@ using Janus.Mask.Translation;
 using Janus.Mask.WebApi.Lenses;
 using Janus.Mask.WebApi.MaskedCommandModel;
 using Janus.Mask.WebApi.MaskedDataModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using static Janus.Commons.SelectionExpressions.Expressions;
@@ -14,12 +16,10 @@ namespace Janus.Mask.WebApi.Translation;
 
 public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
 {
-    private readonly TabularDataObjectLens<object> _lens;
     private readonly WebApiDataTranslator<object> _dataTranslator;
 
     public WebApiCommandTranslator()
     {
-        _lens = new TabularDataObjectLens<object>();
         _dataTranslator = new WebApiDataTranslator<object>();
     }
 
@@ -83,8 +83,14 @@ public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelet
     public Result<UpdateCommand> TranslateUpdate(WebApiUpdate update)
         => Results.AsResult(() =>
         {
-            var data = new List<object> { update.Mutation };
-            var mutationValues = _lens.Put(data).RowData.FirstOrDefault()?.ColumnValues.ToDictionary(_ => _.Key, _ => _.Value) ?? new Dictionary<string, object?>();
+            var mutationData = new WebApiDtoData<object>(new List<object> { update.Mutation });
+            var dataTranslation = _dataTranslator.Translate(mutationData);
+            if (!dataTranslation)
+            {
+                return Results.OnFailure<UpdateCommand>($"Failed instantiation data translation: {dataTranslation.Message}");
+            }
+
+            var mutationValues = new Dictionary<string, object?>(dataTranslation.Data.RowData.FirstOrDefault()?.ColumnValues ?? new Dictionary<string, object?>());
 
             var updateCommand =
                 TranslateSelection(Option<string>.Some(update.Selection?.Trim('?')), $"{update.Target}.")
