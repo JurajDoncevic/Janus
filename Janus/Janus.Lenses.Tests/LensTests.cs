@@ -1,5 +1,6 @@
 ﻿using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
+using Janus.Lenses.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

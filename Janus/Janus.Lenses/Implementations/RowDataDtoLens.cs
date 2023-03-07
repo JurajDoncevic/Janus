@@ -2,7 +2,7 @@
 using Janus.Commons.SchemaModels;
 using System.Reflection;
 
-namespace Janus.Lenses;
+namespace Janus.Lenses.Implementations;
 public sealed class RowDataDtoLens<TDto>
     : Lens<RowData, TDto>,
     ICreatingLeftSpecsLens<RowData, Type>
@@ -18,8 +18,8 @@ public sealed class RowDataDtoLens<TDto>
         {
             var dtoType = view?.GetType() ?? typeof(TDto);
 
-            string columnNamePrefix = 
-                _columnNamePrefix 
+            string columnNamePrefix =
+                _columnNamePrefix
                 ? _columnNamePrefix.Value
                 : FindLongestCommonPrefix((originalSource ?? CreateLeft(dtoType)).ColumnValues.Keys);
 

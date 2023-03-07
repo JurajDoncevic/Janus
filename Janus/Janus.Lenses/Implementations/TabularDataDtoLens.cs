@@ -2,8 +2,8 @@
 using Janus.Commons.SchemaModels;
 using System.Reflection;
 
-namespace Janus.Lenses;
-public class TabularDataDtoLens<TDto> 
+namespace Janus.Lenses.Implementations;
+public class TabularDataDtoLens<TDto>
     : Lens<TabularData, IEnumerable<TDto>>,
     ICreatingRightLens<IEnumerable<TDto>>,
     ICreatingLeftSpecsLens<TabularData, Type>
@@ -30,7 +30,7 @@ public class TabularDataDtoLens<TDto>
     public TabularData CreateLeft(Type dtoType)
     {
         var columnDataTypes = DetermineColumnDataTypesForDto(dtoType);
-        var tabularData = 
+        var tabularData =
             TabularDataBuilder.InitTabularData(columnDataTypes)
             .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>(_rowDataLens.CreateLeft(dtoType).ColumnValues)))
             .Build();
