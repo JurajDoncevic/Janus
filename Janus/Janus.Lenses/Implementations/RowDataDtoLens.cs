@@ -3,16 +3,30 @@ using Janus.Commons.SchemaModels;
 using System.Reflection;
 
 namespace Janus.Lenses.Implementations;
+
+/// <summary>
+/// Describes a lens between a TabularData RowData and a generic DTO.
+/// The DTO must have getters and setters; DTO fields must be named in PascalCase with prefixed underscores.
+/// </summary>
+/// <typeparam name="TDto">DTO type</typeparam>
 public sealed class RowDataDtoLens<TDto>
     : Lens<RowData, TDto>,
     ICreatingLeftSpecsLens<RowData, Type>
 {
+    /// <summary>
+    /// Prefix for column names when generating tabular data
+    /// </summary>
     private readonly Option<string> _columnNamePrefix;
+
     internal RowDataDtoLens(string? columnNamePrefix = null) : base()
     {
-        _columnNamePrefix = Option<string>.Some(columnNamePrefix);
+        _columnNamePrefix = Option<string>.Some(columnNamePrefix); // evaluates to some or none
     }
 
+    /// <summary>
+    /// Lens PUT function: TDto -> RowData? -> RowData.
+    /// If source RowData? is not given, its structure is inferred from the TDto type.
+    /// </summary>
     public override Func<TDto, RowData?, RowData> Put =>
         (view, originalSource) =>
         {
@@ -44,6 +58,9 @@ public sealed class RowDataDtoLens<TDto>
             return RowData.FromDictionary(rowData);
         };
 
+    /// <summary>
+    /// Lens GET function: RowData -> TDto
+    /// </summary>
     public override Func<RowData, TDto> Get =>
         (source) =>
         {
@@ -67,6 +84,11 @@ public sealed class RowDataDtoLens<TDto>
             dtoType.GetRuntimeProperties().ToDictionary(p => p.Name, p => GetDefaultValue(TypeMappings.MapToDataType(p.PropertyType)))
             );
 
+    /// <summary>
+    /// Gets the default system value for the data type
+    /// </summary>
+    /// <param name="dataType"></param>
+    /// <returns>Default value boxed as a object?</returns>
     private object? GetDefaultValue(DataTypes dataType)
         => dataType switch
         {
@@ -80,7 +102,11 @@ public sealed class RowDataDtoLens<TDto>
             _ => null
         };
 
-
+    /// <summary>
+    /// Finds the longest prefix in a IEnumerable of strings
+    /// </summary>
+    /// <param name="strings"></param>
+    /// <returns>Longest prefix in all strings</returns>
     private string FindLongestCommonPrefix(IEnumerable<string> strings)
     {
         if (strings == null || strings.Count() == 0)
@@ -106,8 +132,17 @@ public sealed class RowDataDtoLens<TDto>
     }
 }
 
+/// <summary>
+/// RowDataDtoLens extension class
+/// </summary>
 public static class RowDataDtoLens
 {
-    public static RowDataDtoLens<T> Construct<T>()
-        => new RowDataDtoLens<T>();
+    /// <summary>
+    /// Constructs a RowDataDtoLens
+    /// </summary>
+    /// <typeparam name="TDto">Type of DTO</typeparam>
+    /// <param name="columnNamePrefix">Explicit prefix of column names in a RowData</param>
+    /// <returns>RowDataDtoLens instance</returns>
+    public static RowDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null)
+        => new RowDataDtoLens<TDto>(columnNamePrefix);
 }
