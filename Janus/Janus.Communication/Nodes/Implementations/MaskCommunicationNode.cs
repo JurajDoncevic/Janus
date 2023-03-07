@@ -145,8 +145,10 @@ public sealed class MaskCommunicationNode : BaseCommunicationNode<IMaskNetworkAd
                         // get the hello response - exception if not correct message type
                         var commandResponse = (CommandResMessage)_messageStore.DequeueResponseFromExchange(exchangeId).Data;
                         _logger?.Info("Received {0} on exchange {1} from {2}", commandResponse.Preamble, commandResponse.ExchangeId, commandResponse.NodeId);
-                        // have to throw exception to register as error and get outcome message
-                        return commandResponse.IsSuccess ? true : throw new Exception(commandResponse.OutcomeDescription);
+                        // return outcome as Result; pack the outcome although it might be empty
+                        return commandResponse.IsSuccess 
+                            ? Results.OnSuccess($"Command response indicates success: {commandResponse.OutcomeDescription}")
+                            : Results.OnFailure($"Command response indicates failure: {commandResponse.OutcomeDescription}");
                     })),
                 _options.TimeoutMs);
 
