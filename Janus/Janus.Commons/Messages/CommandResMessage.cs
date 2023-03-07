@@ -29,7 +29,7 @@ public sealed class CommandResMessage : BaseMessage
     /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
     /// <param name="nodeId">Sender's node ID</param>
     /// <param name="isSuccess">Success of the requested command</param>
-    /// <param name="outcomeDescription">Requested command's outcome descriptio (e.g. error message)</param>
+    /// <param name="outcomeDescription">Requested command's outcome description (e.g. error message)</param>
     public CommandResMessage(string exchangeId, string nodeId, bool isSuccess, string? outcomeDescription = null) : base(exchangeId, nodeId, Preambles.COMMAND_RESPONSE)
     {
         _isSuccess = isSuccess;
@@ -40,7 +40,7 @@ public sealed class CommandResMessage : BaseMessage
     /// </summary>
     /// <param name="exchangeId">ID of the message exchange (request and its response)</param>
     /// <param name="isSuccess">Success of the requested command</param>
-    /// <param name="outcomeDescription">Requested command's outcome descriptio (e.g. error message)</param>
+    /// <param name="outcomeDescription">Requested command's outcome description (e.g. error message)</param>
     public CommandResMessage(string nodeId, bool isSuccess, string? outcomeDescription = null) : base(nodeId, Preambles.COMMAND_RESPONSE)
     {
         _isSuccess = isSuccess;
