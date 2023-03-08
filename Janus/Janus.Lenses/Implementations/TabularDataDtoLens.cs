@@ -9,7 +9,7 @@ namespace Janus.Lenses.Implementations;
 /// The DTO must have getters and setters; DTO fields must be named in PascalCase with prefixed underscores.
 /// </summary>
 /// <typeparam name="TDto">DTO type</typeparam>
-public class TabularDataDtoLens<TDto>
+public sealed class TabularDataDtoLens<TDto>
     : Lens<TabularData, IEnumerable<TDto>>,
     ICreatingRightLens<IEnumerable<TDto>>,
     ICreatingLeftSpecsLens<TabularData, Type>
