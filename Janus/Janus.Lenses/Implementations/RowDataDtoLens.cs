@@ -135,7 +135,7 @@ public sealed class RowDataDtoLens<TDto>
 /// <summary>
 /// RowDataDtoLens extension class
 /// </summary>
-public static class RowDataDtoLens
+public static class RowDataDtoLenses
 {
     /// <summary>
     /// Constructs a RowDataDtoLens

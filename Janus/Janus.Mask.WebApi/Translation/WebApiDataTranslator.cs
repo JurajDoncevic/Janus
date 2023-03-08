@@ -12,7 +12,7 @@ public class WebApiDataTranslator<TDto> : IMaskDataTranslator<WebApiDtoData<TDto
 
     public WebApiDataTranslator(string? columnNamePrefix = null)
     {
-        _dataLens= TabularDataDtoLens.Construct<TDto>(columnNamePrefix);
+        _dataLens= TabularDataDtoLenses.Construct<TDto>(columnNamePrefix);
         _columnNamePrefix = columnNamePrefix ?? string.Empty;
     }
 

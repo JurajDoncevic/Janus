@@ -30,7 +30,7 @@ public class RowDataDtoLensTests : BaseLensTesting
 
     public override void GetPutTest()
     {
-        var lens = RowDataDtoLens.Construct<PersonDto>();
+        var lens = RowDataDtoLenses.Construct<PersonDto>();
 
         var source = _peopleTabularData.RowData.First();
 
@@ -45,7 +45,7 @@ public class RowDataDtoLensTests : BaseLensTesting
 
     public override void PutGetTest()
     {
-        var lens = RowDataDtoLens.Construct<PersonDto>();
+        var lens = RowDataDtoLenses.Construct<PersonDto>();
 
         var source = _peopleTabularData.RowData.First();
         var expectedView = new PersonDto
@@ -69,7 +69,7 @@ public class RowDataDtoLensTests : BaseLensTesting
 
     public override void PutPutTest()
     {
-        var lens = RowDataDtoLens.Construct<PersonDto>();
+        var lens = RowDataDtoLenses.Construct<PersonDto>();
 
         var originalView = new PersonDto
         {

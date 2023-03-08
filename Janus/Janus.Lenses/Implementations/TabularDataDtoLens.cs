@@ -25,7 +25,7 @@ public sealed class TabularDataDtoLens<TDto>
     private readonly string _columnNamePrefix;
     internal TabularDataDtoLens(string? columnNamePrefix = null) : base()
     {
-        _rowDataLens = RowDataDtoLens.Construct<TDto>();
+        _rowDataLens = RowDataDtoLenses.Construct<TDto>();
         _columnNamePrefix = columnNamePrefix ?? string.Empty;
     }
 
@@ -77,7 +77,7 @@ public sealed class TabularDataDtoLens<TDto>
 /// <summary>
 /// TabularDataDtoLens extension class
 /// </summary>
-public static class TabularDataDtoLens
+public static class TabularDataDtoLenses
 {
     /// <summary>
     /// Constructs a TabularDataDtoLens
