@@ -1,7 +1,6 @@
 ﻿using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Lenses.Implementations;
-using Janus.Mask.WebApi.Lenses;
 using Janus.Mask.WebApi.MaskedDataModel;
 using Janus.Wrapper.Translation;
 
