@@ -6,7 +6,8 @@ public sealed class IntStringLens : Lens<int, string>
     }
 
     public override Func<string, int, int> Put => 
-        (view, source) => int.TryParse(view, out int updatedSource)
+        (view, source) => view is not null &&
+                          int.TryParse(view, out int updatedSource)
                             ? updatedSource
                             : source;
 
