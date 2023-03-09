@@ -10,6 +10,7 @@ public class ControllerTyping
     private readonly DtoTyping _getDto;
     private readonly Option<DtoTyping> _postDto;
     private readonly IEnumerable<DtoTyping> _putDtos;
+    private readonly bool _enablesDelete;
     private readonly TableauId _targetTableauId;
     private readonly AttributeId _identityAttributeId;
 
@@ -19,6 +20,7 @@ public class ControllerTyping
                             DtoTyping getDto,
                             Option<DtoTyping> postDto,
                             IEnumerable<DtoTyping> putDtos,
+                            bool enablesDelete,
                             TableauId targetTableauId,
                             AttributeId identityAttributeId)
     {
@@ -28,6 +30,7 @@ public class ControllerTyping
         _getDto = getDto;
         _postDto = postDto;
         _putDtos = putDtos;
+        _enablesDelete = enablesDelete;
         _targetTableauId = targetTableauId;
         _identityAttributeId = identityAttributeId;
     }
@@ -48,4 +51,5 @@ public class ControllerTyping
 
     public AttributeId IdentityAttributeId => _identityAttributeId;
 
+    public bool EnablesDelete => _enablesDelete;
 }

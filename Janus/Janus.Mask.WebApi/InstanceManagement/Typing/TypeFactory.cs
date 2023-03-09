@@ -162,6 +162,12 @@ public class TypeFactory : IDisposable
             typeBuilder = GenerateUpdateControllerActionMethod(typeBuilder, putDto, putDtoIdx, commandProviderField, loggerField, defaultErrorCodeGetMethod);
         }
 
+        // create delete methods
+        if (controllerTyping.EnablesDelete)
+        {
+            typeBuilder = GenerateDeleteControllerActionMethod(typeBuilder, controllerTyping.IdPropertyType, commandProviderField, loggerField, defaultErrorCodeGetMethod);
+        }
+
         // define constructor over base constructor
         typeBuilder = GenerateControllerConstructor(typeBuilder, controllerTyping, ctorInitTypes, parentType, targetTableauIdField, identityAttributeIdField, loggerField);
 
@@ -447,6 +453,101 @@ public class TypeFactory : IDisposable
         createMethodImplGen.Emit(OpCodes.Ret); // return result on eval stack
 
         targetTypeBuilder.DefineMethodOverride(createMethodImplBuilder, interfaceCreateMethod);
+
+        return targetTypeBuilder;
+    }
+
+    /// <summary>
+    /// Generates a Delete controller method
+    /// </summary>
+    /// <param name="idPropertyType">Resource id type</param>
+    /// <param name="targetTypeBuilder">Target type builder</param>
+    /// <param name="commandProviderField">Command provider field</param>
+    /// <param name="loggerField">Logger field</param>
+    /// <param name="defaultErrorCodeGetMethod">Default error code getter method</param>
+    /// <returns></returns>
+    private TypeBuilder GenerateDeleteControllerActionMethod(TypeBuilder targetTypeBuilder, Type idPropertyType, FieldInfo commandProviderField, FieldInfo loggerField, MethodInfo defaultErrorCodeGetMethod)
+    {
+        var deleteInterfaceType = typeof(IDeleteController<>).MakeGenericType(idPropertyType);
+        var interfaceDeleteMethod = deleteInterfaceType.GetMethod("Delete");
+        targetTypeBuilder.AddInterfaceImplementation(deleteInterfaceType);
+
+        var deleteMethodImplBuilder =
+            targetTypeBuilder.DefineMethod(
+                "Delete",
+                MethodAttributes.Public | MethodAttributes.Virtual,
+                interfaceDeleteMethod.ReturnType,
+                interfaceDeleteMethod.GetParameters().Select(p => p.ParameterType).ToArray()
+                );
+
+        deleteMethodImplBuilder
+            .DefineParameter(1, ParameterAttributes.None, "id")
+            .SetCustomAttribute(
+                typeof(FromRouteAttribute).GetConstructor(Type.EmptyTypes),
+                new byte[] { }
+                );
+
+        var httpDeleteAttributeType = typeof(HttpDeleteAttribute).GetConstructor(Type.EmptyTypes);
+        var httpDeleteAttr = new CustomAttributeBuilder(httpDeleteAttributeType, new object[] { });
+        deleteMethodImplBuilder.SetCustomAttribute(httpDeleteAttr);
+
+        var routeAttributeType = typeof(RouteAttribute).GetConstructor(new Type[] { typeof(string) });
+        var routeAttr = new CustomAttributeBuilder(routeAttributeType, new object[] { "{id}" });
+        deleteMethodImplBuilder.SetCustomAttribute(routeAttr);
+
+        var debugLogMethod = loggerField.FieldType.GetMethod("Debug", BindingFlags.Public | BindingFlags.Instance, new Type[] { typeof(string) });
+        var okActionResultMethod = typeof(ControllerBase).GetMethod("Ok", BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes);
+        var problemActionResultMethod = typeof(ControllerBase).GetMethod("Problem", BindingFlags.Public | BindingFlags.Instance, new Type[] { typeof(string), typeof(string), typeof(int), typeof(string), typeof(string) });
+        var commandProviderDeleteMethod = commandProviderField.FieldType.GetMethod("Delete");
+        var resultImplicitBoolMethod = typeof(Result).GetMethod("op_Implicit", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(Result) });
+        var resultGetMessageMethod = typeof(Result).GetMethod("get_Message", BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField, Type.EmptyTypes);
+
+        var deleteMethodImplGen = deleteMethodImplBuilder.GetILGenerator();
+        // prepare labels
+        var resultSuccessLabel = deleteMethodImplGen.DefineLabel();
+        var resultFailureLabel = deleteMethodImplGen.DefineLabel();
+        var finalLabel = deleteMethodImplGen.DefineLabel();
+        // declare locals
+        deleteMethodImplGen.DeclareLocal(typeof(Result)); // var result
+        // log create event
+        deleteMethodImplGen.Emit(OpCodes.Ldarg_0); // push this
+        deleteMethodImplGen.Emit(OpCodes.Ldfld, loggerField);
+        deleteMethodImplGen.Emit(OpCodes.Ldstr, $"Controller {targetTypeBuilder.Name} action Delete called");
+        deleteMethodImplGen.Emit(OpCodes.Callvirt, debugLogMethod);
+        deleteMethodImplGen.Emit(OpCodes.Pop); // remove the Unit from Debug() from the stack
+        deleteMethodImplGen.Emit(OpCodes.Nop);
+        // call command provider and store result in var
+        deleteMethodImplGen.Emit(OpCodes.Ldarg_0); // push this
+        deleteMethodImplGen.Emit(OpCodes.Ldfld, commandProviderField);
+        deleteMethodImplGen.Emit(OpCodes.Ldarg_1); // load id
+        deleteMethodImplGen.Emit(OpCodes.Callvirt, commandProviderDeleteMethod); // call command provider update
+        deleteMethodImplGen.Emit(OpCodes.Stloc_0); // store result in var in loc_0
+        // return action result depending on result
+        deleteMethodImplGen.Emit(OpCodes.Ldloc_0); // load result from var in loc_0
+        deleteMethodImplGen.Emit(OpCodes.Call, resultImplicitBoolMethod); // call implicit bool method
+        deleteMethodImplGen.Emit(OpCodes.Brtrue_S, resultSuccessLabel); // if result impl bool method gives true jump to success
+        // on failure return Problem(statusCode: DEFAULT_ERROR_CODE, detail: result.Message)
+        deleteMethodImplGen.MarkLabel(resultFailureLabel);
+        deleteMethodImplGen.Emit(OpCodes.Ldarg_0); // load this
+        deleteMethodImplGen.Emit(OpCodes.Ldloca_S, 0); // get the result
+        deleteMethodImplGen.Emit(OpCodes.Call, resultGetMessageMethod); // call the result message getter; message now on eval stack
+        deleteMethodImplGen.Emit(OpCodes.Ldnull); // null for instance
+        deleteMethodImplGen.Emit(OpCodes.Ldarg_0); // load this
+        deleteMethodImplGen.Emit(OpCodes.Call, defaultErrorCodeGetMethod); // load status code 
+        deleteMethodImplGen.Emit(OpCodes.Newobj, typeof(Nullable<int>).GetConstructor(new Type[] { typeof(int) })); // cast to int?; now on stack
+        deleteMethodImplGen.Emit(OpCodes.Ldnull); // null for title
+        deleteMethodImplGen.Emit(OpCodes.Ldnull); // null for type
+        deleteMethodImplGen.Emit(OpCodes.Call, problemActionResultMethod); // call Problem
+        deleteMethodImplGen.Emit(OpCodes.Br_S, finalLabel); // go to return
+                                                            // on success, return Ok
+        deleteMethodImplGen.MarkLabel(resultSuccessLabel);
+        deleteMethodImplGen.Emit(OpCodes.Ldarg_0); // load this
+        deleteMethodImplGen.Emit(OpCodes.Call, okActionResultMethod); // call Ok
+                                                                      // final label for return
+        deleteMethodImplGen.MarkLabel(finalLabel);
+        deleteMethodImplGen.Emit(OpCodes.Ret); // return result on eval stack
+
+        targetTypeBuilder.DefineMethodOverride(deleteMethodImplBuilder, interfaceDeleteMethod);
 
         return targetTypeBuilder;
     }

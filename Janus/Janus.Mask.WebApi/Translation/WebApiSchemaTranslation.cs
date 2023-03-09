@@ -60,6 +60,7 @@ public class WebApiSchemaTranslator : IMaskSchemaTranslator<WebApiTyping>
                                     )
                             ));
 
+                bool enablesDelete = defaultUpdateSet is not null;
 
                 var controllerTyping =
                         new ControllerTyping(
@@ -69,6 +70,7 @@ public class WebApiSchemaTranslator : IMaskSchemaTranslator<WebApiTyping>
                             getDto,
                             postDto,
                             putDtos,
+                            enablesDelete,
                             tableau.Id,
                             tableau.Attributes.First(attr => attr.IsIdentity).Id // exception should already be thrown above
                             );
