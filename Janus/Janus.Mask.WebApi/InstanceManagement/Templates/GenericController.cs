@@ -47,14 +47,4 @@ public abstract class GenericController<TId, TGetModel>
 
         return result ? Ok(result.Data) : Problem(statusCode: DEFAULT_ERROR_CODE, detail: result.Message);
     }
-
-    //[HttpDelete]
-    //[Route("{id}")]
-    //public async Task<ActionResult> Delete(TId id)
-    //{
-    //    _logger?.Debug($"Controller {ControllerContext.ActionDescriptor.ControllerName} action {ControllerContext.ActionDescriptor.ActionName} received id {id}");
-    //    var result = _commandProvider.Delete(id);
-    //    return result ? Ok() : Problem(statusCode: DEFAULT_ERROR_CODE, detail: result.Message);
-    //}
-
 }
