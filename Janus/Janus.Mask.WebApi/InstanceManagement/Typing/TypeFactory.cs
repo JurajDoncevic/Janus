@@ -458,7 +458,7 @@ public class TypeFactory : IDisposable
     }
 
     /// <summary>
-    /// Generates a Delete controller method
+    /// Generates a delete controller method
     /// </summary>
     /// <param name="idPropertyType">Resource id type</param>
     /// <param name="targetTypeBuilder">Target type builder</param>
