@@ -85,7 +85,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.Persistence.Lite
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Lenses", "Janus.Lenses\Janus.Lenses.csproj", "{BD0A75BB-8D06-4D39-9470-6A21B908BA1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Lenses.Tests", "Janus.Lenses.Tests\Janus.Lenses.Tests.csproj", "{351022FE-4B43-4531-8825-4C7FCB3DF78E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Lenses.Tests", "Janus.Lenses.Tests\Janus.Lenses.Tests.csproj", "{351022FE-4B43-4531-8825-4C7FCB3DF78E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.LiteDB", "Janus.Mask.LiteDB\Janus.Mask.LiteDB.csproj", "{1E6E4600-78E7-4688-AD38-B12FCFDC59F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -261,6 +263,10 @@ Global
 		{351022FE-4B43-4531-8825-4C7FCB3DF78E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{351022FE-4B43-4531-8825-4C7FCB3DF78E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{351022FE-4B43-4531-8825-4C7FCB3DF78E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E6E4600-78E7-4688-AD38-B12FCFDC59F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E6E4600-78E7-4688-AD38-B12FCFDC59F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E6E4600-78E7-4688-AD38-B12FCFDC59F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E6E4600-78E7-4688-AD38-B12FCFDC59F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
