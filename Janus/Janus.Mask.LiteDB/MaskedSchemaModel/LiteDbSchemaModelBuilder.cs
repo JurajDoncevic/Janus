@@ -202,7 +202,7 @@ public class PrimitiveFieldBuilder
 
     internal PrimitiveField Build()
     {
-        return new PrimitiveField(_fieldName, _fieldType);
+        return new PrimitiveField(_fieldName, _fieldType, _isIdentity);
     }
 }
 

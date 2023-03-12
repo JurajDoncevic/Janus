@@ -13,7 +13,7 @@ using Janus.Mask.Translation;
 using LiteDB;
 
 namespace Janus.Mask.LiteDB;
-public class LiteDbMaskQueryManager : MaskQueryManager<LiteDbQuery, Unit, Unit, Unit, Unit, Database>
+public class LiteDbMaskQueryManager : MaskQueryManager<LiteDbQuery, TableauId, Unit, Unit, Unit, Database>
 {
     private readonly LiteDbQueryTranslator _queryTranslator;
     public LiteDbMaskQueryManager(MaskCommunicationNode communicationNode, LiteDbMaskSchemaManager schemaManager, LiteDbQueryTranslator queryTranslator, ILogger? logger = null) : base(communicationNode, schemaManager, queryTranslator, logger)

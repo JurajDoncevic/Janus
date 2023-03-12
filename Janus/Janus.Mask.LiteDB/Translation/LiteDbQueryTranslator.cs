@@ -7,7 +7,7 @@ using Janus.Mask.LiteDB.MaskedQueryModel;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask.LiteDB.Translation;
-public class LiteDbQueryTranslator : IMaskQueryTranslator<LiteDbQuery, Unit, Unit, Unit, Unit>
+public class LiteDbQueryTranslator : IMaskQueryTranslator<LiteDbQuery, TableauId, Unit, Unit, Unit>
 {
     public Result<Query> Translate(LiteDbQuery query)
     {
