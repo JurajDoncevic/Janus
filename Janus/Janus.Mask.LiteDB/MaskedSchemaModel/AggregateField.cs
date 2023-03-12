@@ -3,7 +3,7 @@ public class AggregateField : Field
 {
     private readonly FieldTypes _elementsType;
 
-    public AggregateField(string name) : base(name, FieldTypes.ARRAY)
+    public AggregateField(string name, bool isIdentity) : base(name, FieldTypes.ARRAY, isIdentity)
     {
     }
 

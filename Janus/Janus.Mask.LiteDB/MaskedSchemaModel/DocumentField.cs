@@ -3,7 +3,7 @@ public class DocumentField : Field
 {
     private readonly Dictionary<string, Field> _fields;
 
-    internal DocumentField(string name, IEnumerable<Field>? fields = null) : base(name, FieldTypes.DOCUMENT)
+    internal DocumentField(string name, IEnumerable<Field>? fields = null, bool isIdentity) : base(name, FieldTypes.DOCUMENT, isIdentity)
     {
         _fields = fields?.ToDictionary(f => f.Name, f => f) ?? new Dictionary<string, Field>();
     }

@@ -4,7 +4,6 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.MaskedDataModel;
-using Janus.Mask.WebApi.MaskedDataModel;
 using Janus.Mask.WebApi.MaskedQueryModel;
 using Janus.Mask.WebApi.MaskedSchemaModel;
 using Janus.Mask.WebApi.Translation;

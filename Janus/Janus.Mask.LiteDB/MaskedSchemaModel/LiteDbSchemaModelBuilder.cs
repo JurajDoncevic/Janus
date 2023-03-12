@@ -140,9 +140,10 @@ public class PrimitiveFieldBuilder
 {
     private FieldTypes _fieldType;
     private string _fieldName;
+    private bool _isIdentity;
     private DocumentField? _documentField;
 
-    internal PrimitiveFieldBuilder(string fieldName, FieldTypes fieldType)
+    internal PrimitiveFieldBuilder(string fieldName, FieldTypes fieldType, bool? isIdentity = null)
     {
         if (string.IsNullOrWhiteSpace(fieldName))
         {
@@ -151,6 +152,7 @@ public class PrimitiveFieldBuilder
 
         _fieldType = fieldType;
         _fieldName = fieldName;
+        _isIdentity = isIdentity ?? false;
     }
 
     public PrimitiveFieldBuilder WithName(string name)
@@ -161,6 +163,12 @@ public class PrimitiveFieldBuilder
         }
 
         _fieldName = name;
+        return this;
+    }
+
+    public PrimitiveFieldBuilder AsIdentity()
+    {
+        _isIdentity = true;
         return this;
     }
 
