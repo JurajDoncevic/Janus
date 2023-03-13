@@ -12,5 +12,5 @@ public interface ISchemaTranslator<TSchemaSource, TSchemaDestination>
     /// </summary>
     /// <param name="source">Source schema</param>
     /// <returns>Destination schema</returns>
-    TSchemaDestination Translate(TSchemaSource source);
+    Result<TSchemaDestination> Translate(TSchemaSource source);
 }

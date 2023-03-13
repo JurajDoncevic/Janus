@@ -33,7 +33,8 @@ public abstract class MaskSchemaManager<TMaskedSchema>
     /// </summary>
     /// <returns>Masked schema</returns>
     public Option<TMaskedSchema> CurrentMaskedSchema
-        => _currentSchema.Map(_schemaTranslator.Translate);
+        => _currentSchema.Map(_schemaTranslator.Translate)
+                         .Bind(translation => translation ? Option<TMaskedSchema>.Some(translation.Data) : Option<TMaskedSchema>.None);
 
     public Option<DataSource> CurrentOutputSchema
         => _currentSchema;
