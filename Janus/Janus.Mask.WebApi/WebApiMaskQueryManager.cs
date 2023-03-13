@@ -3,13 +3,13 @@ using FunctionalExtensions.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
-using Janus.Mask.MaskedDataModel;
+using Janus.Mask.WebApi.MaskedDataModel;
 using Janus.Mask.WebApi.MaskedQueryModel;
 using Janus.Mask.WebApi.MaskedSchemaModel;
 using Janus.Mask.WebApi.Translation;
 
 namespace Janus.Mask.WebApi;
-public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiTyping>
+public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiTyping, WebApiDtoData, object>
 {
     private readonly WebApiQueryTranslator _queryTranslator;
     private readonly ILogger<WebApiMaskQueryManager>? _logger;
@@ -19,18 +19,17 @@ public sealed class WebApiMaskQueryManager : MaskQueryManager<WebApiQuery, Table
         logger?.ResolveLogger<WebApiMaskQueryManager>();
     }
 
-    public override async Task<Result<MaskedData<TDto>>> RunQuery<TDto>(WebApiQuery query)
+    public override async Task<Result<WebApiDtoData>> RunQuery(WebApiQuery query)
         => await Results.AsResult(() =>
         {
-            var dataTranslator = new WebApiDataTranslator<TDto>(query.StartingWith.ToString() + ".");
+            var dataTranslator = new WebApiDataTranslator(query.StartingWith.ToString() + ".", query.ExpectingReturnDtoType);
 
             var queryResult =
                 Task.FromResult(_queryTranslator.Translate(query))
                 .Bind(query => RunQuery(query))
                 .Bind(async data => dataTranslator.Translate(data))
-                .Map(data => (MaskedData<TDto>)data); // box it
+                .Map(data => data); // box it
 
             return queryResult;
         });
-
 }

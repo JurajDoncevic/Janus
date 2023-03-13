@@ -1,0 +1,13 @@
+﻿@using System.Text.Json;
+@model Janus.Mask.LiteDB.WebApp.ViewModels.DataSourceViewModel
+
+@{
+    ViewData["Title"] = "Current loaded schema";
+}
+
+<h2>Current loaded schema</h2>
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
+
+<div class="row">
+    <pre class="form-control">@Model.DataSourceJson</pre>
+</div>

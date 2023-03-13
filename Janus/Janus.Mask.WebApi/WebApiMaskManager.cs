@@ -13,7 +13,7 @@ using JanusGenericMask.InstanceManagement.Web;
 
 namespace Janus.Mask.WebApi;
 public sealed class WebApiMaskManager
-    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object, WebApiTyping>
+    : MaskManager<WebApiQuery, TableauId, string?, Unit, Unit, WebApiDelete, WebApiInsert, WebApiUpdate, object, object, WebApiTyping, WebApiDtoData, object>
 {
     private readonly WebApiInstance _webApiInstance;
     private readonly WebApiQueryTranslator _queryTranslator;
@@ -71,12 +71,12 @@ public sealed class WebApiMaskManager
     /// <typeparam name="TModel"></typeparam>
     /// <param name="query">Web API query</param>
     /// <returns>Web API DTO data</returns>
-    public async Task<Result<WebApiDtoData<TModel>>> RunQuery<TModel>(WebApiQuery query)
+    public async Task<Result<WebApiDtoData>> RunQuery<TModel>(WebApiQuery query)
         => await Results.AsResult(() =>
         {
             var queryResult =
-                _queryManager.RunQuery<TModel>(query)
-                .Map(data => (WebApiDtoData<TModel>)data);
+                _queryManager.RunQuery(query)
+                .Map(data => data);
 
             return queryResult;
         });

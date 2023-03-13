@@ -18,9 +18,12 @@ public sealed class RowDataDtoLens<TDto>
     /// </summary>
     private readonly Option<string> _columnNamePrefix;
 
-    internal RowDataDtoLens(string? columnNamePrefix = null) : base()
+    private readonly Option<Type> _originalType;
+
+    internal RowDataDtoLens(string? columnNamePrefix = null, Type? originalType = null) : base()
     {
         _columnNamePrefix = Option<string>.Some(columnNamePrefix); // evaluates to some or none
+        _originalType = Option<Type>.Some(originalType);
     }
 
     /// <summary>
@@ -30,7 +33,7 @@ public sealed class RowDataDtoLens<TDto>
     public override Func<TDto, RowData?, RowData> Put =>
         (view, originalSource) =>
         {
-            var dtoType = view?.GetType() ?? typeof(TDto);
+            var dtoType = view?.GetType() ?? _originalType.Value ?? typeof(TDto);
 
             string columnNamePrefix =
                 _columnNamePrefix
@@ -64,10 +67,10 @@ public sealed class RowDataDtoLens<TDto>
     public override Func<RowData, TDto> Get =>
         (source) =>
         {
-            var viewType = typeof(TDto);
+            var viewType = _originalType.Value ?? typeof(TDto);
 
 
-            var viewItem = Activator.CreateInstance<TDto>();
+            var viewItem = Activator.CreateInstance(viewType);// Activator.CreateInstance<TDto>();
             foreach (var (colName, value) in source.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)))
             {
                 string fieldName = $"_{colName}";
@@ -76,7 +79,7 @@ public sealed class RowDataDtoLens<TDto>
                 targetField?.SetValue(viewItem, value);
             }
 
-            return viewItem;
+            return (TDto)viewItem;
         };
 
     public RowData CreateLeft(Type dtoType)
@@ -143,6 +146,6 @@ public static class RowDataDtoLenses
     /// <typeparam name="TDto">Type of DTO</typeparam>
     /// <param name="columnNamePrefix">Explicit prefix of column names in a RowData</param>
     /// <returns>RowDataDtoLens instance</returns>
-    public static RowDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null)
-        => new RowDataDtoLens<TDto>(columnNamePrefix);
+    public static RowDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null, Type? originalType = null)
+        => new RowDataDtoLens<TDto>(columnNamePrefix, originalType);
 }

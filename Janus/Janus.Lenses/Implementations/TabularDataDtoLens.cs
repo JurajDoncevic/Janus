@@ -19,14 +19,17 @@ public sealed class TabularDataDtoLens<TDto>
     /// </summary>
     private readonly RowDataDtoLens<TDto> _rowDataLens;
 
+    private readonly Option<Type> _originalViewItemType;
+
     /// <summary>
     /// Prefix for column names of a generated TabularData
     /// </summary>
     private readonly string _columnNamePrefix;
-    internal TabularDataDtoLens(string? columnNamePrefix = null) : base()
+    internal TabularDataDtoLens(string? columnNamePrefix = null, Type? originalViewItemType = null) : base()
     {
-        _rowDataLens = RowDataDtoLenses.Construct<TDto>();
+        _rowDataLens = RowDataDtoLenses.Construct<TDto>(originalType: originalViewItemType);
         _columnNamePrefix = columnNamePrefix ?? string.Empty;
+        _originalViewItemType = Option<Type>.Some(originalViewItemType);
     }
 
     /// <summary>
@@ -85,6 +88,6 @@ public static class TabularDataDtoLenses
     /// <typeparam name="TDto">Type of DTO</typeparam>
     /// <param name="columnNamePrefix">Explicit prefix of column names in a TabularData</param>
     /// <returns>TabularDataDtoLens instance</returns>
-    public static TabularDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null)
-        => new TabularDataDtoLens<TDto>(columnNamePrefix);
+    public static TabularDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null, Type? originalType = null)
+        => new TabularDataDtoLens<TDto>(columnNamePrefix, originalType);
 }

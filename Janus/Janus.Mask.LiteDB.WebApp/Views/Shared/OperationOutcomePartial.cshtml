@@ -1,0 +1,15 @@
+﻿@model Option<OperationOutcomeViewModel>
+
+<div class="row">
+    @if (Model)
+    {
+        @if (Model.Value.IsSuccess)
+        {
+            <span class="alert alert-success alert-dismissible">@Model.Value.Message</span>
+        }
+        else
+        {
+            <span class="alert alert-warning alert-dismissible">@Model.Value.Message</span>
+        }
+    }
+</div>

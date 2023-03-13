@@ -16,7 +16,7 @@ internal class MaskConfiguration
 
     public List<RemotePointConfiguration> StartupRemotePoints { get; init; } = new();
 
-    public string PersistenceConnectionString { get; init; } = "./mediator_database.db";
+    public string PersistenceConnectionString { get; init; } = "./mask_database.db";
 
     public WebApiConfiguration WebApiConfiguration { get; init; } = new WebApiConfiguration
     {

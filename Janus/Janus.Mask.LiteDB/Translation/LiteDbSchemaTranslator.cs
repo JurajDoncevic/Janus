@@ -51,10 +51,11 @@ public sealed class LiteDbSchemaTranslator : IMaskSchemaTranslator<Database>
         {
             DataTypes.INT => builder.AsInt32(),
             DataTypes.LONGINT => builder.AsInt64(),
-            DataTypes.BOOLEAN => builder.AsString(),
+            DataTypes.BOOLEAN => builder.AsBoolean(),
             DataTypes.DECIMAL => builder.AsDouble(),
-            DataTypes.DATETIME => builder.AsString(),
-            DataTypes.BINARY => builder.AsString(),
+            DataTypes.DATETIME => builder.AsDateTime(),
+            DataTypes.BINARY => builder.AsBinary(),
+            DataTypes.STRING => builder.AsString(),
             _ => throw new NotSupportedException("Unknown data type provided")
         };
 }

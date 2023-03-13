@@ -4,6 +4,7 @@ using Janus.Commons.SchemaModels;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.LiteDB.MaskedCommandModel;
+using Janus.Mask.LiteDB.MaskedDataModel;
 using Janus.Mask.LiteDB.MaskedQueryModel;
 using Janus.Mask.LiteDB.MaskedSchemaModel;
 using Janus.Mask.LiteDB.Materialization;
@@ -11,7 +12,7 @@ using Janus.Mask.Persistence;
 using LiteDB;
 
 namespace Janus.Mask.LiteDB;
-public sealed class LiteDbMaskManager : MaskManager<LiteDbQuery, TableauId, Unit, Unit, Unit, LiteDbDelete, LiteDbInsert, LiteDbUpdate, Unit, Unit, Database>
+public sealed class LiteDbMaskManager : MaskManager<LiteDbQuery, TableauId, Unit, Unit, Unit, LiteDbDelete, LiteDbInsert, LiteDbUpdate, Unit, Unit, Database, LiteDbData, BsonDocument>
 {
     private readonly LiteDbMaskQueryManager _queryManager;
     private readonly LiteDbMaskSchemaManager _schemaManager;
@@ -29,8 +30,8 @@ public sealed class LiteDbMaskManager : MaskManager<LiteDbQuery, TableauId, Unit
         _databaseMaterializer = new DatabaseMaterializer();
     }
 
-    public Result MaterializeDatabase(string? connectionString = null)
-        => Results.AsResult(() =>
+    public async Task<Result> MaterializeDatabase(string? connectionString = null)
+        => (await Results.AsResult(async () =>
         {
             if(!_schemaManager.CurrentOutputSchema)
             {
@@ -46,6 +47,9 @@ public sealed class LiteDbMaskManager : MaskManager<LiteDbQuery, TableauId, Unit
 
             using var liteDb = new LiteDatabase(connectionString);
 
-            return _databaseMaterializer.MaterializeDatabase(liteDb, _schemaManager.CurrentMaskedSchema.Value, _schemaManager.CurrentOutputSchema.Value, _queryManager);
-        });
+            return await _databaseMaterializer.MaterializeDatabase(liteDb, _schemaManager.CurrentMaskedSchema.Value, _schemaManager.CurrentOutputSchema.Value, _queryManager);
+        })).Pass(
+            r => _logger?.Info($"Materialized database successfully: {r.Message}"),
+            r => _logger?.Info($"Failed database materialization: {r.Message}")
+            );
 }
