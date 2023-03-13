@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Janus.Lenses\Janus.Lenses.csproj" />
     <ProjectReference Include="..\Janus.Mask\Janus.Mask.csproj" />
   </ItemGroup>
 

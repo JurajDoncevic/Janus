@@ -13,11 +13,11 @@ namespace Janus.Mask.WebApi.Translation;
 
 public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelete, WebApiInsert, WebApiUpdate, string?, object, object>
 {
-    private readonly WebApiDataTranslator<object> _dataTranslator;
+    private readonly WebApiDataTranslator _dataTranslator;
 
     public WebApiCommandTranslator()
     {
-        _dataTranslator = new WebApiDataTranslator<object>();
+        _dataTranslator = new WebApiDataTranslator();
     }
 
     public Result<DeleteCommand> TranslateDelete(WebApiDelete delete)
@@ -36,7 +36,7 @@ public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelet
     public Result<InsertCommand> TranslateInsert(WebApiInsert insert)
         => Results.AsResult(() =>
         {
-            var instantiationData = new WebApiDtoData<object>(new List<object> { insert.Instantiation });
+            var instantiationData = new WebApiDtoData(new List<object> { insert.Instantiation });
             var dataTranslation = _dataTranslator.Translate(instantiationData);
             if (!dataTranslation)
             {
@@ -80,7 +80,7 @@ public sealed class WebApiCommandTranslator : IMaskCommandTranslator<WebApiDelet
     public Result<UpdateCommand> TranslateUpdate(WebApiUpdate update)
         => Results.AsResult(() =>
         {
-            var mutationData = new WebApiDtoData<object>(new List<object> { update.Mutation });
+            var mutationData = new WebApiDtoData(new List<object> { update.Mutation });
             var dataTranslation = _dataTranslator.Translate(mutationData);
             if (!dataTranslation)
             {

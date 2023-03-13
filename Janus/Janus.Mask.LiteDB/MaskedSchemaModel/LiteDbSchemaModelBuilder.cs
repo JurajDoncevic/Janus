@@ -200,6 +200,27 @@ public class PrimitiveFieldBuilder
         return this;
     }
 
+    public PrimitiveFieldBuilder AsBinary()
+    {
+        _fieldType = FieldTypes.BINARY;
+
+        return this;
+    }
+
+    public PrimitiveFieldBuilder AsDateTime()
+    {
+        _fieldType = FieldTypes.DATETIME;
+
+        return this;
+    }
+
+    public PrimitiveFieldBuilder AsBoolean()
+    {
+        _fieldType = FieldTypes.BOOLEAN;
+
+        return this;
+    }
+
     internal PrimitiveField Build()
     {
         return new PrimitiveField(_fieldName, _fieldType, _isIdentity);

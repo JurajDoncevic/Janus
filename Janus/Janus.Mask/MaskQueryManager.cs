@@ -12,16 +12,17 @@ using Janus.Mask.MaskedSchemaModel;
 using Janus.Mask.Translation;
 
 namespace Janus.Mask;
-public abstract class MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema>
+public abstract class MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema, TMaskedData, TMaskedDataItem>
     : IDelegatingQueryManager
     where TMaskedQuery : MaskedQuery<TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection>
     where TMaskedSchema : MaskedDataSource
+    where TMaskedData : MaskedData<TMaskedDataItem>
 {
     private readonly MaskCommunicationNode _communicationNode;
     private readonly MaskSchemaManager<TMaskedSchema> _schemaManager;
     private readonly IMaskQueryTranslator<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection> _queryTranslator;
 
-    private readonly ILogger<MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema>>? _logger;
+    private readonly ILogger<MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema, TMaskedData, TMaskedDataItem>>? _logger;
 
     public MaskQueryManager(
         MaskCommunicationNode communicationNode,
@@ -32,10 +33,10 @@ public abstract class MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaske
         _communicationNode = communicationNode;
         _schemaManager = schemaManager;
         _queryTranslator = queryTranslator;
-        _logger = logger?.ResolveLogger<MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema>>();
+        _logger = logger?.ResolveLogger<MaskQueryManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedSchema, TMaskedData, TMaskedDataItem>>();
     }
 
-    public abstract Task<Result<MaskedData<TDataItem>>> RunQuery<TDataItem>(TMaskedQuery query);
+    public abstract Task<Result<TMaskedData>> RunQuery(TMaskedQuery query);
 
     public async Task<Result<TabularData>> RunQuery(Query query)
         => (await Results.AsResult<TabularData>(async () =>
