@@ -38,7 +38,7 @@ public sealed class RowDataDtoLens<TDto>
             string columnNamePrefix =
                 _columnNamePrefix
                 ? _columnNamePrefix.Value
-                : FindLongestCommonPrefix((originalSource ?? CreateLeft(Option<Type>.Some(dtoType))).ColumnValues.Keys);
+                : FindLongestCommonPrefix((originalSource ?? CreateLeft(dtoType)).ColumnValues.Keys);
 
             var columnInfos =
                 dtoType.GetRuntimeProperties()
@@ -49,7 +49,7 @@ public sealed class RowDataDtoLens<TDto>
             var columnDataTypes =
                 columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.fieldType));
 
-            var rowData = new Dictionary<string, object?>((originalSource ?? CreateLeft(Option<Type>.Some(dtoType))).ColumnValues);
+            var rowData = new Dictionary<string, object?>((originalSource ?? CreateLeft(dtoType)).ColumnValues);
 
             foreach (var property in dtoType.GetRuntimeProperties())
             {
@@ -82,9 +82,9 @@ public sealed class RowDataDtoLens<TDto>
             return (TDto)viewItem;
         };
 
-    public RowData CreateLeft(Option<Type> dtoType)
+    public RowData CreateLeft(Type dtoType)
         => RowData.FromDictionary(
-            dtoType.Value.GetRuntimeProperties().ToDictionary(p => p.Name, p => GetDefaultValue(TypeMappings.MapToDataType(p.PropertyType)))
+            dtoType.GetRuntimeProperties().ToDictionary(p => p.Name, p => GetDefaultValue(TypeMappings.MapToDataType(p.PropertyType)))
             );
 
     /// <summary>

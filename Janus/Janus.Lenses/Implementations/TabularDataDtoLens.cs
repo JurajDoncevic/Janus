@@ -37,10 +37,10 @@ public sealed class TabularDataDtoLens<TDto>
     /// If source TabularData? is not given, its structure is inferred from the TDto type and a new name is given to the TabularData.
     /// </summary>
     public override Func<IEnumerable<TDto>, TabularData?, TabularData> Put =>
-        (view, originalSource) => view.Map(viewItem => _rowDataLens.Put(viewItem, _rowDataLens.CreateLeft(Option<Type>.Some(view.FirstOrDefault()?.GetType() ?? typeof(TDto)))).ColumnValues)
-                                      .Aggregate(TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>((originalSource ?? CreateLeft(Option<Type>.Some(view.FirstOrDefault()?.GetType() ?? typeof(TDto)))).ColumnDataTypes)),
+        (view, originalSource) => view.Map(viewItem => _rowDataLens.Put(viewItem, _rowDataLens.CreateLeft(view.FirstOrDefault()?.GetType() ?? typeof(TDto))).ColumnValues)
+                                      .Aggregate(TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>((originalSource ?? CreateLeft(view.FirstOrDefault()?.GetType() ?? typeof(TDto))).ColumnDataTypes)),
                                                  (acc, rowData) => acc.AddRow(conf => conf.WithRowData(new Dictionary<string, object?>(rowData))))
-                                      .WithName((originalSource ?? CreateLeft(Option<Type>.Some(view.FirstOrDefault()?.GetType() ?? typeof(TDto)))).Name)
+                                      .WithName((originalSource ?? CreateLeft(view.FirstOrDefault()?.GetType() ?? typeof(TDto))).Name)
                                       .Build();
 
     /// <summary>
@@ -50,9 +50,9 @@ public sealed class TabularDataDtoLens<TDto>
         (source) => source.RowData.Map(rd => _rowDataLens.Get(rd));
 
 
-    public TabularData CreateLeft(Option<Type> dtoType)
+    public TabularData CreateLeft(Type dtoType)
     {
-        var columnDataTypes = DetermineColumnDataTypesForDto(dtoType.Value);
+        var columnDataTypes = DetermineColumnDataTypesForDto(dtoType);
         var tabularData =
             TabularDataBuilder.InitTabularData(columnDataTypes)
             .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>(_rowDataLens.CreateLeft(dtoType).ColumnValues)))

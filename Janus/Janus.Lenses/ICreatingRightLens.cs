@@ -19,11 +19,12 @@ public interface ICreatingRightLens<TRight>
 /// <typeparam name="TRight">Right/View type</typeparam>
 /// <typeparam name="TRightSpecs">Construction specification type</typeparam>
 public interface ICreatingRightSpecsLens<TRight, TRightSpecs>
+    where TRightSpecs : class
 {
     /// <summary>
     /// Creates a right (view) object of a lens via some specifications
     /// </summary>
     /// <param name="rightSpecs">Construction specification</param>
     /// <returns>Right (view) object</returns>
-    public TRight CreateRight(Option<TRightSpecs> rightSpecs);
+    public TRight CreateRight(TRightSpecs rightSpecs);
 }
