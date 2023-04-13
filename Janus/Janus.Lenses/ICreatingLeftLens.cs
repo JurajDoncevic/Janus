@@ -19,12 +19,11 @@ public interface ICreatingLeftLens<TLeft>
 /// <typeparam name="TLeft">Left/Source type</typeparam>
 /// <typeparam name="TLeftSpecs">Construction specification type</typeparam>
 public interface ICreatingLeftSpecsLens<TLeft, TLeftSpecs>
-    where TLeftSpecs : class
 {
     /// <summary>
     /// Creates a left (source) object of a lens via some specifications
     /// </summary>
     /// <param name="leftSpecs">Construction specification</param>
     /// <returns>Left (source) object</returns>
-    public TLeft CreateLeft(TLeftSpecs leftSpecs);
+    public TLeft CreateLeft(Option<TLeftSpecs> leftSpecs);
 }
