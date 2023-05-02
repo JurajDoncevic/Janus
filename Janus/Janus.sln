@@ -89,7 +89,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Lenses.Tests", "Janus
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.LiteDB", "Janus.Mask.LiteDB\Janus.Mask.LiteDB.csproj", "{1E6E4600-78E7-4688-AD38-B12FCFDC59F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.LiteDB.WebApp", "Janus.Mask.LiteDB.WebApp\Janus.Mask.LiteDB.WebApp.csproj", "{4021C903-B26A-4E31-9406-04EF089C8C92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.LiteDB.WebApp", "Janus.Mask.LiteDB.WebApp\Janus.Mask.LiteDB.WebApp.csproj", "{4021C903-B26A-4E31-9406-04EF089C8C92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Base", "Janus.Base\Janus.Base.csproj", "{19E8B5AB-7105-4CA3-82B3-1810F77419DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Base.Tests", "Janus.Base.Tests\Janus.Base.Tests.csproj", "{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -273,6 +277,14 @@ Global
 		{4021C903-B26A-4E31-9406-04EF089C8C92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4021C903-B26A-4E31-9406-04EF089C8C92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4021C903-B26A-4E31-9406-04EF089C8C92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E8B5AB-7105-4CA3-82B3-1810F77419DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E8B5AB-7105-4CA3-82B3-1810F77419DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E8B5AB-7105-4CA3-82B3-1810F77419DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E8B5AB-7105-4CA3-82B3-1810F77419DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
