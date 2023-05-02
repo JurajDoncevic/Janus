@@ -18,7 +18,7 @@ using Janus.Mask.Persistence.Models;
 using Janus.QueryLanguage;
 
 namespace Janus.Mask;
-public class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedMutation, TMaskedInstantiation, TMaskedSchema, TMaskedData, TMaskedDataItem>
+public abstract class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedMutation, TMaskedInstantiation, TMaskedSchema, TMaskedData, TMaskedDataItem>
     : IComponentManager
     where TMaskedQuery : MaskedQuery<TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection>
     where TMaskedDeleteCommand : MaskedDelete<TMaskedSelection>
