@@ -24,15 +24,16 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Wrapper.Sqlite\Janus.Wrapper.Sqlite.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="chinook.db">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="usgs-lower-us.db">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="chinook.db">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="usgs-lower-us.db">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

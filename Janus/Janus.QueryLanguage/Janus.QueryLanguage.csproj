@@ -13,7 +13,6 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
-		<PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -24,6 +23,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 </Project>

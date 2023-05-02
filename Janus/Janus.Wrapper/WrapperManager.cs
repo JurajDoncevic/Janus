@@ -1,5 +1,5 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.CommandLanguage;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
@@ -15,7 +15,7 @@ using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.LocalQuerying;
 using Janus.Wrapper.Persistence;
 using Janus.Wrapper.Persistence.Models;
-using static FunctionalExtensions.Base.OptionExtensions;
+using static Janus.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
 /// <summary>

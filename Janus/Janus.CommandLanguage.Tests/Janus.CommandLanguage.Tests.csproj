@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.CommandLanguage\Janus.CommandLanguage.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 </Project>

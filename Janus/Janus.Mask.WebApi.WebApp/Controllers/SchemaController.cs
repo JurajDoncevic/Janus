@@ -3,7 +3,7 @@ using Janus.Mask.WebApi.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using static Janus.Mask.WebApi.WebApp.Commons.Helpers;
-using Results = FunctionalExtensions.Base.Resulting.Results;
+using Results = Janus.Base.Resulting.Results;
 
 namespace Janus.Mask.WebApi.WebApp.Controllers;
 public class SchemaController : Controller

@@ -1,17 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
+	</ItemGroup>
 
 </Project>

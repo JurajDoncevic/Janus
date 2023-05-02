@@ -1,1 +1,1 @@
-﻿global using FunctionalExtensions.Base.Resulting;
+﻿global using Janus.Base.Resulting;

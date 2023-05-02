@@ -1,3 +1,3 @@
 global using Xunit;
-global using FunctionalExtensions.Base.Resulting;
-global using FunctionalExtensions.Base;
+global using Janus.Base.Resulting;
+global using Janus.Base;

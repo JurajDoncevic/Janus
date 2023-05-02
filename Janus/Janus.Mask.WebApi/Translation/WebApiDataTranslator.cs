@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Lenses.Implementations;
 using Janus.Mask.WebApi.MaskedDataModel;

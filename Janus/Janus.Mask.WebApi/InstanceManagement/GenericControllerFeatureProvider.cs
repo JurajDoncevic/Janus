@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base;
+﻿using Janus.Base;
 using Janus.Logging;
 using Janus.Mask.WebApi.InstanceManagement.Providers;
 using Janus.Mask.WebApi.InstanceManagement.Templates;

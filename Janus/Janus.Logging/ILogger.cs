@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base;
+﻿using Janus.Base;
 namespace Janus.Logging;
 
 /// <summary>

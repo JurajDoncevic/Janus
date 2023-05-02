@@ -1,5 +1,5 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Serialization.Json.DataModels.DTOs;
 using System.Text.Json;

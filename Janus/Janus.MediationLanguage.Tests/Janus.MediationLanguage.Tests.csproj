@@ -23,6 +23,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.MediationLanguage\Janus.MediationLanguage.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 </Project>

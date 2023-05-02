@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Logging;
 using Janus.Mask.WebApi.MaskedCommandModel;

@@ -1,5 +1,5 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Communication.Remotes;
 using Janus.Components.Persistence;
 using Janus.Logging;

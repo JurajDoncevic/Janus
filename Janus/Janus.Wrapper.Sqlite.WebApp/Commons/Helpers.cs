@@ -1,5 +1,5 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Wrapper.Sqlite.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Text;

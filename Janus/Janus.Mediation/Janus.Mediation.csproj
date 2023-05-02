@@ -8,15 +8,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="QueryModelMediation.cs~RF1042990.TMP" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
+		<None Remove="QueryModelMediation.cs~RF1042990.TMP" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 </Project>

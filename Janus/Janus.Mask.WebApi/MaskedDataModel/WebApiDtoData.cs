@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base;
+﻿using Janus.Base;
 using Janus.Mask.MaskedDataModel;
 
 namespace Janus.Mask.WebApi.MaskedDataModel;

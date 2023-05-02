@@ -1,8 +1,8 @@
-﻿using FunctionalExtensions.Base;
+﻿using Janus.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using static FunctionalExtensions.Base.UnitExtensions;
+using static Janus.Base.UnitExtensions;
 
 namespace Janus.Logging;
 

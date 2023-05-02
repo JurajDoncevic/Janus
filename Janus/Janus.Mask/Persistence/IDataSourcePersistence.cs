@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 using Janus.Components.Persistence;
 using Janus.Mask.Persistence.Models;
 

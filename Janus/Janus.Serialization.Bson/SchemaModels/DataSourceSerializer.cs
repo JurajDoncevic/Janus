@@ -1,5 +1,5 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Commons.SchemaModels;
 using Janus.Commons.SchemaModels.Building;
 using Janus.Serialization.Bson.SchemaModels.DTOs;

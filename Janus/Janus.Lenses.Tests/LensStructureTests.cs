@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base;
+﻿using Janus.Base;
 using System.Reflection;
 
 namespace Janus.Lenses.Tests;

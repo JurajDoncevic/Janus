@@ -1,10 +1,10 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Communication.Remotes;
 using Janus.Wrapper.Sqlite.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
-using Results = FunctionalExtensions.Base.Resulting.Results;
+using Results = Janus.Base.Resulting.Results;
 using Janus.Wrapper.Sqlite;
 using static Janus.Wrapper.Sqlite.WebApp.Commons.Helpers;
 using Janus.Components.Persistence;

@@ -3,8 +3,8 @@ using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using Janus.Wrapper.Sqlite;
-using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+using Janus.Base;
+using Janus.Base.Resulting;
 using static Janus.Wrapper.Sqlite.WebApp.Commons.Helpers;
 
 namespace Janus.Wrapper.Sqlite.WebApp.Controllers;

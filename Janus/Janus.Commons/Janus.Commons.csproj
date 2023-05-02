@@ -9,11 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\Janus.Utils\Janus.Utils.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

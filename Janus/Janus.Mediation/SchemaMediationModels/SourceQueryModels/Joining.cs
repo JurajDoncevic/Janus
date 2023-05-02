@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base;
+﻿using Janus.Base;
 using Janus.Commons.SchemaModels;
 
 namespace Janus.Mediation.SchemaMediationModels.MediationQueryModels;

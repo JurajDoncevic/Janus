@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Serialization.Bson.CommandModels.DTOs;
 using Janus.Serialization.Bson.QueryModels;

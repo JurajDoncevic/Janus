@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base;
+﻿using Janus.Base;
 using Janus.Mask.LiteDB.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Text;

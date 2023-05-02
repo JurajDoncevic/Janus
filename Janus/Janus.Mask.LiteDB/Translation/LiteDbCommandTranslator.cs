@@ -1,5 +1,5 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.SelectionExpressions;
 using Janus.Mask.LiteDB.MaskedCommandModel;

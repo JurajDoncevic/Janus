@@ -1,11 +1,11 @@
-﻿using FunctionalExtensions.Base;
-using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Communication.Remotes;
 using Janus.MediationLanguage;
 using Janus.Mediator.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
-using Results = FunctionalExtensions.Base.Resulting.Results;
+using Results = Janus.Base.Resulting.Results;
 using static Janus.Mediator.WebApp.Commons.Helpers;
 using Janus.Components.Persistence;
 

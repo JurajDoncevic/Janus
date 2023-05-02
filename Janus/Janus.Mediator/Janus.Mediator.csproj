@@ -13,6 +13,7 @@
 		<ProjectReference Include="..\Janus.MediationLanguage\Janus.MediationLanguage.csproj" />
 		<ProjectReference Include="..\Janus.Mediation\Janus.Mediation.csproj" />
 		<ProjectReference Include="..\Janus.QueryLanguage\Janus.QueryLanguage.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 </Project>

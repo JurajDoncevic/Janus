@@ -32,12 +32,13 @@
 		<ProjectReference Include="..\Janus.Serialization.Json\Janus.Serialization.Json.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.MongoBson\Janus.Serialization.MongoBson.csproj" />
 		<ProjectReference Include="..\Janus.Serialization.Protobufs\Janus.Serialization.Protobufs.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

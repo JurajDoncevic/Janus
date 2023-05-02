@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 using Janus.Wrapper.SchemaInference.Model;
 
 namespace Janus.Wrapper.SchemaInference;

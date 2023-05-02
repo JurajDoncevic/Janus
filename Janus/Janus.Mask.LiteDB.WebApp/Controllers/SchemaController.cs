@@ -3,7 +3,7 @@ using Janus.Mask.LiteDB.WebApp.ViewModels;
 using Janus.Serialization.Json;
 using Microsoft.AspNetCore.Mvc;
 using static Janus.Mask.LiteDB.WebApp.Commons.Helpers;
-using Results = FunctionalExtensions.Base.Resulting.Results;
+using Results = Janus.Base.Resulting.Results;
 
 namespace Janus.Mask.LiteDB.WebApp.Controllers;
 public class SchemaController : Controller

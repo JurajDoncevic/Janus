@@ -1,5 +1,5 @@
 ﻿using Antlr4.Runtime.Misc;
-using FunctionalExtensions.Base;
+using Janus.Base;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;

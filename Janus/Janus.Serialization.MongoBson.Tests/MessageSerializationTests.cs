@@ -1,4 +1,4 @@
-using FunctionalExtensions.Base.Resulting;
+using Janus.Base.Resulting;
 using Janus.Commons.CommandModels;
 using Janus.Commons.DataModels;
 using Janus.Commons.Messages;

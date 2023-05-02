@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 using Janus.Mediator.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Text;

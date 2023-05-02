@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 using Janus.Commons.QueryModels;
 using Janus.Commons.QueryModels.Exceptions;
 using Janus.Commons.SchemaModels;

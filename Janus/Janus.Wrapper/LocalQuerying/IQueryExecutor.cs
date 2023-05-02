@@ -1,4 +1,4 @@
-﻿using FunctionalExtensions.Base.Resulting;
+﻿using Janus.Base.Resulting;
 
 namespace Janus.Wrapper.LocalQuerying;
 

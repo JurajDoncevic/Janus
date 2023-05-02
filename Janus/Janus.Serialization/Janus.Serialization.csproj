@@ -8,11 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="FunctionalExtensions.Base" Version="1.2.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+		<ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 </Project>

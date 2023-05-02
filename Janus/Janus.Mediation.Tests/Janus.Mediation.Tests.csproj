@@ -22,7 +22,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Janus.Mediation\Janus.Mediation.csproj" />
+		<ProjectReference Include="..\Janus.Mediation\Janus.Mediation.csproj" />
+		<ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
 	</ItemGroup>
 
 </Project>
