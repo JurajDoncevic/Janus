@@ -1,5 +1,5 @@
 ﻿namespace Janus.Mask.LiteDB.MaskedSchemaModel;
-public class DocumentField : Field
+public sealed class DocumentField : Field
 {
     private readonly Dictionary<string, Field> _fields;
 

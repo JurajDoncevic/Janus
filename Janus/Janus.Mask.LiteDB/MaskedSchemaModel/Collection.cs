@@ -1,5 +1,5 @@
 ﻿namespace Janus.Mask.LiteDB.MaskedSchemaModel;
-public class Collection 
+public sealed class Collection 
 {
     private readonly string _name;
     private readonly List<Document> _documents;

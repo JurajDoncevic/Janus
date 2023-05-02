@@ -9,7 +9,7 @@ public static class LiteDbSchemaModelBuilder
     }
 }
 
-public class DatabaseBuilder
+public sealed class DatabaseBuilder
 {
     private string _databaseName;
     private Dictionary<string, Collection> _databaseCollections;

@@ -1,7 +1,7 @@
 ﻿using Janus.Mask.MaskedSchemaModel;
 
 namespace Janus.Mask.LiteDB.MaskedSchemaModel;
-public class Database : MaskedDataSource
+public sealed class Database : MaskedDataSource
 {
     private readonly string _name;
     private readonly Dictionary<string, Collection> _collections;

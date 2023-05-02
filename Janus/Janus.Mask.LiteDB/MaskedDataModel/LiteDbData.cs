@@ -2,7 +2,7 @@
 using LiteDB;
 
 namespace Janus.Mask.LiteDB.MaskedDataModel;
-public class LiteDbData : MaskedData<BsonDocument>
+public sealed class LiteDbData : MaskedData<BsonDocument>
 {
     public override IReadOnlyList<BsonDocument> Data => _items;
 
