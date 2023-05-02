@@ -2,7 +2,7 @@
 using Janus.Communication.Remotes;
 
 namespace Janus.Mask.LiteDB;
-public class LiteDbMaskOptions : MaskOptions
+public sealed class LiteDbMaskOptions : MaskOptions
 {
     private readonly string _materializationConnectionString;
 

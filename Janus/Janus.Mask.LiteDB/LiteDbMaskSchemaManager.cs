@@ -5,7 +5,7 @@ using Janus.Mask.LiteDB.Translation;
 
 namespace Janus.Mask.LiteDB;
 
-public class LiteDbMaskSchemaManager : MaskSchemaManager<Database>
+public sealed class LiteDbMaskSchemaManager : MaskSchemaManager<Database>
 {
     public LiteDbMaskSchemaManager(MaskCommunicationNode communicationNode, LiteDbSchemaTranslator schemaTranslator, ILogger? logger = null) : base(communicationNode, schemaTranslator, logger)
     {
