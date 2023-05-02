@@ -1,5 +1,5 @@
 ﻿namespace Janus.Mask.LiteDB.MaskedSchemaModel;
-public class AggregateField : Field
+public sealed class AggregateField : Field
 {
     private readonly FieldTypes _elementsType;
 
