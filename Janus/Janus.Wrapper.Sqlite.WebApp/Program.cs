@@ -94,8 +94,8 @@ wrapperConfiguration.NetworkAdapterType switch
                     wrapperConfiguration.ListenPort,
                     wrapperConfiguration.TimeoutMs
                     ),
-                serviceProvider.GetRequiredService<IBytesSerializationProvider>()!,
-                serviceProvider.GetRequiredService<Janus.Logging.ILogger>())),
+                serviceProvider.GetService<IBytesSerializationProvider>()!,
+                serviceProvider.GetService<Janus.Logging.ILogger>())),
     _ => throw new Exception("Unknown network adapter type")
 };
 
@@ -113,7 +113,7 @@ builder.Services.AddSingleton<SqliteWrapperCommandManager>();
 // setup schema managment
 builder.Services.AddSingleton<SqliteSchemaModelProvider>(provider => new SqliteSchemaModelProvider(wrapperConfiguration.SourceConnectionString));
 builder.Services.AddSingleton<SchemaInferrer>(
-    provider => new SchemaInferrer(provider.GetRequiredService<SqliteSchemaModelProvider>()!, wrapperConfiguration.DataSourceName ?? wrapperConfiguration.NodeId));
+    provider => new SchemaInferrer(provider.GetService<SqliteSchemaModelProvider>()!, wrapperConfiguration.DataSourceName ?? wrapperConfiguration.NodeId));
 builder.Services.AddSingleton<SqliteWrapperSchemaManager>();
 
 // setup controller
@@ -154,6 +154,6 @@ app.MapControllerRoute(
 var runTask = app.RunAsync();
 
 // preload mediator manager, so the web interface doesn't need to be accessed for the app to work
-app.Services.GetRequiredService<SqliteWrapperManager>();
+app.Services.GetService<SqliteWrapperManager>();
 
 await runTask;
