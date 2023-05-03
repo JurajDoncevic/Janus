@@ -13,7 +13,7 @@ public class HomeController : Controller
     private readonly SqliteWrapperManager _wrapperManager;
     private readonly WrapperOptions _wrapperOptions;
     private readonly IConfiguration _configuration;
-    public HomeController(SqliteWrapperManager wrapperManager, WrapperOptions wrapperOptions, IConfiguration configuration, Logging.ILogger? logger = null)
+    public HomeController(SqliteWrapperManager wrapperManager, SqliteWrapperOptions wrapperOptions, IConfiguration configuration, Logging.ILogger? logger = null)
     {
         _wrapperManager = wrapperManager;
         _wrapperOptions = wrapperOptions;
