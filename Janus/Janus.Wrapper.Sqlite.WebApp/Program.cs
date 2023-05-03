@@ -125,7 +125,7 @@ builder.Services.AddSingleton<IDataSourceInfoPersistence, DataSourceInfoPersiste
 builder.Services.AddSingleton<IRemotePointPersistence, RemotePointPersistence>();
 builder.Services.AddSingleton<WrapperPersistenceProvider>();
 
-builder.Services.AddSingleton<WrapperOptions>(wrapperConfiguration.ToWrapperOptions());
+builder.Services.AddSingleton<SqliteWrapperOptions>(wrapperConfiguration.ToWrapperOptions());
 
 builder.Services.AddSingleton<SqliteWrapperManager>();
 

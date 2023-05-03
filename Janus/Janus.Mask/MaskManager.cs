@@ -53,16 +53,54 @@ public abstract class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSele
         _logger = logger?.ResolveLogger<MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSelection, TMaskedJoining, TMaskedProjection, TMaskedDeleteCommand, TMaskedInsertCommand, TMaskedUpdateCommand, TMaskedMutation, TMaskedInstantiation, TMaskedSchema, TMaskedData, TMaskedDataItem>>();
 
 
-        RegisterStartupRemotePoints();
+        if (_maskOptions.EagerStartup)
+        {
+            InitiateEagerStartup().GetAwaiter().GetResult();
+        }
     }
 
-    private async void RegisterStartupRemotePoints()
+
+    private async Task<Result> InitiateEagerStartup()
+    {
+        if (_maskOptions.EagerStartup)
+        {
+            var rpReg = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
+            var schLoad = (await StartupLoadSchemas()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
+
+            return rpReg
+                .Bind(_ => schLoad);
+        }
+
+        return Results.OnSuccess("Didn't initiate eager start");
+    }
+
+    /// <summary>
+    /// Tries to register the startup remote points in parallel
+    /// </summary>
+    private async Task<Result> StartupRegisterRemotePoints()
     {
         var regs = _maskOptions.StartupRemotePoints
             .Map(async rp => await RegisterRemotePoint(rp))
             .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
 
-        await Task.WhenAll(regs);
+        var results = await Task.WhenAll(regs);
+        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
+        return accResult;
+    }
+
+    /// <summary>
+    /// Tries to load the startup schemas in parallel
+    /// </summary>
+    private async Task<Result> StartupLoadSchemas()
+    {
+        var schemaLoad = 
+            _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(_maskOptions.StartupNodeSchemaLoad))
+            .Pass(r => _logger?.Info($"Loaded schema: {r.Data.Name}"), r => _logger?.Info($"Failed to load schema: {r.Message}")));
+
+
+        var results = await Task.WhenAll(loads);
+        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
+        return accResult;
     }
 
     public Option<DataSource> GetCurrentSchema()

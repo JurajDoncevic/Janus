@@ -15,7 +15,11 @@ internal class MaskConfiguration
 
     public NetworkAdapterTypes NetworkAdapterType { get; init; } = NetworkAdapterTypes.UNKNOWN;
 
+    public bool EagerStartup { get; init; } = false;
+
     public List<RemotePointConfiguration> StartupRemotePoints { get; init; } = new();
+
+    public List<string> StartupNodesSchemaLoad { get; init; } = new();
 
     public string PersistenceConnectionString { get; init; } = "./mask_database.db";
 
@@ -45,9 +49,11 @@ internal static partial class ConfigurationOptionsExtensions
             configuration.TimeoutMs,
             configuration.CommunicationFormat,
             configuration.NetworkAdapterType,
+            configuration.EagerStartup,
             configuration.StartupRemotePoints
                    .Select(remotePointConfiguration => new UndeterminedRemotePoint(remotePointConfiguration.Address, remotePointConfiguration.ListenPort))
                    .ToList(),
+            configuration.StartupNodesSchemaLoad,
             configuration.PersistenceConnectionString,
             configuration.MaterializationConfiguration.ConnectionString
             );

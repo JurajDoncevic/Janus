@@ -26,11 +26,15 @@ public interface IComponentOptions
     /// </summary>
     public NetworkAdapterTypes NetworkAdapterType { get; }
     /// <summary>
+    /// Enable automatic startup operations. Option names prefixed with "<c>Startup</c>".
+    /// </summary>
+    public bool EagerStartup { get; }
+    /// <summary>
     /// Remote points to register on startup
     /// </summary>
     public IReadOnlyList<UndeterminedRemotePoint> StartupRemotePoints { get; }
     /// <summary>
     /// Connection string to the persistence database
     /// </summary>
-    public string PersistenceConnectionString { get; }
+    public string PersistenceConnectionString { get; } 
 }

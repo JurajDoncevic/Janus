@@ -67,7 +67,59 @@ public abstract class WrapperManager
         _communicationNode.CommandRequestReceived += CommunicationNode_CommandRequestReceived;
         _communicationNode.QueryRequestReceived += CommunicationNode_QueryRequestReceived;
         _communicationNode.SchemaRequestReceived += CommunicationNode_SchemaRequestReceived;
+
+        if (_wrapperOptions.EagerStartup)
+        {
+            InitiateEagerStartup().GetAwaiter().GetResult();
+        }
     }
+
+
+    private async Task<Result> InitiateEagerStartup()
+    {
+        if (_wrapperOptions.EagerStartup)
+        {
+            var rpReg = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
+            var schInf = (await StartupInferSchema()).Pass(r => _logger?.Info($"Inferred schema on startup successfully: {r.Message}"), r => _logger?.Info($"Failed to apply startup mediation successfully: {r.Message}"));
+
+            return rpReg
+                .Bind(_ => rpReg)
+                .Bind(_ => schInf);
+        }
+
+        return Results.OnSuccess("Didn't initiate eager start");
+    }
+
+
+    /// <summary>
+    /// Tries to register the startup remote points in parallel
+    /// </summary>
+    private async Task<Result> StartupRegisterRemotePoints()
+    {
+        var regs = _wrapperOptions.StartupRemotePoints
+            .Map(async rp => await RegisterRemotePoint(rp))
+            .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
+
+        var results = await Task.WhenAll(regs);
+        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
+        return accResult;
+    }
+
+    /// <summary>
+    /// Tries to infer data source schema on startup
+    /// </summary>
+    /// <returns></returns>
+    private async Task<Result> StartupInferSchema()
+    {
+        var schemaInferrence =
+                GenerateSchema();
+
+        return (await schemaInferrence).Match(
+            data => Results.OnSuccess("Startup schema inferred successful"),
+            msg => Results.OnFailure(msg)
+            );
+    }
+
 
     private void CommunicationNode_SchemaRequestReceived(object? sender, Communication.Nodes.Events.SchemaReqEventArgs e)
         => _schemaManager.CurrentOutputSchema

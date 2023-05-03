@@ -6,14 +6,16 @@ namespace Janus.Wrapper;
 /// <summary>
 /// Wrapper component options
 /// </summary>
-public sealed class WrapperOptions : IComponentOptions
+public class WrapperOptions : IComponentOptions
 {
     private readonly string _nodeId;
     private readonly int _listenPort;
     private readonly int _timeoutMs;
     private readonly CommunicationFormats _communicationFormat;
     private readonly NetworkAdapterTypes _networkAdapterType;
+    private readonly bool _eagerStartup;
     private readonly IEnumerable<UndeterminedRemotePoint> _startupRemotePoints;
+    private readonly bool _startupInferSchema;
     private readonly string _sourceConnectionString;
     private readonly bool _allowsCommands;
     private readonly string _persistenceConnectionString;
@@ -25,7 +27,9 @@ public sealed class WrapperOptions : IComponentOptions
         int timeoutMs,
         CommunicationFormats communicationFormat,
         NetworkAdapterTypes networkAdapterType,
+        bool eagerStartup,
         IEnumerable<UndeterminedRemotePoint> startupRemotePoints,
+        bool startupInferSchema,
         string sourceConnectionString,
         bool allowsCommands,
         string persistenceConnectionString,
@@ -36,7 +40,9 @@ public sealed class WrapperOptions : IComponentOptions
         _timeoutMs = timeoutMs;
         _communicationFormat = communicationFormat;
         _networkAdapterType = networkAdapterType;
+        _eagerStartup = eagerStartup;
         _startupRemotePoints = startupRemotePoints;
+        _startupInferSchema = startupInferSchema;
         _sourceConnectionString = sourceConnectionString;
         _allowsCommands = allowsCommands;
         _persistenceConnectionString = persistenceConnectionString;
@@ -69,4 +75,10 @@ public sealed class WrapperOptions : IComponentOptions
     public string PersistenceConnectionString => _persistenceConnectionString;
 
     public string DataSourceName => _dataSourceName;
+
+    public bool EagerStartup => _eagerStartup;
+    /// <summary>
+    /// Enables schema inferrence on eager startup
+    /// </summary>
+    public bool StartupInferSchema => _startupInferSchema;
 }

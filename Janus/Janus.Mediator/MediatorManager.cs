@@ -13,6 +13,7 @@ using Janus.Mediation.SchemaMediationModels;
 using Janus.MediationLanguage;
 using Janus.Mediator.Persistence;
 using Janus.QueryLanguage;
+using NLog.Filters;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -51,19 +52,73 @@ public sealed class MediatorManager : IComponentManager
         _communicationNode.QueryRequestReceived += CommunicationNode_QueryRequestReceived;
         _communicationNode.SchemaRequestReceived += CommunicationNode_SchemaRequestReceived;
 
-        RegisterStartupRemotePoints();
+        if (_mediatorOptions.EagerStartup)
+        {
+            InitiateEagerStartup().GetAwaiter().GetResult();
+        }
+    }
+
+
+    private async Task<Result> InitiateEagerStartup()
+    {
+        if (_mediatorOptions.EagerStartup)
+        {
+            var rpReg = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
+            var schLoad = (await StartupLoadSchemas()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
+            var medAppl = (await StartupApplyMediationScript()).Pass(r => _logger?.Info($"Applied startup mediation successfully: {r.Message}"), r => _logger?.Info($"Failed to apply startup mediation successfully: {r.Message}"));
+
+            return rpReg
+                .Bind(_ => schLoad)
+                .Bind(_ => medAppl);
+        }
+
+        return Results.OnSuccess("Didn't initiate eager start");
     }
 
     /// <summary>
-    /// Tries to registers the startup remote points in parallel
+    /// Tries to register the startup remote points in parallel
     /// </summary>
-    private async void RegisterStartupRemotePoints()
+    private async Task<Result> StartupRegisterRemotePoints()
     {
         var regs = _mediatorOptions.StartupRemotePoints
             .Map(async rp => await RegisterRemotePoint(rp))
             .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
 
-        await Task.WhenAll(regs);
+        var results = await Task.WhenAll(regs);
+        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));      
+        return accResult;
+    }
+
+    /// <summary>
+    /// Tries to load the startup schemas in parallel
+    /// </summary>
+    private async Task<Result> StartupLoadSchemas()
+    {
+        var loads = _mediatorOptions.StartupNodesSchemaLoad
+            .Map(nodeId => (nodeId, remotePoint: _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(nodeId)))) // get remote point for node id
+            .Map(t => t.remotePoint != null ? LoadSchemaFrom(t.remotePoint) : Task.FromResult(Results.OnFailure<DataSource>($"No node registered with id: {t.nodeId}")))
+            .Map(async result => (await result).Pass(r => _logger?.Info($"Loaded schema: {r.Data.Name}"), r => _logger?.Info($"Failed to load schema: {r.Message}")));
+    
+
+        var results = await Task.WhenAll(loads);
+        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
+        return accResult;
+    }
+
+    /// <summary>
+    /// Tries to apply the startup mediation script
+    /// </summary>
+    /// <returns></returns>
+    private async Task<Result> StartupApplyMediationScript()
+    {
+        var mediationApplication =
+                Task.FromResult(CreateDataSourceMediation(_mediatorOptions.StartupMediationScript))
+                .Bind(async mediation => await ApplyMediation(mediation));
+
+        return (await mediationApplication).Match(
+            data => Results.OnSuccess("Startup mediation application successful"),
+            msg => Results.OnFailure(msg)
+            );
     }
 
     #region RECEIVED MESSAGE HANDLERS
