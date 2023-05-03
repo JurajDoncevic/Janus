@@ -94,8 +94,8 @@ wrapperConfiguration.NetworkAdapterType switch
                     wrapperConfiguration.ListenPort,
                     wrapperConfiguration.TimeoutMs
                     ),
-                serviceProvider.GetService<IBytesSerializationProvider>()!,
-                serviceProvider.GetService<Janus.Logging.ILogger>())),
+                serviceProvider.GetRequiredService<IBytesSerializationProvider>()!,
+                serviceProvider.GetRequiredService<Janus.Logging.ILogger>())),
     _ => throw new Exception("Unknown network adapter type")
 };
 
@@ -113,7 +113,7 @@ builder.Services.AddSingleton<SqliteWrapperCommandManager>();
 // setup schema managment
 builder.Services.AddSingleton<SqliteSchemaModelProvider>(provider => new SqliteSchemaModelProvider(wrapperConfiguration.SourceConnectionString));
 builder.Services.AddSingleton<SchemaInferrer>(
-    provider => new SchemaInferrer(provider.GetService<SqliteSchemaModelProvider>()!, wrapperConfiguration.DataSourceName ?? wrapperConfiguration.NodeId));
+    provider => new SchemaInferrer(provider.GetRequiredService<SqliteSchemaModelProvider>()!, wrapperConfiguration.DataSourceName ?? wrapperConfiguration.NodeId));
 builder.Services.AddSingleton<SqliteWrapperSchemaManager>();
 
 // setup controller

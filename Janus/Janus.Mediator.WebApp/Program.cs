@@ -131,6 +131,6 @@ app.MapControllerRoute(
 var runTask = app.RunAsync();
 
 // preload mediator manager, so the web interface doesn't need to be accessed for the app to work
-var mediatorManager = app.Services.GetService<MediatorManager>();
+var mediatorManager = app.Services.GetRequiredService<MediatorManager>();
 
 await runTask;
