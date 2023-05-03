@@ -113,7 +113,7 @@ internal class ComponentInstances
         return (hostGuid, mediatorManager ?? throw new Exception("Couldn't get the required mediator manager"));
     }
 
-    internal static (Guid hostId, SqliteWrapperManager wrapperManager) CreateSqliteWrapperHostedInstance(WrapperOptions wrapperOptions)
+    internal static (Guid hostId, SqliteWrapperManager wrapperManager) CreateSqliteWrapperHostedInstance(SqliteWrapperOptions wrapperOptions)
     {
         var builder = Host.CreateDefaultBuilder();
         builder.ConfigureServices(services =>
@@ -177,7 +177,7 @@ internal class ComponentInstances
             services.AddSingleton<IRemotePointPersistence, Janus.Wrapper.Persistence.LiteDB.RemotePointPersistence>();
             services.AddSingleton<WrapperPersistenceProvider>();
 
-            services.AddSingleton<WrapperOptions>(wrapperOptions);
+            services.AddSingleton<SqliteWrapperOptions>(wrapperOptions);
 
             services.AddSingleton<SqliteWrapperManager>();
         });

@@ -65,7 +65,7 @@ public abstract class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSele
         if (_maskOptions.EagerStartup)
         {
             var rpReg = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
-            var schLoad = (await StartupLoadSchemas()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
+            var schLoad = (await StartupLoadSchema()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
 
             return rpReg
                 .Bind(_ => schLoad);
@@ -91,16 +91,27 @@ public abstract class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSele
     /// <summary>
     /// Tries to load the startup schemas in parallel
     /// </summary>
-    private async Task<Result> StartupLoadSchemas()
+    private async Task<Result> StartupLoadSchema()
     {
-        var schemaLoad = 
-            _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(_maskOptions.StartupNodeSchemaLoad))
-            .Pass(r => _logger?.Info($"Loaded schema: {r.Data.Name}"), r => _logger?.Info($"Failed to load schema: {r.Message}")));
+        var remotePointForSchemaLoading = _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(_maskOptions.StartupNodeSchemaLoad));
+
+        if(remotePointForSchemaLoading == null)
+        {
+            _logger?.Info($"No remote point registered with node id: {_maskOptions.NodeId}");
+
+            return Results.OnFailure($"No remote point registered with node id: {_maskOptions.NodeId}");
+        }
+
+        var schemaLoad =
+            (await LoadSchemaFrom(remotePointForSchemaLoading))
+            .Pass(r => _logger?.Info($"Loaded schema: {r.Data.Name}"), r => _logger?.Info($"Failed to load schema: {r.Message}"));
 
 
-        var results = await Task.WhenAll(loads);
-        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
-        return accResult;
+        var result = schemaLoad.Match(
+            r => Results.OnSuccess(schemaLoad.Message),
+            msg => Results.OnFailure(msg)
+            );
+        return result;
     }
 
     public Option<DataSource> GetCurrentSchema()
