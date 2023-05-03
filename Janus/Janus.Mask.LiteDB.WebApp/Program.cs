@@ -137,6 +137,6 @@ app.MapControllerRoute(
 var runTask = app.RunAsync();
 
 // preload mediator manager, so the web interface doesn't need to be accessed for the app to work
-app.Services.GetService<LiteDbMaskManager>();
+var manager = app.Services.GetService<LiteDbMaskManager>();
 
 await runTask;
