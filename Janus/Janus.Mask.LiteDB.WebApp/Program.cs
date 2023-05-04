@@ -41,7 +41,7 @@ var webConfiguration =
                  .Get<WebConfiguration>();
 
 // set port for web host
-builder.WebHost.UseUrls($"http://127.0.0.1:{webConfiguration.Port}", $"https://127.0.0.1:{webConfiguration.Port + 1}");
+builder.WebHost.UseUrls($"{webConfiguration.AllowedHttpHost}:{webConfiguration.Port}", $"{webConfiguration.AllowedHttpsHost}:{webConfiguration.Port + 1}");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
