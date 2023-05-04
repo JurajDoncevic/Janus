@@ -55,10 +55,10 @@ internal class WebApiInstance
             var dataSource = _dataSourceSchema.Value;
 
             var builder = WebApplication.CreateBuilder();
-            var urls = new string[] { $"http://127.0.0.1:{_webApiOptions.ListenPort}" };
+            var urls = new string[] { $"http://*:{_webApiOptions.ListenPort}" };
             if (_webApiOptions.UseSSL)
             {
-                urls = urls.Append($"https://127.0.0.1:{_webApiOptions.ListenPortSecure ?? (_webApiOptions.ListenPort + 1)}").ToArray();
+                urls = urls.Append($"https://*:{_webApiOptions.ListenPortSecure ?? (_webApiOptions.ListenPort + 1)}").ToArray();
             }
 
             builder.WebHost.UseUrls(urls);
