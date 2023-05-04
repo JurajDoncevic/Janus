@@ -80,13 +80,21 @@ public sealed class MediatorManager : IComponentManager
     /// </summary>
     private async Task<Result> StartupRegisterRemotePoints()
     {
-        var regs = _mediatorOptions.StartupRemotePoints
-            .Map(async rp => await RegisterRemotePoint(rp))
-            .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
-
-        var results = await Task.WhenAll(regs);
-        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));      
-        return accResult;
+        var regs =
+        _mediatorOptions.StartupRemotePoints.Fold(
+            Results.OnSuccess(),
+            (rp, res) => res.Bind(
+                _ => RegisterRemotePoint(rp)
+                    .Result.Match(
+                        r => Results.OnSuccess($"{_.Message};Successfully registered at startup: {r}"),
+                        msg => Results.OnFailure($"{_.Message};{msg}")
+                    ) 
+            )
+        );
+        regs.Pass(r => _logger?.Info($"Registered startup remote points: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
+        
+        
+        return regs;
     }
 
     /// <summary>
