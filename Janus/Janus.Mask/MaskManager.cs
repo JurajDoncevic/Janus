@@ -59,33 +59,39 @@ public abstract class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSele
         }
     }
 
-
+    /// <summary>
+    /// Initiates eager startup operations on component initialization
+    /// </summary>
+    /// <returns>Result of startup operations</returns>
     private async Task<Result> InitiateEagerStartup()
     {
-        if (_maskOptions.EagerStartup)
-        {
-            var rpReg = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
-            var schLoad = (await StartupLoadSchema()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
-
-            return rpReg
-                .Bind(_ => schLoad);
-        }
-
-        return Results.OnSuccess("Didn't initiate eager start");
+        var remotePointRegistrations = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
+        var schemaLoading = (await StartupLoadSchema()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
+        var additionalOperations = (await AdditionalBaseStartupOperations()).Pass(r => _logger?.Info($"Additional operations completed successfully: {r.Message}"), r => _logger?.Info($"Additionaly operations failed: {r.Message}"));
+        return remotePointRegistrations
+            .Bind(_ => schemaLoading)
+            .Bind(_ => additionalOperations);
     }
+
+    /// <summary>
+    /// Additional startup operations over the base class for specific mask manager kinds
+    /// </summary>
+    /// <returns>Result of additional operations</returns>
+    protected async virtual Task<Result> AdditionalBaseStartupOperations()
+        => await Task.FromResult(Results.OnSuccess("No additional operations required"));
 
     /// <summary>
     /// Tries to register the startup remote points in parallel
     /// </summary>
     private async Task<Result> StartupRegisterRemotePoints()
     {
-        var regs = _maskOptions.StartupRemotePoints
+        var remotePointRegistrations = _maskOptions.StartupRemotePoints
             .Map(async rp => await RegisterRemotePoint(rp))
             .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
 
-        var results = await Task.WhenAll(regs);
-        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
-        return accResult;
+        var registrationResults = await Task.WhenAll(remotePointRegistrations);
+        var registrationOperationResult = registrationResults.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
+        return registrationOperationResult;
     }
 
     /// <summary>
@@ -95,7 +101,7 @@ public abstract class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSele
     {
         var remotePointForSchemaLoading = _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(_maskOptions.StartupNodeSchemaLoad));
 
-        if(remotePointForSchemaLoading == null)
+        if (remotePointForSchemaLoading == null)
         {
             _logger?.Info($"No remote point registered with node id: {_maskOptions.NodeId}");
 

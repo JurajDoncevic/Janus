@@ -19,6 +19,8 @@ public sealed class WebApiMaskManager
     private readonly WebApiQueryTranslator _queryTranslator;
     private readonly WebApiCommandTranslator _commandTranslator;
 
+    private readonly ILogger<WebApiMaskManager>? _logger;
+
     public WebApiMaskManager(MaskCommunicationNode communicationNode,
                              WebApiMaskQueryManager queryManager,
                              WebApiMaskCommandManager commandManager,
@@ -39,7 +41,19 @@ public sealed class WebApiMaskManager
         _queryTranslator = queryTranslator;
         _commandTranslator = commandTranslator;
         _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, commandManager, queryManager, schemaManager, logger);
+
+        _logger = logger?.ResolveLogger<WebApiMaskManager>();
+
+        if (_maskOptions.EagerStartup)
+        {
+            // will not succed if the base operations are not successful
+            StartupWebApiInstance().GetAwaiter().GetResult();
+        }
     }
+
+    private async Task<Result> StartupWebApiInstance()
+        => (await Task.FromResult(StartWebApi()))
+            .Pass(r => _logger?.Info($"Startup Web API instance start successful"), r => _logger?.Info($"Startup Web API instance start failed: {r.Message}"));
 
     public bool IsInstanceRunning => _webApiInstance.IsRunning();
 

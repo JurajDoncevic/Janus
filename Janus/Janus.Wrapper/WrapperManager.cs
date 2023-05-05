@@ -15,6 +15,7 @@ using Janus.Wrapper.LocalCommanding;
 using Janus.Wrapper.LocalQuerying;
 using Janus.Wrapper.Persistence;
 using Janus.Wrapper.Persistence.Models;
+using System.Diagnostics;
 using static Janus.Base.OptionExtensions;
 
 namespace Janus.Wrapper;
@@ -74,20 +75,27 @@ public abstract class WrapperManager
         }
     }
 
+    /// <summary>
+    /// Initiates eager startup operations on component initialization
+    /// </summary>
+    /// <returns>Result of startup operations</returns>
+    protected virtual async Task<Result> AdditionalBaseStartupOperations()
+        => await Task.FromResult(Results.OnSuccess("No additional operations required"));
 
+    /// <summary>
+    /// Initiates eager startup operations on component initialization
+    /// </summary>
+    /// <returns></returns>
     private async Task<Result> InitiateEagerStartup()
     {
-        if (_wrapperOptions.EagerStartup)
-        {
-            var rpReg = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
-            var schInf = (await StartupInferSchema()).Pass(r => _logger?.Info($"Inferred schema on startup successfully: {r.Message}"), r => _logger?.Info($"Failed to apply startup mediation successfully: {r.Message}"));
+        var remotePointRegistrations = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
+        var schemaInferrencing = (await StartupInferSchema()).Pass(r => _logger?.Info($"Inferred schema on startup successfully: {r.Message}"), r => _logger?.Info($"Failed to apply startup mediation successfully: {r.Message}"));
+        var additionalOperations = (await AdditionalBaseStartupOperations()).Pass(r => _logger?.Info($"Additional operations completed successfully: {r.Message}"), r => _logger?.Info($"Additionaly operations failed: {r.Message}"));
 
-            return rpReg
-                .Bind(_ => rpReg)
-                .Bind(_ => schInf);
-        }
-
-        return Results.OnSuccess("Didn't initiate eager start");
+        return remotePointRegistrations
+            .Bind(_ => remotePointRegistrations)
+            .Bind(_ => schemaInferrencing)
+            .Bind(_ => additionalOperations);
     }
 
 
@@ -96,13 +104,13 @@ public abstract class WrapperManager
     /// </summary>
     private async Task<Result> StartupRegisterRemotePoints()
     {
-        var regs = _wrapperOptions.StartupRemotePoints
+        var registrations = _wrapperOptions.StartupRemotePoints
             .Map(async rp => await RegisterRemotePoint(rp))
             .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
 
-        var results = await Task.WhenAll(regs);
-        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
-        return accResult;
+        var registrationResults = await Task.WhenAll(registrations);
+        var registrationOperationResult = registrationResults.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
+        return registrationOperationResult;
     }
 
     /// <summary>
@@ -129,7 +137,7 @@ public abstract class WrapperManager
                 );
 
     private async void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
-    {        
+    {
         (await (await RunQuery(e.ReceivedMessage.Query))
             .Match(
                 tabularData => _communicationNode.SendQueryResponse(e.ReceivedMessage.ExchangeId, tabularData, e.FromRemotePoint),
@@ -174,7 +182,7 @@ public abstract class WrapperManager
 
     public async Task<Result<IEnumerable<RemotePoint>>> GetPersistedRemotePoints()
         => await Results.AsResult(async () => _persistenceProvider.RemotePointPersistence.GetAll());
-    
+
     public async Task<Result> PersistRemotePoint(RemotePoint remotePoint)
         => await Results.AsResult(async () =>
         {
