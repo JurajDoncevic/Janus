@@ -12,7 +12,7 @@
         <div class="col-7">
             <h4>Query text</h4>
             <form asp-controller="Querying" asp-action="RunQuery" method="post">
-                <textarea name="queryText" class="form-control" type="text" style="min-height:50vh">@Model.QueryText</textarea>
+                <textarea name="queryText" class="form-control code" type="text" style="min-height:50vh">@Model.QueryText</textarea>
                 <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
             </form>
 
