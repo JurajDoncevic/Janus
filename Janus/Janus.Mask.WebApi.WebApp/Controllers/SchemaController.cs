@@ -23,7 +23,7 @@ public class SchemaController : Controller
         var schemaToJson =
             currentSchema.Match(
                                 dataSource => _jsonSerializationProvider.DataSourceSerializer.Serialize(dataSource).Map(PrettyJsonString),
-                                () => Results.OnFailure<string>("No mediated schema generated")
+                                () => Results.OnFailure<string>("No schema generated")
                                 );
 
         var viewModel = new DataSourceViewModel

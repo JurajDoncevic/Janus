@@ -29,7 +29,8 @@ public class HomeController : Controller
             NetworkAdapterType = _mediatorOptions.NetworkAdapterType,
             PersistenceConnectionString = _mediatorOptions.PersistenceConnectionString,
             TimeoutMs = _mediatorOptions.TimeoutMs,
-            WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port
+            WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port,
+            EagerStartup = _mediatorOptions.EagerStartup
         };
         return View(viewModel);
     }

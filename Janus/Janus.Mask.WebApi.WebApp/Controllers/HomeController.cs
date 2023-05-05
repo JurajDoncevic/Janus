@@ -34,7 +34,8 @@ public class HomeController : Controller
             WebApiSecurePort = _maskOptions.WebApiOptions.ListenPortSecure,
             WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port,
             IsInstanceRunning = _maskManager.IsInstanceRunning,
-            OperationOutcome = TempData.ToOperationOutcomeViewModel()
+            OperationOutcome = TempData.ToOperationOutcomeViewModel(),
+            EagerStartup = _maskOptions.EagerStartup
         };
         return View(viewModel);
     }

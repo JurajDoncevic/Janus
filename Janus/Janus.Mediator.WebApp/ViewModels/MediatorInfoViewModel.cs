@@ -24,4 +24,7 @@ public sealed class MediatorInfoViewModel
 
     [Display(Name = "Port for the web application")]
     public int WebPort { get; init; }
+
+    [Display(Name = "Eager startup")]
+    public bool EagerStartup { get; init; } = false;
 }

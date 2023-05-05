@@ -31,7 +31,8 @@ public class HomeController : Controller
             TimeoutMs = _maskOptions.TimeoutMs,
             WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port,
             MaterializationConnectionString = _maskOptions.MaterializationConnectionString,
-            OperationOutcome = TempData.ToOperationOutcomeViewModel()
+            OperationOutcome = TempData.ToOperationOutcomeViewModel(),
+            EagerStartup = _maskOptions.EagerStartup
         };
         return View(viewModel);
     }
