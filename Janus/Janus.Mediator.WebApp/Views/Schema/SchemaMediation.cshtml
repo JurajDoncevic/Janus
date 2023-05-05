@@ -67,7 +67,7 @@
             <div id="collapse-@remotePoint.NodeId" class="accordion-collapse collapse" aria-labelledby="collapse-@remotePoint.NodeId" data-bs-parent="#remotePointSchemas">
                 <div class="accordion-body">
                     <div class="row">
-                        <button class="btn btn-primary w-auto" data-node-id="@remotePoint.NodeId" onclick="getSchema(this.dataset.nodeId)">Get schema</button>
+                        <button class="btn btn-primary w-auto" data-node-id="@remotePoint.NodeId" data-output-element-id="schema-@remotePoint.NodeId" onclick="getSchema(this.dataset.nodeId, this.dataset.outputElementId)">Get schema</button>
                         <button class="btn btn-warning w-auto ms-2" data-node-id="@remotePoint.NodeId" onclick="loadSchema(this.dataset.nodeId)">Load schema</button>
                     </div>
                     <hr>
