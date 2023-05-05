@@ -99,13 +99,18 @@ public abstract class MaskManager<TMaskedQuery, TMaskedStartingWith, TMaskedSele
     /// </summary>
     private async Task<Result> StartupLoadSchema()
     {
+        if(string.IsNullOrWhiteSpace(_maskOptions.StartupNodeSchemaLoad))
+        {
+            _logger?.Info($"No startup schema load node id given");
+            return Results.OnFailure($"No startup schema load node id given");
+        }
         var remotePointForSchemaLoading = _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(_maskOptions.StartupNodeSchemaLoad));
 
         if (remotePointForSchemaLoading == null)
         {
-            _logger?.Info($"No remote point registered with node id: {_maskOptions.NodeId}");
+            _logger?.Info($"No remote point registered with node id: {_maskOptions.StartupNodeSchemaLoad}");
 
-            return Results.OnFailure($"No remote point registered with node id: {_maskOptions.NodeId}");
+            return Results.OnFailure($"No remote point registered with node id: {_maskOptions.StartupNodeSchemaLoad}");
         }
 
         var schemaLoad =

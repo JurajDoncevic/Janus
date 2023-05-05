@@ -94,6 +94,10 @@ public sealed class MediatorManager : IComponentManager
     /// </summary>
     private async Task<Result> StartupLoadSchemas()
     {
+        if (_mediatorOptions.StartupNodesSchemaLoad.Count == 0)
+        {
+            return Results.OnFailure("No startup schema load node ids given");
+        }
         var schemaLoads = _mediatorOptions.StartupNodesSchemaLoad
             .Map(nodeId => (nodeId, remotePoint: _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(nodeId)))) // get remote point for node id
             .Map(t => t.remotePoint != null ? LoadSchemaFrom(t.remotePoint) : Task.FromResult(Results.OnFailure<DataSource>($"No node registered with id: {t.nodeId}")))
