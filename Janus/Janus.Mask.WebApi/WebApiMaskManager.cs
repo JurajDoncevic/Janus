@@ -46,7 +46,7 @@ public sealed class WebApiMaskManager
 
         if (_maskOptions.EagerStartup)
         {
-            // will not succed if the base operations are not successful
+            // will not succed if the base operations are not successful - maybe add check later?
             StartupWebApiInstance().GetAwaiter().GetResult();
         }
     }
