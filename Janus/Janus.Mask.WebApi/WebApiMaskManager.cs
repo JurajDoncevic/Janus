@@ -18,7 +18,7 @@ public sealed class WebApiMaskManager
     private readonly WebApiInstance _webApiInstance;
     private readonly WebApiQueryTranslator _queryTranslator;
     private readonly WebApiCommandTranslator _commandTranslator;
-
+    private readonly WebApiMaskOptions _maskOptions;
     private readonly ILogger<WebApiMaskManager>? _logger;
 
     public WebApiMaskManager(MaskCommunicationNode communicationNode,
@@ -38,6 +38,7 @@ public sealed class WebApiMaskManager
                maskOptions,
                logger)
     {
+        _maskOptions = maskOptions;
         _queryTranslator = queryTranslator;
         _commandTranslator = commandTranslator;
         _webApiInstance = new WebApiInstance(maskOptions.WebApiOptions, commandManager, queryManager, schemaManager, logger);
@@ -46,8 +47,11 @@ public sealed class WebApiMaskManager
 
         if (_maskOptions.EagerStartup)
         {
-            // will not succed if the base operations are not successful - maybe add check later?
-            StartupWebApiInstance().GetAwaiter().GetResult();
+            if (_maskOptions.StartupWebApi)
+            {
+                // will not succed if the base operations are not successful - maybe add check later?
+                StartupWebApiInstance().GetAwaiter().GetResult();
+            }
         }
     }
 
