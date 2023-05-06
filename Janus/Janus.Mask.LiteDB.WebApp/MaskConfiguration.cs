@@ -27,6 +27,8 @@ internal class MaskConfiguration
     {
         ConnectionString = "materialized.db"
     };
+
+    public bool StartupMaterializeDatabase { get; init; } = false;
 }
 
 internal class MaterializationConfiguration
@@ -54,6 +56,7 @@ internal static partial class ConfigurationOptionsExtensions
                    .Select(remotePointConfiguration => new UndeterminedRemotePoint(remotePointConfiguration.Address, remotePointConfiguration.ListenPort))
                    .ToList(),
             configuration.StartupNodeSchemaLoad,
+            configuration.StartupMaterializeDatabase,
             configuration.PersistenceConnectionString,
             configuration.MaterializationConfiguration.ConnectionString
             );

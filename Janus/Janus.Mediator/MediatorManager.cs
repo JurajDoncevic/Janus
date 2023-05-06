@@ -58,21 +58,21 @@ public sealed class MediatorManager : IComponentManager
         }
     }
 
-
+    /// <summary>
+    /// Initiates eager startup operations on component initialization
+    /// </summary>
+    /// <returns></returns>
     private async Task<Result> InitiateEagerStartup()
     {
-        if (_mediatorOptions.EagerStartup)
-        {
-            var rpReg = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
-            var schLoad = (await StartupLoadSchemas()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
-            var medAppl = (await StartupApplyMediationScript()).Pass(r => _logger?.Info($"Applied startup mediation successfully: {r.Message}"), r => _logger?.Info($"Failed to apply startup mediation successfully: {r.Message}"));
 
-            return rpReg
-                .Bind(_ => schLoad)
-                .Bind(_ => medAppl);
-        }
+        var remotePointRegistrations = (await StartupRegisterRemotePoints()).Pass(r => _logger?.Info($"Registered startup remote points successfully: {r.Message}"), r => _logger?.Info($"Failed to register startup remote points: {r.Message}"));
+        var schemaLoads = (await StartupLoadSchemas()).Pass(r => _logger?.Info($"Loaded startup schemas successfully: {r.Message}"), r => _logger?.Info($"Failed to load startup schemas: {r.Message}"));
+        var mediationApplication = (await StartupApplyMediationScript()).Pass(r => _logger?.Info($"Applied startup mediation successfully: {r.Message}"), r => _logger?.Info($"Failed to apply startup mediation successfully: {r.Message}"));
 
-        return Results.OnSuccess("Didn't initiate eager start");
+        return remotePointRegistrations
+            .Bind(_ => schemaLoads)
+            .Bind(_ => mediationApplication);
+
     }
 
     /// <summary>
@@ -80,13 +80,13 @@ public sealed class MediatorManager : IComponentManager
     /// </summary>
     private async Task<Result> StartupRegisterRemotePoints()
     {
-        var regs = _mediatorOptions.StartupRemotePoints
+        var registrations = _mediatorOptions.StartupRemotePoints
             .Map(async rp => await RegisterRemotePoint(rp))
             .Map(async result => (await result).Pass(r => _logger?.Info($"Registered startup remote point: {r.Data}"), r => _logger?.Info($"Failed to register startup remote point: {r.Message}")));
 
-        var results = await Task.WhenAll(regs);
-        var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));      
-        return accResult;
+        var registrationResults = await Task.WhenAll(registrations);
+        var registrationOperationResult = registrationResults.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
+        return registrationOperationResult;
     }
 
     /// <summary>
@@ -94,13 +94,17 @@ public sealed class MediatorManager : IComponentManager
     /// </summary>
     private async Task<Result> StartupLoadSchemas()
     {
-        var loads = _mediatorOptions.StartupNodesSchemaLoad
+        if (_mediatorOptions.StartupNodesSchemaLoad.Count == 0)
+        {
+            return Results.OnFailure("No startup schema load node ids given");
+        }
+        var schemaLoads = _mediatorOptions.StartupNodesSchemaLoad
             .Map(nodeId => (nodeId, remotePoint: _communicationNode.RemotePoints.FirstOrDefault(rp => rp.NodeId.Equals(nodeId)))) // get remote point for node id
             .Map(t => t.remotePoint != null ? LoadSchemaFrom(t.remotePoint) : Task.FromResult(Results.OnFailure<DataSource>($"No node registered with id: {t.nodeId}")))
             .Map(async result => (await result).Pass(r => _logger?.Info($"Loaded schema: {r.Data.Name}"), r => _logger?.Info($"Failed to load schema: {r.Message}")));
-    
 
-        var results = await Task.WhenAll(loads);
+
+        var results = await Task.WhenAll(schemaLoads);
         var accResult = results.Fold(Results.OnSuccess(), (r, acc) => acc.Bind(_ => r ? Results.OnSuccess($"{_.Message};{r.Message}") : Results.OnFailure($"{_.Message};{r.Message}")));
         return accResult;
     }
@@ -133,7 +137,7 @@ public sealed class MediatorManager : IComponentManager
                 r => _logger?.Info($"Failed to respond to schema request from {e.FromRemotePoint} due to: {r.Message}")
             );
     }
-    
+
     private async void CommunicationNode_QueryRequestReceived(object? sender, Communication.Nodes.Events.QueryReqEventArgs e)
     {
         (await (await _queryManager.RunQuery(e.ReceivedMessage.Query, _schemaManager))
@@ -229,7 +233,7 @@ public sealed class MediatorManager : IComponentManager
         {
             var deletion =
                 _persistenceProvider.RemotePointPersistence.Delete(nodeId);
-        
+
             return deletion;
         });
 
@@ -300,7 +304,7 @@ public sealed class MediatorManager : IComponentManager
         => await Results.AsResult(async () =>
         {
             var persistedSchemas = _persistenceProvider.DataSourceInfoPersistence.GetAll();
-            
+
             return persistedSchemas;
         });
 

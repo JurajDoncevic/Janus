@@ -26,6 +26,8 @@ public sealed class MaskInfoViewModel
     [Display(Name = "Port for the web management application")]
     public int WebPort { get; init; }
 
+    [Display(Name = "Eager startup")]
+    public bool EagerStartup { get; init; } = false;
 
     [Display(Name = "Materialization connection string")]
     public string MaterializationConnectionString { get; init; } = string.Empty;

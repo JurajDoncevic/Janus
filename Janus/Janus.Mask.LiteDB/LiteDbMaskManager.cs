@@ -30,7 +30,18 @@ public sealed class LiteDbMaskManager : MaskManager<LiteDbQuery, TableauId, Unit
         _logger = logger?.ResolveLogger<LiteDbMaskManager>();
 
         _databaseMaterializer = new DatabaseMaterializer();
+
+        if (_maskOptions.EagerStartup)
+        {
+            if(_maskOptions.StartupMaterializeDatabase)
+            {
+                StartupMaterializeDatabase().GetAwaiter().GetResult();
+            }
+        }
     }
+
+    private async Task<Result> StartupMaterializeDatabase()
+        => await MaterializeDatabase(_maskOptions.MaterializationConnectionString);
 
     public async Task<Result> MaterializeDatabase(string? connectionString = null)
         => (await Results.AsResult(async () =>

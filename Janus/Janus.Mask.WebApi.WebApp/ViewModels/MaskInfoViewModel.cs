@@ -26,6 +26,9 @@ public sealed class MaskInfoViewModel
     [Display(Name = "Port for the web management application")]
     public int WebPort { get; init; }
 
+    [Display(Name = "Eager startup")]
+    public bool EagerStartup { get; init; } = false;
+
     [Display(Name = "Port for the mask web API")]
     public int WebApiPort { get; init; }
 

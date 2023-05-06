@@ -20,6 +20,8 @@ internal class MaskConfiguration
 
     public string StartupNodeSchemaLoad { get; init; } = string.Empty;
 
+    public bool StartupWebApi { get; init; } = false;
+
     public string PersistenceConnectionString { get; init; } = "./mask_database.db";
 
     public WebApiConfiguration WebApiConfiguration { get; init; } = new WebApiConfiguration
@@ -57,6 +59,7 @@ internal static partial class ConfigurationOptionsExtensions
                    .Select(remotePointConfiguration => new UndeterminedRemotePoint(remotePointConfiguration.Address, remotePointConfiguration.ListenPort))
                    .ToList(),
             configuration.StartupNodeSchemaLoad,
+            configuration.StartupWebApi,
             configuration.PersistenceConnectionString,
             new InstanceManagement.WebApiOptions
             {

@@ -38,7 +38,6 @@ The MMW architecture extends the mediator-wrapper architecture by the addition o
 </div>
 <br/><br/>
 
-Janus' development extensively uses my **[Functional extensions base library](https://github.com/JurajDoncevic/FunctionalExtensions)**. Feel free to take a look at the latest nuget package :-)
 
 ## Research papers regarding MMW and its capabilities
 **[Mask-Mediator-Wrapper: A revised mediator-wrapper architecture for heterogeneous data source integration](https://doi.org/10.3390/app13042471)**

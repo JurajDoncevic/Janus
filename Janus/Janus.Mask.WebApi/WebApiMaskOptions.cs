@@ -6,6 +6,8 @@ namespace Janus.Mask.WebApi;
 public sealed class WebApiMaskOptions : MaskOptions
 {
     private readonly WebApiOptions _webApiOptions;
+    private readonly bool _startupWebApi;
+
     public WebApiMaskOptions(
         string nodeId,
         int listenPort,
@@ -15,6 +17,7 @@ public sealed class WebApiMaskOptions : MaskOptions
         bool eagerStartup,
         IEnumerable<UndeterminedRemotePoint> startupRemotePoints,
         string startupNodeSchemaLoad,
+        bool startupWebApi,
         string persistenceConnectionString,
         WebApiOptions webApiOptions) 
         : base(
@@ -29,7 +32,10 @@ public sealed class WebApiMaskOptions : MaskOptions
             persistenceConnectionString)
     {
         _webApiOptions = webApiOptions;
+        _startupWebApi = startupWebApi;
     }
 
     public WebApiOptions WebApiOptions => _webApiOptions;
+
+    public bool StartupWebApi => _startupWebApi;
 }

@@ -33,7 +33,8 @@ public class HomeController : Controller
             TimeoutMs = _wrapperOptions.TimeoutMs,
             SourceConnectionString = _wrapperOptions.SourceConnectionString,
             WebPort = _configuration.GetSection("WebConfiguration").Get<WebConfiguration>().Port,
-            AllowsCommandExecution = _wrapperOptions.AllowsCommands
+            AllowsCommandExecution = _wrapperOptions.AllowsCommands,
+            EagerStartup = _wrapperOptions.EagerStartup,
         };
         return View(viewModel);
     }
