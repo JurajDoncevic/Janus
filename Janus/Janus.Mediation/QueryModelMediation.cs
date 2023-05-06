@@ -53,7 +53,7 @@ public static class QueryModelMediation
                                       .Map(joining => joining.Value.Joins)
                                       .Map(joins => joins.Map(join => (fkAttrId: join.ForeignKeyAttributeId, pkAttrId: join.PrimaryKeyAttributeId)))
                                       .SelectMany(t => t),
-                    () => initialSourceTableauId.Identity()
+                    () => queryOnMediatedDataSource.OnTableauId.Identity()
                             .Map(tableauId => tableauId.NameTuple)
                             .Map(names => dataSourceMediation[names.schemaName]![names.tableauName]!.SourceQuery.Joining)
                             .Data
