@@ -1,0 +1,129 @@
+﻿@model RemotePointsListViewModel
+
+@{
+    ViewData["Title"] = "Remote points";
+}
+
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
+
+<div class="row">
+    <form class="d-inline" method="post">
+        <b class="me-1">Address:</b><input name="address" type="text" class="form-control d-inline-block w-25" />
+        <b class="me-1">Port:</b><input name="port" type="number" class="form-control d-inline-block w-auto" />
+        <input type="submit" value="Register" asp-action="RegisterRemotePoint" class="btn btn-primary" />
+        <input type="submit" value="Send HELLO" asp-action="PingRemotePoint" class="btn btn-primary" />
+    </form>
+</div>
+<hr />
+
+
+<div class="row">
+    <div class="col-6">
+        <h3>Registered remote points</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.NodeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.Port)
+                    </th>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.RemotePointType)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RegisteredRemotePoints)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NodeId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Port)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RemotePointType)
+                        </td>
+                        <td>
+                            <form method="post" asp-action="UnregisterRemotePoint" asp-controller="RemotePoints" class="d-inline">
+                                <input type="hidden" name="nodeId" value="@item.NodeId" />
+                                <input type="submit" class="btn btn-danger" value="Send BYE" />
+                            </form>
+                            <form method="post" asp-action="PersistRemotePoint" asp-controller="RemotePoints" class="d-inline">
+                                <input type="hidden" name="NodeId" value="@item.NodeId" />
+                                <input type="hidden" name="Address" value="@item.Address" />
+                                <input type="hidden" name="Port" value="@item.Port" />
+                                <input type="hidden" name="RemotePointType" value="@item.RemotePointType" />
+                                <input type="submit" class="btn btn-outline-primary" value="Persist" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-6">
+        <h3>Persisted remote points</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.NodeId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.Port)
+                    </th>
+                    <th>
+                        @Html.DisplayNameForInnerType((RemotePointViewModel model) => model.RemotePointType)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PersistedRemotePoints)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NodeId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Port)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RemotePointType)
+                        </td>
+                        <td>
+                            <form method="post" asp-action="RegisterRemotePoint" asp-controller="RemotePoints" class="d-inline">
+                                <input type="hidden" name="NodeId" value="@item.NodeId" />
+                                <input type="hidden" name="Address" value="@item.Address" />
+                                <input type="hidden" name="Port" value="@item.Port" />
+                                <input type="hidden" name="RemotePointType" value="@item.RemotePointType" />
+                                <input type="submit" class="btn btn-primary" value="Register" />
+                            </form>
+                            <form method="post" asp-action="DeleteRemotePoint" asp-controller="RemotePoints" class="d-inline">
+                                <input type="hidden" name="nodeId" value="@item.NodeId" />
+                                <input type="submit" class="btn btn-danger" value="Delete" />
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

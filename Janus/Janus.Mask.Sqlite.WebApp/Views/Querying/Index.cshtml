@@ -1,0 +1,55 @@
+﻿@model QueryingViewModel
+
+@{
+    ViewData["Title"] = "Querying on the loaded schema";
+}
+
+<h2>Querying on the loaded schema</h2>
+<hr />
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome" />
+<div class="mt-2 mb-2">
+    <div class="row">
+        <div class="col-7">
+            <h4>Query text</h4>
+            <form asp-controller="Querying" asp-action="RunQuery" method="post">
+                <textarea name="queryText" class="form-control code" type="text" style="min-height:50vh">@Model.QueryText</textarea>
+                <input type="submit" class="btn btn-primary mt-2" value="Run query!" />
+            </form>
+
+        </div>
+        <div class="col-5">
+            <h4>Current loaded schema</h4>
+            <pre id="schema-json" class="overflow-scroll form-control" style="min-height:50vh; height:50vh; resize:vertical">@Model.DataSourceJson</pre>
+        </div>
+    </div>
+
+    @if (Model.QueryResult && Model.QueryResult.Value.ColumnDataTypes.Count > 0)
+    {
+        <div class="row mt-3">
+            <h4>Query results</h4>
+            <div class="table-responsive" style="height:50vh">
+                <table class="table table-bordered">
+                    <thead class="table-secondary">
+                        <tr>
+                            @foreach (var column in Model.QueryResult.Value.ColumnDataTypes)
+                            {
+                                <th>@column.Key (@column.Value)</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dataRow in Model.QueryResult.Value.DataRows)
+                        {
+                            <tr>
+                                @foreach (var colName in Model.QueryResult.Value.ColumnDataTypes.Keys)
+                                {
+                                    <td>@dataRow[colName]</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

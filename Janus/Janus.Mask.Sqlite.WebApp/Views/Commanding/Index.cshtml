@@ -1,0 +1,22 @@
+﻿@model CommandingViewModel
+
+@{
+    ViewData["Title"] = "Commanding on the loaded schema";
+}
+<h2>Commanding</h2>
+<hr />
+<partial name="OperationOutcomePartial" model="Model.OperationOutcome"/>
+<div class="row mt-2 mb-2">
+    <div class="col-7">
+        <h4>Command</h4>
+        <form asp-action="RunCommand" method="post">
+            <textarea name="commandText" class="form-control code" style="min-height:50vh" type="text">@Model.CommandText</textarea>
+            <input type="submit" class="btn btn-primary mt-2" value="Run command!" />
+        </form>
+
+    </div>
+    <div class="col-5">
+        <h4>Current loaded schema</h4>
+        <pre class="overflow-scroll form-control" style="min-height:50vh; height:50vh; resize:vertical">@Model.DataSourceJson</pre>
+    </div>
+</div>

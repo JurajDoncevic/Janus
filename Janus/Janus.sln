@@ -91,11 +91,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.LiteDB", "Janus.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.LiteDB.WebApp", "Janus.Mask.LiteDB.WebApp\Janus.Mask.LiteDB.WebApp.csproj", "{4021C903-B26A-4E31-9406-04EF089C8C92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Base", "Janus.Base\Janus.Base.csproj", "{19E8B5AB-7105-4CA3-82B3-1810F77419DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Base", "Janus.Base\Janus.Base.csproj", "{19E8B5AB-7105-4CA3-82B3-1810F77419DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Base.Tests", "Janus.Base.Tests\Janus.Base.Tests.csproj", "{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Base.Tests", "Janus.Base.Tests\Janus.Base.Tests.csproj", "{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.Sqlite", "Janus.Mask.Sqlite\Janus.Mask.Sqlite.csproj", "{921ED67F-26E7-4260-A621-5B8929AA8593}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janus.Mask.Sqlite", "Janus.Mask.Sqlite\Janus.Mask.Sqlite.csproj", "{921ED67F-26E7-4260-A621-5B8929AA8593}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.Sqlite.WebApp", "Janus.Mask.Sqlite.WebApp\Janus.Mask.Sqlite.WebApp.csproj", "{2A5C4C1C-AFBE-44CB-93BC-7DE4DBDA378B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -291,6 +293,10 @@ Global
 		{921ED67F-26E7-4260-A621-5B8929AA8593}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{921ED67F-26E7-4260-A621-5B8929AA8593}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{921ED67F-26E7-4260-A621-5B8929AA8593}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A5C4C1C-AFBE-44CB-93BC-7DE4DBDA378B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A5C4C1C-AFBE-44CB-93BC-7DE4DBDA378B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A5C4C1C-AFBE-44CB-93BC-7DE4DBDA378B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A5C4C1C-AFBE-44CB-93BC-7DE4DBDA378B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
