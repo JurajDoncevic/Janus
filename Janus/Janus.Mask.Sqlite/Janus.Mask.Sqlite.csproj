@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnablePreviewFeatures></EnablePreviewFeatures>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
+    <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
+    <ProjectReference Include="..\Janus.Communication\Janus.Communication.csproj" />
+    <ProjectReference Include="..\Janus.Components\Janus.Components.csproj" />
+    <ProjectReference Include="..\Janus.Logging\Janus.Logging.csproj" />
+    <ProjectReference Include="..\Janus.Mask\Janus.Mask.csproj" />
+    <ProjectReference Include="..\Janus.Utils\Janus.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MaskedCommandModel\" />
+    <Folder Include="MaskedDataModel\" />
+    <Folder Include="MaskedSchemaModel\" />
+    <Folder Include="Materialization\" />
+    <Folder Include="Translation\" />
+  </ItemGroup>
+
+</Project>

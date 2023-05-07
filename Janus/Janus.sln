@@ -95,6 +95,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Base", "Janus.Base\Ja
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Base.Tests", "Janus.Base.Tests\Janus.Base.Tests.csproj", "{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janus.Mask.Sqlite", "Janus.Mask.Sqlite\Janus.Mask.Sqlite.csproj", "{921ED67F-26E7-4260-A621-5B8929AA8593}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -285,6 +287,10 @@ Global
 		{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BE4AC8A-F84C-4BEB-8B8A-89B8B92F99FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{921ED67F-26E7-4260-A621-5B8929AA8593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{921ED67F-26E7-4260-A621-5B8929AA8593}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{921ED67F-26E7-4260-A621-5B8929AA8593}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{921ED67F-26E7-4260-A621-5B8929AA8593}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
