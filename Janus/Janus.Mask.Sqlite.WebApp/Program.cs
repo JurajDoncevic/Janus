@@ -3,7 +3,7 @@ using Janus.Communication;
 using Janus.Communication.Nodes.Implementations;
 using Janus.Components.Persistence;
 using Janus.Mask.Persistence;
-using Janus.Mask.Persistence.Sqlite;
+using Janus.Mask.Persistence.LiteDB;
 using Janus.Mask.Sqlite;
 using Janus.Mask.Sqlite.Translation;
 using Janus.Mask.Sqlite.WebApp;

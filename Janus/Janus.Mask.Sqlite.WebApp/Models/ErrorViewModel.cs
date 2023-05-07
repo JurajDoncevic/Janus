@@ -1,4 +1,4 @@
-namespace Janus.Mask.LiteDB.WebApp.Models;
+namespace Janus.Mask.Sqlite.WebApp.Models;
 
 public class ErrorViewModel
 {

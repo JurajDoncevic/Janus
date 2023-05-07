@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -20,7 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Janus.Base\Janus.Base.csproj" />
     <ProjectReference Include="..\Janus.Commons\Janus.Commons.csproj" />
-    <ProjectReference Include="..\Janus.Mask.Persistence.LiteDB\Janus.Mask.Persistence.LiteDB.csproj" />
+    <ProjectReference Include="..\Janus.Mask.Persistence.LiteDb\Janus.Mask.Persistence.LiteDb.csproj" />
     <ProjectReference Include="..\Janus.Mask.Sqlite\Janus.Mask.Sqlite.csproj" />
     <ProjectReference Include="..\Janus.Serialization.Avro\Janus.Serialization.Avro.csproj" />
     <ProjectReference Include="..\Janus.Serialization.Bson\Janus.Serialization.Bson.csproj" />

@@ -1,17 +1,17 @@
-﻿using Janus.Mask.LiteDB.WebApp.Commons;
-using Janus.Mask.LiteDB.WebApp.Models;
-using Janus.Mask.LiteDB.WebApp.ViewModels;
+﻿using Janus.Mask.Sqlite.WebApp.Commons;
+using Janus.Mask.Sqlite.WebApp.Models;
+using Janus.Mask.Sqlite.WebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace Janus.Mask.LiteDB.WebApp.Controllers;
+namespace Janus.Mask.Sqlite.WebApp.Controllers;
 public class HomeController : Controller
 {
     private readonly Logging.ILogger<HomeController>? _logger;
-    private readonly LiteDbMaskManager _maskManager;
-    private readonly LiteDbMaskOptions _maskOptions;
+    private readonly SqliteMaskManager _maskManager;
+    private readonly SqliteMaskOptions _maskOptions;
     private readonly IConfiguration _configuration;
-    public HomeController(LiteDbMaskManager maskManager, LiteDbMaskOptions maskOptions, IConfiguration configuration, Logging.ILogger? logger = null)
+    public HomeController(SqliteMaskManager maskManager, SqliteMaskOptions maskOptions, IConfiguration configuration, Logging.ILogger? logger = null)
     {
         _maskManager = maskManager;
         _maskOptions = maskOptions;
