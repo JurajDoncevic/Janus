@@ -231,6 +231,6 @@ public sealed class ColumnBuilder
 
     internal Column Build()
     {
-        return new Column(_columnName, _columnOrdinal, _typeAffinity);
+        return new Column(_columnName, _columnIsPrimaryKey, _columnOrdinal, _typeAffinity);
     }
 }
