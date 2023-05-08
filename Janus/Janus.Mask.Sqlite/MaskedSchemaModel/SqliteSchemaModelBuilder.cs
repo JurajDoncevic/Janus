@@ -163,7 +163,7 @@ public sealed class TableBuilder
             throw new ArgumentException($"'{nameof(columnName)}' cannot be null or whitespace.", nameof(columnName));
         }
 
-        var builder = new ColumnBuilder(columnName, _tableColumns.Max(c => c.Value.Ordinal) + 1);
+        var builder = new ColumnBuilder(columnName, _tableColumns.Any() ? _tableColumns.Max(c => c.Value.Ordinal) + 1 : 0);
 
         var column = configuration(builder).Build();
 
@@ -193,7 +193,7 @@ public sealed class ColumnBuilder
 
     public ColumnBuilder AsPrimaryKey()
     {
-        _columnIsPrimaryKey |= true;
+        _columnIsPrimaryKey = true;
 
         return this;
     }

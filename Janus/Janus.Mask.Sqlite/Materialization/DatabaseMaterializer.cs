@@ -4,7 +4,6 @@ using static Janus.Commons.SelectionExpressions.Expressions;
 using Janus.Commons.SchemaModels;
 using Janus.Mask.Sqlite.MaskedSchemaModel;
 using Janus.Mask.Sqlite.Translation;
-using Janus.Commons.CommandModels;
 using Microsoft.Data.Sqlite;
 using Janus.Base;
 using Janus.Mask.Sqlite.MaskedDataModel;
@@ -21,6 +20,11 @@ public sealed class DatabaseMaterializer
                 .Select(t => (collectionName: $"{t.Schema.Name}_{t.Name}", tableauId: t.Id))
                 .ToDictionary(t => t.collectionName, t => t.tableauId);
 
+            using var connection = new SqliteConnection(sqliteConnectionString);
+
+            if (connection.State == System.Data.ConnectionState.Closed)
+                await connection.OpenAsync();
+
             foreach (var table in materializedSchema.Tables)
             {
                 var targetTableauId = tableauMappings[table.Name];
@@ -35,6 +39,7 @@ public sealed class DatabaseMaterializer
 
                 if (!queryResult)
                 {
+                    connection.Close();
                     return Results.OnFailure($"Materialization failed to acquire data for tableau {dataAcquisitionQuery.OnTableauId}: {queryResult.Message}");
                 }
 
@@ -46,11 +51,6 @@ public sealed class DatabaseMaterializer
                     return Results.OnFailure($"Failed data translation for table {table.Name} with: {translation.Message}");
                 }
 
-                using var connection = new SqliteConnection(sqliteConnectionString);
-
-                if (connection.State == System.Data.ConnectionState.Closed)
-                    await connection.OpenAsync();
-
                 // create table
                 using var createTableCommand = connection.CreateCommand();
                 createTableCommand.CommandText = GenerateCreateTableCommandText(table);
@@ -58,7 +58,8 @@ public sealed class DatabaseMaterializer
 
                 if (!tableCreation)
                 {
-                    return Results.OnFailure($"Materialization failed on table creation: {tableCreation.Message}");
+                    connection.Close();
+                    return Results.OnFailure($"Materialization failed on table {table.Name} creation: {tableCreation.Message}");
                 }
 
                 // populate table
@@ -68,7 +69,8 @@ public sealed class DatabaseMaterializer
 
                 if (!tablePopulation)
                 {
-                    return Results.OnFailure($"Materialization failed on table population: {tablePopulation.Message}");
+                    connection.Close();
+                    return Results.OnFailure($"Materialization failed on table {table.Name} population: {tablePopulation.Message}");
                 }
             }
 
@@ -76,11 +78,6 @@ public sealed class DatabaseMaterializer
             // create relationships with alter table
             foreach (var relationship in materializedSchema.Relationships)
             {
-                using var connection = new SqliteConnection(sqliteConnectionString);
-
-                if (connection.State == System.Data.ConnectionState.Closed)
-                    await connection.OpenAsync();
-
                 // create relationship
                 using var createRelationshipCommand = connection.CreateCommand();
                 createRelationshipCommand.CommandText = GenerateAlterTableForRelationshipText(relationship);
@@ -90,16 +87,17 @@ public sealed class DatabaseMaterializer
             }
             if (!relationshipMaterialization)
             {
+                connection.Close();
                 return Results.OnFailure($"Materialization failed on relationship creation: {relationshipMaterialization.Message}");
             }
-
+            connection.Close();
             return Results.OnSuccess("Materialization completed");
         });
 
 
     private string GenerateAlterTableForRelationshipText(Relationship relationship)
     {
-        string alterTableText = 
+        string alterTableText =
             $@"ALTER TABLE {relationship.ForeignKeyTableName} 
                ADD FOREIGN KEY ({relationship.ForeignKeyColumnName}) 
                REFERENCES {relationship.PrimaryKeyTableName}({relationship.PrimaryKeyColumnName});";
@@ -118,34 +116,42 @@ public sealed class DatabaseMaterializer
             string valueTuple = $"({valueReps.Aggregate((s1, s2) => $"{s1},{s2}")})\n";
 
             return valueTuple;
-        }).Aggregate((s1,s2) => $"{s1},{s2}");
+        }).Aggregate((s1, s2) => $"{s1},\n{s2}");
 
-        string commandText = $"INSERT INTO {table} VALUES {valueTuples};";
+        string commandText = $"INSERT INTO {table.Name} VALUES {valueTuples};";
 
         return commandText;
     }
 
     private string GenerateCreateTableCommandText(Table table)
     {
+        bool isCompositePrimKey = table.Columns.Count(c => c.IsPrimaryKey) > 1;
+
         string columnDefinitionsText =
             table.Columns.OrderBy(c => c.Ordinal)
-                .Map(c => $"{c.Name} {c.TypeAffinity} {(c.IsPrimaryKey ? "PRIMARY KEY" : string.Empty)}~n")
-                .Aggregate((s1, s2) => $"{s1},{s2}");
+                .Map(c => $"{c.Name} {c.TypeAffinity}{(!isCompositePrimKey && c.IsPrimaryKey ? " PRIMARY KEY" : string.Empty)}")
+                .Aggregate((s1, s2) => $"{s1},\n{s2}");
 
-        string commandText = $"CREATE TABLE {table.Name} (\n{columnDefinitionsText});";
+        string compositePrimKeyText =
+            isCompositePrimKey
+            ? $",\nPRIMARY KEY ({string.Join(", ", table.Columns.Where(c => c.IsPrimaryKey).Map(c => c.Name))})"
+            : string.Empty;
+
+        string commandText = $"CREATE TABLE {table.Name} (\n{columnDefinitionsText}{compositePrimKeyText});";
 
         return commandText;
     }
 
     private string ValueToStringRepresentation(object? value, TypeAffinities expectedAffinity)
-        => value is null 
+        => value is null
             ? "NULL"
             : expectedAffinity switch
             {
-                TypeAffinities.DATETIME => ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss"),
-                TypeAffinities.TEXT => $"'{value}'",
+            TypeAffinities.DATETIME =>$"\"{((DateTime) value).ToString("yyyy-MM-dd HH:mm:ss")}\"",
+                TypeAffinities.TEXT => $"\"{value?.ToString()?.Replace("\"", "\"\"")}\"",
                 TypeAffinities.BLOB => $"X'{Convert.ToBase64String((byte[])value).ToLower()}'",
                 TypeAffinities.BOOLEAN => ((bool)value) ? "1" : "0",
+                TypeAffinities.REAL => $"{value?.ToString()?.Replace(",", ".")}",
                 _ => $"{value}"
             };
 }

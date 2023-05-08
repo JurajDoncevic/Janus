@@ -13,6 +13,7 @@ using Janus.Serialization.Bson;
 using Janus.Serialization.Json;
 using Janus.Serialization.MongoBson;
 using Janus.Serialization.Protobufs;
+using LiteDB;
 using NLog;
 using NLog.Extensions.Hosting;
 using NLog.Extensions.Logging;
@@ -102,6 +103,7 @@ builder.Services.AddSingleton<SqliteMaskCommandManager>();
 builder.Services.AddSingleton<SqliteMaskSchemaManager>();
 
 builder.Services.AddSingleton<JsonSerializationProvider>();
+builder.Services.AddSingleton<ILiteDatabase, LiteDatabase>(services => new LiteDatabase(maskConfiguration.PersistenceConnectionString));
 builder.Services.AddSingleton<IDataSourceInfoPersistence, DataSourceInfoPersistence>();
 builder.Services.AddSingleton<IRemotePointPersistence, RemotePointPersistence>();
 builder.Services.AddSingleton<MaskPersistenceProvider>();

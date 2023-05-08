@@ -25,7 +25,7 @@ internal class MaskConfiguration
 
     public MaterializationConfiguration MaterializationConfiguration { get; init; } = new MaterializationConfiguration
     {
-        ConnectionString = "materialized.db"
+        ConnectionString = "Data Source = ./materialized.db"
     };
 
     public bool StartupMaterializeDatabase { get; init; } = false;
