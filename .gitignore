@@ -378,7 +378,8 @@ FodyWeavers.xsd
 /Janus/Janus.Mask.WebApi.WebApp/*.db
 /Janus/Janus.Mask.WebApi.WebApp/wwwroot/lib
 /Janus/Janus.Mask.LiteDB.WebApp/*.db
-
+/Janus/Janus.Mask.Sqlite.WebApp/*.db
 # on for now
 # /Janus/Janus.Components.IntegrationTests/*.db
+
 
