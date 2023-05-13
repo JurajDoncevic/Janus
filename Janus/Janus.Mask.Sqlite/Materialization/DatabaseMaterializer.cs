@@ -22,6 +22,12 @@ public sealed class DatabaseMaterializer
 
             using var connection = new SqliteConnection(sqliteConnectionString);
 
+            var fileRemoval = TryRemoveDbFile(connection.DataSource);
+            if (!fileRemoval)
+            {
+                return Results.OnFailure($"Failed to remove database file at {connection.DataSource} with message: {fileRemoval.Message}");
+            }
+
             if (connection.State == System.Data.ConnectionState.Closed)
                 await connection.OpenAsync();
 
@@ -154,4 +160,15 @@ public sealed class DatabaseMaterializer
                 TypeAffinities.REAL => $"{value?.ToString()?.Replace(",", ".")}",
                 _ => $"{value}"
             };
+
+    private Result TryRemoveDbFile(string databaseFilepath)
+        => Results.AsResult(() =>
+        {
+            if (File.Exists(databaseFilepath))
+            {
+                File.Delete(databaseFilepath);
+                return Results.OnSuccess("Database file deleted successfully.");
+            }
+            return Results.OnSuccess("No database file found to remove");
+        });
 }
