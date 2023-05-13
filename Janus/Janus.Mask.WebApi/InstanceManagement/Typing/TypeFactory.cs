@@ -38,7 +38,7 @@ public class TypeFactory : IDisposable
     public Type CreateDtoType(DtoTyping dtoTyping, string @namespace, Type? parentType = null)
     {
         TypeBuilder typeBuilder = _moduleBuilder.DefineType(
-              $"{@namespace}.{dtoTyping.Name}", TypeAttributes.Public, parentType);
+              $"{@namespace}.{dtoTyping.Prefix}{dtoTyping.Name}", TypeAttributes.Public, parentType);
 
         // define a default constructor
         ConstructorBuilder ctorBuilder;
@@ -120,7 +120,7 @@ public class TypeFactory : IDisposable
             throw new ArgumentNullException(nameof(controllerTyping));
         }
 
-        string typeName = controllerTyping.ControllerName + "Controller";
+        string typeName = controllerTyping.ControllerClassName;
 
         TypeBuilder typeBuilder = _moduleBuilder.DefineType(
               $"{@namespace}.{typeName}", TypeAttributes.Public, parentType);
@@ -141,7 +141,7 @@ public class TypeFactory : IDisposable
         // if there is a route prefix for the controller, set Route attribute
         if (controllerTyping.RoutePrefix is not null)
         {
-            string controllerRoute = $"{controllerTyping.RoutePrefix}/{controllerTyping.ControllerName}";
+            string controllerRoute = $"{controllerTyping.RoutePrefix}/{controllerTyping.Route}";
             var routePrefixAttributeType = typeof(RouteAttribute);
             var constructorInfo = routePrefixAttributeType.GetConstructor(new Type[] { typeof(string) });
             var attributeBuilder = new CustomAttributeBuilder(constructorInfo, new object[] { controllerRoute });

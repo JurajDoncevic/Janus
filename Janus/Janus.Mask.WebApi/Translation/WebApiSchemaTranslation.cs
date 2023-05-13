@@ -19,7 +19,7 @@ public class WebApiSchemaTranslator : IMaskSchemaTranslator<WebApiTyping>
             }
             foreach (var schema in dataSource.Schemas)
             {
-                string controllerNamePrefix = $"{schema.Name}";
+                string controllerNamePrefix = $"{schema.Name}_";
 
                 foreach (var tableau in schema.Tableaus)
                 {
@@ -39,7 +39,8 @@ public class WebApiSchemaTranslator : IMaskSchemaTranslator<WebApiTyping>
                                 defaultUpdateSet.AttributeNames.ToDictionary( // .Where(attrName => !tableau[attrName].IsIdentity)
                                     attrName => attrName,
                                     attrName => TypeMappings.MapToType(tableau[attrName].DataType)
-                                    )))
+                                    ),
+                                $"{tableau.Schema.Name}_"))
                         : Option<DtoTyping>.None;
 
                     var getDto =
@@ -49,7 +50,9 @@ public class WebApiSchemaTranslator : IMaskSchemaTranslator<WebApiTyping>
                             tableau.Attributes.ToDictionary(
                                 attr => attr.Name,
                                 attr => TypeMappings.MapToType(attr.DataType)
-                                ));
+                                ),
+                            $"{tableau.Schema.Name}_"
+                            );
 
                     var putDtos =
                         tableau.UpdateSets
@@ -59,13 +62,15 @@ public class WebApiSchemaTranslator : IMaskSchemaTranslator<WebApiTyping>
                                 us.AttributeNames.Where(attrName => !tableau[attrName].IsIdentity).ToDictionary(
                                         attrName => attrName,
                                         attrName => TypeMappings.MapToType(tableau[attrName].DataType)
-                                        )
+                                        ),
+                                $"{tableau.Schema.Name}_"
                                 ));
 
                     bool enablesDelete = defaultUpdateSet is not null;
 
                     var controllerTyping =
                             new ControllerTyping(
+                                controllerNamePrefix + tableau.Name,
                                 tableau.Name,
                                 schema.Name,
                                 idPropertyType,

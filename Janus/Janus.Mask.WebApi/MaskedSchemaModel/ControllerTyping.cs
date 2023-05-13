@@ -4,7 +4,8 @@ using Janus.Commons.SchemaModels;
 namespace Janus.Mask.WebApi.MaskedSchemaModel;
 public class ControllerTyping
 {
-    private readonly string _controllerName;
+    private readonly string _controllerClassName;
+    private readonly string _route;
     private readonly string _routePrefix;
     private readonly Type _idPropertyType;
     private readonly DtoTyping _getDto;
@@ -14,7 +15,8 @@ public class ControllerTyping
     private readonly TableauId _targetTableauId;
     private readonly AttributeId _identityAttributeId;
 
-    public ControllerTyping(string controllerName,
+    public ControllerTyping(string controllerClassName,
+                            string route,
                             string routePrefix,
                             Type idPropertyType,
                             DtoTyping getDto,
@@ -24,18 +26,21 @@ public class ControllerTyping
                             TableauId targetTableauId,
                             AttributeId identityAttributeId)
     {
-        _controllerName = controllerName;
+        _controllerClassName = !controllerClassName.EndsWith("Controller") ? controllerClassName + "Controller" : controllerClassName;
+        _route = route;
         _routePrefix = routePrefix;
-        _idPropertyType = idPropertyType;
-        _getDto = getDto;
+        _idPropertyType = idPropertyType ?? throw new ArgumentNullException(nameof(idPropertyType));
+        _getDto = getDto ?? throw new ArgumentNullException(nameof(getDto));
         _postDto = postDto;
-        _putDtos = putDtos;
+        _putDtos = putDtos ?? throw new ArgumentNullException(nameof(putDtos));
         _enablesDelete = enablesDelete;
-        _targetTableauId = targetTableauId;
-        _identityAttributeId = identityAttributeId;
+        _targetTableauId = targetTableauId ?? throw new ArgumentNullException(nameof(targetTableauId));
+        _identityAttributeId = identityAttributeId ?? throw new ArgumentNullException(nameof(identityAttributeId));
     }
 
-    public string ControllerName => _controllerName;
+    public string ControllerClassName => _controllerClassName;
+
+    public string Route => _route;
 
     public string RoutePrefix => _routePrefix;
 

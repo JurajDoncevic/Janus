@@ -26,7 +26,7 @@ public class GenericControllerFeatureProvider : IApplicationFeatureProvider<Cont
         // so the list of 'real' controllers has already been populated.
         foreach (var controllerTyping in _controllerTypings)
         {
-            var typeName = controllerTyping.ControllerName + "Controller";
+            var typeName = controllerTyping.ControllerClassName;
             if (!feature.Controllers.Any(t => t.Name == typeName))
             {
                 // There's no 'real' controller for this entity, so add the generic version.
@@ -44,7 +44,7 @@ public class GenericControllerFeatureProvider : IApplicationFeatureProvider<Cont
             }
         }
         // remove controllers not belonging to the the typed controllers
-        var typedControllerNames = _controllerTypings.Map(typing => typing.ControllerName + "Controller").ToList();
+        var typedControllerNames = _controllerTypings.Map(typing => typing.ControllerClassName).ToList();
         var rogueControllerTypes = feature.Controllers.Where(ctrlType => !typedControllerNames.Contains(ctrlType.Name)).ToList();
 
         foreach (var rogueCtrlType in rogueControllerTypes)
