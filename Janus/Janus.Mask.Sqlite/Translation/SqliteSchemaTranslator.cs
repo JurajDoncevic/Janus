@@ -23,7 +23,8 @@ public sealed class SqliteSchemaTranslator : IMaskSchemaTranslator<Database>
                             {
                                 var bldr = colBuilder
                                     .WithName(attr.Name)
-                                    .WithTypeAffinity(MapToTypeAffinity(attr.DataType));
+                                    .WithTypeAffinity(MapToTypeAffinity(attr.DataType))
+                                    .WithOrdinal(attr.Ordinal);
 
                                 bldr = attr.IsIdentity ? bldr.AsPrimaryKey() : bldr;
                                 bldr = attr.IsNullable ? bldr.AsNullable() : bldr;

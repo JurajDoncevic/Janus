@@ -114,11 +114,11 @@ public sealed class DatabaseMaterializer
 
     private string GenerateInsertCommandText(Table table, SqliteTabularData data)
     {
-        var dataAffs = data.DataSchema;
+        var dataSchema = data.DataSchema;
         string valueTuples = data.Data.Map(row =>
         {
             IEnumerable<string> valueReps =
-                row.DataRow.Map(kv => ValueToStringRepresentation(kv.Value, dataAffs[kv.Key]));
+                dataSchema.Keys.Map(colName => ValueToStringRepresentation(row.DataRow[colName], dataSchema[colName]));
 
             string valueTuple = $"({valueReps.Aggregate((s1, s2) => $"{s1},{s2}")})\n";
 
