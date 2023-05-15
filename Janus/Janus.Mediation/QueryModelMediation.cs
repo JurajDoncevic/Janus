@@ -236,7 +236,10 @@ public static class QueryModelMediation
             // globalize column names
             var globalizedNamesResult = projectionResult.Bind(projectedData =>
             {
-                var nameMappingDict = projectedData.ColumnNames.ToDictionary(cn => cn, cn => queryMediation.DataSourceMediation.GetDeclaredAttributeId(AttributeId.From(cn)));
+                // quick and dirty fix - really need aliasing!
+                // if multiple tableaus' attributes have the same source, prefer this source
+                // can't join specialization tableaus - but then again, why would we?
+                var nameMappingDict = projectedData.ColumnNames.ToDictionary(cn => cn, cn => queryMediation.DataSourceMediation.GetDeclaredAttributeId(AttributeId.From(cn), queryMediation.OriginalQuery.OnTableauId));
                 if (nameMappingDict.Values.Contains(null))
                 {
                     return Results.OnFailure<TabularData>($"Couldn't globalize column names: {string.Join(", ", nameMappingDict.Where(_ => _.Value is null).Map(kv => kv.Key))}");

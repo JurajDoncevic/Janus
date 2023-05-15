@@ -104,11 +104,12 @@ public class DataSourceMediation
     /// </summary>
     /// <param name="declaredAttributeId"></param>
     /// <returns></returns>
-    public AttributeId? GetDeclaredAttributeId(AttributeId sourceAttributeId)
+    public AttributeId? GetDeclaredAttributeId(AttributeId sourceAttributeId, TableauId? forMediatedTableauId = null)
         => _schemaMediations.Map(sm => (sm.SchemaName, sm.TableauMediations))
                             .SelectMany(t => t.TableauMediations.Map(tm => (t.SchemaName, tm.TableauName, tm.AttributeMediations)))
                             .SelectMany(t => t.AttributeMediations.Map(am => (t.SchemaName, t.TableauName, am.DeclaredAttributeName, am.SourceAttributeId)))
                             .Map(t => (declaredAttributeId: AttributeId.From(_dataSourceName, t.SchemaName, t.TableauName, t.DeclaredAttributeName), t.SourceAttributeId))
+                            .Where(t => forMediatedTableauId?.IsParentOf(t.declaredAttributeId) ?? true)
                             .FirstOrDefault(t => t.SourceAttributeId.Equals(sourceAttributeId))
                             .declaredAttributeId;
 
