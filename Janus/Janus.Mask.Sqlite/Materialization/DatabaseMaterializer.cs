@@ -124,7 +124,7 @@ public sealed class DatabaseMaterializer
             return valueTuple;
         }).Aggregate((s1, s2) => $"{s1},\n{s2}");
 
-        string commandText = $"INSERT INTO {table.Name} VALUES {valueTuples};";
+        string commandText = $"INSERT OR IGNORE INTO {table.Name} VALUES {valueTuples};";
 
         return commandText;
     }
@@ -153,7 +153,7 @@ public sealed class DatabaseMaterializer
             ? "NULL"
             : expectedAffinity switch
             {
-            TypeAffinities.DATETIME =>$"\"{((DateTime) value).ToString("yyyy-MM-dd HH:mm:ss")}\"",
+                TypeAffinities.DATETIME =>$"\"{((DateTime) value).ToString("yyyy-MM-dd HH:mm:ss")}\"",
                 TypeAffinities.TEXT => $"\"{value?.ToString()?.Replace("\"", "\"\"")}\"",
                 TypeAffinities.BLOB => $"X'{Convert.ToBase64String((byte[])value).ToLower()}'",
                 TypeAffinities.BOOLEAN => ((bool)value) ? "1" : "0",
