@@ -26,6 +26,7 @@ public sealed class SqliteSchemaTranslator : IMaskSchemaTranslator<Database>
                                     .WithTypeAffinity(MapToTypeAffinity(attr.DataType));
 
                                 bldr = attr.IsIdentity ? bldr.AsPrimaryKey() : bldr;
+                                bldr = attr.IsNullable ? bldr.AsNullable() : bldr;
 
                                 return bldr;
                             });

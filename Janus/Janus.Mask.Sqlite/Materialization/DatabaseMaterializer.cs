@@ -135,7 +135,7 @@ public sealed class DatabaseMaterializer
 
         string columnDefinitionsText =
             table.Columns.OrderBy(c => c.Ordinal)
-                .Map(c => $"{c.Name} {c.TypeAffinity}{(!isCompositePrimKey && c.IsPrimaryKey ? " PRIMARY KEY" : string.Empty)}")
+                .Map(c => $"{c.Name} {c.TypeAffinity}{(!isCompositePrimKey && c.IsPrimaryKey ? " PRIMARY KEY" : string.Empty)}{(!c.IsNullable ? " NOT NULL" : string.Empty)}")
                 .Aggregate((s1, s2) => $"{s1},\n{s2}");
 
         string compositePrimKeyText =

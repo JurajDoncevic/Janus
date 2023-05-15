@@ -181,6 +181,7 @@ public sealed class TableBuilder
 public sealed class ColumnBuilder
 {
     private string _columnName;
+    private bool _columnIsNullable = false;
     private bool _columnIsPrimaryKey = false;
     private int _columnOrdinal = 0;
     private TypeAffinities _typeAffinity = TypeAffinities.TEXT;
@@ -195,6 +196,12 @@ public sealed class ColumnBuilder
     {
         _columnIsPrimaryKey = true;
 
+        return this;
+    }
+
+    public ColumnBuilder AsNullable()
+    {
+        _columnIsNullable = true;
         return this;
     }
 
@@ -231,6 +238,6 @@ public sealed class ColumnBuilder
 
     internal Column Build()
     {
-        return new Column(_columnName, _columnIsPrimaryKey, _columnOrdinal, _typeAffinity);
+        return new Column(_columnName, _columnIsPrimaryKey, _columnIsNullable, _columnOrdinal, _typeAffinity);
     }
 }
