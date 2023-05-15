@@ -125,7 +125,7 @@ public sealed class DatabaseMaterializer
             return valueTuple;
         }).Aggregate((s1, s2) => $"{s1},\n{s2}");
 
-        string commandText = $"INSERT OR IGNORE INTO {table.Name} VALUES {valueTuples};";
+        string commandText = $"INSERT INTO {table.Name} VALUES {valueTuples};";
 
         return commandText;
     }
