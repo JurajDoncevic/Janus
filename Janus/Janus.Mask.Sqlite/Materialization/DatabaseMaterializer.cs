@@ -71,9 +71,9 @@ public sealed class DatabaseMaterializer
                 // populate table
                 using var insertIntoCommand = connection.CreateCommand();
                 insertIntoCommand.CommandText = GenerateInsertCommandText(table, translation.Data);
-                //var tablePopulation = Results.AsResult(() => insertIntoCommand.ExecuteNonQuery() == translation.Data.ItemCount);
-                //populate and KBO
-                var tablePopulation = Results.AsResult(() => insertIntoCommand.ExecuteNonQuery());
+                var tablePopulation = Results.AsResult(() => insertIntoCommand.ExecuteNonQuery() == translation.Data.ItemCount);
+                //try to populate and KBO
+                //var tablePopulation = Results.AsResult(() => insertIntoCommand.ExecuteNonQuery());
                 if (!tablePopulation)
                 {
                     connection.Close();
