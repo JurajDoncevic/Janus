@@ -1,6 +1,7 @@
-﻿using Janus.Commons;
-using Janus.Commons.SchemaModels;
+﻿using Janus.Commons.SchemaModels;
 using Janus.Mediation.SchemaMediationModels;
+using Janus.Mediation.SchemaMediationModels.MediationQueryModels;
+using System.ComponentModel;
 
 namespace Janus.Mediation;
 
@@ -17,6 +18,8 @@ public static class SchemaModelMediation
     public static Result<DataSource> MediateDataSource(DataSourceMediation dataSourceMediation)
             => Results.AsResult<DataSource>(() =>
             {
+                
+
                 var dataSourceBuilder = SchemaModelBuilder.InitDataSource(dataSourceMediation.DataSourceName)
                     .WithDescription(dataSourceMediation.DataSourceDescription)
                     .WithVersion(dataSourceMediation.DataSourceVersion);
@@ -33,6 +36,19 @@ public static class SchemaModelMediation
                             {
                                 tableauBuilder.WithDescription(tableauMediation.TableauDescription);
 
+                                // determine nullable attrs by nullability of the FKs that brought them into the mediation
+                                var nullableRefAttrs =
+                                tableauMediation.SourceQuery.Joining
+                                    .Match(
+                                        joining => joining.Joins
+                                                    .Map(join => (join, join.ForeignKeyAttributeId.NameTuple))
+                                                    .Where(t => dataSourceMediation.AvailableDataSources[t.NameTuple.dataSourceName][t.NameTuple.schemaName][t.NameTuple.tableauName][t.NameTuple.attributeName].IsNullable)
+                                                    .Map(t => t.join.ForeignKeyAttributeId),
+                                        () => Enumerable.Empty<AttributeId>()
+                                    );
+                                
+                                var nullableRefTabs = nullableRefAttrs.Fold(new HashSet<TableauId>(), (attrId, set) => set.Union(DetermineNullableSourceTableauIds(tableauMediation.SourceQuery.Joining.Value.Joins.ToList(), attrId)).ToHashSet());
+                                 
                                 foreach (var attributeMediation in tableauMediation.AttributeMediations)
                                 {
                                     tableauBuilder.AddAttribute(attributeMediation.DeclaredAttributeName, attributeBuilder =>
@@ -41,11 +57,13 @@ public static class SchemaModelMediation
 
                                         var sourceAttribute = dataSourceMediation.AvailableDataSources[dsName][scName][tblName][attrName];
 
+                                        bool isAttrNullable = nullableRefTabs.Contains(sourceAttribute.Tableau.Id) || sourceAttribute.IsNullable;
+
                                         attributeBuilder.WithDescription(dataSourceMediation.PropagateAttributeDescriptions
                                                                             ? attributeMediation.AttributeDescription ? attributeMediation.AttributeDescription.Value : sourceAttribute.Description
                                                                             : attributeMediation.AttributeDescription.Value ?? string.Empty)
                                                         .WithIsIdentity(sourceAttribute.IsIdentity) // identities are inherited by default
-                                                        .WithIsNullable(sourceAttribute.IsNullable)
+                                                        .WithIsNullable(isAttrNullable)
                                                         .WithDataType(sourceAttribute.DataType);
 
                                         return attributeBuilder;
@@ -86,4 +104,24 @@ public static class SchemaModelMediation
                 }
                 return dataSourceBuilder.Build();
             });
+
+    private static HashSet<TableauId> DetermineNullableSourceTableauIds(List<Join> joins, AttributeId startingNullableFkAttribute)
+    {
+        var nullableTableauIds = 
+            joins.Where(join => join.ForeignKeyAttributeId.Equals(startingNullableFkAttribute))
+                 .Map(join => join.PrimaryKeyTableauId)
+                 .ToHashSet();
+
+        var primaryKeysOnNullableTableaus =
+            joins.Where(join => nullableTableauIds.Contains(join.ForeignKeyTableauId))
+                 .Map(join => join.PrimaryKeyAttributeId);
+        nullableTableauIds = nullableTableauIds.Union(primaryKeysOnNullableTableaus.Map(pk => pk.ParentTableauId)).ToHashSet();
+
+        foreach (var pkOnNullTab in primaryKeysOnNullableTableaus)
+        {
+            nullableTableauIds = nullableTableauIds.Union(DetermineNullableSourceTableauIds(joins, pkOnNullTab)).ToHashSet();
+        }
+
+        return nullableTableauIds;
+    }
 }
