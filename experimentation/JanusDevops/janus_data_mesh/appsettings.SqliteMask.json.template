@@ -1,0 +1,38 @@
+{
+  "MaskConfiguration": {
+    "NodeId": "${NODE_ID}",
+    "ListenPort": ${LISTEN_PORT},
+    "TimeoutMs": ${TIMEOUT_MS},
+    "CommunicationFormat": "${COMMUNICATION_FORMAT}",
+    "NetworkAdapterType": "${NETWORK_ADAPTER_TYPE}",
+    "EagerStartup": ${EAGER_STARTUP},
+    "StartupRemotePoints": [${STARTUP_REMOTE_POINTS}],
+    "StartupNodeSchemaLoad": "${STARTUP_NODE_SCHEMA_LOAD}",
+    "StartupMaterializeDatabase": ${STARTUP_MATERIALIZE_DATABASE},
+    "MaterializationConfiguration": {
+      "ConnectionString": "${MATERIALIZATION_CONNECTION_STRING};Pooling=False"
+    },
+    "PersistenceConnectionString": "./mask_database.db"
+  },
+  "WebConfiguration": {
+    "Port": ${WEB_PORT},
+    "AllowedHttpHost": "http://*",
+    "AllowedHttpsHost": "https://*"
+  },
+  "NLog": {
+    "targets": {
+      "file": {
+        "type": "File",
+        "fileName": "./log-§{shortdate}.log",
+        "layout": "§{longdate}|§{logger}|§{message}"
+      }
+    },
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "file"
+      }
+    ]
+  }
+}

@@ -1,0 +1,393 @@
+version: '2.1'
+name: 'janus-sos-system'
+services:
+  # --------------- WRAPPERS --------------- #
+  albums_artists_wrapper:
+    ports:
+      - "8101:8101"
+      - "10001:10001"
+    # restart: always
+    environment:
+      NODE_ID: "AlbumsArtistsWrapper"
+      LISTEN_PORT: 10001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "true"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "AlbumsArtistsData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8101
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "AlbumsArtists.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.1.1"
+
+  tracks_wrapper:
+    ports:
+      - "8103:8103"
+      - "10002:10002"
+    # restart: always
+    environment:
+      NODE_ID: "TracksWrapper"
+      LISTEN_PORT: 10002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "true"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "TracksData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8103
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "Tracks.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.1.2"
+
+  playlists_users_wrapper:
+    ports:
+      - "8105:8105"
+      - "10003:10003"
+    # restart: always
+    environment:
+      NODE_ID: "PlaylistsUsersWrapper"
+      LISTEN_PORT: 10003
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "true"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "PlaylistsUsersData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8105
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "PlaylistsUsers.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.1.3"
+
+  users_invoices_wrapper:
+    ports:
+      - "8107:8107"
+      - "10004:10004"
+    # restart: always
+    environment:
+      NODE_ID: "UsersInvoicesWrapper"
+      LISTEN_PORT: 10004
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "true"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "UsersInvoicesData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8107
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "UsersInvoices.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.1.4"
+
+  # --------------- MEDIATORS --------------- #
+  albums_artists_mediator:
+    depends_on:
+      - albums_artists_wrapper
+    ports:
+      - "8201:8201"
+      - "20001:20001"
+    # restart: always
+    environment:
+      NODE_ID: "AlbumsArtistsMediator"
+      LISTEN_PORT: 20001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: true
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.1.1:10001"
+      STARTUP_NODES_SCHEMA_LOAD: "AlbumsArtistsWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE AlbumsArtistsData VERSION \\\"1.0\\\" WITH SCHEMA Main  WITH TABLEAU Albums WITH ATTRIBUTES AlbumId, Title, ArtistId BEING SELECT AlbumsArtistsData.main.albums.AlbumId, AlbumsArtistsData.main.albums.Title, AlbumsArtistsData.main.albums.ArtistId FROM AlbumsArtistsData.main.albums WITH TABLEAU Artists WITH ATTRIBUTES ArtistId, Name BEING SELECT AlbumsArtistsData.main.artists.ArtistId, AlbumsArtistsData.main.artists.Name FROM AlbumsArtistsData.main.artists"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8201
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.2.1"
+
+  tracks_mediator:
+    depends_on:
+      - tracks_wrapper
+    ports:
+      - "8203:8203"
+      - "20002:20002"
+    # restart: always
+    environment:
+      NODE_ID: "TracksMediator"
+      LISTEN_PORT: 20002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: true
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.1.2:10002"
+      STARTUP_NODES_SCHEMA_LOAD: "TracksWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE TracksData VERSION \\\"1.0\\\" WITH SCHEMA Main  WITH TABLEAU Genres WITH ATTRIBUTES GenreId, Name BEING SELECT TracksData.main.genres.GenreId, TracksData.main.genres.Name FROM TracksData.main.genres WITH TABLEAU MediaTypes WITH ATTRIBUTES MediaTypeId, Name BEING SELECT TracksData.main.media_types.MediaTypeId, TracksData.main.media_types.Name FROM TracksData.main.media_types WITH TABLEAU Tracks WITH ATTRIBUTES TrackId, Name, AlbumId, MediaTypeId, GenreId, Composer, Milliseconds, Bytes, UnitPrice BEING SELECT TracksData.main.tracks.TrackId, TracksData.main.tracks.Name, TracksData.main.tracks.AlbumId, TracksData.main.tracks.MediaTypeId, TracksData.main.tracks.GenreId, TracksData.main.tracks.Composer, TracksData.main.tracks.Milliseconds, TracksData.main.tracks.Bytes, TracksData.main.tracks.UnitPrice FROM TracksData.main.tracks"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8203
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.2.2"
+
+  playlists_users_mediator:
+    depends_on:
+      - playlists_users_wrapper
+    ports:
+      - "8205:8205"
+      - "20003:20003"
+    # restart: always
+    environment:
+      NODE_ID: "PlaylistsUsersMediator"
+      LISTEN_PORT: 20003
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: true
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.1.3:10003"
+      STARTUP_NODES_SCHEMA_LOAD: "PlaylistsUsersWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE PlaylistsUsersData VERSION \\\"1.0\\\" WITH SCHEMA Main WITH TABLEAU Customers WITH ATTRIBUTES CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId BEING SELECT PlaylistsUsersData.main.customers.CustomerId, PlaylistsUsersData.main.customers.FirstName, PlaylistsUsersData.main.customers.LastName, PlaylistsUsersData.main.customers.Company, PlaylistsUsersData.main.customers.Address, PlaylistsUsersData.main.customers.City, PlaylistsUsersData.main.customers.State, PlaylistsUsersData.main.customers.Country, PlaylistsUsersData.main.customers.PostalCode, PlaylistsUsersData.main.customers.Phone, PlaylistsUsersData.main.customers.Fax, PlaylistsUsersData.main.customers.Email, PlaylistsUsersData.main.customers.SupportRepId FROM PlaylistsUsersData.main.customers WITH TABLEAU Playlists WITH ATTRIBUTES PlaylistId, Name, CreatorId BEING SELECT PlaylistsUsersData.main.playlists.PlaylistId, PlaylistsUsersData.main.playlists.Name, PlaylistsUsersData.main.playlists.CreatorId FROM PlaylistsUsersData.main.playlists WITH TABLEAU PlaylistTrack WITH ATTRIBUTES PlaylistId, TrackId BEING SELECT PlaylistsUsersData.main.playlist_track.PlaylistId, PlaylistsUsersData.main.playlist_track.TrackId FROM PlaylistsUsersData.main.playlist_track"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8205
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.2.3"
+
+  users_invoices_mediator:
+    depends_on:
+      - users_invoices_wrapper
+    ports:
+      - "8207:8207"
+      - "20004:20004"
+    # restart: always
+    environment:
+      NODE_ID: "UsersInvoicesMediator"
+      LISTEN_PORT: 20004
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: true
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.1.4:10004"
+      STARTUP_NODES_SCHEMA_LOAD: "UsersInvoicesWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE UsersInvoicesData VERSION \\\"1.0\\\" WITH SCHEMA Main WITH TABLEAU Employees WITH ATTRIBUTES EmployeeId, LastName, FirstName, Title, ReportsTo, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, Email BEING SELECT UsersInvoicesData.main.employees.EmployeeId, UsersInvoicesData.main.employees.LastName, UsersInvoicesData.main.employees.FirstName, UsersInvoicesData.main.employees.Title, UsersInvoicesData.main.employees.ReportsTo, UsersInvoicesData.main.employees.BirthDate, UsersInvoicesData.main.employees.HireDate, UsersInvoicesData.main.employees.Address, UsersInvoicesData.main.employees.City, UsersInvoicesData.main.employees.State, UsersInvoicesData.main.employees.Country, UsersInvoicesData.main.employees.PostalCode, UsersInvoicesData.main.employees.Phone, UsersInvoicesData.main.employees.Fax, UsersInvoicesData.main.employees.Email FROM UsersInvoicesData.main.employees WITH TABLEAU Customers WITH ATTRIBUTES CustomerId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, SupportRepId BEING SELECT UsersInvoicesData.main.customers.CustomerId, UsersInvoicesData.main.customers.FirstName, UsersInvoicesData.main.customers.LastName, UsersInvoicesData.main.customers.Company, UsersInvoicesData.main.customers.Address, UsersInvoicesData.main.customers.City, UsersInvoicesData.main.customers.State, UsersInvoicesData.main.customers.Country, UsersInvoicesData.main.customers.PostalCode, UsersInvoicesData.main.customers.Phone, UsersInvoicesData.main.customers.Fax, UsersInvoicesData.main.customers.Email, UsersInvoicesData.main.customers.SupportRepId FROM UsersInvoicesData.main.customers WITH TABLEAU Invoices WITH ATTRIBUTES InvoiceId, CustomerId, InvoiceDate, BillingAddress, BillingCity, BillingState, BillingCountry, BillingPostalCode, Total BEING SELECT UsersInvoicesData.main.invoices.InvoiceId, UsersInvoicesData.main.invoices.CustomerId, UsersInvoicesData.main.invoices.InvoiceDate, UsersInvoicesData.main.invoices.BillingAddress, UsersInvoicesData.main.invoices.BillingCity, UsersInvoicesData.main.invoices.BillingState, UsersInvoicesData.main.invoices.BillingCountry, UsersInvoicesData.main.invoices.BillingPostalCode, UsersInvoicesData.main.invoices.Total FROM UsersInvoicesData.main.invoices WITH TABLEAU InvoiceItems WITH ATTRIBUTES InvoiceLineId, InvoiceId, TrackId, UnitPrice, Quantity BEING SELECT UsersInvoicesData.main.invoice_items.InvoiceLineId, UsersInvoicesData.main.invoice_items.InvoiceId, UsersInvoicesData.main.invoice_items.TrackId, UsersInvoicesData.main.invoice_items.UnitPrice, UsersInvoicesData.main.invoice_items.Quantity FROM UsersInvoicesData.main.invoice_items"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8207
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.2.4"
+
+  # --------------- MASKS --------------- #
+  albums_artists_mask:
+    depends_on:
+      - albums_artists_mediator
+    ports:
+      - "8801:8801"
+      - "8802:8802"
+      - "8301:8301"
+      - "30001:30001"
+    # restart: always
+    environment:
+      NODE_ID: "AlbumsArtistsMask"
+      LISTEN_PORT: 30001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.2.1:20001"
+      STARTUP_NODE_SCHEMA_LOAD: "AlbumsArtistsMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8801
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8802
+      WEB_PORT: 8301
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.3.1"
+
+  tracks_mask:
+    depends_on:
+      - tracks_mediator
+    ports:
+      - "8803:8803"
+      - "8804:8804"
+      - "8303:8303"
+      - "30002:30002"
+    # restart: always
+    environment:
+      NODE_ID: "TracksMask"
+      LISTEN_PORT: 30002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.2.2:20002"
+      STARTUP_NODE_SCHEMA_LOAD: "TracksMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8803
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8805
+      WEB_PORT: 8303
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.3.2"
+
+  playlists_users_mask:
+    depends_on:
+      - playlists_users_mediator
+    ports:
+      - "8805:8805"
+      - "8806:8806"
+      - "8305:8305"
+      - "30003:30003"
+    # restart: always
+    environment:
+      NODE_ID: "PlaylistsUsersMask"
+      LISTEN_PORT: 30003
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.2.3:20003"
+      STARTUP_NODE_SCHEMA_LOAD: "PlaylistsUsersMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8805
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8806
+      WEB_PORT: 8305
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.3.3"
+
+  users_invoices_mask:
+    depends_on:
+      - users_invoices_mediator
+    ports:
+      - "8807:8807"
+      - "8808:8808"
+      - "8307:8307"
+      - "30004:30004"
+    # restart: always
+    environment:
+      NODE_ID: "UsersInvoicesMask"
+      LISTEN_PORT: 30004
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.25.2.4:20004"
+      STARTUP_NODE_SCHEMA_LOAD: "UsersInvoicesMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8807
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8808
+      WEB_PORT: 8307
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+    networks:
+      janus-sos-network:
+        ipv4_address: "172.25.3.4"
+
+networks:
+  janus-sos-network:
+    driver: "bridge"
+    ipam:
+      config:
+        - subnet: "172.25.0.0/16"
+          gateway: "172.25.0.1"

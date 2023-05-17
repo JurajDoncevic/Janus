@@ -1,0 +1,963 @@
+version: '3.9'
+name: 'janus-data-mesh'
+services:
+  # --------------- DATA INFRA PLATFORM --------------- #
+  customers_dip_wrapper:
+    ports:
+      - "8101:8101"
+      - "11001:11001"
+    # restart: always
+    environment:
+      NODE_ID: "Customers_DIPWrapper"
+      LISTEN_PORT: 11001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "CustomersData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8101
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "customers.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.1"
+
+  billing_dip_wrapper:
+    ports:
+      - "8102:8102"
+      - "11002:11002"
+    # restart: always
+    environment:
+      NODE_ID: "Billing_DIPWrapper"
+      LISTEN_PORT: 11002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "BillingData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8102
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "billing.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.2"
+
+  countries_dip_wrapper:
+    ports:
+      - "8103:8103"
+      - "11003:11003"
+    # restart: always
+    environment:
+      NODE_ID: "Countries_DIPWrapper"
+      LISTEN_PORT: 11003
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "CountriesData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8103
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "countries.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.3"
+
+  customers_plans_dip_wrapper:
+    ports:
+      - "8104:8104"
+      - "11004:11004"
+    # restart: always
+    environment:
+      NODE_ID: "CustomersPlans_DIPWrapper"
+      LISTEN_PORT: 11004
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "CustomersPlansData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8104
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "customers_plans.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.4"
+
+  listening_dip_wrapper:
+    ports:
+      - "8105:8105"
+      - "11005:11005"
+    # restart: always
+    environment:
+      NODE_ID: "Listening_DIPWrapper"
+      LISTEN_PORT: 11005
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "ListeningData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8105
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "listening.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.5"
+
+  lyrics_dip_wrapper:
+    ports:
+      - "8106:8106"
+      - "11006:11006"
+    # restart: always
+    environment:
+      NODE_ID: "Lyrics_DIPWrapper"
+      LISTEN_PORT: 11006
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "LyricsData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8106
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "lyrics.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.6"
+
+  music_dip_wrapper:
+    ports:
+      - "8107:8107"
+      - "11007:11007"
+    # restart: always
+    environment:
+      NODE_ID: "Music_DIPWrapper"
+      LISTEN_PORT: 11007
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "MusicData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8107
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "music.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.7"
+
+  tracks_instances_dip_wrapper:
+    ports:
+      - "8108:8108"
+      - "11008:11008"
+    # restart: always
+    environment:
+      NODE_ID: "TracksInstances_DIPWrapper"
+      LISTEN_PORT: 11008
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "TracksInstancesData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8108
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "tracks_instances.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.8"
+
+  playlists_dip_wrapper:
+    ports:
+      - "8109:8109"
+      - "11009:11009"
+    # restart: always
+    environment:
+      NODE_ID: "Playlists_DIPWrapper"
+      LISTEN_PORT: 11009
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "PlaylistsData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8109
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        DB_NAME: "playlists.db"
+        DB_DIR: "/Database/"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.1.9"
+
+  # --------------- CUSTOMERS DATA PRODUCT --------------- #
+  customers_ingress_mediator:
+    depends_on:
+      - customers_dip_wrapper
+      - countries_dip_wrapper
+    ports:
+      - "8201:8201"
+      - "22001:22001"
+    # restart: always
+    environment:
+      NODE_ID: "Customers_IngressMediator"
+      LISTEN_PORT: 22001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.1.1:11001,172.26.1.3:11003"
+      STARTUP_NODES_SCHEMA_LOAD: "Customers_DIPWrapper,Countries_DIPWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE CustomersIngressData VERSION \\\"1.0\\\" WITH SCHEMA Main WITH TABLEAU Customers WITH ATTRIBUTES CustomerId, UserName, Email, CountryName BEING SELECT CustomersData.main.customers.customer_id, CustomersData.main.customers.username, CustomersData.main.customers.email, CountriesData.main.countries.name FROM CustomersData.main.customers JOIN CountriesData.main.countries ON CustomersData.main.customers.country_id = CountriesData.main.countries.country_id"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8201
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.2.1"
+
+  customers_ingress_mask:
+    depends_on:
+      - customers_ingress_mediator
+    ports:
+      - "8203:8203"
+      - "32001:32001"
+    # restart: always
+    environment:
+      NODE_ID: "Customers_IngressMask"
+      LISTEN_PORT: 32001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.2.1:22001"
+      STARTUP_NODE_SCHEMA_LOAD: "Customers_IngressMediator"
+      STARTUP_MATERIALIZE_DATABASE: true
+      MATERIALIZATION_CONNECTION_STRING: "Data Source = /Database/customers_domain_data.db"
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_PORT: 8203
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteMask"
+    volumes:
+      - customers_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.2.2"
+
+  customers_egress_wrapper:
+    depends_on:
+      - customers_ingress_mediator
+      - customers_ingress_mask
+    ports:
+      - "8205:8205"
+      - "12001:12001"
+    # restart: always
+    environment:
+      NODE_ID: "Customers_EgressWrapper"
+      LISTEN_PORT: 12001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "CustomersDomainData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8205
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-sans-db-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        COPY_DB: "false"
+        DB_NAME: "customers_domain_data.db"
+        DB_DIR: "/Database/"
+    volumes:
+      - customers_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.2.3"
+
+  customers_egress_mediator:
+    depends_on:
+      - customers_ingress_mediator
+      - customers_egress_wrapper
+    ports:
+      - "8207:8207"
+      - "22002:22002"
+    # restart: always
+    environment:
+      NODE_ID: "Customers_EgressMediator"
+      LISTEN_PORT: 22002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.2.1:22001,172.26.2.3:12001"
+      STARTUP_NODES_SCHEMA_LOAD: "Customers_IngressMediator,Customers_EgressWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE CustomersData VERSION \\\"1.0\\\" WITH SCHEMA Stable WITH TABLEAU Customers WITH ATTRIBUTES CustomerId, UserName, Email, CountryName BEING SELECT CustomersDomainData.main.Main_Customers.CustomerId, CustomersDomainData.main.Main_Customers.UserName, CustomersDomainData.main.Main_Customers.Email, CustomersDomainData.main.Main_Customers.CountryName FROM CustomersDomainData.main.Main_Customers WITH SCHEMA Fresh WITH TABLEAU Customers WITH ATTRIBUTES CustomerId, UserName, Email, CountryName BEING SELECT CustomersIngressData.Main.Customers.CustomerId, CustomersIngressData.Main.Customers.UserName, CustomersIngressData.Main.Customers.Email, CustomersIngressData.Main.Customers.CountryName FROM CustomersIngressData.Main.Customers"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8207
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.2.4"
+
+  customers_egress_mask:
+    depends_on:
+      - customers_egress_mediator
+    ports:
+      - "8801:8801"
+      - "8802:8802"
+      - "8209:8209"
+      - "32002:32002"
+    # restart: always
+    environment:
+      NODE_ID: "Customers_EgressMask"
+      LISTEN_PORT: 32002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.2.4:22002"
+      STARTUP_NODE_SCHEMA_LOAD: "Customers_EgressMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8801
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8802
+      WEB_PORT: 8209
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.2.5"
+
+  # --------------- SUBSCRIPTIONS DATA PRODUCT --------------- #
+  subscriptions_ingress_mediator:
+    depends_on:
+      - customers_plans_dip_wrapper
+      - customers_egress_mediator
+    ports:
+      - "8301:8301"
+      - "23001:23001"
+    # restart: always
+    environment:
+      NODE_ID: "Subscriptions_IngressMediator"
+      LISTEN_PORT: 23001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.1.4:11004,172.26.2.4:22002"
+      STARTUP_NODES_SCHEMA_LOAD: "CustomersPlans_DIPWrapper,Customers_EgressMediator"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE SubscriptionsIngressData VERSION \\\"1.0\\\" WITH SCHEMA Main WITH TABLEAU SingleUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT CustomersPlansData.main.single_plans_customers.plan_id, CustomersData.Stable.Customers.UserName, CustomersData.Stable.Customers.Email, CustomersPlansData.main.customers_plans.started_on, CustomersPlansData.main.customers_plans.ended_on FROM CustomersPlansData.main.single_plans_customers JOIN CustomersPlansData.main.customers_plans ON CustomersPlansData.main.single_plans_customers.plan_id == CustomersPlansData.main.customers_plans.plan_id JOIN CustomersData.Stable.Customers ON CustomersPlansData.main.customers_plans.billing_customer_id == CustomersData.Stable.Customers.CustomerId WITH TABLEAU DualUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT CustomersPlansData.main.dual_plans_customers.plan_id, CustomersData.Stable.Customers.UserName, CustomersData.Stable.Customers.Email, CustomersPlansData.main.customers_plans.started_on, CustomersPlansData.main.customers_plans.ended_on FROM CustomersPlansData.main.dual_plans_customers JOIN CustomersPlansData.main.customers_plans ON CustomersPlansData.main.dual_plans_customers.plan_id == CustomersPlansData.main.customers_plans.plan_id JOIN CustomersData.Stable.Customers ON CustomersPlansData.main.customers_plans.billing_customer_id == CustomersData.Stable.Customers.CustomerId WITH TABLEAU MultiUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT CustomersPlansData.main.multi_plans_customers.plan_id, CustomersData.Stable.Customers.UserName, CustomersData.Stable.Customers.Email, CustomersPlansData.main.customers_plans.started_on, CustomersPlansData.main.customers_plans.ended_on FROM CustomersPlansData.main.multi_plans_customers JOIN CustomersPlansData.main.customers_plans ON CustomersPlansData.main.multi_plans_customers.plan_id == CustomersPlansData.main.customers_plans.plan_id JOIN CustomersData.Stable.Customers ON CustomersPlansData.main.customers_plans.billing_customer_id == CustomersData.Stable.Customers.CustomerId"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8301
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.3.1"
+
+  subscriptions_ingress_mask:
+    depends_on:
+      - subscriptions_ingress_mediator
+    ports:
+      - "8303:8303"
+      - "33001:33001"
+    # restart: always
+    environment:
+      NODE_ID: "Subscriptions_IngressMask"
+      LISTEN_PORT: 33001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.3.1:23001"
+      STARTUP_NODE_SCHEMA_LOAD: "Subscriptions_IngressMediator"
+      STARTUP_MATERIALIZE_DATABASE: true
+      MATERIALIZATION_CONNECTION_STRING: "Data Source = /Database/subscriptions_domain_data.db"
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_PORT: 8303
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteMask"
+    volumes:
+      - subscriptions_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.3.2"
+
+  subscriptions_egress_wrapper:
+    depends_on:
+      - subscriptions_ingress_mediator
+      - subscriptions_ingress_mask
+    ports:
+      - "8305:8305"
+      - "13001:13001"
+    # restart: always
+    environment:
+      NODE_ID: "Subscriptions_EgressWrapper"
+      LISTEN_PORT: 13001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "SubscriptionsDomainData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8305
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-sans-db-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        COPY_DB: "false"
+        DB_NAME: "subscriptions_domain_data.db"
+        DB_DIR: "/Database/"
+        SLEEP_START: 1
+    volumes:
+      - subscriptions_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.3.3"
+
+  subscriptions_egress_mediator:
+    depends_on:
+      - subscriptions_ingress_mediator
+      - subscriptions_egress_wrapper
+    ports:
+      - "8307:8307"
+      - "23002:23002"
+    # restart: always
+    environment:
+      NODE_ID: "Subscriptions_EgressMediator"
+      LISTEN_PORT: 23002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.3.1:23001,172.26.3.3:13001"
+      STARTUP_NODES_SCHEMA_LOAD: "Subscriptions_IngressMediator,Subscriptions_EgressWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE SubscriptionsData VERSION \\\"1.0\\\" WITH SCHEMA Stable WITH TABLEAU SingleUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT SubscriptionsDomainData.main.Main_SingleUserSubscriptions.PlanId, SubscriptionsDomainData.main.Main_SingleUserSubscriptions.BillingUserName, SubscriptionsDomainData.main.Main_SingleUserSubscriptions.BillingUserEmail, SubscriptionsDomainData.main.Main_SingleUserSubscriptions.StartedOn, SubscriptionsDomainData.main.Main_SingleUserSubscriptions.EndedOn FROM SubscriptionsDomainData.main.Main_SingleUserSubscriptions WITH TABLEAU DualUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT SubscriptionsDomainData.main.Main_DualUserSubscriptions.PlanId, SubscriptionsDomainData.main.Main_DualUserSubscriptions.BillingUserName, SubscriptionsDomainData.main.Main_DualUserSubscriptions.BillingUserEmail, SubscriptionsDomainData.main.Main_DualUserSubscriptions.StartedOn, SubscriptionsDomainData.main.Main_DualUserSubscriptions.EndedOn FROM SubscriptionsDomainData.main.Main_DualUserSubscriptions WITH TABLEAU MultiUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT SubscriptionsDomainData.main.Main_MultiUserSubscriptions.PlanId, SubscriptionsDomainData.main.Main_MultiUserSubscriptions.BillingUserName, SubscriptionsDomainData.main.Main_MultiUserSubscriptions.BillingUserEmail, SubscriptionsDomainData.main.Main_MultiUserSubscriptions.StartedOn, SubscriptionsDomainData.main.Main_MultiUserSubscriptions.EndedOn FROM SubscriptionsDomainData.main.Main_MultiUserSubscriptions WITH SCHEMA Fresh WITH TABLEAU SingleUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT SubscriptionsIngressData.Main.SingleUserSubscriptions.PlanId, SubscriptionsIngressData.Main.SingleUserSubscriptions.BillingUserName, SubscriptionsIngressData.Main.SingleUserSubscriptions.BillingUserEmail, SubscriptionsIngressData.Main.SingleUserSubscriptions.StartedOn, SubscriptionsIngressData.Main.SingleUserSubscriptions.EndedOn FROM SubscriptionsIngressData.Main.SingleUserSubscriptions WITH TABLEAU DualUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT SubscriptionsIngressData.Main.DualUserSubscriptions.PlanId, SubscriptionsIngressData.Main.DualUserSubscriptions.BillingUserName, SubscriptionsIngressData.Main.DualUserSubscriptions.BillingUserEmail, SubscriptionsIngressData.Main.DualUserSubscriptions.StartedOn, SubscriptionsIngressData.Main.DualUserSubscriptions.EndedOn FROM SubscriptionsIngressData.Main.DualUserSubscriptions WITH TABLEAU MultiUserSubscriptions WITH ATTRIBUTES PlanId, BillingUserName, BillingUserEmail, StartedOn, EndedOn BEING SELECT SubscriptionsIngressData.Main.MultiUserSubscriptions.PlanId, SubscriptionsIngressData.Main.MultiUserSubscriptions.BillingUserName, SubscriptionsIngressData.Main.MultiUserSubscriptions.BillingUserEmail, SubscriptionsIngressData.Main.MultiUserSubscriptions.StartedOn, SubscriptionsIngressData.Main.MultiUserSubscriptions.EndedOn FROM SubscriptionsIngressData.Main.MultiUserSubscriptions"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8307
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+        SLEEP_START: 2
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.3.4"
+
+  subscriptions_egress_mask:
+    depends_on:
+      - subscriptions_egress_mediator
+    ports:
+      - "8803:8803"
+      - "8804:8804"
+      - "8309:8309"
+      - "33002:33002"
+    # restart: always
+    environment:
+      NODE_ID: "Subscriptions_EgressMask"
+      LISTEN_PORT: 33002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.3.4:23002"
+      STARTUP_NODE_SCHEMA_LOAD: "Subscriptions_EgressMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8803
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8804
+      WEB_PORT: 8309
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+        SLEEP_START: 2
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.3.5"
+
+  # --------------- MUSIC DATA PRODUCT --------------- #
+  music_ingress_mediator:
+    depends_on:
+      - music_dip_wrapper
+    ports:
+      - "8401:8401"
+      - "24001:24001"
+    # restart: always
+    environment:
+      NODE_ID: "Music_IngressMediator"
+      LISTEN_PORT: 24001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.1.7:11007"
+      STARTUP_NODES_SCHEMA_LOAD: "Music_DIPWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE MusicIngressData VERSION \\\"1.0\\\" WITH SCHEMA Main WITH TABLEAU Tracks WITH ATTRIBUTES TrackId, TrackTitle, Composer, TrackLengthSeconds, AlbumId, AlbumTitle, ArtistName, GenreName BEING SELECT MusicData.main.tracks.track_id, MusicData.main.tracks.title, MusicData.main.tracks.composer, MusicData.main.tracks.track_length_seconds, MusicData.main.tracks.album_id, MusicData.main.albums.title, MusicData.main.artists.name, MusicData.main.genres.name FROM MusicData.main.tracks JOIN MusicData.main.albums ON MusicData.main.tracks.album_id == MusicData.main.albums.album_id JOIN MusicData.main.artists ON MusicData.main.albums.artist_id == MusicData.main.artists.artist_id JOIN MusicData.main.genres ON MusicData.main.tracks.genre_id == MusicData.main.genres.genre_id WITH TABLEAU Albums WITH ATTRIBUTES AlbumId, Title, PublishYear, ArtistId, ArtistName BEING SELECT MusicData.main.albums.album_id, MusicData.main.albums.title, MusicData.main.albums.publish_year, MusicData.main.artists.artist_id, MusicData.main.artists.name FROM MusicData.main.albums JOIN MusicData.main.artists ON MusicData.main.albums.artist_id == MusicData.main.artists.artist_id"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8401
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.4.1"
+
+  music_ingress_mask:
+    depends_on:
+      - music_ingress_mediator
+    ports:
+      - "8403:8403"
+      - "34001:34001"
+    # restart: always
+    environment:
+      NODE_ID: "Music_IngressMask"
+      LISTEN_PORT: 34001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.4.1:24001"
+      STARTUP_NODE_SCHEMA_LOAD: "Music_IngressMediator"
+      STARTUP_MATERIALIZE_DATABASE: true
+      MATERIALIZATION_CONNECTION_STRING: "Data Source = /Database/music_domain_data.db"
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_PORT: 8403
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteMask"
+    volumes:
+      - music_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.4.2"
+
+  music_egress_wrapper:
+    depends_on:
+      - music_ingress_mediator
+      - music_ingress_mask
+    ports:
+      - "8405:8405"
+      - "14001:14001"
+    # restart: always
+    environment:
+      NODE_ID: "Music_EgressWrapper"
+      LISTEN_PORT: 14001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "MusicDomainData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8405
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-sans-db-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        COPY_DB: "false"
+        DB_NAME: "music_domain_data.db"
+        DB_DIR: "/Database/"
+        SLEEP_START: 2
+    volumes:
+      - music_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.4.3"
+
+  music_egress_mediator:
+    depends_on:
+      - music_ingress_mediator
+      - music_egress_wrapper
+    ports:
+      - "8407:8407"
+      - "24002:24002"
+    # restart: always
+    environment:
+      NODE_ID: "Music_EgressMediator"
+      LISTEN_PORT: 24002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.4.1:24001,172.26.4.3:14001"
+      STARTUP_NODES_SCHEMA_LOAD: "Music_IngressMediator,Music_EgressWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE MusicData VERSION \\\"1.0\\\" WITH SCHEMA Stable WITH TABLEAU Tracks WITH ATTRIBUTES TrackId, TrackTitle, Composer, TrackLengthSeconds, AlbumId, AlbumTitle, ArtistName, GenreName BEING SELECT MusicDomainData.main.Main_Tracks.TrackId, MusicDomainData.main.Main_Tracks.TrackTitle, MusicDomainData.main.Main_Tracks.Composer, MusicDomainData.main.Main_Tracks.TrackLengthSeconds, MusicDomainData.main.Main_Tracks.AlbumId, MusicDomainData.main.Main_Tracks.AlbumTitle, MusicDomainData.main.Main_Tracks.ArtistName, MusicDomainData.main.Main_Tracks.GenreName FROM MusicDomainData.main.Main_Tracks WITH TABLEAU Albums WITH ATTRIBUTES AlbumId, Title, PublishYear, ArtistId, ArtistName BEING SELECT MusicDomainData.main.Main_Albums.AlbumId, MusicDomainData.main.Main_Albums.Title, MusicDomainData.main.Main_Albums.PublishYear, MusicDomainData.main.Main_Albums.ArtistId, MusicDomainData.main.Main_Albums.ArtistName FROM MusicDomainData.main.Main_Albums WITH SCHEMA Fresh WITH TABLEAU Tracks WITH ATTRIBUTES TrackId, TrackTitle, Composer, TrackLengthSeconds, AlbumId, AlbumTitle, ArtistName, GenreName BEING SELECT MusicIngressData.Main.Tracks.TrackId, MusicIngressData.Main.Tracks.TrackTitle, MusicIngressData.Main.Tracks.Composer, MusicIngressData.Main.Tracks.TrackLengthSeconds, MusicIngressData.Main.Tracks.AlbumId, MusicIngressData.Main.Tracks.AlbumTitle, MusicIngressData.Main.Tracks.ArtistName, MusicIngressData.Main.Tracks.GenreName FROM MusicIngressData.Main.Tracks WITH TABLEAU Albums WITH ATTRIBUTES AlbumId, Title, PublishYear, ArtistId, ArtistName BEING SELECT MusicIngressData.Main.Albums.AlbumId, MusicIngressData.Main.Albums.Title, MusicIngressData.Main.Albums.PublishYear, MusicIngressData.Main.Albums.ArtistId, MusicIngressData.Main.Albums.ArtistName FROM MusicIngressData.Main.Albums"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8407
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+        SLEEP_START: 2
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.4.4"
+
+  music_egress_mask:
+    depends_on:
+      - music_egress_mediator
+    ports:
+      - "8805:8805"
+      - "8806:8806"
+      - "8409:8409"
+      - "34002:34002"
+    # restart: always
+    environment:
+      NODE_ID: "Music_EgressMask"
+      LISTEN_PORT: 34002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.4.4:24002"
+      STARTUP_NODE_SCHEMA_LOAD: "Music_EgressMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8805
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8806
+      WEB_PORT: 8409
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+        SLEEP_START: 2
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.4.5"
+
+  # --------------- LISTENING DATA PRODUCT --------------- #
+  listening_ingress_mediator:
+    depends_on:
+      - tracks_instances_dip_wrapper
+      - music_egress_mediator
+      - listening_dip_wrapper
+      - customers_egress_mediator
+    ports:
+      - "8501:8501"
+      - "25001:25001"
+    # restart: always
+    environment:
+      NODE_ID: "Listening_IngressMediator"
+      LISTEN_PORT: 25001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.1.5:11005,172.26.4.4:24002,172.26.1.8:11008,172.26.2.4:22002"
+      STARTUP_NODES_SCHEMA_LOAD: "Listening_DIPWrapper,Music_EgressMediator,TracksInstances_DIPWrapper,Customers_EgressMediator"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE ListeningIngressData VERSION \\\"1.0\\\" WITH SCHEMA Main WITH TABLEAU ListeningHistory WITH ATTRIBUTES ListenId, CustomerUserName, ListenedTrackId, ListenedTrackName, ListenedOn, ListenedToEnd, StoppedAtSeconds, ListenedMediaType BEING SELECT ListeningData.main.listening_history.listen_id, CustomersData.Stable.Customers.UserName, ListeningData.main.listening_history.listened_track_id, MusicData.Stable.Tracks.TrackTitle, ListeningData.main.listening_history.listened_on, ListeningData.main.listening_history.listened_to_end, ListeningData.main.listening_history.stopped_at_seconds, TracksInstancesData.main.media_types.name FROM ListeningData.main.listening_history JOIN CustomersData.Stable.Customers ON ListeningData.main.listening_history.customer_id == CustomersData.Stable.Customers.CustomerId JOIN MusicData.Stable.Tracks ON ListeningData.main.listening_history.listened_track_id == MusicData.Stable.Tracks.TrackId JOIN TracksInstancesData.main.media_types ON ListeningData.main.listening_history.listened_media_type_id == TracksInstancesData.main.media_types.media_type_id"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8501
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.5.1"
+
+  listening_ingress_mask:
+    depends_on:
+      - listening_ingress_mediator
+    ports:
+      - "8503:8503"
+      - "35001:35001"
+    # restart: always
+    environment:
+      NODE_ID: "Listening_IngressMask"
+      LISTEN_PORT: 35001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.5.1:25001"
+      STARTUP_NODE_SCHEMA_LOAD: "Listening_IngressMediator"
+      STARTUP_MATERIALIZE_DATABASE: true
+      MATERIALIZATION_CONNECTION_STRING: "Data Source = /Database/listening_domain_data.db"
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_PORT: 8503
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteMask"
+    volumes:
+      - listening_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.5.2"
+
+  listening_egress_wrapper:
+    depends_on:
+      - listening_ingress_mediator
+      - listening_ingress_mask
+    ports:
+      - "8505:8505"
+      - "15001:15001"
+    # restart: always
+    environment:
+      NODE_ID: "Listening_EgressWrapper"
+      LISTEN_PORT: 15001
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      ALLOW_COMMANDS: "false"
+      EAGER_STARTUP: "true"
+      STARTUP_REMOTE_POINTS: ""
+      STARTUP_INFER_SCHEMA: "true"
+      DATASOURCE_NAME: "ListeningDomainData"
+      PERSISTENCE_CONNECTION_STRING: "./wrapper_database.db"
+      WEB_PORT: 8505
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: janus-sqlite-wrapper-sans-db-deploy
+      args:
+        PROJECT_NAME: "Janus.Wrapper.Sqlite.WebApp"
+        COMPONENT_TYPE: "SqliteWrapper"
+        COPY_DB: "false"
+        DB_NAME: "listening_domain_data.db"
+        DB_DIR: "/Database/"
+        SLEEP_START: 2
+    volumes:
+      - listening_dpc_domain_data:/Database
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.5.3"
+
+  listening_egress_mediator:
+    depends_on:
+      - listening_ingress_mediator
+      - listening_egress_wrapper
+    ports:
+      - "8507:8507"
+      - "25002:25002"
+    # restart: always
+    environment:
+      NODE_ID: "Listening_EgressMediator"
+      LISTEN_PORT: 25002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.5.1:25001,172.26.5.3:15001"
+      STARTUP_NODES_SCHEMA_LOAD: "Listening_IngressMediator,Listening_EgressWrapper"
+      STARTUP_MEDIATION_SCRIPT: "SETTING PROPAGATE ATTRIBUTE DESCRIPTIONS DATASOURCE ListeningData VERSION \\\"1.0\\\" WITH SCHEMA Stable WITH TABLEAU ListeningHistory WITH ATTRIBUTES ListenId, CustomerUserName, ListenedTrackId, ListenedTrackName, ListenedOn, ListenedToEnd, StoppedAtSeconds, ListenedMediaType BEING SELECT ListeningDomainData.main.Main_ListeningHistory.ListenId, ListeningDomainData.main.Main_ListeningHistory.CustomerUserName, ListeningDomainData.main.Main_ListeningHistory.ListenedTrackId, ListeningDomainData.main.Main_ListeningHistory.ListenedTrackName, ListeningDomainData.main.Main_ListeningHistory.ListenedOn, ListeningDomainData.main.Main_ListeningHistory.ListenedToEnd, ListeningDomainData.main.Main_ListeningHistory.StoppedAtSeconds, ListeningDomainData.main.Main_ListeningHistory.ListenedMediaType FROM ListeningDomainData.main.Main_ListeningHistory WITH SCHEMA Fresh WITH TABLEAU ListeningHistory WITH ATTRIBUTES ListenId, CustomerUserName, ListenedTrackId, ListenedTrackName, ListenedOn, ListenedToEnd, StoppedAtSeconds, ListenedMediaType BEING SELECT ListeningIngressData.Main.ListeningHistory.ListenId, ListeningIngressData.Main.ListeningHistory.CustomerUserName, ListeningIngressData.Main.ListeningHistory.ListenedTrackId, ListeningIngressData.Main.ListeningHistory.ListenedTrackName, ListeningIngressData.Main.ListeningHistory.ListenedOn, ListeningIngressData.Main.ListeningHistory.ListenedToEnd, ListeningIngressData.Main.ListeningHistory.StoppedAtSeconds, ListeningIngressData.Main.ListeningHistory.ListenedMediaType FROM ListeningIngressData.Main.ListeningHistory"
+      PERSISTENCE_CONNECTION_STRING: "./mediator_database.db"
+      WEB_PORT: 8507
+    build:
+      dockerfile: Dockerfile
+      target: janus-mediator-deploy
+      args:
+        PROJECT_NAME: "Janus.Mediator.WebApp"
+        COMPONENT_TYPE: "Mediator"
+        SLEEP_START: 2
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.5.4"
+
+  listening_egress_mask:
+    depends_on:
+      - listening_egress_mediator
+    ports:
+      - "8807:8807"
+      - "8808:8808"
+      - "8509:8509"
+      - "35002:35002"
+    # restart: always
+    environment:
+      NODE_ID: "Listening_EgressMask"
+      LISTEN_PORT: 35002
+      TIMEOUT_MS: 5000
+      COMMUNICATION_FORMAT: "AVRO"
+      NETWORK_ADAPTER_TYPE: "TCP"
+      EAGER_STARTUP: true
+      STARTUP_REMOTE_POINTS: "172.26.5.4:25002"
+      STARTUP_NODE_SCHEMA_LOAD: "Listening_EgressMediator"
+      STARTUP_WEB_API: true
+      PERSISTENCE_CONNECTION_STRING: "./mask_database.db"
+      WEB_API_LISTEN_PORT: 8807
+      WEB_API_USE_SSL: false
+      WEB_API_LISTEN_PORT_SECURE: 8808
+      WEB_PORT: 8509
+    build:
+      dockerfile: Dockerfile
+      target: janus-mask-deploy
+      args:
+        PROJECT_NAME: "Janus.Mask.WebApi.WebApp"
+        COMPONENT_TYPE: "WebApiMask"
+        SLEEP_START: 2
+    networks:
+      janus-data-mesh-network:
+        ipv4_address: "172.26.5.5"
+
+volumes:
+  customers_dpc_domain_data:
+  subscriptions_dpc_domain_data:
+  music_dpc_domain_data:
+  listening_dpc_domain_data:
+
+
+networks:
+  janus-data-mesh-network:
+    driver: "bridge"
+    ipam:
+      config:
+        - subnet: "172.26.0.0/16"
+          gateway: "172.26.0.1"

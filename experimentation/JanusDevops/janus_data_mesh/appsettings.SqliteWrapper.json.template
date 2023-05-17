@@ -1,0 +1,37 @@
+{
+  "WrapperConfiguration": {
+    "NodeId": "${NODE_ID}",
+    "ListenPort": ${LISTEN_PORT},
+    "TimeoutMs": ${TIMEOUT_MS},
+    "CommunicationFormat": "${COMMUNICATION_FORMAT}",
+    "NetworkAdapterType": "${NETWORK_ADAPTER_TYPE}",
+    "AllowCommands": ${ALLOW_COMMANDS},
+    "EagerStartup": ${EAGER_STARTUP},
+    "StartupRemotePoints": [${STARTUP_REMOTE_POINTS}],
+    "StartupInferSchema": ${STARTUP_INFER_SCHEMA},
+    "SourceConnectionString": "Data Source =${DB_DIR}${DB_NAME};Pooling=False;",
+    "DataSourceName": "${DATASOURCE_NAME}",
+    "PersistenceConnectionString": "./wrapper_database.db"
+  },
+  "WebConfiguration": {
+    "Port": ${WEB_PORT},
+    "AllowedHttpHost": "http://*",
+    "AllowedHttpsHost": "https://*"
+  },
+  "NLog": {
+    "targets": {
+      "file": {
+        "type": "File",
+        "fileName": "./log-§{shortdate}.log",
+        "layout": "§{longdate}|§{logger}|§{message}"
+      }
+    },
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "file"
+      }
+    ]
+  }
+}

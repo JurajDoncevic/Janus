@@ -1,0 +1,40 @@
+{
+  "MaskConfiguration": {
+    "NodeId": "${NODE_ID}",
+    "ListenPort": ${LISTEN_PORT},
+    "TimeoutMs": ${TIMEOUT_MS},
+    "CommunicationFormat": "${COMMUNICATION_FORMAT}",
+    "NetworkAdapterType": "${NETWORK_ADAPTER_TYPE}",
+    "EagerStartup": ${EAGER_STARTUP},
+    "StartupRemotePoints": [${STARTUP_REMOTE_POINTS}],
+    "StartupNodeSchemaLoad": "${STARTUP_NODE_SCHEMA_LOAD}",
+    "StartupWebApi":"${STARTUP_WEB_API}",
+    "PersistenceConnectionString": "./mask_database.db",
+    "WebApiConfiguration": {
+      "ListenPort":${WEB_API_LISTEN_PORT},
+      "UseSSL":${WEB_API_USE_SSL},
+      "ListenSecurePort":${WEB_API_LISTEN_PORT_SECURE}
+    }
+  },
+  "WebConfiguration": {
+    "Port": ${WEB_PORT},
+    "AllowedHttpHost": "http://*",
+    "AllowedHttpsHost": "https://*"
+  },
+  "NLog": {
+    "targets": {
+      "file": {
+        "type": "File",
+        "fileName": "./log-§{shortdate}.log",
+        "layout": "§{longdate}|§{logger}|§{message}"
+      }
+    },
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "file"
+      }
+    ]
+  }
+}

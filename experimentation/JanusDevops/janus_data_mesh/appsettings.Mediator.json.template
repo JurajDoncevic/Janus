@@ -1,0 +1,35 @@
+{
+  "MediatorConfiguration": {
+    "NodeId": "${NODE_ID}",
+    "ListenPort": ${LISTEN_PORT},
+    "TimeoutMs": ${TIMEOUT_MS},
+    "CommunicationFormat": "${COMMUNICATION_FORMAT}",
+    "NetworkAdapterType": "${NETWORK_ADAPTER_TYPE}",
+    "EagerStartup": ${EAGER_STARTUP},
+    "StartupRemotePoints": [${STARTUP_REMOTE_POINTS}],
+    "StartupNodesSchemaLoad": [${STARTUP_NODES_SCHEMA_LOAD}],
+    "StartupMediationScript": "${STARTUP_MEDIATION_SCRIPT}",
+    "PersistenceConnectionString": "./mediator_database.db"
+  },
+  "WebConfiguration": {
+    "Port": ${WEB_PORT},
+    "AllowedHttpHost": "http://*",
+    "AllowedHttpsHost": "https://*"
+  },
+  "NLog": {
+    "targets": {
+      "file": {
+        "type": "File",
+        "fileName": "./log-§{shortdate}.log",
+        "layout": "§{longdate}|§{logger}|§{message}"
+      }
+    },
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "file"
+      }
+    ]
+  }
+}
