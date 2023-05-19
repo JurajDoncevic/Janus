@@ -3,42 +3,64 @@ using Janus.Commons.SchemaModels;
 using System.Reflection;
 
 namespace Janus.Lenses.Implementations;
-
-/// <summary>
-/// Describes a lens between a TabularData RowData and a generic DTO.
-/// The DTO must have getters and setters; DTO fields must be named in PascalCase with prefixed underscores.
-/// </summary>
-/// <typeparam name="TDto">DTO type</typeparam>
-public sealed class RowDataDtoLens<TDto>
-    : Lens<RowData, TDto>,
-    ICreatingLeftSpecsLens<RowData, Type>
+public sealed class RowDataDtoLens<TDto> 
+    : SymmetricLens<RowData, TDto>
+    where TDto : class
 {
-    /// <summary>
-    /// Prefix for column names when generating tabular data
-    /// </summary>
+    private readonly Option<Type> _dtoType;
     private readonly Option<string> _columnNamePrefix;
 
-    private readonly Option<Type> _originalType;
 
-    internal RowDataDtoLens(string? columnNamePrefix = null, Type? originalType = null) : base()
+    internal RowDataDtoLens(string? columnNamePrefix = null, Type? dtoType = null) : base()
     {
         _columnNamePrefix = Option<string>.Some(columnNamePrefix); // evaluates to some or none
-        _originalType = Option<Type>.Some(originalType);
+        _dtoType = Option<Type>.Some(dtoType); // evaluates to None if null
     }
 
-    /// <summary>
-    /// Lens PUT function: TDto -> RowData? -> RowData.
-    /// If source RowData? is not given, its structure is inferred from the TDto type.
-    /// </summary>
-    public override Func<TDto, RowData?, RowData> Put =>
-        (view, originalSource) =>
+    protected override Result<RowData> _CreateLeft(TDto? right)
+        => Results.AsResult(() =>
+            right is null
+            ? RowData.FromDictionary(
+                typeof(TDto).GetRuntimeProperties().ToDictionary(p => p.Name, p => GetDefaultValue(TypeMappings.MapToDataType(p.PropertyType)))
+            )
+            : RowData.FromDictionary(
+                (_dtoType.Value ?? right?.GetType() ?? typeof(TDto)).GetRuntimeProperties().ToDictionary(p => p.Name, p => p.GetValue(right))
+            )
+        );
+
+    protected override Result<TDto> _CreateRight(RowData? left)
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+        => Results.AsResult(() =>
         {
-            var dtoType = view?.GetType() ?? _originalType.Value ?? typeof(TDto);
+            Type rightType = _dtoType.Value ?? typeof(TDto);
+
+            var rightItem = Activator.CreateInstance(rightType);// Activator.CreateInstance<TDto>();
+            foreach (var (colName, value) in left?.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)) ?? Enumerable.Empty<(string, object?)>())
+            {
+                string fieldName = $"_{colName}";
+
+                var targetField = rightType.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+                targetField?.SetValue(rightItem, value);
+            }
+
+            return (TDto)rightItem;
+        });
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+
+    protected override Result<RowData> _PutLeft(TDto right, RowData? left)
+        => Results.AsResult(() =>
+        {
+            var dtoType = right?.GetType() ?? _dtoType.Value ?? typeof(TDto);
 
             string columnNamePrefix =
                 _columnNamePrefix
                 ? _columnNamePrefix.Value
-                : FindLongestCommonPrefix((originalSource ?? CreateLeft(dtoType)).ColumnValues.Keys);
+                : FindLongestCommonPrefix(
+                    (left ?? CreateLeft(null).Match(
+                        l => l, 
+                        msg => RowData.FromDictionary(new Dictionary<string, object?>()))
+                    ).ColumnValues.Keys
+                    );
 
             var columnInfos =
                 dtoType.GetRuntimeProperties()
@@ -49,44 +71,44 @@ public sealed class RowDataDtoLens<TDto>
             var columnDataTypes =
                 columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.fieldType));
 
-            var rowData = new Dictionary<string, object?>((originalSource ?? CreateLeft(dtoType)).ColumnValues);
+            var rowData = new Dictionary<string, object?>(
+                (left ?? CreateLeft(null).Match(
+                        l => l,
+                        msg => RowData.FromDictionary(new Dictionary<string, object?>())
+                        )
+                    ).ColumnValues
+                );
 
             foreach (var property in dtoType.GetRuntimeProperties())
             {
-                var value = property.GetValue(view);
+                var value = property.GetValue(right);
                 var columnName = columnInfos[property.Name].columnName;
                 rowData[columnName] = value;
             }
 
             return RowData.FromDictionary(rowData);
-        };
+        });
 
-    /// <summary>
-    /// Lens GET function: RowData -> TDto
-    /// </summary>
-    public override Func<RowData, TDto> Get =>
-        (source) =>
+    protected override Result<TDto> _PutRight(RowData left, TDto? right)
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+        => Results.AsResult(() =>
         {
-            var viewType = _originalType.Value ?? typeof(TDto);
+            Type rightType = _dtoType.Value ?? typeof(TDto);
 
-
-            var viewItem = Activator.CreateInstance(viewType);// Activator.CreateInstance<TDto>();
-            foreach (var (colName, value) in source.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)))
+            var rightItem = Activator.CreateInstance(rightType);// Activator.CreateInstance<TDto>();
+            foreach (var (colName, value) in left?.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)) ?? Enumerable.Empty<(string, object?)>())
             {
                 string fieldName = $"_{colName}";
 
-                var targetField = viewType.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-                targetField?.SetValue(viewItem, value);
+                var targetField = rightType.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+                targetField?.SetValue(rightItem, value);
             }
 
-            return (TDto)viewItem;
-        };
+            return (TDto)rightItem;
+        });
+#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
 
-    public RowData CreateLeft(Type dtoType)
-        => RowData.FromDictionary(
-            dtoType.GetRuntimeProperties().ToDictionary(p => p.Name, p => GetDefaultValue(TypeMappings.MapToDataType(p.PropertyType)))
-            );
-
+    #region HELPER METHODS
     /// <summary>
     /// Gets the default system value for the data type
     /// </summary>
@@ -133,12 +155,14 @@ public sealed class RowDataDtoLens<TDto>
 
         return prefix;
     }
+
+    #endregion
 }
 
 /// <summary>
 /// RowDataDtoLens extension class
 /// </summary>
-public static class RowDataDtoLenses
+public static class SymmetricRowDataDtoLenses
 {
     /// <summary>
     /// Constructs a RowDataDtoLens
@@ -146,6 +170,6 @@ public static class RowDataDtoLenses
     /// <typeparam name="TDto">Type of DTO</typeparam>
     /// <param name="columnNamePrefix">Explicit prefix of column names in a RowData</param>
     /// <returns>RowDataDtoLens instance</returns>
-    public static RowDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null, Type? originalType = null)
-        => new RowDataDtoLens<TDto>(columnNamePrefix, originalType);
+    public static RowDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null, Type? dtoType = null) where TDto : class
+        => new RowDataDtoLens<TDto>(columnNamePrefix, dtoType);
 }

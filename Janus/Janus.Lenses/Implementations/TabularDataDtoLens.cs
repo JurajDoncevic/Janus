@@ -3,68 +3,87 @@ using Janus.Commons.SchemaModels;
 using System.Reflection;
 
 namespace Janus.Lenses.Implementations;
-
-/// <summary>
-/// Describes a lens between a TabularData and IEnumerable of a generic DTO.
-/// The DTO must have getters and setters; DTO fields must be named in PascalCase with prefixed underscores.
-/// </summary>
-/// <typeparam name="TDto">DTO type</typeparam>
-public sealed class TabularDataDtoLens<TDto>
-    : Lens<TabularData, IEnumerable<TDto>>,
-    ICreatingRightLens<IEnumerable<TDto>>,
-    ICreatingLeftSpecsLens<TabularData, Type>
+public class TabularDataDtoLens<TDto> 
+    : SymmetricLens<TabularData, IEnumerable<TDto>>
+    where TDto : class
 {
     /// <summary>
-    /// Combined RowDataDtoLens used to transform RowData and TDto
+    /// Combined RowDataDtoLens used to transform RowData and TDto - this is what COMBINATORS are used for
     /// </summary>
     private readonly RowDataDtoLens<TDto> _rowDataLens;
 
-    private readonly Option<Type> _originalViewItemType;
+    private readonly Option<Type> _dtoType;
 
     /// <summary>
     /// Prefix for column names of a generated TabularData
     /// </summary>
     private readonly string _columnNamePrefix;
-    internal TabularDataDtoLens(string? columnNamePrefix = null, Type? originalViewItemType = null) : base()
+    internal TabularDataDtoLens(string? columnNamePrefix = null, Type? dtoType = null) : base()
     {
-        _rowDataLens = RowDataDtoLenses.Construct<TDto>(originalType: originalViewItemType);
         _columnNamePrefix = columnNamePrefix ?? string.Empty;
-        _originalViewItemType = Option<Type>.Some(originalViewItemType);
+        _rowDataLens = SymmetricRowDataDtoLenses.Construct<TDto>(_columnNamePrefix, dtoType);
+        _dtoType = Option<Type>.Some(dtoType);
     }
 
-    /// <summary>
-    /// Lens PUT function: IEnumerable[TDto] -> TabularData? -> TabularData.
-    /// If source TabularData? is not given, its structure is inferred from the TDto type and a new name is given to the TabularData.
-    /// </summary>
-    public override Func<IEnumerable<TDto>, TabularData?, TabularData> Put =>
-        (view, originalSource) => view.Map(viewItem => _rowDataLens.Put(viewItem, _rowDataLens.CreateLeft(view.FirstOrDefault()?.GetType() ?? typeof(TDto))).ColumnValues)
-                                      .Aggregate(TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>((originalSource ?? CreateLeft(view.FirstOrDefault()?.GetType() ?? typeof(TDto))).ColumnDataTypes)),
-                                                 (acc, rowData) => acc.AddRow(conf => conf.WithRowData(new Dictionary<string, object?>(rowData))))
-                                      .WithName((originalSource ?? CreateLeft(view.FirstOrDefault()?.GetType() ?? typeof(TDto))).Name)
-                                      .Build();
+    protected override Result<TabularData> _CreateLeft(IEnumerable<TDto>? right = null)
+        => Results.AsResult(() =>
+        {
+            var dtoType = right?.FirstOrDefault()?.GetType() ?? typeof(TDto);
+            var dtoValues = right ?? Enumerable.Empty<TDto>();
+            var columnDataTypes = DetermineColumnDataTypesForDto(dtoType);
+            var tabularData =
+                dtoValues.Fold(
+                    TabularDataBuilder.InitTabularData(columnDataTypes),
+                    (dtoValue, tabularBuilder)
+                        => tabularBuilder.AddRow(conf => conf.WithRowData(new Dictionary<string, object?>(
+                            _rowDataLens.CreateLeft(dtoValue).Match(
+                                row => row,
+                                msg => _rowDataLens.CreateLeft(null).Data // doomed of this breaks
+                                ).ColumnValues
+                            ))
+                        ))
+                .Build();
+            return tabularData;
+        });
 
-    /// <summary>
-    /// Lens GET function: TabularData -> IEnumerable[TDto]
-    /// </summary>
-    public override Func<TabularData, IEnumerable<TDto>> Get =>
-        (source) => source.RowData.Map(rd => _rowDataLens.Get(rd));
+    protected override Result<IEnumerable<TDto>> _CreateRight(TabularData? left)
+        => Results.AsResult(() =>
+        {
+            var right =
+                left is not null
+                ? left.RowData
+                    .Map(rd => _rowDataLens.PutRight(rd, null))
+                    .Fold(Results.OnSuccess<IEnumerable<TDto>>(Enumerable.Empty<TDto>()),
+                         (dtoRes, results) => results.Bind(r => dtoRes.Map(dto => r.Append(dto))))
+                : Results.OnSuccess(Enumerable.Empty<TDto>());
+            return right;
+        });
 
+    protected override Result<TabularData> _PutLeft(IEnumerable<TDto> right, TabularData? left)
+        => Results.AsResult(() =>
+        {
+            var tabularData =
+            right.Map(rightItem => _rowDataLens.CreateLeft(rightItem)
+                                    .Bind(createdLeft => _rowDataLens.PutLeft(rightItem, createdLeft))
+                                    .Match(l => l.ColumnValues, msg => new Dictionary<string, object?>())
+                                    )
+                 .Fold(TabularDataBuilder.InitTabularData(new Dictionary<string, DataTypes>((left ?? CreateLeft(right).Data).ColumnDataTypes)),
+                   (values, tabularBuilder) => tabularBuilder.AddRow(conf => conf.WithRowData(new Dictionary<string, object?>(values)))
+                 )
+                 .WithName(left?.Name ?? CreateLeft(null).Data.Name)
+                 .Build();
+            return tabularData;
+        });
 
-    public TabularData CreateLeft(Type dtoType)
-    {
-        var columnDataTypes = DetermineColumnDataTypesForDto(dtoType);
-        var tabularData =
-            TabularDataBuilder.InitTabularData(columnDataTypes)
-            .AddRow(conf => conf.WithRowData(new Dictionary<string, object?>(_rowDataLens.CreateLeft(dtoType).ColumnValues)))
-            .Build();
-        return tabularData;
-    }
+    protected override Result<IEnumerable<TDto>> _PutRight(TabularData left, IEnumerable<TDto>? right)
+        => Results.AsResult(() =>
+        {
+            return left.RowData.Map(rd => _rowDataLens.PutRight(rd, null))
+                .Fold(Results.OnSuccess<IEnumerable<TDto>>(Enumerable.Empty<TDto>()),
+                     (dtoRes, results) => results.Bind(r => dtoRes.Map(dto => r.Append(dto))));
+        });
 
-    public IEnumerable<TDto> CreateRight()
-    {
-        return Enumerable.Empty<TDto>();
-    }
-
+    #region HELPER METHODS
     /// <summary>
     /// Determines column data types fro a given DTO system Type
     /// </summary>
@@ -75,12 +94,13 @@ public sealed class TabularDataDtoLens<TDto>
         dtoType ??= typeof(TDto);
         return dtoType.GetRuntimeProperties().ToDictionary(p => _columnNamePrefix + p.Name, p => TypeMappings.MapToDataType(p.PropertyType));
     }
+    #endregion
 }
 
 /// <summary>
 /// TabularDataDtoLens extension class
 /// </summary>
-public static class TabularDataDtoLenses
+public static class SymmetricTabularDataDtoLenses
 {
     /// <summary>
     /// Constructs a TabularDataDtoLens
@@ -88,6 +108,6 @@ public static class TabularDataDtoLenses
     /// <typeparam name="TDto">Type of DTO</typeparam>
     /// <param name="columnNamePrefix">Explicit prefix of column names in a TabularData</param>
     /// <returns>TabularDataDtoLens instance</returns>
-    public static TabularDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null, Type? originalType = null)
-        => new TabularDataDtoLens<TDto>(columnNamePrefix, originalType);
+    public static TabularDataDtoLens<TDto> Construct<TDto>(string? columnNamePrefix = null, Type? dtoType = null) where TDto : class
+        => new TabularDataDtoLens<TDto>(columnNamePrefix, dtoType);
 }

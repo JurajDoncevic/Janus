@@ -17,7 +17,7 @@ public class LensStructureTests
             .Where(type => !type.IsAbstract &&
                            !type.IsInterface &&
                            (type.BaseType?.IsGenericType ?? false) &&
-                           type.BaseType?.GetGenericTypeDefinition() == typeof(Lens<,>))
+                           type.BaseType?.GetGenericTypeDefinition() == typeof(AsymmetricLens<,>))
             .ToList();
 
         var lensDefinitions =

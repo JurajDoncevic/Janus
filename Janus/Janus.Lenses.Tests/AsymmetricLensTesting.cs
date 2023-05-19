@@ -1,9 +1,11 @@
-﻿using Janus.Commons.DataModels;
+﻿using Janus.Base.Resulting;
+using Janus.Commons.DataModels;
 using Janus.Commons.SchemaModels;
+using Janus.Lenses.Implementations;
 
-namespace Janus.Lenses.Tests.Implementations;
+namespace Janus.Lenses.Tests;
 
-public abstract class BaseLensTesting
+public abstract class AsymmetricLensTesting
 {
     /// <summary>
     /// Should confirm that get(put v s) = v

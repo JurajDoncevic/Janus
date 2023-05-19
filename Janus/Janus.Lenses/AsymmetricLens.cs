@@ -1,8 +1,8 @@
 ﻿namespace Janus.Lenses;
-public abstract class Lens<TSource, TView>
+public abstract class AsymmetricLens<TSource, TView>
 {
 
-    protected Lens()
+    protected AsymmetricLens()
     {
     }
 
@@ -28,7 +28,7 @@ public abstract class Lens<TSource, TView>
     public override bool Equals(object? obj)
     {
         return obj is not null && 
-               obj is Lens<TSource, TView> lens &&
+               obj is AsymmetricLens<TSource, TView> lens &&
                Get.Equals(lens.Get) &&
                Put.Equals(lens.Put);
     }
@@ -38,12 +38,12 @@ public abstract class Lens<TSource, TView>
         return HashCode.Combine(Get, Put);
     }
 
-    public static bool operator ==(Lens<TSource, TView> left, Lens<TSource, TView> right)
+    public static bool operator ==(AsymmetricLens<TSource, TView> left, AsymmetricLens<TSource, TView> right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(Lens<TSource, TView> left, Lens<TSource, TView> right)
+    public static bool operator !=(AsymmetricLens<TSource, TView> left, AsymmetricLens<TSource, TView> right)
     {
         return !(left == right);
     }

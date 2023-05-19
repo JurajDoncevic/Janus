@@ -1,18 +1,17 @@
 ﻿namespace Janus.Lenses.Implementations;
-public sealed class IntStringLens : Lens<int, string>
+public sealed class IntStringLens : SymmetricLens<int, string>
 {
-    internal IntStringLens() : base()
-    {
-    }
+    protected override Result<int> _CreateLeft(string? right)
+        => Results.AsResult(() => Convert.ToInt32(right));
 
-    public override Func<string, int, int> Put => 
-        (view, source) => view is not null &&
-                          int.TryParse(view, out int updatedSource)
-                            ? updatedSource
-                            : source;
+    protected override Result<string> _CreateRight(int left)
+        => Results.AsResult(() => left.ToString());
 
-    public override Func<int, string> Get => 
-        (source) => source.ToString();
+    protected override Result<int> _PutLeft(string right, int left)
+        => Results.AsResult(() => Convert.ToInt32(right));
+
+    protected override Result<string> _PutRight(int left, string? right)
+        => Results.AsResult(() => left.ToString());
 }
 
 public static class IntStringLenses

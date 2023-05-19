@@ -6,7 +6,7 @@ using Janus.Mask.LiteDB.MaskedDataModel;
 using LiteDB;
 
 namespace Janus.Mask.LiteDB.Lenses;
-public sealed class TabularDataLiteDbDataLens : Lens<TabularData, LiteDbData>
+public sealed class TabularDataLiteDbDataLens : AsymmetricLens<TabularData, LiteDbData>
 {
     private readonly string _columnNamePrefix;
 

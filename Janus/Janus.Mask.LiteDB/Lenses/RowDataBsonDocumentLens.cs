@@ -4,7 +4,7 @@ using Janus.Lenses;
 using LiteDB;
 
 namespace Janus.Mask.LiteDB.Lenses;
-public sealed class RowDataBsonDocumentLens : Lens<RowData, BsonDocument>
+public sealed class RowDataBsonDocumentLens : AsymmetricLens<RowData, BsonDocument>
 {
     private readonly string _columnNamePrefix;
 

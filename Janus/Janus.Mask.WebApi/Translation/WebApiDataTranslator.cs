@@ -12,19 +12,21 @@ public class WebApiDataTranslator : IMaskDataTranslator<WebApiDtoData, object>
 
     public WebApiDataTranslator(string? columnNamePrefix = null, Type? originalType = null)
     {
-        _dataLens= TabularDataDtoLenses.Construct<object>(columnNamePrefix, originalType);
+        _dataLens = SymmetricTabularDataDtoLenses.Construct<object>(columnNamePrefix, originalType);
         _columnNamePrefix = columnNamePrefix ?? string.Empty;
     }
 
     public Result<TabularData> Translate(WebApiDtoData source)
         => Results.AsResult(() =>
         {
-            return _dataLens.Put(source.Data, null);
+            return _dataLens.PutLeft(source.Data, null);
         });
 
     public Result<WebApiDtoData> Translate(TabularData destination)
         => Results.AsResult(() =>
         {
-            return new WebApiDtoData(_dataLens.Get(destination));
+            return
+            _dataLens.PutRight(destination, null)
+                .Map(data => new WebApiDtoData(data));
         });
 }
