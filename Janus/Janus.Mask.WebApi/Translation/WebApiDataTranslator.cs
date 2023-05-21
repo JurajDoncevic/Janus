@@ -1,4 +1,5 @@
-﻿using Janus.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 using Janus.Commons.DataModels;
 using Janus.Lenses.Implementations;
 using Janus.Mask.WebApi.MaskedDataModel;
@@ -19,14 +20,14 @@ public class WebApiDataTranslator : IMaskDataTranslator<WebApiDtoData, object>
     public Result<TabularData> Translate(WebApiDtoData source)
         => Results.AsResult(() =>
         {
-            return _dataLens.PutLeft(source.Data, null);
+            return _dataLens.PutLeft(source.Data, Option<TabularData>.None);
         });
 
     public Result<WebApiDtoData> Translate(TabularData destination)
         => Results.AsResult(() =>
         {
             return
-            _dataLens.PutRight(destination, null)
+            _dataLens.PutRight(destination, Option<IEnumerable<object>>.None)
                 .Map(data => new WebApiDtoData(data));
         });
 }

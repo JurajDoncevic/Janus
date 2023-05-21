@@ -1,4 +1,5 @@
-﻿using Janus.Base.Resulting;
+﻿using Janus.Base;
+using Janus.Base.Resulting;
 
 namespace Janus.Lenses.Tests;
 
@@ -43,8 +44,8 @@ public abstract class SymmetricLensTestingFramework<TLeft, TRight> : SymmetricLe
     public override void CreatePutLRTest()
     {
         var result =
-        _lens.CreateLeft(_y)
-            .Bind(x => _lens.PutRight(x, _y));
+        _lens.CreateLeft(Option<TRight>.Some(_y))
+            .Bind(x => _lens.PutRight(x, Option<TRight>.Some(_y)));
 
         Assert.True(result);
         Assert.Equal(_y, result.Data);
@@ -53,8 +54,8 @@ public abstract class SymmetricLensTestingFramework<TLeft, TRight> : SymmetricLe
     public override void CreatePutRLTest()
     {
         var result =
-        _lens.CreateRight(_x)
-            .Bind(y => _lens.PutLeft(y, _x));
+        _lens.CreateRight(Option<TLeft>.Some(_x))
+            .Bind(y => _lens.PutLeft(y, Option<TLeft>.Some(_x)));
 
         Assert.True(result);
         Assert.Equal(_x, result.Data);
@@ -63,8 +64,8 @@ public abstract class SymmetricLensTestingFramework<TLeft, TRight> : SymmetricLe
     public override void PutLRTest()
     {
         var result =
-        _lens.PutLeft(_y, _x)
-            .Bind(x => _lens.PutRight(x, _y));
+        _lens.PutLeft(_y, Option<TLeft>.Some(_x))
+            .Bind(x => _lens.PutRight(x, Option<TRight>.Some(_y)));
 
         Assert.True(result);
         Assert.Equal(_y, result.Data);
@@ -73,8 +74,8 @@ public abstract class SymmetricLensTestingFramework<TLeft, TRight> : SymmetricLe
     public override void PutRLTest()
     {
         var result =
-        _lens.PutRight(_x, _y)
-            .Bind(y => _lens.PutLeft(y, _x));
+        _lens.PutRight(_x, Option<TRight>.Some(_y))
+            .Bind(y => _lens.PutLeft(y, Option<TLeft>.Some(_x)));
 
         Assert.True(result);
         Assert.Equal(_x, result.Data);

@@ -17,25 +17,25 @@ public sealed class RowDataDtoLens<TDto>
         _dtoType = Option<Type>.Some(dtoType); // evaluates to None if null
     }
 
-    protected override Result<RowData> _CreateLeft(TDto? right)
+    protected override Result<RowData> _CreateLeft(Option<TDto> right)
         => Results.AsResult(() =>
-            right is null
+            !right.IsSome
             ? RowData.FromDictionary(
                 typeof(TDto).GetRuntimeProperties().ToDictionary(p => p.Name, p => GetDefaultValue(TypeMappings.MapToDataType(p.PropertyType)))
             )
             : RowData.FromDictionary(
-                (_dtoType.Value ?? right?.GetType() ?? typeof(TDto)).GetRuntimeProperties().ToDictionary(p => p.Name, p => p.GetValue(right))
+                (_dtoType.Value ?? right.Value?.GetType() ?? typeof(TDto)).GetRuntimeProperties().ToDictionary(p => p.Name, p => p.GetValue(right.Value))
             )
         );
 
-    protected override Result<TDto> _CreateRight(RowData? left)
+    protected override Result<TDto> _CreateRight(Option<RowData> left)
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
         => Results.AsResult(() =>
         {
             Type rightType = _dtoType.Value ?? typeof(TDto);
 
             var rightItem = Activator.CreateInstance(rightType);// Activator.CreateInstance<TDto>();
-            foreach (var (colName, value) in left?.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)) ?? Enumerable.Empty<(string, object?)>())
+            foreach (var (colName, value) in left.Value?.ColumnValues.Map(t => (t.Key.Split('.').Last(), t.Value)) ?? Enumerable.Empty<(string, object?)>())
             {
                 string fieldName = $"_{colName}";
 
@@ -47,7 +47,7 @@ public sealed class RowDataDtoLens<TDto>
         });
 #pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
 
-    protected override Result<RowData> _PutLeft(TDto right, RowData? left)
+    protected override Result<RowData> _PutLeft(TDto right, Option<RowData> left)
         => Results.AsResult(() =>
         {
             var dtoType = right?.GetType() ?? _dtoType.Value ?? typeof(TDto);
@@ -56,7 +56,7 @@ public sealed class RowDataDtoLens<TDto>
                 _columnNamePrefix
                 ? _columnNamePrefix.Value
                 : FindLongestCommonPrefix(
-                    (left ?? CreateLeft(null).Match(
+                    (left.Value ?? CreateLeft(Option<TDto>.None).Match(
                         l => l, 
                         msg => RowData.FromDictionary(new Dictionary<string, object?>()))
                     ).ColumnValues.Keys
@@ -72,7 +72,7 @@ public sealed class RowDataDtoLens<TDto>
                 columnInfos.ToDictionary(t => t.Value.columnName, t => TypeMappings.MapToDataType(t.Value.fieldType));
 
             var rowData = new Dictionary<string, object?>(
-                (left ?? CreateLeft(null).Match(
+                (left.Value ?? CreateLeft(Option<TDto>.None).Match(
                         l => l,
                         msg => RowData.FromDictionary(new Dictionary<string, object?>())
                         )
@@ -89,7 +89,7 @@ public sealed class RowDataDtoLens<TDto>
             return RowData.FromDictionary(rowData);
         });
 
-    protected override Result<TDto> _PutRight(RowData left, TDto? right)
+    protected override Result<TDto> _PutRight(RowData left, Option<TDto> right)
 #pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
         => Results.AsResult(() =>
         {
