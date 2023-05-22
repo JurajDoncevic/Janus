@@ -9,6 +9,7 @@ public sealed class RowDataDtoLensTests : SymmetricLensTestingFramework<RowData,
         RowData.FromDictionary(new Dictionary<string, object?>
         {
                 { "Id", 1L },
+                { "Coefficient", 1.2 },
                 { "FirstName", "John" },
                 { "LastName", "Doe" },
                 { "DateOfBirth", new DateTime(1965, 1, 1)}
@@ -16,6 +17,7 @@ public sealed class RowDataDtoLensTests : SymmetricLensTestingFramework<RowData,
     protected override PersonDto _y => new PersonDto
     {
         Id = 1L,
+        Coefficient = 1.2,
         FirstName = "John",
         LastName = "Doe",
         DateOfBirth = new DateTime(1965, 1, 1)
