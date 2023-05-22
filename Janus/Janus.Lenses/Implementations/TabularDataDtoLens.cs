@@ -3,7 +3,7 @@ using Janus.Commons.SchemaModels;
 using System.Reflection;
 
 namespace Janus.Lenses.Implementations;
-public class TabularDataDtoLens<TDto> 
+public sealed class TabularDataDtoLens<TDto> 
     : SymmetricLens<TabularData, IEnumerable<TDto>>
     where TDto : class
 {
