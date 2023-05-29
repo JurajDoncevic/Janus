@@ -39,6 +39,13 @@ The MMW architecture extends the mediator-wrapper architecture by the addition o
 <br/><br/>
 
 
+## MMW-driven data mesh experiments
+The Janus system has shown that an MMW system can drive a data mesh. The experiment files are located <a href="https://github.com/JurajDoncevic/Janus/blob/master/experimentation/janus_data_mesh/">HERE</a>.
+The description of those experiments, and the way to reproduce them is described <a href="https://github.com/JurajDoncevic/Janus/blob/master/wiki/data_mesh_experiments.md">HERE</a>.
+
+
 ## Research papers regarding MMW and its capabilities
 **[Mask-Mediator-Wrapper: A revised mediator-wrapper architecture for heterogeneous data source integration](https://doi.org/10.3390/app13042471)**
 **[Mask-Mediator-Wrapper architecture as a Data Mesh driver](https://doi.org/10.48550/arXiv.2209.04661)**
+
+
