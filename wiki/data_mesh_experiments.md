@@ -12,7 +12,7 @@ The containerization is set up so it loads and adapts these files for the requir
 
 The data mesh that is being experimentally driven by Janus is pictured here:
 <div align="center">
-<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/dm_experiment_data_mesh.png?raw=true" width=40% alt="Experiment databases">
+<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/dm_experiment_data_mesh.png?raw=true" width=100% alt="Experiment databases">
 <br>
 <caption><i>Experimental data mesh topology</i></caption>
 </div>
@@ -47,7 +47,7 @@ $> python time_measuring.py
 The databases used as data sources in the DIP are described by the following unified logical diagram:
 
 <div align="center">
-<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/dm_experiment_databases_used.png?raw=true" width=40% alt="Experiment databases">
+<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/dm_experiment_databases_used.png?raw=true" width=100% alt="Experiment databases">
 <br>
 <caption><i>Experiment databases</i></caption>
 </div>
