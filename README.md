@@ -23,7 +23,7 @@ referencing the old roman god of duality, gates and transitions - *Janus Bifrons
 The mask-mediator-wrapper (MMW) architecture on which Janus is based is an extension of the mediator-wrapper (MW) architectural pattern.
 
 <div align="center">
-<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/mediator_wrapper_pattern.png?raw=true" width=40% alt="MW pattern">
+<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/mediator_wrapper_pattern.png?raw=true" width=60% alt="MW pattern">
 <br>
 <caption><i>The mediator-wrapper pattern</i></caption>
 </div>
@@ -32,7 +32,7 @@ The mask-mediator-wrapper (MMW) architecture on which Janus is based is an exten
 The MMW architecture extends the mediator-wrapper architecture by the addition of a mask component type. Masks are used for schema, query and data representation. This concern was usually assigned to specialized client applications built for specific integration systems. Masks provide the ability to support a variety of user applications that are not inherently designed for the integration system itself. An example of a MMW system is shown here:
 
 <div align="center">
-<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/mmw_architecture_example.png?raw=true" width=40% alt="MMW wxample">
+<img src="https://github.com/JurajDoncevic/Janus/blob/master/wiki/figures/mmw_architecture_example.png?raw=true" width=70% alt="MMW wxample">
 <br>
 <caption><i>MMW example</i></caption>
 </div>
@@ -46,6 +46,6 @@ The description of those experiments, and the way to reproduce them is described
 
 ## Research papers regarding MMW and its capabilities
 **[Mask-Mediator-Wrapper: A revised mediator-wrapper architecture for heterogeneous data source integration](https://doi.org/10.3390/app13042471)**
-**[Mask-Mediator-Wrapper architecture as a Data Mesh driver](https://doi.org/10.48550/arXiv.2209.04661)**
+**[Mask-Mediator-Wrapper architecture as a Data Mesh driver](https://doi.org/10.48550/arXiv.2209.04661)** (pre-print)
 
 
