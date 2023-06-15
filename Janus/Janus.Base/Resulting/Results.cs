@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using System;
-
-namespace Janus.Base.Resulting;
+﻿namespace Janus.Base.Resulting;
 public static partial class Results
 {
     #region MATCH
@@ -550,6 +547,22 @@ public static partial class Results
             Try<TResult> t when t.IsException => Results.OnException<TResult>(t.Exception),
             _ => Results.OnFailure<TResult>()
         };
+
+    #endregion
+
+    #region FOLD
+
+    /// <summary>
+    /// Automatically Folds a list of Results
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="results"></param>
+    /// <returns></returns>
+    public static Result<IEnumerable<T>> AutoFold<T>(this IEnumerable<Result<T>> results)
+        => results.Fold(
+            Results.OnSuccess(Enumerable.Empty<T>()),
+            (result, results) => result.Bind(r => results.Map(rs => rs.Append(r)))
+            );
 
     #endregion
 }
